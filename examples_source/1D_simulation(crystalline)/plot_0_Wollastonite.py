@@ -21,7 +21,7 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
-# **Step 1:** Create the sites.
+# Create the sites.
 Si29_1 = Site(
     isotope="29Si",
     isotropic_chemical_shift=-89.0,  # in ppm
@@ -39,7 +39,7 @@ Si29_3 = Site(
 )
 
 # %%
-# **Step 2:** Create the spin systems from these sites. Again, we create three
+# Create the spin systems from these sites. Again, we create three
 # single-site spin systems for better performance.
 spin_systems = [
     SpinSystem(sites=[Si29_1]),
@@ -48,7 +48,7 @@ spin_systems = [
 ]
 
 # %%
-# **Step 3:** Create a Bloch decay spectrum method.
+# Create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
@@ -69,13 +69,8 @@ method.plot()
 plt.show()
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
-
-# %%
-# **Step 5:** Simulate the spectrum.
+# Create the Simulator object and add the method and spin system objects.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.

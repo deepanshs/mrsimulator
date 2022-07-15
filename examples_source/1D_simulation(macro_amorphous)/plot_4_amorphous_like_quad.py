@@ -88,9 +88,7 @@ static_method = BlochDecayCTSpectrum(
 
 # %%
 # Create the simulator object and add the spin systems and method.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [static_method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[static_method])
 sim.run()
 
 # %%

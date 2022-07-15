@@ -79,12 +79,10 @@ methods = [
 # %%
 # **Simulator**
 #
-# Create the Simulator object and add the method and the spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the three spin systems
-sim.methods = methods  # add the four methods
+# Create a Simulator object and add the four method and three spin system objects.
+sim = Simulator(spin_systems=spin_systems, methods=methods)
 sim.config.integration_volume = "hemisphere"  # set averaging to hemisphere
-# decompose spectrum to individual spin systems.
+# config to decompose spectrum to individual spin systems.
 sim.config.decompose_spectrum = "spin_system"
 
 # %%

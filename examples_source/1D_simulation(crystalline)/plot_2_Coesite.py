@@ -21,7 +21,7 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create the sites.
+# Create the sites.
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17_1 = Site(
@@ -54,7 +54,7 @@ O17_5 = Site(
 sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 # %%
-# **Step 2:** Create the spin systems from these sites. For optimum performance, we
+# Create the spin systems from these sites. For optimum performance, we
 # create five single-site spin systems instead of a single five-site spin system. The
 # abundance of each spin system is taken from above reference. Here we are iterating
 # over both the *sites* and *abundance* list concurrently using a list comprehension
@@ -63,7 +63,7 @@ abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 # %%
-# **Step 3:** Create a central transition selective Bloch decay spectrum method.
+# Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCTSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
@@ -83,13 +83,8 @@ method = BlochDecayCTSpectrum(
 # width using 2048 points.
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
-
-# %%
-# **Step 5:** Simulate the spectrum.
+# Create the Simulator object and add the method and spin system objects.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.

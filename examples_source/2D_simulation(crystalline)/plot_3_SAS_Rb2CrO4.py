@@ -75,9 +75,7 @@ sas = Method(
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin systems
-sim.methods = [sas]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[sas])
 
 # Configure the simulator object. For non-coincidental tensors, set the value of the
 # `integration_volume` attribute to `hemisphere`.

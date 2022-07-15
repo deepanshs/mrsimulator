@@ -37,8 +37,10 @@ spin_system = SpinSystem(sites=[site])
 # - :math:`|5/2\rangle\rightarrow|-1/2\rangle` (:math:`P=-3, D=-6`)
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
-# D to the `transition_queries`. Here, we select the symmetric triple-quantum
-# transition.
+# D to the symmetry query object of `transition_queries`. Refer to the
+# :ref:`transition_query_documentation` for details.
+#
+# Here, we select the symmetric triple-quantum transition.
 method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
@@ -65,13 +67,9 @@ method.plot()
 plt.show()
 
 # %%
-# Create the Simulator object and add the method and the spin system object.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
-# The plot of the simulation before signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(sim.methods[0].simulation.real, color="black", linewidth=1)

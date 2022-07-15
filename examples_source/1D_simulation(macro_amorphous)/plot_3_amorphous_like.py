@@ -114,9 +114,7 @@ method = BlochDecaySpectrum(
 #
 # Now that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 
 # %%
 # Static spectrum

@@ -57,11 +57,11 @@ systems = single_site_system_generator(
 )
 print(len(systems))
 
+method = BlochDecaySpectrum(channels=["13C"])
+
 # %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%
@@ -105,22 +105,18 @@ plt.show()
 # Simulate the spectrum
 # '''''''''''''''''''''
 # **Static spectrum**
-# Create the spin systems.
 systems = single_site_system_generator(
     isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
+method = BlochDecayCTSpectrum(
+    channels=["71Ga"],
+    magnetic_flux_density=9.4,  # in T
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=2e5)],
+)
 # %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [
-    BlochDecayCTSpectrum(
-        channels=["71Ga"],
-        magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[SpectralDimension(count=2048, spectral_width=2e5)],
-    )
-]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%

@@ -20,7 +20,7 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
-# **Step 1:** Create the spin system
+# Create the spin system
 site = Site(
     name="33S",
     isotope="33S",
@@ -30,7 +30,7 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# **Step 2:** Create a central transition selective Bloch decay spectrum method.
+# Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCTSpectrum(
     channels=["33S"],
     magnetic_flux_density=21.14,  # in T
@@ -51,13 +51,8 @@ method.plot()
 plt.show()
 
 # %%
-# **Step 3:** Create the Simulator object and add method and spin system objects.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
-
-# %%
-# **Step 4:** Simulate the spectrum.
+# Create the Simulator object and add method and spin system objects.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.

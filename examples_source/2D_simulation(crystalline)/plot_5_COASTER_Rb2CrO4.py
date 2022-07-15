@@ -82,9 +82,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin systems
-sim.methods = [coaster]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[coaster])
 
 # configure the simulator object. For non-coincidental tensors, set the value of the
 # `integration_volume` attribute to `hemisphere`.
