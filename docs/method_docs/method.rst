@@ -14,13 +14,6 @@ section assumes that you are already familiar with the topics covered in the
 Introduction sections :ref:`getting_started`,
 :ref:`introduction_isotopomers_example`, and :ref:`fitting_example`.
 
-.. note::
-
-    Lists in Python are always ordered; however, we use the phrase *ordered list* when
-    referring to a list where the order of elements is meaningful for **mrsimulator**.
-    Similarly, the phrase *unordered list* implies **mrsimulator** does not care about
-    the ordering of the items.
-
 Overview
 --------
 
@@ -80,7 +73,15 @@ frequencies in each spectroscopic dimension of the dataset. To this end, a
 At the heart of a **Method** object, assigned to its attribute
 ``spectral_dimensions``, is an ordered list of :ref:`spectral_dim_api` objects
 in the same order as the time evolution dimensions of the experimental NMR
-sequence. In each **SpectralDimension** object, assigned to the attribute
+sequence. 
+
+.. note::
+
+    Lists in Python are always ordered; however, we use the phrase *ordered list* when
+    the order is necessary for **mrsimulator**.
+
+
+In each **SpectralDimension** object, assigned to the attribute
 ``events``, is an ordered list of :ref:`event_api` objects, which are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.DelayEvent`, and (3)
