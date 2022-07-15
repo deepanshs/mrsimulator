@@ -243,7 +243,7 @@ Method Documentation
   method_docs/affine_transformation.rst
   method_docs/frequency_contrib.rst
   method_docs/attribute_tables.rst
-  method_docs/method_theory.rst
+  ..method_docs/method_theory.rst
 
 Examples
 --------
