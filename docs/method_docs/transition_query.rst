@@ -540,7 +540,7 @@ is given in the code below.
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
@@ -666,7 +666,7 @@ The code below will select the six *two-spin double-quantum transitions* where
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
@@ -773,7 +773,7 @@ The code below will select these *three-spin single-quantum transitions*.
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()

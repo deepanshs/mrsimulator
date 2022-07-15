@@ -234,17 +234,16 @@ Method Documentation
 --------------------
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
   :caption: Method Documentation
 
   method_docs/method.rst
-  method_docs/overview.rst
   method_docs/transition_query.rst
   method_docs/mixing_query.rst
   method_docs/affine_transformation.rst
   method_docs/frequency_contrib.rst
-  method_docs/method_theory.rst
   method_docs/attribute_tables.rst
+  method_docs/method_theory.rst
 
 Examples
 --------
@@ -268,7 +267,8 @@ API and references
     api_py/py-signal-processor
     api_py/py-model
     api_py/py-fitting
-    api_c/c_api
+
+.. api_c/c_api
 
 
 Project details

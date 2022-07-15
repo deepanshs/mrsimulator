@@ -111,7 +111,7 @@ Additionally, the user can affect transition frequencies during a spectral or
 delay event by changing other measurement attributes: ``rotor_frequency``,
 ``rotor_angle``, and ``magnetic_flux_density``. If left unspecified, these
 attributes default to the values of the identically named global attributes in
-the **Method** object. SpectralEvent**** objects use the ``fraction`` attribute to
+the **Method** object. **SpectralEvent** objects use the ``fraction`` attribute to
 calculate the weighted average frequency during the spectral dimension for each
 selected transition pathway.
 
@@ -160,18 +160,18 @@ contributions<freq_contrib_api>` can often reduce the number of events needed in
 the design of your custom Method object.
 
 
-Sections
---------
+.. Sections
+.. --------
 
-These sections need to be converted from a toctree to a list of page references
+.. These sections need to be converted from a toctree to a list of page references
 
-.. toctree::
-    :maxdepth: 1
+.. .. toctree::
+..     :maxdepth: 1
 
-    transition_query
-    mixing_query
-    frequency_contrib
-    affine_transformation
-    origin_and_reference_offset
-    method_theory
-    attribute_tables
+..     transition_query
+..     mixing_query
+..     frequency_contrib
+..     affine_transformation
+..     origin_and_reference_offset
+..     method_theory
+..     attribute_tables

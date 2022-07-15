@@ -181,6 +181,8 @@ refocus through the transition pathways.
     :math:`\mathbb{G}_0` echoes, which are designed to occur simultaneously during the
     Dynamic-Angle Spinning (DAS) experiment.
 
+.. _p_and_d_echoes:
+
 p and d Echoes on Deuterium
 '''''''''''''''''''''''''''
 
