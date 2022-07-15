@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Itraconazole, ¹³C (I=1/2) PASS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator.method.lib import SSB2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
@@ -70,7 +69,7 @@ sim.run()
 # %%
 # Apply post-simulation processing. Here, we apply a Lorentzian line broadening to the
 # isotropic dimension.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(dim_index=0),
@@ -78,14 +77,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=0),
     ]
 )
-processed_data = processor.apply_operations(data=data).real
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=dataset).real
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data, aspect="auto", cmap="gist_ncar_r", vmax=0.5)
+cb = ax.imshow(processed_dataset, aspect="auto", cmap="gist_ncar_r", vmax=0.5)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

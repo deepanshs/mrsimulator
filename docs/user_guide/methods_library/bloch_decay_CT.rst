@@ -10,7 +10,7 @@ Bloch decay central transition selective spectrum.
     from mrsimulator.method import SpectralDimension
 
     method = BlochDecayCTSpectrum(
-        channels=["1H"],
+        channels=["87Rb"],
         rotor_frequency=12500,  # in Hz
         rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Site class."""
 import pytest
 from mrsimulator import Site
@@ -51,10 +50,10 @@ def test_direct_init_site1():
     assert Site().isotope == Isotope(symbol="1H")
 
     error = ["with spin quantum number", "does not allow quadrupolar tensor"]
-    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+    with pytest.raises(ValidationError, match=".*{}.*{}.*".format(*error)):
         Site(quadrupolar={"Cq": 5.1e6})
 
-    with pytest.raises(ValidationError, match=".*{0}.*{1}.*".format(*error)):
+    with pytest.raises(ValidationError, match=".*{}.*{}.*".format(*error)):
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
     ax = Site.parse_dict_with_units({"isotope": "29Si"})

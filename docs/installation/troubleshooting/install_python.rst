@@ -3,8 +3,8 @@
 Installing Python
 """""""""""""""""
 
-``mrsimulator`` requires Python or a hosted Notebook service to run. If you are
-using Google Colab, see the `colab installation steps <on_google_colab>`__.
+**Mrsimulator** requires Python or a hosted Notebook service to run. If you are
+using Google Colab, see specific instructions in the :ref:`install` section.
 
 Checking the version of Python
 ''''''''''''''''''''''''''''''
@@ -37,7 +37,7 @@ Checking the version of Python
 
     .. tab:: MacOS
 
-        Most recent versions of MacOS come with Python pre-installed. If you're unsure
+        Nearly all recent versions of MacOS come with Python pre-installed. If you're unsure
         if Python is installed, follow these steps.
 
         To check if Python is installed on MacOS, open the Terminal application. Next, type
@@ -83,4 +83,5 @@ If Python is already installed on your system but is out of date, we recommend `
 multiple versions of Python to run on one computer without interfering with each-other.
 
 However, if Anaconda can't be used, newer versions of Python can be installed from `python.org
-<https://www.python.org/downloads/>`__. We recommend using the latest version of ``Python 3.9``.
+<https://www.python.org/downloads/>`__. Python 3.7 or greater is required to run mrsimulator,
+but we encourage using the latest compatible version of Python.

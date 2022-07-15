@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coesite, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^
@@ -14,7 +13,7 @@ Coesite, ¹⁷O (I=5/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
@@ -106,12 +105,12 @@ processor = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

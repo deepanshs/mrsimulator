@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ⁸⁷Rb 2D QMAT NMR of Rb₂SO₄
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,7 +14,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import SSB2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -26,25 +25,25 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # Import the dataset
 # ------------------
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
-qmat_data = cp.load(filename)
+qmat_dataset = cp.load(filename)
 
 # standard deviation of noise from the dataset
 sigma = 6.530634
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
-qmat_data = qmat_data.real
+qmat_dataset = qmat_dataset.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-_ = [item.to("ppm", "nmr_frequency_ratio") for item in qmat_data.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in qmat_dataset.dimensions]
 
 # plot of the dataset.
-max_amp = qmat_data.max()
+max_amp = qmat_dataset.max()
 levels = (np.arange(31) + 0.15) * max_amp / 32  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=1, linewidths=0.5)  # plot options
 
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)
 plt.grid()
@@ -76,14 +75,14 @@ spin_systems = [SpinSystem(sites=[s]) for s in [Rb_1, Rb_2]]
 # Create the SSB2D method.
 
 # Get the spectral dimension parameters from the experiment.
-spectral_dims = get_spectral_dimensions(qmat_data)
+spectral_dims = get_spectral_dimensions(qmat_dataset)
 
 PASS = SSB2D(
     channels=["87Rb"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=2604,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=qmat_data,  # add the measurement to the method.
+    experiment=qmat_dataset,  # add the measurement to the method.
 )
 
 # Optimize the script by pre-setting the transition pathways for each spin system from
@@ -110,14 +109,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=1e7),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
-ax.contour(processed_data.T, colors="r", linestyles="--", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
+ax.contour(processed_dataset.T, colors="r", linestyles="--", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)
 plt.grid()
@@ -149,7 +148,7 @@ best_fit = sf.bestfit(sim, processor)[0].real
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
 ax.contour(best_fit.T, colors="r", linestyles="--", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)

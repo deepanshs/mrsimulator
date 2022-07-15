@@ -71,7 +71,7 @@ docs/_build/
 # Spinx Gallery build dirs
 docs/examples/
 docs/fitting/
-docs/signal_processing
+docs/signal_processor
 
 # Doxygen output
 docs/xml/

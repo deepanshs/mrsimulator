@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
 import numpy as np
 from sympy.physics.quantum.spin import Rotation

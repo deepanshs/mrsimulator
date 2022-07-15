@@ -4,7 +4,7 @@
 Simulation Gallery
 ==================
 
-In this section, we use the ``mrsimulator`` tools to create spin systems and
+In this section, we use the **mrsimulator** tools to create spin systems and
 simulate spectrum with practical/experimental applications. These examples illustrate
 
 - building spin systems (uncoupled and weakly-coupled),

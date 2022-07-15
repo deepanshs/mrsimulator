@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹⁷O 2D DAS NMR of Coesite
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,7 +14,7 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
@@ -91,13 +90,13 @@ DAS = Method(
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=37.38 * np.pi / 180,  # in rads
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=79.19 * np.pi / 180,  # in rads
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
             ],
@@ -108,7 +107,7 @@ DAS = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=54.735 * np.pi / 180,  # in rads
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
@@ -142,14 +141,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=4e7),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.grid()

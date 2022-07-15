@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
@@ -89,7 +88,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch.experiment = my_data # doctest: +SKIP
+        >>> bloch.experiment = my_dataset # doctest: +SKIP
 
     name:
         Name or id of the method. The default value is None.
@@ -189,6 +188,21 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+        # Check for only one event with 0 < rotor_freq < infinity
+        speeds = [
+            ev.rotor_frequency
+            for sd in self.spectral_dimensions
+            for ev in sd.events
+            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+        ]
+        speeds = [sp for sp in speeds if 0 < sp < 1e12]
+        if len(speeds) > 1:
+            raise NotImplementedError(
+                f"Sideband-sideband correlation is not yet supported in mrsimulator. "
+                f"Only one event with non-zero and finite `rotor_frequency` is allowed "
+                f"in a method. Found {len(speeds)} events with rotor frequencies "
+                f"{speeds}."
+            )
 
     @classmethod
     def check(cls, kwargs, is_named_method=False, ndim=None):
@@ -198,14 +212,14 @@ class Method(Parseable):
             check_for_at_least_one_event(kwargs)
 
     @staticmethod
-    def __check_csdm__(data):
-        if data is None:
+    def __check_csdm__(dataset):
+        if dataset is None:
             return None
-        if isinstance(data, dict):
-            return cp.parse_dict(data)
-        if isinstance(data, cp.CSDM):
-            return data
-        raise ValueError("Unable to read the data.")
+        if isinstance(dataset, dict):
+            return cp.parse_dict(dataset)
+        if isinstance(dataset, cp.CSDM):
+            return dataset
+        raise ValueError("Unable to read the dataset.")
 
     @validator("experiment", pre=True, always=True)
     def validate_experiment(cls, v, *, values, **kwargs):
@@ -227,31 +241,6 @@ class Method(Parseable):
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
-        return v
-
-    @validator("spectral_dimensions", always=True)
-    def validate_spectral_dimensions(cls, v, *, values, **kwargs):
-        """Check for exactly one non-zero and finite rotor_frequency in the method."""
-
-        global_rf = (
-            0.0 if "rotor_frequency" not in values else values["rotor_frequency"]
-        )
-        speeds = [
-            ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
-            for sd in v
-            for ev in sd.events
-            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
-        ]
-        # remove all zero and infinite (>1e12 Hz) speeds from list
-        speeds = {sp for sp in speeds if 0 < sp < 1e12}
-        if len(speeds) > 1:
-            raise NotImplementedError(
-                (
-                    "Sideband-sideband correlation is not supported in mrsimulator. "
-                    "Only one event with non-zero finite `rotor_frequency` is allowed "
-                    "in a method."
-                )
-            )
         return v
 
     @classmethod
@@ -379,17 +368,17 @@ class Method(Parseable):
             ...             "events": [
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [1]}}]
             ...                 },
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [0]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [0]}}]
             ...                 }
             ...             ],
             ...         },
             ...         {
             ...             "events": [
-            ...                 {"transition_query": [{"ch1": {"P": [-1]}}]},
+            ...                 {"transition_queries": [{"ch1": {"P": [-1]}}]},
             ...             ],
             ...         }
             ...     ]
@@ -410,14 +399,14 @@ class Method(Parseable):
             ...         {
             ...             "events": [{
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [
+            ...                 "transition_queries": [
             ...                     {"ch1": {"P": [1]}},
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             },
             ...             {
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [  # selecting double quantum
+            ...                 "transition_queries": [  # selecting double quantum
             ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
             ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
             ...                 ]
@@ -425,7 +414,7 @@ class Method(Parseable):
             ...         },
             ...         {
             ...             "events": [{
-            ...                 "transition_query": [ # selecting single quantum
+            ...                 "transition_queries": [ # selecting single quantum
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             }],
@@ -479,7 +468,7 @@ class Method(Parseable):
         isotopes = spin_system.get_isotopes(symbol=True)
         channels = [item.symbol for item in self.channels]
         if np.any([item not in isotopes for item in channels]):
-            return []
+            return np.asarray([])
 
         segments = [
             evt.filter_transitions(all_transitions, isotopes, channels)
@@ -496,7 +485,7 @@ class Method(Parseable):
 
     def _get_transition_pathway_weights(self, pathways, spin_system):
         if pathways == []:
-            return []
+            return np.asarray([])
 
         symbol = [item.isotope.symbol for item in spin_system.sites]
         spins = np.asarray([item.isotope.spin for item in spin_system.sites])
@@ -794,4 +783,4 @@ class Method(Parseable):
             >>> method.shape()
             (40, 10)
         """
-        return tuple([item.count for item in self.spectral_dimensions])
+        return tuple(item.count for item in self.spectral_dimensions)

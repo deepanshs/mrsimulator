@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList

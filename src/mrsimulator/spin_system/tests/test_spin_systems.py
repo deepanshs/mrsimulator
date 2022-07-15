@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base SpinSystem class."""
 import numpy as np
 import pytest

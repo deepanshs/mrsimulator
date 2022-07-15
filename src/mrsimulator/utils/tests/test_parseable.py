@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tests for the base Parseable pattern"""
 from typing import ClassVar
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extended Czjzek distribution (Shielding and Quadrupolar)
 ========================================================

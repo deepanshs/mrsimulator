@@ -7,7 +7,7 @@
       "events": [{
         "magnetic_flux_density": "1 T",
         "rotor_frequency": "5 kHz",
-        "transition_query": [{
+        "transition_queries": [{
           "ch1": {
             "P": [-1]
           }

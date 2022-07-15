@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Amorphous material, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -7,10 +6,10 @@ Amorphous material, ²⁹Si (I=1/2)
 ²⁹Si (I=1/2) simulation of amorphous material.
 """
 # %%
-# One of the advantages of the ``mrsimulator`` package is that it is a fast NMR
+# One of the advantages of the mrsimulator package is that it is a fast NMR
 # spectrum simulation library. We can exploit this feature to simulate bulk spectra and
 # eventually model amorphous materials. In this section, we illustrate how the
-# ``mrsimulator`` library may be used in simulating the NMR spectrum of amorphous
+# mrsimulator library may be used in simulating the NMR spectrum of amorphous
 # materials.
 import numpy as np
 import matplotlib.pyplot as plt

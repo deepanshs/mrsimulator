@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Wollastonite, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,7 +13,7 @@ Wollastonite, ²⁹Si (I=1/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
@@ -88,12 +87,12 @@ plt.show()
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="70 Hz"), sp.FFT()]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

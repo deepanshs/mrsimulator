@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coupled spin-1/2 (CSA + heteronuclear dipolar + J-couplings)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -17,7 +16,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.method.lib import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
 
@@ -103,8 +102,8 @@ processor = sp.SignalProcessor(
     ]
 )
 # apply the same post-simulation processing to all the twelve simulations.
-processed_data = [
-    processor.apply_operations(data=method.simulation) for method in sim.methods
+processed_dataset = [
+    processor.apply_operations(dataset=method.simulation) for method in sim.methods
 ]
 
 # %%
@@ -116,7 +115,7 @@ processed_data = [
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(
-    processed_data[0].split()[0].real,
+    processed_dataset[0].split()[0].real,
     color="black",
     linewidth=1,
     label="$\\nu_r=$3 kHz, \n $\\beta=30^\\circ$",
@@ -138,7 +137,7 @@ fig, ax = plt.subplots(
     sharey=True,
     figsize=(8, 10.0),
 )
-for i, datum in enumerate(processed_data):
+for i, datum in enumerate(processed_dataset):
     datum_spin_sys = datum.split()  # get simulation from the three spin systems.
     for j, item in enumerate(datum_spin_sys):
         ax[i, j].plot(

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from pprint import pprint
 
 import matplotlib
@@ -6,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from mrsimulator import Coupling
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator import Coupling
 from mrsimulator import Simulator
@@ -9,6 +8,9 @@ from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
+
+positive_sq_tq = [{"ch1": {"P": [1]}}]
+negative_sq_tq = [{"ch1": {"P": [-1]}}]
 
 
 def coupled_spin_system(j_coup=0, dipole=0):
@@ -36,11 +38,9 @@ def hahn_method():
                 count=512,
                 spectral_width=2e4,  # in Hz
                 events=[
-                    SpectralEvent(fraction=0.5, transition_query=[{"ch1": {"P": [1]}}]),
+                    SpectralEvent(fraction=0.5, transition_queries=positive_sq_tq),
                     MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
-                    SpectralEvent(
-                        fraction=0.5, transition_query=[{"ch1": {"P": [-1]}}]
-                    ),
+                    SpectralEvent(fraction=0.5, transition_queries=negative_sq_tq),
                 ],
             )
         ],
@@ -62,7 +62,11 @@ def contrib_method(contrib):
             SpectralDimension(
                 count=512,
                 spectral_width=2e4,
-                events=[SpectralEvent(freq_contrib=contrib)],
+                events=[
+                    SpectralEvent(
+                        freq_contrib=contrib, transition_queries=negative_sq_tq
+                    )
+                ],
             )
         ],
     )

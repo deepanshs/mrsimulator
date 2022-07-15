@@ -38,12 +38,12 @@
                             {
                                 "fraction": 0.5,
                                 "rotor_angle": "0.6524035233333334 rad",
-                                "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                             },
                             {
                                 "fraction": 0.5,
                                 "rotor_angle": "1.3821250672222223 rad",
-                                "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                             }
                         ]
                     },
@@ -53,7 +53,7 @@
                         "events": [
                             {
                                 "rotor_angle": "0.9553051591666667 rad",
-                                "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                             }
                         ]
                     }
@@ -78,7 +78,7 @@
         ],
         "some_bad_key": "I should be removed"
     },
-    "old_root_level_and_transition_query": {
+    "old_root_level_and_transition_queries": {
         "name": "Test Conversion Simulator",
         "description": "JSON to test conversion of old structures",
         "label": "Simulator label",
@@ -116,12 +116,12 @@
                             {
                                 "fraction": 0.5,
                                 "rotor_angle": "0.6524035233333334 rad",
-                                "transition_query": {"P": [-1], "D": [0]}
+                                "transition_queries": {"P": [-1], "D": [0]}
                             },
                             {
                                 "fraction": 0.5,
                                 "rotor_angle": "1.3821250672222223 rad",
-                                "transition_query": {"P": [-1], "D": [0]}
+                                "transition_queries": {"P": [-1], "D": [0]}
                             }
                         ]
                     },
@@ -131,7 +131,7 @@
                         "events": [
                             {
                                 "rotor_angle": "0.9553051591666667 rad",
-                                "transition_query": {"P": [-1], "D": [0]}
+                                "transition_queries": {"P": [-1], "D": [0]}
                             }
                         ]
                     }
@@ -195,12 +195,12 @@
                                 {
                                     "fraction": 0.5,
                                     "rotor_angle": "0.6524035233333334 rad",
-                                    "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                                 },
                                 {
                                     "fraction": 0.5,
                                     "rotor_angle": "1.3821250672222223 rad",
-                                    "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                                 }
                             ]
                         },
@@ -210,7 +210,7 @@
                             "events": [
                                 {
                                     "rotor_angle": "0.9553051591666667 rad",
-                                    "transition_query": [{"ch1": {"P": [-1], "D": [0]}}]
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
                                 }
                             ]
                         }

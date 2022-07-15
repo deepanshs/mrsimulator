@@ -17,9 +17,9 @@ follows,
 .. math::
     {\bf S} = \left[
     \begin{array}{l l l}
-    S_{xx} & S_{xy} & S_{xz} \\
-    S_{xy} & S_{yy} & S_{yz} \\
-    S_{xz} & S_{yz} & S_{zz}
+        S_{xx} & S_{xy} & S_{xz} \\
+        S_{xy} & S_{yy} & S_{yz} \\
+        S_{xz} & S_{yz} & S_{zz}
     \end{array}
     \right],
 
@@ -38,10 +38,9 @@ second-rank irreducible spherical tensor components [#f3]_, :math:`R_{2,k}`, fol
 In the Czjzek model, the distribution of the second-rank traceless symmetric tensor is
 based on the assumption of a random distribution of the five irreducible spherical
 tensor components, :math:`R_{2,k}`, drawn from an uncorrelated five-dimensional
-multivariate normal distribution.
-Since :math:`R_{2,k}` components are complex, random sampling is performed on the
-equivalent real tensor components, which are a linear combination of :math:`R_{2,k}`,
-and are given as
+multivariate normal distribution. Since :math:`R_{2,k}` components are complex, random
+sampling is performed on the equivalent real tensor components, which are a linear combination
+of :math:`R_{2,k}`, and are given as
 
 .. math::
     U_1 &= \frac{1}{\sqrt{6}} R_{2,0}, \\
@@ -71,9 +70,9 @@ and the explicit matrix form of :math:`{\bf S}` is
 .. math::
     {\bf S} = \left[
     \begin{array}{l l l}
-    \sqrt{3} U_5 - U_1   & \sqrt{3} U_4          & \sqrt{3} U_2 \\
-    \sqrt{3} U_4         & -\sqrt{3} U_5 - U_1   & \sqrt{3} U_3 \\
-    \sqrt{3} U_2         & \sqrt{3} U_3          & 2 U_1
+    \sqrt{3} U_5 - U_1  & \sqrt{3} U_4          & \sqrt{3} U_2 \\
+    \sqrt{3} U_4        & -\sqrt{3} U_5 - U_1   & \sqrt{3} U_3 \\
+    \sqrt{3} U_2        & \sqrt{3} U_3          & 2 U_1
     \end{array}
     \right].
 
@@ -94,7 +93,7 @@ traceless symmetric tensors about a non-zero tensor, which is given as
 where :math:`S_T` is the total tensor, :math:`S(0)` is the non-zero dominant second-rank
 tensor, :math:`S_C(\sigma=1)` is the Czjzek random model attributing to the random
 perturbation of the tensor about the dominant tensor, :math:`S(0)`, and :math:`\rho` is
-the size of the perturbation. Note, in the above equation, the :math:`\sigma` parameter
+the size of the perturbation. In the above equation, the :math:`\sigma` parameter
 from the Czjzek random model, :math:`S_C`, has no meaning and is set to one. The factor,
 :math:`\rho`, is defined as
 

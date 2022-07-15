@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 1D PASS/MAT sideband order cross-section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,7 +13,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -93,14 +92,14 @@ sim.run()
 # Post Simulation Processing
 # --------------------------
 processor = sp.SignalProcessor(operations=[sp.Scale(factor=2000)])
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
-ax.plot(processed_data, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(processed_dataset, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
 plt.grid()
 ax.invert_xaxis()
 plt.legend()

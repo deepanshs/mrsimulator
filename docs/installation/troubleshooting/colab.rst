@@ -9,19 +9,20 @@ Google Colab has the same functionality as a Jupyter Notebooks. The main differe
 Jupyter Notebooks are run on your local machine. The `Jupyter Notebook documentation
 <https://jupyter-notebook.readthedocs.io/en/stable/index.html>`__ details installation and use.
 
-.. However, if you're new to python, we recommend using `Google Colab <https://colab.research.google.com>`__.
+.. However, if you're new to Python, we recommend using `Google Colab <https://colab.research.google.com>`__.
 
 Updating Numpy
 """"""""""""""
 
-Google Colab is versatile and platform independent, but many of the pre-installed libraries are old
-version. Users often encounter the following error when running ``mrsimulator`` on Google Colab
+Google Colab is versatile and platform independent, but some of the pre-installed libraries may be
+old version. When running **mrsimulator** on Google Colab, an incompatible version of ``numpy`` will
+cause the following error
 
 .. code-block:: bash
 
     ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 
-If you see this error, that means an older version of ``numpy`` is installed. To update ``numpy`` in
+To update ``numpy`` in
 Google Colab, execute the following command in a new cell.
 
 .. code-block:: shell

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base ConfigSimulator class."""
 import pytest
 from mrsimulator import Simulator

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Rb₂SO₄, ⁸⁷Rb (I=3/2) QMAT
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,9 +78,9 @@ sim.run()
 # %%
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
-data = sim.methods[0].simulation.real
+dataset = sim.methods[0].simulation.real
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
+cb = ax.imshow(dataset / dataset.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(200, -200)

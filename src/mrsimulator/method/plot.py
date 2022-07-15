@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from itertools import groupby
 from math import ceil
 
@@ -534,7 +533,7 @@ def _add_angle_and_phase(df):
         df["phase"] = [None] * len(df["type"])
         return
 
-    # Keep queries where at least one RotationalQuery is not None
+    # Keep queries where at least one RotationQuery is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
     # TODO: Need to ensure at least one channel, maybe check if queries is empty

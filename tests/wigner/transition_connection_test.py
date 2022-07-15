@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.base_model import transition_connect_factor
 

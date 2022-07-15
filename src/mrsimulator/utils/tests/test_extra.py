@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from mrsimulator.utils.extra import _check_dict_value_lengths

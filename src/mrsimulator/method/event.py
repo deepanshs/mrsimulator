@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
@@ -46,9 +45,9 @@ class BaseEvent(Parseable):
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
-        A list of TransitionQuery or equivalent dict objects. The queries are used in
-        selecting the transitions during the event. Only selected transitions
+    transition_queries:
+        A TransitionQuery or an equivalent dict object listing the queries used in
+        selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.
     """
 
@@ -56,7 +55,7 @@ class BaseEvent(Parseable):
     rotor_frequency: float = Field(default=None, ge=0.0)
     rotor_angle: float = Field(default=None, ge=0.0, le=1.5707963268)
     freq_contrib: List[FrequencyEnum] = default_freq_contrib
-    transition_query: List[TransitionQuery] = [TransitionQuery()]
+    transition_queries: List[TransitionQuery] = [TransitionQuery()]
 
     property_unit_types: ClassVar[Dict] = {
         "magnetic_flux_density": "magnetic flux density",
@@ -101,14 +100,17 @@ class BaseEvent(Parseable):
         array[[item.index() for item in self.freq_contrib]] = 1
         return array
 
-    def permutation(self, isotopes, channels):
-        """Permutate the event queries over the given channels and list of isotopes.
+    def combination(self, isotopes, channels):
+        """All possible combinations of the event queries over the given channels and
+        list of isotopes.
 
         Args:
             (list) isotopes: List of isotopes in the spin system.
             (list) channels: List of method channels.
         """
-        return [item.permutation(isotopes, channels) for item in self.transition_query]
+        return [
+            item.combination(isotopes, channels) for item in self.transition_queries
+        ]
 
     def filter_transitions(self, all_transitions, isotopes, channels):
         """Filter transitions based on the transition query.
@@ -118,13 +120,11 @@ class BaseEvent(Parseable):
             (list) isotopes: List of isotopes in the spin system.
             (list) channels: List of method channels.
         """
+        symmetry_combinations = self.combination(isotopes, channels)
 
-        symmetry_permutations = self.permutation(isotopes, channels)
-        # print("symmetry_permutations", symmetry_permutations)
         segment = []
-        for item in symmetry_permutations:
+        for item in symmetry_combinations:
             st = all_transitions[:]
-            # print(item["P"].size, item["D"].size)
             st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
             st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
             segment += [st]
@@ -157,7 +157,7 @@ class SpectralEvent(BaseEvent):
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
+    transition_queries:
         A TransitionQuery or an equivalent dict object listing the queries used in
         selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.
@@ -196,7 +196,7 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
     freq_contrib:
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
-    transition_query:
+    transition_queries:
         A TransitionQuery or an equivalent dict object listing the queries used in
         selecting the active transitions during the event. Only the active transitions
         from this query will contribute to the net frequency.

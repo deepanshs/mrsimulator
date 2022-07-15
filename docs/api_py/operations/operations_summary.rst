@@ -6,13 +6,13 @@ Operations
 Generic operations
 ------------------
 
-.. currentmodule:: mrsimulator.signal_processing
+.. currentmodule:: mrsimulator.signal_processor
 
 Import the module as
 
 .. code-block:: python
 
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
 .. rubric:: Operation Summary
 
@@ -30,7 +30,7 @@ CSDM object.
 Baseline
 --------
 
-.. currentmodule:: mrsimulator.signal_processing.baseline
+.. currentmodule:: mrsimulator.signal_processor.baseline
 
 Access the sub-module as ``sp.baseline``
 
@@ -47,15 +47,15 @@ the CSDM object.
 
 .. seealso::
 
-    :ref:`signal_processing_documentation` for more details.
+    :ref:`signal_processor_documentation` for more details.
 
-    :ref:`signal_processing_examples` for notebooks using these operations.
+    :ref:`signal_processor_examples` for notebooks using these operations.
 
 
 Apodization
 -----------
 
-.. currentmodule:: mrsimulator.signal_processing.apodization
+.. currentmodule:: mrsimulator.signal_processor.apodization
 
 Access the sub-module as ``sp.apodization``
 
@@ -75,15 +75,15 @@ the CSDM object.
 
 .. seealso::
 
-    :ref:`signal_processing_documentation` for more details.
+    :ref:`signal_processor_documentation` for more details.
 
-    :ref:`signal_processing_examples` for notebooks using these operations.
+    :ref:`signal_processor_examples` for notebooks using these operations.
 
 
 Affine Transformation
 ---------------------
 
-.. currentmodule:: mrsimulator.signal_processing.affine
+.. currentmodule:: mrsimulator.signal_processor.affine
 
 Access the sub-module as ``sp.affine``
 
@@ -100,4 +100,4 @@ the CSDM object.
 
 .. seealso::
 
-    :ref:`signal_processing_documentation` for more details.
+    :ref:`signal_processor_documentation` for more details.

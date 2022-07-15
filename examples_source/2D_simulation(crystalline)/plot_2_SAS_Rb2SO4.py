@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 3
@@ -53,7 +52,7 @@ sas = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=90 * np.pi / 180,  # in radians
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
@@ -65,7 +64,7 @@ sas = Method(
             events=[
                 SpectralEvent(
                     rotor_angle=54.74 * np.pi / 180,  # in radians
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
@@ -85,11 +84,11 @@ sim.run()
 
 # %%
 # The plot of the simulation.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()
@@ -106,14 +105,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data)
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=dataset)
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()

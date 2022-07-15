@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -13,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import ST1_VAS
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import SpectralDimension
 
@@ -84,11 +83,11 @@ sim.run()
 
 # %%
 # The plot of the simulation.
-data = [sim.methods[0].simulation, sim.methods[1].simulation]
+dataset = [sim.methods[0].simulation, sim.methods[1].simulation]
 fig, ax = plt.subplots(1, 2, figsize=(8.5, 3), subplot_kw={"projection": "csdm"})
 
 titles = ["STVAS @ magic-angle", "STVAS @ 0.0059 deg off magic-angle"]
-for i, item in enumerate(data):
+for i, item in enumerate(dataset):
     cb1 = ax[i].imshow(item.real / item.real.max(), aspect="auto", cmap="gist_ncar_r")
     ax[i].set_title(titles[i])
     plt.colorbar(cb1, ax=ax[i])
@@ -108,16 +107,16 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = []
-for item in data:
-    processed_data.append(processor.apply_operations(data=item))
-    processed_data[-1] /= processed_data[-1].max()
+processed_dataset = []
+for item in dataset:
+    processed_dataset.append(processor.apply_operations(dataset=item))
+    processed_dataset[-1] /= processed_dataset[-1].max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data[1].real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset[1].real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

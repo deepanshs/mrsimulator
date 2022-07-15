@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import platform
 import sys
 from os.path import abspath
@@ -307,7 +306,7 @@ if python_version.major != 3 and python_version.minor < 6:
     print(f"Python>=3.6 is required for the setup. You are using version {py_version}")
     sys.exit(1)
 
-with open("src/mrsimulator/__init__.py", "r") as f:
+with open("src/mrsimulator/__init__.py") as f:
     for line in f.readlines():
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")

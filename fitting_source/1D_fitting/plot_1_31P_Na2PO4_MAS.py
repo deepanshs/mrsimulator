@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ³¹P MAS NMR of crystalline Na2PO4 (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -24,7 +23,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method.lib import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -77,8 +76,8 @@ spin_systems = [SpinSystem(sites=[P_31])]
 
 # %%
 # **Step 2:** Create the method object. Create an appropriate method object that closely
-# resembles the technique used in acquiring the experimental data. The attribute values
-# of this method must meet the experimental conditions, including the acquisition
+# resembles the technique used in acquiring the experimental dataset. The attribute
+# values of this method must meet the experimental conditions, including the acquisition
 # channels, the magnetic flux density, rotor angle, rotor frequency, and the
 # spectral/spectroscopic dimension.
 #
@@ -125,14 +124,14 @@ processor = sp.SignalProcessor(
         sp.baseline.ConstantOffset(offset=-2),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # %%
-# **Step 5:** The plot of the data and the guess spectrum.
+# **Step 5:** The plot of the dataset and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
+ax.plot(processed_dataset, linewidth=2, alpha=0.6, label="Guess Spectrum")
 ax.set_xlim(150, -150)
 plt.legend()
 plt.grid()
