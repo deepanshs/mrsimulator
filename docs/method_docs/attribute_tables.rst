@@ -128,16 +128,15 @@ Attribute Summaries
   * - freq_contrib
     - ``List``
     - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
-      frequency contributions to include when calculating the spectrum. For example,
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
-      all frequency contributions are calculated.
+      contributions to include when calculating a transition frequency. For example,
+      ``["Shielding1_0", "Shielding1_2"]``.  When unspecified, it defaults to a list holding 
+      all frequency enumerations.
 
   * - transition_queries
     - ``list``
-    - An *optional* ``list`` of :ref:`transition_api` objects, or their ``dict`` representations
-      selecting transitions active during the event. Only these selected transitions will
-      contribute to the net frequency. The default is one **TransitionQuery** with *P=[0]*
-      on ``ch1`` and ``None`` on all other channels
+    - An *optional* ``list`` of :ref:`query_api` objects, or their ``dict`` representations
+      selecting transitions active during the event. The default is one **TransitionQuery** 
+      with *P=[0]* on ``ch1`` and ``None`` on all other channels
 
 
 .. cssclass:: table-bordered table-striped centered
@@ -153,7 +152,8 @@ Attribute Summaries
   * - query
     - ``dict`` or :py:class:`~mrsimulator.method.MixingQuery`
     - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation,
-      selecting a set of transition pathways between two **SpectralEvent** or **DelayEvent**
+      determines the complex amplitude of mixing between transitions in adjacent spectral or delay
+      events.
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``
