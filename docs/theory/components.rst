@@ -33,13 +33,13 @@ Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is written as the pro
 .. math::
     :label: eq_2
 
-    \Omega_k(\Theta, i, j) = \omega_k ~ \Xi_L^{(k)}(\Theta) ~ \xi_L^{(k)}(i, j),
+    \Omega_k(\Theta, i, j) = \omega_k ~ \Xi_L^{(k)}(\Theta) ~ \xi_\ell^{(k)}(i, j),
 
 where :math:`\omega_k` is the size of the :math:`k^\text{th}` frequency
-component, and :math:`\Xi_L^{(k)}(\Theta)` and :math:`\xi_L^{(k)}(i, j)` are
+component, and :math:`\Xi_L^{(k)}(\Theta)` and :math:`\xi_\ell^{(k)}(i, j)` are
 the sample's spatial orientation and quantized NMR transition functions
-corresponding to the :math:`L^\text{th}` rank spatial and spin irreducible
-spherical tensors, respectively.
+corresponding to the :math:`L^\text{th}` rank spatial and the 
+:math:`\ell^\text{th}` rank spin irreducible spherical tensors, respectively.
 
 ----
 
@@ -108,7 +108,7 @@ where
 .. math::
     :label: eq_7
 
-    \varpi_{L, n}^{(k)} = \varsigma_{L,n}^{(k)}~~\xi_L^{(k)}(i, j)
+    \varpi_{\ell, L, n}^{(k)} = \varsigma_{L,n}^{(k)}~~\xi_\ell^{(k)}(i, j)
 
 is the frequency tensor component (FT) of rank :math:`L`, defined in the principal
 axis system of the interaction tensor and corresponds to the
@@ -438,7 +438,7 @@ The relation between :math:`\varrho_{L,n}^{(d)}` and :math:`\rho_{L,n}^{(d)}` fo
 
 .. _spin_transition_theory:
 
-Spin transition functions, :math:`\xi_L^{(k)}(i,j)`
+Spin transition functions, :math:`\xi_\ell^{(k)}(i,j)`
 ===================================================
 
 The spin transition function is typically
@@ -453,12 +453,12 @@ Single nucleus spin transition functions
 
 .. cssclass:: table-bordered table-striped centered
 
-.. list-table:: A list of single nucleus spin transition functions, :math:`\xi_L^{(k)}(i,j)`.
+.. list-table:: A list of single nucleus spin transition functions, :math:`\xi_\ell^{(k)}(i,j)`.
   :widths: 10 12 43 35
   :header-rows: 1
 
-  * - :math:`\xi_L^{(k)}(i,j)`
-    - Rank, :math:`L`
+  * - :math:`\xi_\ell^{(k)}(i,j)`
+    - Rank, :math:`\ell`
     - Value
     - Description
 
@@ -484,8 +484,8 @@ Single nucleus spin transition functions
 
 .. _irreducible_tensors:
 
-Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
-operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
+Here, :math:`\hat{T}_{\ell,k}(\bf{I})` are the irreducible spherical tensor
+operators of rank :math:`\ell`, :math:`k \in [-\ell, \ell]`, for transition
 :math:`|i\rangle \rightarrow |j\rangle`.
 In terms of the tensor product of the Cartesian operators, the above spherical tensors are expressed as follows,
 
@@ -515,11 +515,11 @@ where :math:`I` is the spin quantum number of the nucleus and
 
 .. cssclass:: table-bordered table-striped centered
 .. list-table:: A list of composite single nucleus spin transition functions,
-  :math:`\xi_L^{(k)}(i,j)`. Here, `I` is the spin quantum number of the nucleus.
+  :math:`\xi_\ell^{(k)}(i,j)`. Here, `I` is the spin quantum number of the nucleus.
   :widths: 50 50
   :header-rows: 1
 
-  * - :math:`\xi_L^{(k)}(i,j)`
+  * - :math:`\xi_\ell^{(k)}(i,j)`
     - Value
 
   * - :math:`\mathbb{c}_0(i,j)`
@@ -538,11 +538,11 @@ Weakly coupled nucleus spin transition functions
 .. cssclass:: table-bordered table-striped centered
 
 .. list-table:: A list of weakly coupled nucleus spin transition functions,
-  :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
+  :math:`\xi_\ell^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`.
   :widths: 22 22 56
   :header-rows: 1
 
-  * - :math:`\xi_L^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+  * - :math:`\xi_\ell^{(k)}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
     - Value
     - Description
 

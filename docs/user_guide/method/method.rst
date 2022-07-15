@@ -17,13 +17,6 @@ Introduction sections :ref:`getting_started`,
 Overview
 --------
 
-.. note::
-
-    Lists in Python are always ordered; however, we use the phrase *ordered list* when
-    referring to a list where the order of elements is meaningful for **mrsimulator**.
-    Similarly, the phrase *unordered list* implies **mrsimulator** does not care about
-    the ordering of the items.
-
 An experimental NMR method involves a sequence of rf pulses, free evolution
 periods, and sample motion. The **Method** object in **mrsimulator** models the
 spectrum from an NMR pulse sequence. The **Method** object is designed to be
@@ -269,13 +262,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 ----
 
-For discussion on higher-level transition symmetry functions and how they can be used when
-selecting NMR coherence order pathways, click on the following dropdown.
+For a summary on spin transition symmetry functions in NMR, click on the disclosure
+triangle below.
 
 .. raw:: html
 
     <details>
-    <summary><b>Higher-Level Symmetry Functions</b></summary>
+    <summary><b>Spin Transition Symmetry Functions</b></summary>
 
 .. include:: spin_trans_symm.rst
 
@@ -326,7 +319,7 @@ isotopes are associated with ``ch1``, ``ch2``, and ``ch3``, respectively.
 Currently, **mrsimulator** only supports up to three channels, although this may
 be increased in future versions.
 
-The **TransitionQuery** object goes into an unordered list in the
+The **TransitionQuery** object goes into a list in the
 ``transition_queries`` attribute of a **SpectralEvent** object. The
 **SpectralEvent** object, in turn, is added to an ordered list in the ``events``
 attribute of a **SpectralDimension** object. All this is illustrated in the code
@@ -1128,6 +1121,147 @@ The single transition in the heteronuclear two-spin
 (:math:`^2\text{H}`-:math:`^1\text{H}`) triple-quantum spectrum is unaffected by
 the dipolar and quadrupolar frequency anisotropies.
 
+
+Frequency Contributions
+-----------------------
+
+The NMR frequency, :math:`\Omega(\Theta,i,j)`, of an :math:`i  \rightarrow  j`
+transition between the eigenstates of the stationary-state semi-classical
+Hamiltonian in a sample with a lattice spatial orientation, :math:`\Theta`, can
+be written as a sum of components,
+
+.. math::
+    \Omega(\Theta,i,j) = \sum_k \Omega_k(\Theta,i,j)
+
+with each component, :math:`\Omega_k(\Theta,i,j)`, separated into three parts:
+
+.. math::
+    \Omega_k(\Theta,i,j) = \omega_k \, {\Xi}^{(k)}_L (\Theta) \,{\xi}^{(k)}_\ell (i,j),
+
+where :math:`{\xi}^{(k)}_\ell(i,j)` are the spin transition symmetry functions
+described earlier, :math:`{\Xi}^{(k)}_L(\Theta)` are the spatial symmetry
+functions, and :math:`\omega_k` gives the size of the kth frequency component.
+The experimentalist indirectly influences a frequency component :math:`\Omega_k`
+by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
+the spatial orientation,  :math:`\Theta` of the sample.
+
+The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
+upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
+:math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
+:math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the spectroscopic
+sub-shell letter designations for :math:`L`. Consult the `Symmetry Pathways
+paper <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ for more details on the
+form of the spatial symmetry functions.  In short, the :math:`\mathbb{S}`
+function is independent of sample orientation, i.e., it will appear in all
+isotropic frequency contributions.  The :math:`\mathbb{D}(\Theta)` function has
+a second-rank dependence on sample orientation, and can be averaged away with
+fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
+is the root of the second-rank Legendre polynomial ":math:`P_2(\cos \theta_R)`.
+The other spatial symmetry functions are removed by spinning the sample about
+the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
+\theta_R)`.
+
+.. note::
+
+    For 2nd-order quadrupolar coupling contributions, it is convenient to define
+    "hybrid" spin transition functions as linear combinations of the spin transition
+    functions
+
+    .. math::
+
+        \mathbb{c}_0  = \,\,\,\frac{4}{\sqrt{125}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  + \sqrt{\frac{18}{25}} \, \mathbb{f}_I
+
+    .. math::
+
+        \mathbb{c}_2  = \,\,\,\frac{2}{\sqrt{175}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{6}{\sqrt{35}} \, \mathbb{f}_I
+
+    .. math::
+
+        \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
+
+These transition symmetry functions play an essential role in evaluating the
+individual frequency contributions to the overall transition frequency, given in
+the table below and in
+:py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
+pulse sequence design by identifying how different frequency contributions
+refocus through the transition pathways.  For a summary on echo symmetry classification in NMR, 
+click on the disclosure triangle below.
+
+.. raw:: html
+
+    <details>
+    <summary><b>Echo Symmetry Classification</b></summary>
+
+.. include:: echo_symm_classes.rst
+
+.. raw:: html
+
+    </details>
+
+
+.. _frequency_contribution_table:
+
+.. list-table:: Frequency Contributions
+    :widths: 25 25 25 25 25
+    :header-rows: 2
+
+    * - Interactions
+      - perturbation
+      - anisotropy
+      - ``freq_contrib``
+      - Expression
+    * -
+      - order
+      - rank
+      -
+      -
+    * - shielding
+      - 1st
+      - 0th
+      - ``Shielding1_0``
+      - :math:`-\omega_0 \sigma_\text{iso} \cdot \mathbb{p}_I`
+    * - shielding
+      - 1st
+      - 2nd
+      - ``Shielding1_2``
+      - :math:`-\omega_0 \zeta_\sigma \cdot \mathbb{D}^{\{\sigma\}} \cdot \mathbb{p}_I`
+    * - weak J
+      - 1st
+      - 0th
+      - ``J1_0``
+      - :math:`2 \pi J_\text{iso} \, (\mathbb{pp})_{IS}`
+    * - weak J
+      - 1st
+      - 2nd
+      - ``J1_2``
+      - :math:`2 \pi \zeta_J \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
+    * - weak dipolar
+      - 1st
+      - 2nd
+      - ``D1_2``
+      - :math:`\omega_d \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
+    * - quadrupolar
+      - 1st
+      - 2nd
+      - ``Quad1_2``
+      - :math:`\omega_q \cdot \mathbb{D}^{\{q\}} \cdot \mathbb{d}_I`
+    * - quadrupolar
+      - 2nd
+      - 0th
+      - ``Quad2_0``
+      - :math:`\displaystyle \frac{\omega_q^2}{\omega_0}  \cdot \mathbb{S}^{\{qq\}} \cdot \mathbb{c}_0`
+    * - quadrupolar
+      - 2nd
+      - 2nd
+      - ``Quad2_2``
+      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{D}^{\{qq\}} \cdot \mathbb{c}_2`
+    * - quadrupolar
+      - 2nd
+      - 4th
+      - ``Quad2_4``
+      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
+
+
 Affine Transformations
 ----------------------
 
@@ -1608,185 +1742,6 @@ illustrated in the sample code below.
         }
     )
 
-Frequency Contributions
------------------------
-
-The NMR frequency, :math:`\Omega(\Theta,i,j)`, of an :math:`i  \rightarrow  j`
-transition between the eigenstates of the stationary-state semi-classical
-Hamiltonian in a sample with a lattice spatial orientation, :math:`\Theta`, can
-be written as a sum of components,
-
-.. math::
-    \Omega(\Theta,i,j) = \sum_k \Omega_k(\Theta,i,j)
-
-with each component, :math:`\Omega_k(\Theta,i,j)`, separated into three parts:
-
-.. math::
-    \Omega_k(\Theta,i,j) = \omega_k \, {\Xi}^{(k)}_L (\Theta) \,{\xi}^{(k)}_\ell (i,j),
-
-where :math:`{\xi}^{(k)}_\ell(i,j)` are the spin transition symmetry functions
-described earlier, :math:`{\Xi}^{(k)}_L(\Theta)` are the spatial symmetry
-functions, and :math:`\omega_k` gives the size of the kth frequency component.
-The experimentalist indirectly influences a frequency component :math:`\Omega_k`
-by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
-the spatial orientation,  :math:`\Theta` of the sample.
-
-The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
-upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
-:math:`\mathbb{D}(\Theta)`, :math:`\mathbb{F}(\Theta)`,
-:math:`\mathbb{G}(\Theta)`, :math:`\ldots`, i.e., following the spectroscopic
-sub-shell letter designations for :math:`L`. Consult the `Symmetry Pathways
-paper <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ for more details on the
-form of the spatial symmetry functions.  In short, the :math:`\mathbb{S}`
-function is independent of sample orientation, i.e., it will appear in all
-isotropic frequency contributions.  The :math:`\mathbb{D}(\Theta)` function has
-a second-rank dependence on sample orientation, and can be averaged away with
-fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
-is the root of the second-rank Legendre polynomial ":math:`P_2(\cos \theta_R)`.
-The other spatial symmetry functions are removed by spinning the sample about
-the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
-\theta_R)`.
-
-.. note::
-
-    For 2nd-order quadrupolar coupling contributions, it is convenient to define
-    "hybrid" spin transition functions as linear combinations of the spin transition
-    functions
-
-    .. math::
-
-        \mathbb{c}_0  = \,\,\,\frac{4}{\sqrt{125}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  + \sqrt{\frac{18}{25}} \, \mathbb{f}_I
-
-    .. math::
-
-        \mathbb{c}_2  = \,\,\,\frac{2}{\sqrt{175}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{6}{\sqrt{35}} \, \mathbb{f}_I
-
-    .. math::
-
-        \mathbb{c}_4  = -\frac{184}{\sqrt{875}} \, [I(I+1) - 3/4] \, \mathbb{p}_I  - \frac{17}{\sqrt{175}} \, \mathbb{f}_I
-
-As described in ":ref:`theory`", these transition symmetry functions play an
-essential role in evaluating the individual frequency contributions to the
-overall transition frequency, given in the table below and in
-:py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
-pulse sequence design by identifying how different frequency contributions
-refocus through the transition pathways.
-
-.. _frequency_contribution_table:
-
-.. list-table:: Frequency Contributions
-    :widths: 25 25 25 25 25
-    :header-rows: 2
-
-    * - Interactions
-      - perturbation
-      - anisotropy
-      - ``freq_contrib``
-      - Expression
-    * -
-      - order
-      - rank
-      -
-      -
-    * - shielding
-      - 1st
-      - 0th
-      - ``Shielding1_0``
-      - :math:`-\omega_0 \sigma_\text{iso} \cdot \mathbb{p}_I`
-    * - shielding
-      - 1st
-      - 2nd
-      - ``Shielding1_2``
-      - :math:`-\omega_0 \zeta_\sigma \cdot \mathbb{D}^{\{\sigma\}} \cdot \mathbb{p}_I`
-    * - weak J
-      - 1st
-      - 0th
-      - ``J1_0``
-      - :math:`2 \pi J_\text{iso} \, (\mathbb{pp})_{IS}`
-    * - weak J
-      - 1st
-      - 2nd
-      - ``J1_2``
-      - :math:`2 \pi \zeta_J \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
-    * - weak dipolar
-      - 1st
-      - 2nd
-      - ``D1_2``
-      - :math:`\omega_d \cdot \mathbb{D}^{\{d_{IS}\}} \cdot (\mathbb{pp})_{IS}`
-    * - quadrupolar
-      - 1st
-      - 2nd
-      - ``Quad1_2``
-      - :math:`\omega_q \cdot \mathbb{D}^{\{q\}} \cdot \mathbb{d}_I`
-    * - quadrupolar
-      - 2nd
-      - 0th
-      - ``Quad2_0``
-      - :math:`\displaystyle \frac{\omega_q^2}{\omega_0}  \cdot \mathbb{S}^{\{qq\}} \cdot \mathbb{c}_0`
-    * - quadrupolar
-      - 2nd
-      - 2nd
-      - ``Quad2_2``
-      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{D}^{\{qq\}} \cdot \mathbb{c}_2`
-    * - quadrupolar
-      - 2nd
-      - 4th
-      - ``Quad2_4``
-      - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
-
-.. note::
-
-    **Echo Symmetry Classification**
-
-    The well-known Hahn-echo can occur whenever the :math:`p_I` values of
-    transitions in a transition pathway change sign.  This is because the
-    changing sign of :math:`p_I` leads to a sign change for every
-    :math:`p_I`-dependent transition frequency contribution. Thus, a Hahn
-    echo forms whenever
-
-    .. math::
-        \overline{\text{p}_I} = \frac{1}{t} \int_0^t \text{p}_I(t') \, dt' = 0,
-
-    assuming a frequency contribution's spatial symmetry function, :math:`{\Xi}`,
-    remains constant during this period.  As seen in the table in the
-    :ref:`frequency_contribution_table` table, sign changes in other symmetry
-    functions can also lead to corresponding sign changes for dependent
-    frequency contributions.  Thus, a problem with showing only the :math:`p_I`
-    symmetry pathway for an NMR method is that it does not explain the formation
-    of other classes of echoes that result when other symmetry functions change
-    sign in a transition pathway.  To fully understand when and which frequency
-    contributions refocus into echoes, we must follow *all* relevant spatial,
-    transition, or spatial-transition product symmetries through an NMR
-    experiment.   Thus, we generally classify echoes that refocus during a time
-    interval as a *transition symmetry echo* (at constant :math:`{\Xi}_k`) when
-
-    .. math::
-        \overline{{\xi}_k} = \frac{1}{t} \int_0^t {\xi}_k(t') \, dt' = 0,
-
-    and as a *spatial symmetry echo* (at constant :math:`{\xi}_k`) when
-
-    .. math::
-        \overline{{\Xi}_k} = \frac{1}{t} \int_0^t {\Xi}_k(t') \, dt' = 0,
-
-    and as a *spatial-transition symmetry product* echo when
-
-    .. math::
-
-        \overline{{\Xi}_k {\xi}_k} = \frac{1}{t} \int_0^t {\Xi}_k(t') \, {\xi}_k(t')  \, dt' = 0.
-
-    Within the class of transition echoes we find subclasses such as
-    :math:`\text{p}` echoes, which include the Hahn echo and the stimulated
-    echo; :math:`\text{d}` echoes, which include the solid echo and Solomon
-    echoes,  :math:`\text{c}_4` echoes, used in MQ-MAS and Satellite-Transition
-    Magic-Angle Spinning (ST-MAS); :math:`\text{c}_2` echoes, used in
-    Correlation Of Anisotropies Separated Through Echo Refocusing (COASTER); and
-    :math:`\text{c}_0` echoes, used in Multiple-Quantum DOuble Rotation
-    (MQ-DOR).
-
-    Within the class of spatial echoes we find subclasses such as :math:`\mathbb{D}`
-    rotary echoes, which occur during sample rotation, and :math:`\mathbb{D}_0` and
-    :math:`\mathbb{G}_0` echoes, which are designed to occur simultaneously during the
-    Dynamic-Angle Spinning (DAS) experiment.
 
 p and d Echoes on Deuterium
 '''''''''''''''''''''''''''
@@ -2230,14 +2185,14 @@ Attribute Summaries
 
   * - freq_contrib
     - ``List``
-    - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
-      frequency contributions to include when calculating the spectrum. For example,
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
+    - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which 
+      contributions to include when calculating a transition frequency. For example, 
+      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and 
       all frequency contributions are calculated.
 
   * - transition_queries
     - ``list``
-    - An *optional* ``list`` of :ref:`transition_api` objects, or their ``dict`` representations
+    - An *optional* ``list`` of :ref:`query_api` objects, or their ``dict`` representations
       selecting transitions active during the event. Only these selected transitions will
       contribute to the net frequency. The default is one **TransitionQuery** with *P=[0]*
       on ``ch1`` and ``None`` on all other channels
@@ -2255,8 +2210,9 @@ Attribute Summaries
 
   * - query
     - ``dict`` or :py:class:`~mrsimulator.method.MixingQuery`
-    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation,
-      selecting a set of transition pathways between two **SpectralEvent** or **DelayEvent**
+    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation, 
+      determines the complex amplitude of mixing between transitions in adjacent spectral 
+      or delay events.
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``
