@@ -114,13 +114,12 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 ----
 
-For discussion on higher-level transition symmetry functions and how they can be used when
-selecting NMR coherence order pathways, click on the following dropdown.
+For a brief summary of transition symmetry functions, click on the following dropdown.
 
 .. raw:: html
 
     <details>
-    <summary><b>Higher-Level Symmetry Functions</b></summary>
+    <summary><b>Transition Symmetry Functions</b></summary>
 
 .. include:: spin_trans_symm.rst
 
