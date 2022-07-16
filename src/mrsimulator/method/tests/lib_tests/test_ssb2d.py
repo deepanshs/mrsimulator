@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from mrsimulator.method.lib import SSB2D
@@ -40,8 +39,8 @@ def test_SSB_general():
 
     # test transition query
     tq = TransitionQuery(ch1={"P": [-1], "D": [0]})
-    assert mth.spectral_dimensions[0].events[0].transition_query[0] == tq
-    assert mth.spectral_dimensions[1].events[0].transition_query[0] == tq
+    assert mth.spectral_dimensions[0].events[0].transition_queries[0] == tq
+    assert mth.spectral_dimensions[1].events[0].transition_queries[0] == tq
 
     # test rotor_frequency
     assert mth.spectral_dimensions[0].events[0].rotor_frequency == 1200
@@ -66,14 +65,14 @@ def test_SSB_general():
             {
                 "count": 1024,
                 "spectral_width": "50000.0 Hz",
-                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
             {
                 "count": 1024,
                 "events": [
                     {
                         "rotor_frequency": "1000000000000.0 Hz",
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     }
                 ],
                 "spectral_width": "50000.0 Hz",

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 import numpy as np
 from mrsimulator import Simulator
@@ -58,12 +57,12 @@ def test_DAS():
                     {
                         "fraction": 0.5,
                         "rotor_angle": 37.38 * 3.14159 / 180,
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 0.5,
                         "rotor_angle": 79.19 * 3.14159 / 180,
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             },
@@ -77,7 +76,7 @@ def test_DAS():
                 "events": [
                     {
                         "rotor_angle": 54.735 * 3.14159 / 180,
-                        "transition_query": [{"ch1": {"P": [-1], "D": [0]}}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     }
                 ],
             },
@@ -90,8 +89,8 @@ def test_DAS():
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
-    data_das = sim.methods[0].simulation
-    data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
+    dataset_das = sim.methods[0].simulation
+    dataset_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
     bloch = BlochDecayCTSpectrum(
@@ -115,7 +114,7 @@ def test_DAS():
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
-    data_bloch = sim.methods[0].simulation
+    dataset_bloch = sim.methods[0].simulation
 
     larmor_freq = das.channels[0].gyromagnetic_ratio * B0 * 1e6
     spin = das.channels[0].spin
@@ -130,13 +129,13 @@ def test_DAS():
             iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
 
             # get the index where there is a signal
-            id1 = data_das[i] / data_das[i].max()
+            id1 = dataset_das[i] / dataset_das[i].max()
             index = np.where(id1 == id1.max())[0]
-            iso_spectrum = data_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
+            iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
 
             # test for the position of isotropic peaks.
             np.testing.assert_almost_equal(iso_obs, iso_spectrum, decimal=1)
 
             # test for the spectrum across the isotropic peaks.
-            data_bloch_i = data_bloch[i] / data_bloch[i].max()
-            assert np.allclose(id1[index[0]], data_bloch_i)
+            dataset_bloch_i = dataset_bloch[i] / dataset_bloch[i].max()
+            assert np.allclose(id1[index[0]], dataset_bloch_i)

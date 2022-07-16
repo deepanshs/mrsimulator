@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 import os
 
 from mrsimulator import __version__
 from mrsimulator import dict
 from mrsimulator import load
 from mrsimulator import save
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem

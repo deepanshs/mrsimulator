@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NiCl₂.2D₂O, ²H (I=1) Shifting-d echo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,7 +15,7 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -104,7 +103,7 @@ shifting_d = Method(
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 ),
                 MixingEvent(query="NoMixing"),
@@ -115,7 +114,7 @@ shifting_d = Method(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],
@@ -150,14 +149,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=5e8),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.set_xlim(1000, -1000)
 ax.set_ylim(1500, -1500)
 plt.grid()

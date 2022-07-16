@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from mrsimulator.method import SpectralDimension
@@ -24,12 +23,12 @@ def sample_test_output(n):
             {
                 "count": 1024,
                 "spectral_width": "25000.0 Hz",
-                "events": [{"transition_query": [{"ch1": {"P": [n], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [n], "D": [0]}}]}],
             },
             {
                 "count": 1024,
                 "spectral_width": "25000.0 Hz",
-                "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+                "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
             },
         ],
     }
@@ -66,10 +65,10 @@ def test_3Q_VAS_general():
     mth = ThreeQ_VAS(channels=["87Rb"], spectral_dimensions=[{}, {}])
     assert mth.name == "ThreeQ_VAS"
     assert mth.description == "Simulate a 3Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == [
+    assert mth.spectral_dimensions[0].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-3], "D": [0]})
     ]
-    assert mth.spectral_dimensions[1].events[0].transition_query == [
+    assert mth.spectral_dimensions[1].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [0]})
     ]
     assert ThreeQ_VAS.parse_dict_with_units(mth.json()) == mth
@@ -94,10 +93,10 @@ def test_5Q_VAS_general():
 
     assert mth.name == "FiveQ_VAS"
     assert mth.description == "Simulate a 5Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == [
+    assert mth.spectral_dimensions[0].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-5], "D": [0]})
     ]
-    assert mth.spectral_dimensions[1].events[0].transition_query == [
+    assert mth.spectral_dimensions[1].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [0]})
     ]
     assert FiveQ_VAS.parse_dict_with_units(mth.json()) == mth
@@ -123,10 +122,10 @@ def test_7Q_VAS_general():
 
     assert mth.name == "SevenQ_VAS"
     assert mth.description == "Simulate a 7Q variable-angle spinning spectrum."
-    assert mth.spectral_dimensions[0].events[0].transition_query == [
+    assert mth.spectral_dimensions[0].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-7], "D": [0]})
     ]
-    assert mth.spectral_dimensions[1].events[0].transition_query == [
+    assert mth.spectral_dimensions[1].events[0].transition_queries == [
         TransitionQuery(ch1={"P": [-1], "D": [0]})
     ]
     assert SevenQ_VAS.parse_dict_with_units(mth.json()) == mth

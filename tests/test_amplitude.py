@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test amplitude for shift, reference offset, points, orientation averaging."""
 import numpy as np
 from mrsimulator import Simulator

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Arbitrary spin transition (multi-quantum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,7 +37,8 @@ spin_system = SpinSystem(sites=[site])
 # - :math:`|5/2\rangle\rightarrow|-1/2\rangle` (:math:`P=-3, D=-6`)
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
-# D to the `transition_query`. Here, we select the symmetric triple-quantum transition.
+# D to the `transition_queries`. Here, we select the symmetric triple-quantum
+# transition.
 method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
@@ -53,7 +53,7 @@ method = Method(
             events=[
                 SpectralEvent(
                     # symmetric triple quantum transitions
-                    transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                    transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]
                 ),
             ],
         )

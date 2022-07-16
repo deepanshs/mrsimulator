@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
 from mrsimulator import Method
@@ -19,7 +18,12 @@ def pre_setup(isotope, shift, reference_offset):
                     "count": 2048,
                     "spectral_width": "25 kHz",
                     "reference_offset": f"{reference_offset} Hz",
-                    "events": [{"magnetic_flux_density": "9.4 T"}],
+                    "events": [
+                        {
+                            "magnetic_flux_density": "9.4 T",
+                            "transition_queries": [{"ch1": {"P": [-1]}}],
+                        }
+                    ],
                 }
             ],
         )

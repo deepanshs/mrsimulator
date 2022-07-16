@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # import json
 import filecmp
 import json
@@ -36,7 +35,7 @@ def test_parse_old_structure():
     assert test_app == app
 
     # Test old root level and convert transition queries
-    old_queries = test_data["old_root_level_and_transition_query"]
+    old_queries = test_data["old_root_level_and_transition_queries"]
     with pytest.warns(Warning, match=e):
         test_sim, test_sp, test_app = parse(old_queries)
 
@@ -52,13 +51,13 @@ def test_parse_old_structure():
 
 
 def test_update_old_dict_struct():
-    old_struct = test_data["old_root_level_and_transition_query"]
+    old_struct = test_data["old_root_level_and_transition_queries"]
     should_be = test_data["serialization_should_be"]
     assert update_old_dict_struct(old_struct) == Mrsimulator.parse(should_be).json()
 
 
 def test_update_old_file_struct():
-    old_struct = test_data["old_root_level_and_transition_query"]
+    old_struct = test_data["old_root_level_and_transition_queries"]
 
     # Save old dictionary to mrsim file
     with open("old_struct.mrsim", "w", encoding="utf8") as outfile:

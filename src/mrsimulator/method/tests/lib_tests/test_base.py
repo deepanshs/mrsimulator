@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.lib.base import BaseNamedMethod1D
@@ -57,3 +56,13 @@ def test_BaseNamedMethod2D_setting_name():
     e = "`name=test != classname=BaseNamedMethod2D`."
     with pytest.raises(NamedMethodError, match=f".*{e}.*"):
         BaseNamedMethod2D(channels=["1H"], name="test", spectral_dimensions=[{}, {}])
+
+
+def test_BaseNamedMethod_wrong_number_of_channels():
+    e = r"BaseNamedMethod1D only supports 1 channel\(s\). Got 2 channels"
+    with pytest.raises(ValueError, match=e):
+        BaseNamedMethod1D(channels=["1H", "13C"], name="BaseNamedMethod1D")
+
+    e = r"BaseNamedMethod2D only supports 1 channel\(s\). Got 2 channels"
+    with pytest.raises(ValueError, match=e):
+        BaseNamedMethod2D(channels=["1H", "13C"], name="BaseNamedMethod2D")

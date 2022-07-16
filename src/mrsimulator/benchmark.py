@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import timeit
 
@@ -119,13 +118,13 @@ def quad_static_2d_method():
                 "count": 256,
                 "spectral_width": 4e4,  # in Hz
                 "reference_offset": -1e4,  # in Hz
-                "events": [{"rotor_angle": 70.12 * to_rad, "transition_query": tq}],
+                "events": [{"rotor_angle": 70.12 * to_rad, "transition_queries": tq}],
             },
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "reference_offset": -5e3,  # in Hz
-                "events": [{"rotor_angle": 54.74 * to_rad, "transition_query": tq}],
+                "events": [{"rotor_angle": 54.74 * to_rad, "transition_queries": tq}],
             },
         ],
     )

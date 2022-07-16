@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 import mrsimulator.method.lib as NamedMethods
@@ -21,12 +20,13 @@ def check_sim_save(sim1, sim2, message):
         mth.simulation._timestamp = ""
         _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
-    data1 = sim1.methods[0].simulation.copy()
+    dataset1 = sim1.methods[0].simulation.copy()
     sim1.methods[0].simulation = None
-    data2 = sim2.methods[0].simulation.copy()
+    dataset2 = sim2.methods[0].simulation.copy()
     sim2.methods[0].simulation = None
 
-    assert data1 == data2, f"data saved and loaded is not equal: type {message}."
+    e = f"dataset saved and loaded is not equal: type {message}."
+    assert dataset1 == dataset2, e
     assert sim1 == sim2, f".mrsim saved and loaded is not equal: type {message}."
 
 
@@ -35,12 +35,12 @@ def check_methods_save_load(sim1, sim2):
         mth.simulation._timestamp = ""
         _ = [item.to("ppm", "nmr_frequency_ratio") for item in mth.simulation.x]
 
-    data1 = sim1.methods[0].simulation.copy()
+    dataset1 = sim1.methods[0].simulation.copy()
     sim1.methods[0].simulation = None
-    data2 = sim2.methods[0].simulation.copy()
+    dataset2 = sim2.methods[0].simulation.copy()
     sim2.methods[0].simulation = None
 
-    assert data1 == data2, "method saved and loaded is not equal."
+    assert dataset1 == dataset2, "method saved and loaded is not equal."
     assert sim1 == sim2, ".mrmtd saved and loaded is not equal."
 
 
@@ -54,7 +54,7 @@ def assert_parsing(method, fn1):
     event_error = "Event objects are immutable for"
     serialize = fn1.json()
     ent = serialize["spectral_dimensions"][0]["events"]
-    ent[0]["transition_query"][0]["ch1"]["P"] = [-100]
+    ent[0]["transition_queries"][0]["ch1"]["P"] = [-100]
 
     if method not in [Method]:
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
@@ -65,7 +65,9 @@ def assert_parsing(method, fn1):
 
         with pytest.raises(ImmutableEventError, match=f".*{event_error}.*"):
             ent[0]["fraction"] = 0.5
-            ent.append({"fraction": 0.5, "transition_query": [{"ch1": {"P": [-100]}}]})
+            ent.append(
+                {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-100]}}]}
+            )
             method.parse_dict_with_units(serialize)
 
 

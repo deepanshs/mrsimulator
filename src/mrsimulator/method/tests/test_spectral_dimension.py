@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from mrsimulator.method import SpectralEvent
@@ -90,7 +89,7 @@ def basic_spectral_dimension_tests(the_dimension):
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             }
         ],
     )
@@ -108,7 +107,7 @@ def basic_spectral_dimension_tests(the_dimension):
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             }
         ],
     )
@@ -178,14 +177,14 @@ def test_spectral_dimension():
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             },
             {
                 "fraction": 0.5,
                 "magnetic_flux_density": "9.6 T",
                 "rotor_angle": "0.9553059660790962 rad",
                 "rotor_frequency": "1000.0 Hz",
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             },
         ],
     )
@@ -203,7 +202,7 @@ def test_spectral_dimension():
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             },
             {
                 "fraction": 0.5,
@@ -211,7 +210,7 @@ def test_spectral_dimension():
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,
-                "transition_query": [{"ch1": {"P": [-1]}}],
+                "transition_queries": [{"ch1": {"P": [0]}}],
             },
         ],
     )

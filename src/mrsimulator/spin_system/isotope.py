@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Isotope class."""
 from os import path
 from re import match
@@ -85,6 +84,23 @@ class Isotope(BaseModel):
         """Atomic number of the isotope."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["atomic_number"]
+
+    def larmor_freq(self, B0=9.4):
+        """Return the Larmor frequency of the isotope at a magnetic field strength B0.
+
+        Args:
+            float B0: magnetic field strength in T
+
+        Returns:
+            float: larmor frequency in MHz
+
+        Example
+        -------
+
+        >>> silicon = Isotope(symbol="29Si")
+        >>> freq = silicon.larmor_freq(B0 = 9.4)
+        """
+        return -self.gyromagnetic_ratio * B0
 
 
 def format_isotope_string(isotope_string: str) -> str:

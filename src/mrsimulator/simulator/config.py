@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
 from mrsimulator.utils.parseable import Parseable

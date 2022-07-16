@@ -4,7 +4,7 @@ Multi-Quantum VAS
 The :py:class:`~mrsimulator.method.lib.ThreeQ_VAS`, :py:class:`~mrsimulator.method.lib.FiveQ_VAS`, and
 :py:class:`~mrsimulator.method.lib.SevenQ_VAS` classes all simulate a multiple quantum VAS
 spectrum. The spinning speed for all three methods is fixed at infinite speed. The spectrum
-is also sheared such that the correlating dimensions are the isotropic dimension and the VAS dimension.
+is also sheared such that the correlated dimensions are the isotropic dimension and the VAS dimension.
 
 .. code-block:: python
 
@@ -30,7 +30,7 @@ is also sheared such that the correlating dimensions are the isotropic dimension
         ],
     )
 
-The other methods, representing 5 and 7 quantum transitions, can be imported as follows:
+The other methods, employing five and seven quantum transitions, can be imported as follows:
 
 .. code-block:: python
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Zeeman State Tests"""
 from itertools import product
 

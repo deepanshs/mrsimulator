@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 from mrsimulator.method.query import MixingEnum
 from mrsimulator.method.query import MixingQuery
-from mrsimulator.method.query import RotationalQuery
+from mrsimulator.method.query import RotationQuery
 from mrsimulator.method.query import SymmetryQuery
 from mrsimulator.method.query import TransitionQuery
 
@@ -36,7 +35,7 @@ def test_TransitionQuery():
     assert obj2.name is None
     assert obj2.description is None
     assert obj2.label is None
-    assert obj2.ch1 == SymmetryQuery(P=[-1]), "TransitionQuery ch1 not equal."
+    assert obj2.ch1 == SymmetryQuery(P=[0]), "TransitionQuery ch1 not equal."
     assert obj2.ch2 == SymmetryQuery(P=[-2], D=[2]), "TransitionQuery ch2 not equal."
     assert obj2.ch3 is None, "TransitionQuery ch3 not equal."
 
@@ -53,21 +52,21 @@ def test_TransitionQuery():
 def test_RFRotation():
     # parse units
     test = {"angle": "90 deg", "phase": "5 deg"}
-    rf_obj = RotationalQuery.parse_dict_with_units(test)
+    rf_obj = RotationQuery.parse_dict_with_units(test)
     assert rf_obj.name is None
     assert rf_obj.description is None
     assert rf_obj.label is None
-    assert rf_obj.angle == np.pi / 2.0, "RotationalQuery angle not equal."
-    assert rf_obj.phase == 5 * np.pi / 180, "RotationalQuery phase not equal."
+    assert rf_obj.angle == np.pi / 2.0, "RotationQuery angle not equal."
+    assert rf_obj.phase == 5 * np.pi / 180, "RotationQuery phase not equal."
     # ensure the default value is rad
     assert rf_obj.property_units["angle"] == "rad"
     assert rf_obj.property_units["phase"] == "rad"
 
     # direct initialization
     test = {"angle": 3.1415, "phase": 1.212}
-    rf_obj = RotationalQuery(**test)
-    assert rf_obj.angle == 3.1415, "RotationalQuery angle not equal."
-    assert rf_obj.phase == 1.212, "RotationalQuery phase not equal."
+    rf_obj = RotationQuery(**test)
+    assert rf_obj.angle == 3.1415, "RotationQuery angle not equal."
+    assert rf_obj.phase == 1.212, "RotationQuery phase not equal."
 
 
 def test_MixingQuery():
@@ -77,8 +76,8 @@ def test_MixingQuery():
         "ch2": {"angle": "0.12 rad", "phase": "176 deg"},
     }
     obj1 = MixingQuery.parse_dict_with_units(test1)
-    rf1 = RotationalQuery(angle=2.12, phase=-176 * np.pi / 180)
-    rf2 = RotationalQuery(angle=0.12, phase=176 * np.pi / 180)
+    rf1 = RotationQuery(angle=2.12, phase=-176 * np.pi / 180)
+    rf2 = RotationQuery(angle=0.12, phase=176 * np.pi / 180)
     assert obj1.name is None
     assert obj1.description is None
     assert obj1.label is None
@@ -94,7 +93,7 @@ def test_MixingQuery():
     assert obj2.description is None
     assert obj2.label is None
     assert obj2.ch1 is None
-    assert obj2.ch2 == RotationalQuery(angle=5.101, phase=1.61)
+    assert obj2.ch2 == RotationQuery(angle=5.101, phase=1.61)
     assert obj2.ch3 is None
 
 

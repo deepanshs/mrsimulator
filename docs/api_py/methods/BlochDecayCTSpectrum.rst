@@ -41,7 +41,7 @@ but can be constructed with a generic method as follows
     ...             "count": 1024,
     ...             "spectral_width": 50000,  # in Hz
     ...             "reference_offset": -8000,  # in Hz
-    ...             "events": [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}],
+    ...             "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
     ...         }
     ...     ],
     ... )

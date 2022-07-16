@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
-import mrsimulator.signal_processing as sp
+import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
+
 
 START = "sys_"
 ENCODING_PAIRS = [
@@ -229,7 +229,7 @@ def make_simulator_params(sim: Simulator, include={}):
 
     # get total abundance scaling factor
     length = len(sim.spin_systems)
-    abundance_scale = 100 / sum([sys.abundance for sys in sim.spin_systems])
+    abundance_scale = 100 / sum(sys.abundance for sys in sim.spin_systems)
 
     # expression for the last abundance.
     last_abundance = f"{length - 1}_abundance"
@@ -423,7 +423,7 @@ def LMFIT_min_function(
         sigma: A list of standard deviations corresponding to the experiments in the
             Simulator.methods attribute
     Returns:
-        Array of the differences between the simulation and the experimental data.
+        Array of the differences between the simulation and the experimental datasets.
     """
     processors = processors if isinstance(processors, list) else [processors]
     sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
@@ -433,13 +433,13 @@ def LMFIT_min_function(
 
     sim.run()
 
-    processed_data = [
-        item.apply_operations(data=data.simulation)
+    processed_dataset = [
+        item.apply_operations(dataset=data.simulation)
         for item, data in zip(processors, sim.methods)
     ]
 
     diff = np.asarray([])
-    for processed_datum, mth, sigma_ in zip(processed_data, sim.methods, sigma):
+    for processed_datum, mth, sigma_ in zip(processed_dataset, sim.methods, sigma):
         datum = 0
         for decomposed_datum in processed_datum.y:
             datum += decomposed_datum.components[0].real
@@ -462,7 +462,7 @@ def bestfit(sim: Simulator, processors: list = None):
     sim.run()
 
     return [
-        proc.apply_operations(data=mth.simulation).real
+        proc.apply_operations(dataset=mth.simulation).real
         for mth, proc in zip(sim.methods, processors)
     ]
 

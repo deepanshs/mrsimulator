@@ -12,7 +12,7 @@ transition pathways---pathways that satisfy the mixing query criterion.
 TransitionQuery
 ---------------
 
-Transition queries are assigned to the `transition_query` attribute of a SpectralEvent
+Transition queries are assigned to the `transition_queries` attribute of a SpectralEvent
 object as
 
 .. code-block:: python
@@ -21,7 +21,7 @@ object as
 
     SpectralEvent(
         # other attributes
-        transition_query=[
+        transition_queries=[
             # list of TransitionQuery objects
         ]
     )
@@ -143,13 +143,13 @@ common to all selection criteria.
 Now consider a case where we want to select both :math:`p=-1`` and :math:`p=+1`` transitions
 simultaneously. Following the rule of intersection, there are precisely zero transitions that
 are both :math:`p=+1` and :math:`p=-1`. Here, we use the **union** rule. Recall that the
-value of the `transition_query` attribute of the SpectralEvent object is a list of queries,
+value of the `transition_queries` attribute of the SpectralEvent object is a list of queries,
 
 .. code-block:: python
 
     SpectralEvent(
         # other attributes
-        transition_query=[
+        transition_queries=[
             # TransitionQuery(...),  # 0
             # TransitionQuery(...),  # 1
             # TransitionQuery(...),  # 2
@@ -164,7 +164,7 @@ three queries. To select :math:`p=\pm1` transitions, we write
 
     SpectralEvent(
         # other attributes
-        transition_query=[
+        transition_queries=[
             # union of set of transitions from query-1 and query-2
             {"ch1": {"P": [-1]}},  # query-1
             {"ch1": {"P": [+1]}},  # query-2
@@ -187,5 +187,5 @@ follows,
     }
 
 where ``ch-`` s are the channels over which the query is performed. Its value is the
-python dictionary representation of the :class:`~mrsimulator.method.query.RotationalQuery`
+python dictionary representation of the :class:`~mrsimulator.method.query.RotationQuery`
 object. A MixingQuery is a channel-wise selective rotation with parameters `angle` and `phase`.

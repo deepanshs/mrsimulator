@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ⁸⁷Rb 2D 3QMAS NMR of RbNO₃
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,7 +13,7 @@ from lmfit import Minimizer
 
 from mrsimulator import Simulator
 from mrsimulator.method.lib import ThreeQ_VAS
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
@@ -111,14 +110,14 @@ processor = sp.SignalProcessor(
         sp.Scale(factor=1e7),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.set_xlim(-20, -50)
 ax.set_ylim(-45, -65)
 plt.grid()

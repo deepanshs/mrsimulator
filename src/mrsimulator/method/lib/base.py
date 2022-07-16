@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 
@@ -18,6 +17,7 @@ class BaseNamedMethod(Method):
     """BaseNamedMethod class."""
 
     _named_method: bool = PrivateAttr(True)
+    _num_channels: ClassVar[int] = 1
     ndim: ClassVar[int] = 1
 
     def __init__(self, **kwargs):
@@ -43,8 +43,18 @@ class BaseNamedMethod(Method):
             return v
         raise ValueError(
             "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
-            "and cannot be modified."
+            " and cannot be modified."
         )
+
+    @validator("channels", pre=True, always=True)
+    def check_channel_count(cls, v, *, values, **kwargs):
+        # NOTE: This check will need to change if multi-isotope named methods added
+        if len(v) != cls._num_channels:
+            raise ValueError(
+                f"{cls.__name__} only supports {cls._num_channels} channel(s). "
+                f"Got {len(v)} channels."
+            )
+        return v
 
     @classmethod
     def update(cls, **kwargs):
@@ -115,9 +125,9 @@ class BaseNamedMethod(Method):
             for k in obj_keys:  # iterate over event attributes
                 fail = False
                 if k in check_keys:
-                    obj_attr, default_attr, check_attr = [
+                    obj_attr, default_attr, check_attr = (
                         getattr(_, k) for _ in [ev_obj, default_obj, ev_check]
-                    ]
+                    )
                     fail_1 = obj_attr != default_attr  # not default (user passed value)
                     fail_2 = obj_attr != check_attr  # passed attr does not match base
                     fail_3 = default_attr is not None
@@ -156,7 +166,7 @@ class BlochDecaySpectrum(BaseNamedMethod1D):
 
     @classmethod
     def update(cls, **kwargs):
-        events = [{"transition_query": [{"ch1": {"P": [-1]}}]}]
+        events = [{"transition_queries": [{"ch1": {"P": [-1]}}]}]
         return {
             "spectral_dimensions": [{"events": events}],
         }
@@ -175,7 +185,7 @@ class BlochDecayCTSpectrum(BaseNamedMethod1D):
 
     @classmethod
     def update(cls, **kwargs):
-        events = [{"transition_query": [{"ch1": {"P": [-1], "D": [0]}}]}]
+        events = [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}]
         return {
             "spectral_dimensions": [{"events": events}],
         }

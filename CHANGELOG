@@ -4,53 +4,92 @@ v0.7.0
 What's new
 ''''''''''
 
-**General**
+**Features**
 
 - Support for complex amplitude simulation.
-- Add `isotropic_interpolation` as a `sim.config` parameter. The interpolation schemes are linear
-  and Gaussian.
+- New isotropic interpolation schemes. Added `isotropic_interpolation` as a `sim.config` parameter.
+  Allowed values are `linear` and `Gaussian`.
+- New `larmor_freq(B0)` function added to the `Isotope` class which returns the Larmor frequency
+  of the isotope, given a magnetic flux density. For example, `H1.larmor_freq(B0=9.40)`
+- New weak J and dipolar coupling enumerations added to `freq_contrib`.
+- New command-line interface (CLI) tools for mrsimulator.
+- Added 200+ NMR active isotopes to the library.
+- Support for python 3.10
 
 **Method**
 
-- Removed ``Method1D`` and ``Method2D`` classes. Use the generic ``mrsimulator.method.Method``
-  object for custom 1D and 2D methods.
-- New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent
-  controls the mixing of transitions in a multi-event method.
-- Added ``total_mixing`` and ``no_mixing`` queries to allow quick scripting of common mixing
+- New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent controls the transition
+  amplitude mixing in a multi-event method.
+- New ``TotalMixing`` and ``NoMixing`` mixing query enumerations for quick scripting of common mixing
   events.
-- A ``TransitionPathway`` object now includes a weight attribute, which holds the probability of
+- New weights attribute for the ``TransitionPathway`` object, which holds the probability of
   the transition pathway based on the mixing events defined within the method.
-- New class method, ``plot()``, which will create a visual representation of the events, transition
-  pathways, rotor angle, etc. a method object defines.
+- New ``plot()`` function in Method class, which generates a visual representation of the method's events,
+  transition pathways, rotor angle, etc.
+- Support for concurrent mixing events.
+- Support for negative spectral width in a spectral dimension.
+- Deprecated ``Method1D`` and ``Method2D`` classes. Use the generic ``mrsimulator.method.Method``
+  object for custom 1D and 2D methods.
 
 **SpinSystem**
 
-- Add a new function ``simplify()`` to the spin system object, which reduces a spin system to
+- New function ``simplify()`` to simplifies a spin system object to
   a list of irreducible spin systems.
-- Add a new function ``site_generator()`` to the utility collection sub-module, which simplify
+- New function ``site_generator()`` added to the utility collection sub-module, which simplifies
   the process of creating Site objects in bulk.
-- Added gyromagnetic ratio and quadrupole moment data for all isotopes, including unstable
+- Added gyromagnetic ratio and quadrupole moment metadata for all isotopes, including unstable
   isotopes.
+
+**SignalProcessor**
+
+- New `SkewGaussian`, `TopHat`, and `Mask` apodization functions were added to the signal processor module.
 
 **Documentation**
 
 - Restructured documentation layout
-- Added instillation troubleshooting section
-- Added section *User Guide* detailing use and attributes of most objects.
-- Condensed simulation/fitting gallery by removing redundant examples
+- Improved troubleshooting section.
+- Added section *User Guide* detailing the use and attributes of most objects.
+- Added section *Method* demonstrating how to create custom **Method** objects.
+- Condensed simulation/fitting gallery by removing redundant examples.
 - New gallery demonstrating signal processing functions.
 
 Changes
 '''''''
 
 - `reduced_dict` function is deprecated, use `json(units=False)` instead.
-
+- The `mrsimulator.signal_processing` module is renamed to `mrsimulator.signal_processor`
+- Drop support for Python version 3.6
+- Added Channel validation for named methods #177
+- Optimized memory usage and performance of the `single_site_system_generator` utility function.
 
 Bug fixes
 '''''''''
 
-- Fixed bug where spectral interpolation resulted in segmentation fault.
+- Fixed bug where spectral interpolation resulted in a segmentation fault.
 - Fixed memory leak issue in the C code.
+- Fixed bug in query combination involving multiple quadrupolar queries. #188.
+- Fixed bug related to unsigned/signed integers crashing on M1 macs.
+
+
+Breaking changes
+''''''''''''''''
+
+**For most users**
+Mrsimulator is currently in development, and the new release includes breaking changes from v0.6.
+Please review these changes and make changes according.
+
+- The `mrsimulator.methods` module is renamed as `mrsimulator.method.lib`.
+- The `mrsimulator.signal_processing` module is renamed to `mrsimulator.signal_processor`.
+- The `data` attribute of `SignalProcessor.apply_operations(data=...)` is renamed to `dataset`.
+  Use `SignalProcessor.apply_operations(dataset=...)`
+- The `transition_query` attribute of the `mrsimulator.method.SpectralEvent` class
+  is renamed to `transition_queries`.
+- The `mrsimulator.method.query.RotationalQuery` class is renamed to
+  `mrsimulator.method.query.RotationQuery`
+
+**For advanced users**
+- Complete redesign of the `TransitionQuery` object. Please refer to the documentation for details.
+
 
 v0.6.0
 ------

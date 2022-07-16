@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 import numpy as np
 from mrsimulator import Simulator
@@ -30,6 +29,7 @@ def SSB2D_setup(ist, vr, method_type):
     spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
     B0 = 11.7
+    sq_tq = {"transition_queries": [{"ch1": {"P": [-1]}}]}
     if method_type == "PASS":
         method = SSB2D(
             channels=[ist],
@@ -60,7 +60,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "count": 64,
                     "spectral_width": 8e4,  # in Hz
                     "label": "Anisotropic dimension",
-                    "events": [{"rotor_angle": 90 * 3.14159 / 180}],
+                    "events": [{"rotor_angle": 90 * 3.14159 / 180, **sq_tq}],
                 },
                 # The last spectral dimension block is the direct-dimension
                 {
@@ -68,7 +68,7 @@ def SSB2D_setup(ist, vr, method_type):
                     "spectral_width": 2e4,  # in Hz
                     "reference_offset": 5e3,  # in Hz
                     "label": "Fast MAS dimension",
-                    "events": [{}],
+                    "events": [sq_tq],
                 },
             ],
             affine_matrix=[[1, -1], [0, 1]],

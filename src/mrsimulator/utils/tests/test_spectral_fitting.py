@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 import csdmpy as cp
 import mrsimulator.utils.spectral_fitting as sf
 import numpy as np
 import pytest
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -309,17 +308,17 @@ def test_7():
 
     def test_array():
         sim.run()
-        data = processor.apply_operations(sim.methods[0].simulation)
+        dataset = processor.apply_operations(sim.methods[0].simulation)
 
         data_sum = 0
-        for dv in data.y:
+        for dv in dataset.y:
             data_sum += dv.components[0]
 
         params = sf.make_LMFIT_params(sim, processor)
         a = sf.LMFIT_min_function(params, sim, processor)
         np.testing.assert_almost_equal(-a, data_sum, decimal=8)
 
-        dat = sf.add_csdm_dvs(data.real)
+        dat = sf.add_csdm_dvs(dataset.real)
         fits = sf.bestfit(sim, processor)
         assert sf.add_csdm_dvs(fits[0]) == dat
 
@@ -331,8 +330,8 @@ def test_7():
     sim.config.decompose_spectrum = "spin_system"
     test_array()
 
-    # data = processor.apply_operations(sim.methods[0].simulation)
+    # dataset = processor.apply_operations(sim.methods[0].simulation)
 
     # params = sf.make_LMFIT_params(sim, processor)
     # a = sf.LMFIT_min_function(params, sim, processor)
-    # np.testing.assert_almost_equal(-a.sum(), data.sum().real, decimal=8)
+    # np.testing.assert_almost_equal(-a.sum(), dataset.sum().real, decimal=8)

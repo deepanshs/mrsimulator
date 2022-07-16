@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for c functions."""
 import mrsimulator.tests.tests as clib
 import numpy as np

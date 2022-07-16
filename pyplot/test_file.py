@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
