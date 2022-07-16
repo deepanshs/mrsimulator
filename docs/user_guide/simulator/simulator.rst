@@ -100,7 +100,7 @@ and evaluate the frequency integral over the octant, which is equivalent to the
 integration over the sphere. By adding the Euler angles to this tensor, we break the
 symmetry, and the integration over the octant is no longer accurate.
 
-..skip: next
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -112,7 +112,7 @@ symmetry, and the integration over the octant is no longer accurate.
 
 To fix this inaccurate spectrum, set the integration volume to ``"hemisphere"`` and re-simulate.
 
-..skip: next
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -134,14 +134,14 @@ number of orientations, :math:`\Theta_\text{count}`, is given as
 
 .. math::
 
-    \Theta_\text{count} = M (n + 1)(n + 2)/2,
+    \Theta_\text{count} = M (n + 1)(n + 2)/2
 
 where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
 number of octants is deciphered from the value of the ``integration_volume`` attribute.
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contributions are evaluated.
 
-..skip: next
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -152,7 +152,7 @@ frequency contributions are evaluated.
     sim.run()
     plot(sim.methods[0].simulation)
 
-..skip: next
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -274,6 +274,74 @@ The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.isotropic_interpo
 is an enumeration with two string literals, ``linear`` and ``gaussian``. The default value is ``linear``.
 
 The value specifies the interpolation scheme used in binning isotropic contributions.
+
+Attribute Summaries
+-------------------
+
+.. cssclass:: table-bordered table-striped centered
+.. _table_simulator:
+.. list-table:: The attributes of a Simulator object
+  :widths: 20 15 65
+  :header-rows: 1
+
+  * - Attribute Name
+    - Type
+    - Description
+
+  * - spin_systems
+    - ``list``
+    - An *optional* list of :ref:`spin_sys_api` objects whose spectra are simulated when running
+      a simulation.
+
+  * - methods
+    - ``list``
+    - An *optional* list of :ref:`method_api` objects describing the NMR methods used to simulate
+      the spectra of the contained spin systems.
+
+  * - config
+    - ``dict`` or :py:class:`~mrsimulator.simulator.config.ConfigSimulator`
+    - An *optional* ConfigSimulator object, or its dictionary representation, specifying how to
+      run a simulation.
+
+.. cssclass:: table-bordered table-striped centered
+.. _table_sim_config:
+.. list-table:: The attributes of a Simulator object
+  :widths: 20 15 65
+  :header-rows: 1
+
+  * - Attribute Name
+    - Type
+    - Description
+
+  * - number_of_sidebands
+    - ``int``
+    - An *optional* integer greater than zero specifying the number of sidebands to simulate. The
+      default is ``64`` sidebands.
+
+  * - integration_volume
+    - ``str``
+    - An *optional* string specifying what portion of the unit sphere NMR frequencies are
+      integrated over. The allowed strings are ``"octant"`` and ``"hemisphere"``. The default
+      is ``"octant"``.
+
+  * - integration_density
+    - ``int``
+    - An *optional* integer greater than zero specifying the number of orientations to sample over
+      the given volume according to the equation :math:`\Theta_\text{count} = M (n + 1)(n + 2)/2`
+      where :math:`M` is the number of octants. The default value is ``70``.
+
+  * - decompose_spectrum
+    - ``str``
+    - An *optional* string specifying how to decompose the spectrum. The allowed strings are
+      ``"none"`` and ``"spin_system"``. The value of ``"none"`` will add the spectral from
+      individual spin systems into one dependent variable whereas ``"spin_system"`` will leave
+      contributions from each spin system as its own dependent variable. The default is ``"none"``.
+
+  * - isotropic_interpolation
+    - ``str``
+    - An *optional* string specifying an interpolation scheme when binning isotropic contributions.
+      The allowed strings are ``"linear"`` and ``"gaussian"``. The default is ``"linear"``.
+
 
 ----
 
