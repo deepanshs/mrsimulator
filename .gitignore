@@ -67,6 +67,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/introduction/Al_acac
 
 # Spinx Gallery build dirs
 docs/examples/

@@ -37,8 +37,10 @@ spin_system = SpinSystem(sites=[site])
 # - :math:`|5/2\rangle\rightarrow|-1/2\rangle` (:math:`P=-3, D=-6`)
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
-# D to the `transition_queries`. Here, we select the symmetric triple-quantum
-# transition.
+# D to the symmetry query object of `transition_queries`. Refer to the
+# :ref:`transition_query_documentation` for details.
+#
+# Here, we select the symmetric triple-quantum transition.
 method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
