@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
 from mrsimulator import Simulator
@@ -88,7 +87,7 @@ def test_2D():
                     label="Quadrupolar frequency",
                     events=[
                         SpectralEvent(
-                            transition_query=[{"ch1": {"P": [-1]}}],
+                            transition_queries=[{"ch1": {"P": [-1]}}],
                             freq_contrib=["Quad1_2"],
                         ),
                         MixingEvent(query="NoMixing"),
@@ -101,7 +100,7 @@ def test_2D():
                     label="Paramagnetic shift",
                     events=[
                         SpectralEvent(
-                            transition_query=[{"ch1": {"P": [-1]}}],
+                            transition_queries=[{"ch1": {"P": [-1]}}],
                             freq_contrib=["Shielding1_0", "Shielding1_2"],
                         )
                     ],
