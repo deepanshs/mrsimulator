@@ -14,7 +14,9 @@ section assumes that you are already familiar with the topics covered in the
 Introduction sections :ref:`getting_started`,
 :ref:`introduction_isotopomers_example`, and :ref:`fitting_example`.
 
-Before writing your own custom Method, it would be worthwhile to see if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
+.. note::
+
+    Before writing your own custom Method, it would be worthwhile to see if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
 
 
 Overview
