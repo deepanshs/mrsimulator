@@ -23,8 +23,8 @@ Overview
 --------
 
 An experimental NMR method involves a sequence of rf pulses, free evolution
-periods, and sample motion. The **Method** object in **mrsimulator** models the
-spectrum from an NMR pulse sequence. The **Method** object is designed to be
+periods, and sample motion. The Method object in **mrsimulator** models the
+spectrum from an NMR pulse sequence. The Method object is designed to be
 versatile in its ability to model spectra from various multi-pulse NMR methods
 using concepts from the `symmetry pathway approach
 <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_ where a pulse sequence is
@@ -59,11 +59,11 @@ eliminating all undesired transition pathway signals.
 
 While NMR measurements occur in the time domain, **mrsimulator** simulates the
 corresponding multi-dimensional spectra directly in the frequency domain. The
-**Method** object in **mrsimulator** needs only a few details of the NMR pulse
+Method object in **mrsimulator** needs only a few details of the NMR pulse
 sequence to generate the spectrum. It mimics the result of the pulse sequence
 given the desired transition pathways and their complex amplitudes and average
 frequencies in each spectroscopic dimension of the dataset. To this end, a
-**Method** object is organized according to the UML diagram below.
+Method object is organized according to the UML diagram below.
 
 .. figure:: ../../_static/MethodUML.*
     :width: 700
@@ -81,22 +81,22 @@ frequencies in each spectroscopic dimension of the dataset. To this end, a
  association decorated with a filled black diamond. Inheritance is shown as a
  line with a hollow triangle as an arrowhead.
 
-At the heart of a **Method** object, assigned to its attribute
+At the heart of a Method object, assigned to its attribute
 ``spectral_dimensions``, is an ordered list of :ref:`spectral_dim_api` objects
 in the same order as the time evolution dimensions of the experimental NMR
-sequence. In each **SpectralDimension** object, an ordered list of :ref:`event_api`
+sequence. In each SpectralDimension object, an ordered list of :ref:`event_api`
 objects assigned to the attribute ``events``; Event objects are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.DelayEvent`, and (3)
 :py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list of Event objects
 is used to select the desired transition pathways and determine their average
-frequency and complex amplitude in the **SpectralDimension**.
+frequency and complex amplitude in the SpectralDimension.
 
 .. warning::
 
   DelayEvent objects are not available in version 0.7 of **mrsimulator**.
 
-**SpectralEvent** and **DelayEvent** objects define which transitions are
+SpectralEvent and DelayEvent objects define which transitions are
 observed during the event and under which transition-dependent frequency
 contributions they evolve. No coherence transfer among transitions or
 populations occurs in a spectral or delay event. The transition-dependent
@@ -115,50 +115,50 @@ Additionally, the user can affect transition frequencies during a spectral or
 delay event by changing other measurement attributes: ``rotor_frequency``,
 ``rotor_angle``, and ``magnetic_flux_density``. If left unspecified, these
 attributes default to the values of the identically named global attributes in
-the **Method** object. SpectralEvent objects use the ``fraction`` attribute to
+the Method object. SpectralEvent objects use the ``fraction`` attribute to
 calculate the weighted average frequency during the spectral dimension for each
 selected transition pathway.
 
-Inside **SpectralEvent** and **DelayEvent** objects, is a list of
+Inside SpectralEvent and DelayEvent objects, is a list of
 :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*)
-which determine which transitions are observed during the event. **Method**
+which determine which transitions are observed during the event. Method
 objects in **mrsimulator** are general-purpose because they are designed for an
 arbitrary spin system, i.e., a method does not know the spin system in advance.
-When designing a **Method** object, you cannot identify and select a transition
+When designing a Method object, you cannot identify and select a transition
 through its initial and final eigenstate quantum numbers. Transition selection
-is done through **TransitionQuery** and
+is done through TransitionQuery and
 :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects during individual
-spectral or delay events. **TransitionQuery** objects can hold a
-**SymmetryQuery** object in the attributes ``ch1``, ``ch2``, or ``ch3``, which act on
-specific isotopes defined by the ``channels`` attribute in **Method**. It is
-only during a simulation that the **Method** object uses its **TransitionQuery**
-objects to determine the selected transition pathways for a given **SpinSystem**
+spectral or delay events. TransitionQuery objects can hold a
+SymmetryQuery object in the attributes ``ch1``, ``ch2``, or ``ch3``, which act on
+specific isotopes defined by the ``channels`` attribute in Method. It is
+only during a simulation that the Method object uses its TransitionQuery
+objects to determine the selected transition pathways for a given SpinSystem
 object by the initial and final eigenstate quantum numbers of each transition.
 
 Between adjacent SpectralEvent or DelayEvent objects, **mrsimulator** defaults
 to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
-explicit **MixingEvent** object between such events. Inside **MixingEvent**
+explicit MixingEvent object between such events. Inside MixingEvent
 objects is a :py:meth:`~mrsimulator.method.query.MixingQuery` object, which
 determines the coherence transfer amplitude between transitions. A
-**MixingQuery** object holds
+MixingQuery object holds
 :py:meth:`~mrsimulator.method.query.RotationQuery` objects acting on specific
 isotopes in the spin system. As before, the isotope upon which the
-**RotationQuery** objects act is determined by the ``channels`` attribute in the
-**Method** object.
+RotationQuery objects act is determined by the ``channels`` attribute in the
+Method object.
 
 In this guide to designing custom Method objects, we begin with a brief review
 of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This
 review is necessary for understanding (1) how transitions are selected during
 spectral and delay events and (2) how average signal frequencies and amplitudes
 in each spectral dimension are determined. We outline the procedures for
-designing and creating **TransitionQuery** and **MixingQuery** for single- and
+designing and creating TransitionQuery and MixingQuery for single- and
 multi-spin transitions and how to use them to select the transition pathways
-with the desired frequency and amplitudes in each **SpectralDimension** of your
+with the desired frequency and amplitudes in each SpectralDimension of your
 custom Method object. In multi-dimensional spectra, we illustrate how the
 desired frequency correlation can sometimes be achieved by using an appropriate
 affine transformation. We also examine how changing the frequency contributions
-in **SpectralEvent** of **DelayEvent** objects can be used to obtain the desired
+in SpectralEvent of DelayEvent objects can be used to obtain the desired
 frequency and amplitude behavior. The ability to select :ref:`frequency
 contributions<freq_contrib_api>` can often reduce the number of events needed in
 the design of your custom Method object.
@@ -208,7 +208,7 @@ further, assume that all spin-spin couplings are in the weak limit.
 
 To write a custom Method in **mrsimulator**, you'll need to determine the desired
 transition pathways and select the desired transitions during each
-**SpectralEvent** or **DelayEvent**. Keep in mind, however, that **Method**
+SpectralEvent or DelayEvent. Keep in mind, however, that Method
 objects are designed without any details of the spin systems upon which they
 will act. For example, in the density matrix of a spin system ensemble, one
 could easily identify a transition by its row and column indexes. However, those
@@ -303,7 +303,7 @@ Single-Spin Queries
 Based on the review above, we now know for the spin :math:`I=1`, the transition
 :math:`\ketbra{-1}{0}` can be selected with :math:`{(\text{p}_I,\text{d}_I) =
 (-1,1)}`.  In **mrsimulator**, this transition is selected during a
-**SpectralEvent** using the **SymmetryQuery** and **TransitionQuery** objects,
+SpectralEvent using the SymmetryQuery and TransitionQuery objects,
 as defined in the code below.
 
 .. plot::
@@ -319,8 +319,8 @@ as defined in the code below.
 .. note::
     Python dictionaries can also be used to create and initialize **mrsimulator** objects.
     To do this, the dictionary must use the object's attribute names as the key strings and be
-    passed to a higher level object. Since a **SpectralEvent** object holds a list of
-    **TransitionQuery** objects, the above code could have been written as
+    passed to a higher level object. Since a SpectralEvent object holds a list of
+    TransitionQuery objects, the above code could have been written as
 
     .. plot::
         :context: close-figs
@@ -332,18 +332,18 @@ as defined in the code below.
             # Dictionary of TransitionQuery passed to SpectralEvent
             spec_event = SpectralEvent(transition_queries=[trans_query_dict])
 
-In the example above, the **SymmetryQuery** object is created and assigned to
-the **TransitionQuery** attribute ``ch1``, i.e., it acts on the isotope in the
-"first channel". Recall that the ``channels`` attribute of the **Method** object
+In the example above, the SymmetryQuery object is created and assigned to
+the TransitionQuery attribute ``ch1``, i.e., it acts on the isotope in the
+"first channel". Recall that the ``channels`` attribute of the Method object
 holds an ordered list of isotope strings. This list's first, second, and third
 isotopes are associated with ``ch1``, ``ch2``, and ``ch3``, respectively.
 Currently, **mrsimulator** only supports up to three channels, although this may
 be increased in future versions.
 
-The **TransitionQuery** object goes into a list in the
-``transition_queries`` attribute of a **SpectralEvent** object. The
-**SpectralEvent** object, in turn, is added to an ordered list in the ``events``
-attribute of a **SpectralDimension** object. All this is illustrated in the code
+The TransitionQuery object goes into a list in the
+``transition_queries`` attribute of a SpectralEvent object. The
+SpectralEvent object, in turn, is added to an ordered list in the ``events``
+attribute of a SpectralDimension object. All this is illustrated in the code
 below.
 
 .. plot::
@@ -448,7 +448,7 @@ below.
 
 .. note::
 
-    Whenever the ``D`` attribute is omitted, the **SymmetryQuery** allows
+    Whenever the ``D`` attribute is omitted, the SymmetryQuery allows
     transitions with all values of :math:`\text{d}_I`. On the other hand, whenever
     the ``P`` attribute is omitted, it defaults to ``P=[0]``,  i.e., no selected
     transitions on the assigned channel.
@@ -464,9 +464,9 @@ the two symmetric (:math:`\text{d}_I = 0`) transitions,
 :math:`\ketbra{-\tfrac{1}{2}}{\tfrac{1}{2}}`, the so-called "central transition,"
 and :math:`\ketbra{-\tfrac{3}{2}}{\tfrac{3}{2}}`, the symmetric triple quantum
 transition.   The code below is an example of a custom 2D method using two
-**SpectralDimension** objects, each holding a single **SpectralEvent**.  The
-**TransitionQuery** objects select each transition in their respective
-**SpectralDimension** objects.
+SpectralDimension objects, each holding a single SpectralEvent.  The
+TransitionQuery objects select each transition in their respective
+SpectralDimension objects.
 
 .. plot::
     :context: close-figs
@@ -592,7 +592,7 @@ in a given spin system using the function
     )]
 
 
-.. **Method** also has a related function :py:meth:`~mrsimulator.Method.plot` for generating a symmetry
+.. Method also has a related function :py:meth:`~mrsimulator.Method.plot` for generating a symmetry
 .. pathway diagram of the method.
 ..
 .. .. skip: next
@@ -728,11 +728,11 @@ at 2.5 ppm, and :math:`\hat{A}_4, (\hat{A}_3, \hat{A}_2)`, and :math:`\hat{A}_1`
 centered at 0.5 ppm.
 
 It is essential to realize that all sites having the same isotope are
-"indistinguishable" to a **TransitionQuery** object. Recall that ``ch1`` is
+"indistinguishable" to a TransitionQuery object. Recall that ``ch1`` is
 associated with the first isotope in the list of isotope strings assigned to the
-**Method** attribute ``channels``. When the **TransitionQuery** above is combined with
-the **SpinSystem** object with three :math:`^1\text{H}` Sites, it must first expand
-its **SymmetryQuery** into an intermediate set of spin-system-specific symmetry
+Method attribute ``channels``. When the TransitionQuery above is combined with
+the SpinSystem object with three :math:`^1\text{H}` Sites, it must first expand
+its SymmetryQuery into an intermediate set of spin-system-specific symmetry
 queries, illustrated by each row in the table below.
 
 .. list-table::
@@ -762,7 +762,7 @@ selected transitions is obtained from the union of transition subsets from each
 spin-system-specific symmetry query.
 
 The :py:meth:`~mrsimulator.Method.get_transition_pathways` function will allow
-you to inspect the transitions selected by the **Method**
+you to inspect the transitions selected by the Method
 in terms of the initial and final Zeeman eigenstate quantum numbers.
 
 .. plot::
@@ -1576,8 +1576,8 @@ frequency on spin :math:`I=3/2` is given by
 As we saw at the beginning of this section, the first spectral dimension
 derives its *average frequency*, :math:`\overline{\Omega}_1`, from a weighted
 average of multiple transition frequencies. Thus, this weighted average frequency can
-be obtained through the use of multiple **SpectralEvent** objects in  the
-**SpectralDimension** associated with the isotropic dimension, as shown in the
+be obtained through the use of multiple SpectralEvent objects in  the
+SpectralDimension associated with the isotropic dimension, as shown in the
 code below.
 
 .. skip: next
@@ -1638,7 +1638,7 @@ code below.
 We could apply an affine transformation to remove the isotropic chemical shift
 from the central transition (horizontal) dimension. If you go back to the
 previous discussion, you will find that the required value for the
-``affine_matrix`` in the **Method** object to do this shear is given by
+``affine_matrix`` in the Method object to do this shear is given by
 
 ``affine_matrix=[[1,0],[-8/25, 17/25]]``
 
@@ -1666,13 +1666,13 @@ Default Total Mixing between Adjacent Spectral or Delay Events
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 In previous discussions, we did not mention the efficiency of transfer between
-selected transitions in adjacent **SpectralEvent** objects. This is because, as
+selected transitions in adjacent SpectralEvent objects. This is because, as
 default behavior, **mrsimulator** does a *total mixing*, i.e., connects all
 selected transitions in the two adjacent spectral or delay events. In other
-words, if the first of two adjacent **SpectralEvent** objects has three selected
+words, if the first of two adjacent SpectralEvent objects has three selected
 transitions, and the second has two selected transitions, then **mrsimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
-passing from the first to second **SpectralEvent** objects.
+passing from the first to second SpectralEvent objects.
 
 Additionally, this *total mixing* assumes that every connection has a mixing
 amplitude of 1. This is unrealistic, but if used correctly gives a significant
@@ -1685,7 +1685,7 @@ speed-up in the simulation by avoiding the need to calculate mixing amplitudes.
     transition pathways.
 
 If this default mixing behavior had been explicitly shown in the previous example,
-the events list in the first **SpectralDimension** would have looked like the code
+the events list in the first SpectralDimension would have looked like the code
 below.
 
 .. plot::
@@ -1700,7 +1700,7 @@ below.
         MixingEvent(query="TotalMixing"),
     ]
 
-Since only one transition was selected in each **SpectralEvent**, the expected (and
+Since only one transition was selected in each SpectralEvent, the expected (and
 default) behavior is that there is a mixing (transfer) of coherence between
 the symmetric triple-quantum and central transitions, forming the desired
 transition pathway.
@@ -1709,7 +1709,7 @@ However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-``"TotalMixing"`` event by inserting **MixingEvent** object with a certain rotation
+``"TotalMixing"`` event by inserting MixingEvent object with a certain rotation
 query.
 
 Rotation Query
@@ -1771,8 +1771,8 @@ event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
 
     MixingEvent(query="NoMixing")
 
-The **MixingEvent** object holds the rotation details in a **MixingQuery** object as
-a **RotationQuery** object associated with a ``channels`` attribute.  This is
+The MixingEvent object holds the rotation details in a MixingQuery object as
+a RotationQuery object associated with a ``channels`` attribute.  This is
 illustrated in the sample code below.
 
 .. plot::
@@ -1797,10 +1797,10 @@ importance of echo classification in understanding how transition-frequency
 contributions can be eliminated or separated based on their dependence on
 different transition symmetry functions.
 
-First, we implement two **Method** objects that follow the design of the
-experimental pulse sequence. In this effort, we use **RotationQuery** objects to
+First, we implement two Method objects that follow the design of the
+experimental pulse sequence. In this effort, we use RotationQuery objects to
 select the desired transition pathways and obtain spectra with the desired
-average frequencies. Then, we implement two simpler **Method** objects that
+average frequencies. Then, we implement two simpler Method objects that
 produce identical spectra and illustrate how :ref:`frequency
 contributions<freq_contrib_api>` can be used to reduce the number of events
 needed in a custom method.
@@ -1834,21 +1834,21 @@ beneath the sequence. Here, also recall that the :math:`\text{d}_I` transition
 symmetry value cannot remain unchanged (:math:`\Delta \text{d}_I \neq 0`)
 between two connected transitions under a :math:`\pi/2` rotation.
 
-Below are two custom **Method** objects for simulating the Hahn and Solid Echo
-experiments. There is only one **SpectralDimension** object in each method, and
+Below are two custom Method objects for simulating the Hahn and Solid Echo
+experiments. There is only one SpectralDimension object in each method, and
 the average frequency during each spectral dimension is derived from equal
-fractions of two **SpectralEvent** objects.  Between these two **SpectralEvent**
-objects is a **MixingEvent** with a **RotationQuery** object. The
-**RotationQuery** object is created with a :math:`\pi` rotation in the Hahn Echo
+fractions of two SpectralEvent objects.  Between these two SpectralEvent
+objects is a MixingEvent with a RotationQuery object. The
+RotationQuery object is created with a :math:`\pi` rotation in the Hahn Echo
 method, and a :math:`\pi/2` rotation in the Solid Echo method.
 
 .. note ::
 
-    The ``transition_queries`` attribute of **SpectralEvent** holds a list of
-    **TransitionQuery** objects. Each **TransitionQuery** in the list applies to
+    The ``transition_queries`` attribute of SpectralEvent holds a list of
+    TransitionQuery objects. Each TransitionQuery in the list applies to
     the full set of transitions in the spin system. The union of these transition
     subsets becomes the final set of selected transitions during the
-    **SpectralEvent**.
+    SpectralEvent.
 
 We use the deuterium Site defined earlier in this document.
 
@@ -2247,7 +2247,7 @@ Attribute Summaries
     - ``list``
     - An *optional* ``list`` of :ref:`query_api` objects, or their ``dict`` representations
       selecting transitions active during the event. Only these selected transitions will
-      contribute to the net frequency. The default is one **TransitionQuery** with *P=[0]*
+      contribute to the net frequency. The default is one TransitionQuery with *P=[0]*
       on ``ch1`` and ``None`` on all other channels
 
 
