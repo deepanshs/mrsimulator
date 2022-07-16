@@ -381,7 +381,7 @@ Attribute Summaries
 
   * - ``name``, ``label``, and ``description``
     - String
-    - All three are *optional* attributes giving context to a **Site** object. The default
+    - All three are *optional* attributes giving context to a Site object. The default
       value for all three is an empty string.
 
   * - ``isotope``
