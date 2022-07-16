@@ -132,7 +132,7 @@ class Simulator(Parseable):
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
-    indexes = []
+    # indexes = []
 
     class Config:
         validate_assignment = True

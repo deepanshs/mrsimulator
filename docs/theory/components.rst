@@ -558,7 +558,7 @@ in weakly coupled basis.
 .. _frequency_tensor_theory:
 
 Frequency tensor components (FT) in PAS, :math:`\varpi_{\ell,L, n}^{(k)}`
-====================================================================
+=========================================================================
 
 .. cssclass:: table-bordered table-striped centered
 

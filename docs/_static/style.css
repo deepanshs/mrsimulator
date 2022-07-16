@@ -570,3 +570,19 @@ h6.center {
 .sphx-glr-script-out .highlight {
   font-size: smaller;
 }
+
+details.reveal-theory  {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0;
+  box-shadow: 0 .1rem 1rem -.6rem #00000066;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+details.reveal-theory summary {
+  display: block;
+  padding-left: 1.2rem;
+  position: relative;
+  cursor: pointer;
+}
