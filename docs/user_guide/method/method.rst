@@ -14,6 +14,9 @@ section assumes that you are already familiar with the topics covered in the
 Introduction sections :ref:`getting_started`,
 :ref:`introduction_isotopomers_example`, and :ref:`fitting_example`.
 
+Before writing your own custom Method, it would be worthwhile to see if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
+
+
 Overview
 --------
 
@@ -36,6 +39,10 @@ pathway, :math:`{\hat{A} \rightarrow \hat{B} \rightarrow \hat{C} \rightarrow
     :width: 600
     :alt: figure
     :align: center
+
+    A illustration of an two-dimensional NMR pulse sequence leading up to the
+    acqusition of the signal from a transition pathway.
+
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
 transition pathway signal as a function of :math:`t_1`, derives its *average
@@ -60,6 +67,8 @@ frequencies in each spectroscopic dimension of the dataset. To this end, a
     :width: 700
     :alt: figure
     :align: center
+
+    Unified Modeling Language class diagram of the Method object in mrsimulator.
 
 .. note::
 
@@ -257,10 +266,18 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :alt: figure
     :align: center
 
+    Energy level diagrams of a spin :math:`I=1` nucleus  (left) and spin
+    :math:`I=3/2` nucleus (right). Arrows beginning at the initial state and end
+    at the final state represent transitions.   Transitions are labeled with
+    their corresponding :math:`\text{p}_I` and :math:`\text{d}_I` transition
+    symmetry function values.
+
 .. figure:: ../../_static/SpinFiveHalf.*
     :width: 550
     :alt: figure
     :align: center
+
+    Energy level diagram of a spin :math:`I=5/2` nucleus. Arrows beginning at the initial state and end at the final state represent transitions.   Transitions are labeled with their corresponding :math:`\text{p}_I` and :math:`\text{d}_I` spin transition symmetry function values.
 
 ----
 
@@ -640,6 +657,12 @@ in the energy level diagram below.
     :alt: figure
     :align: center
 
+    Energy level diagram for three coupled spin :math:`I=1/2` nuclei. Arrows
+    beginning at the initial state and end at the final state represent the
+    single-spin single-quantum transitions.   Transitions are labeled with their
+    corresponding single-spin :math:`\text{p}_i` transition symmetry function
+    values.
+
 Keep in mind that the Method object does not know, in advance, the
 number of sites in a spin system.
 
@@ -786,6 +809,12 @@ below.
     :alt: figure
     :align: center
 
+    Energy level diagram for three coupled spin :math:`I=1/2` nuclei. Arrows
+    beginning at the initial state and end at the final state represent the
+    two-spin double-quantum transitions.   Transitions are labeled with their
+    corresponding single-spin :math:`\text{p}_i` transition symmetry function
+    values.
+
 The code below will select the six *two-spin double-quantum transitions* where
 :math:`\text{p}_{AMX} = -2`.
 
@@ -894,6 +923,12 @@ The three *three-spin single-quantum transitions* having
     :alt: figure
     :align: center
 
+    Energy level diagram for three coupled spin :math:`I=1/2` nuclei. Arrows
+    beginning at the initial state and end at the final state represent the
+    three spin single-quantum transitions.   Transitions are labeled with their
+    corresponding single-spin :math:`\text{p}_i` transition symmetry function
+    values.
+
 The code below will select these *three-spin single-quantum transitions*.
 
 .. plot::
@@ -993,6 +1028,13 @@ the right.
     :width: 850
     :alt: figure
     :align: center
+
+    Energy level diagram for two coupled nuclei with spins :math:`I=1/2` and
+    :math:`I=1`. Arrows beginning at the initial state and end at the final
+    state represent the single spin single-quantum transitions (left) and the
+    three-spin triple-quantum transition.  Transitions are labeled with their
+    corresponding single-spin :math:`\text{p}_i` transition symmetry function
+    values.
 
 .. plot::
     :context: close-figs
@@ -1768,6 +1810,13 @@ respectively.
     :alt: Transition symmetry pathways for the Hahn and Solid Echo experiments
     :align: center
     :width: 100%
+
+    Hahn Echo (left) and Solid-Echo (right) pulse sequences. Above each
+    sequence, on the energy level diagram, are the corresponding two transition
+    pathways indicated with blue and orange arrows.  Transitions are labeled
+    with their corresponding :math:`\text{p}_I` and :math:`\text{d}_I`
+    transition symmetry function values.  Below each sequence are the
+    corresponding transition symmetry pathways, also in blue and orange.
 
 The Hahn Echo sequence, with :math:`\pi/2-\tau-\pi-t\rightarrow`, leads to the formation
 of a :math:`\text{p}_I` echo at :math:`t = \tau`.  The two transition pathways

@@ -1,5 +1,5 @@
 .. note::
-    
+
     The well-known Hahn-echo can occur whenever the :math:`p_I` values of
     transitions in a transition pathway change sign.  This is because the
     changing sign of :math:`p_I` leads to a sign change for every
