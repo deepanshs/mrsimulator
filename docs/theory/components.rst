@@ -1,9 +1,9 @@
 
 .. _theory:
 
-**************************
-How does mrsimulator work?
-**************************
+*******************************
+Transition Frequency Components
+*******************************
 
 The NMR spectral simulation in **mrsimulator** is based on
 Symmetry Pathways in Solid-State NMR by Grandinetti *et al.* [#f1]_
@@ -101,7 +101,7 @@ tensor. Using Eqs. :eq:`eq_3` and :eq:`eq_5`, we re-express Eq. :eq:`eq_2` as
     \Omega_k(\Theta, i, j) = \sum_{n_0=-L}^L D^L_{n_0,0}(\Theta_0)
                              \sum_{n_1=-L}^L D^L_{n_1,n_0}(\Theta_1) ~ ... ~
                              \sum_{n_i=-L}^L D^L_{n_i,n}(\Theta_i) ~~
-                             \varpi_{L, n}^{(k)},
+                             \varpi_{\ell, L, n}^{(k)},
 
 where
 
@@ -546,18 +546,18 @@ Weakly coupled nucleus spin transition functions
     - Value
     - Description
 
-  * - :math:`\mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+  * - :math:`(\mathbb{pp})_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
     - :math:`m_{f_I} m_{f_S} - m_{i_I} m_{i_S}`
     - :math:`\left< m_{f_I} m_{f_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{f_I} m_{f_S} \right>` – :math:`\left< m_{i_I} m_{i_S} | \hat{T}_{10}(I) \hat{T}_{10}(S) | m_{i_I} m_{i_S} \right>`
 
-Here, :math:`\hat{T}_{L,k}(\bf{I})` are the irreducible spherical tensor
-operators of rank :math:`L`, :math:`k \in [-L, L]`, for transition
+Here, :math:`\hat{T}_{\ell,k}(\bf{I})` are the irreducible spherical tensor
+operators of rank :math:`\ell`, :math:`k \in [-\ell, \ell]`, for transition
 :math:`|m_{i_I} m_{i_S}\rangle \rightarrow |m_{f_I} m_{f_S}\rangle`
 in weakly coupled basis.
 
 .. _frequency_tensor_theory:
 
-Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
+Frequency tensor components (FT) in PAS, :math:`\varpi_{\ell,L, n}^{(k)}`
 ====================================================================
 
 .. cssclass:: table-bordered table-striped centered
@@ -565,59 +565,59 @@ Frequency tensor components (FT) in PAS, :math:`\varpi_{L, n}^{(k)}`
 .. _tb_freq_components:
 .. list-table:: The table presents a list of frequency tensors defined in the principal
   axis system of the respective interaction tensor from Eq. :eq:`eq_7`,
-  :math:`\varpi_{L,n}^{(k)}`, of rank L resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in mrsimulator.
+  :math:`\varpi_{\ell,L,n}^{(k)}`, of ranks :math:`\ell` and :math:`L` resulting from the Mth order perturbation expansion of the interaction Hamiltonian supported in mrsimulator.
   :widths: 20 15 15 50
   :header-rows: 1
 
   * - Interaction
     - Order, :math:`M`
     - Rank, :math:`L`
-    - :math:`\varpi_{L,n}^{(k)}`
+    - :math:`\varpi_{\ell,L,n}^{(k)}`
 
   * - Nuclear shielding
     - 1
     - 0
-    - :math:`\varpi_{0,0}^{(\sigma)} = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+    - :math:`\varpi_{1,0,0}^{(\sigma)} = \varsigma_{0,0}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
   * - Nuclear shielding
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(\sigma)} = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
+    - :math:`\varpi_{1,2,n}^{(\sigma)} = \varsigma_{2,n}^{(\sigma)} ~~ \mathbb{p}(i, j)`
 
   * - Electric Quadrupole
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(q)} = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
+    - :math:`\varpi_{2,2,n}^{(q)} = \varsigma_{2,n}^{(q)} ~~ \mathbb{d}(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 0
-    - :math:`\varpi_{0,0}^{(qq)} = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
+    - :math:`\varpi_{c_0,0,0}^{(qq)} = \varsigma_{0,0}^{(qq)} ~~ \mathbb{c}_0(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 2
-    - :math:`\varpi_{2,n}^{(qq)} = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
+    - :math:`\varpi_{c_2,2,n}^{(qq)} = \varsigma_{2,n}^{(qq)} ~~ \mathbb{c}_2(i, j)`
 
   * - Electric Quadrupole
     - 2
     - 4
-    - :math:`\varpi_{4,n}^{(qq)} = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
+    - :math:`\varpi_{c_4,4,n}^{(qq)} = \varsigma_{4,n}^{(qq)} ~~ \mathbb{c}_4(i, j)`
 
   * - Weak :math:`J`-coupling
     - 1
     - 0
-    - :math:`\varpi_{0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - :math:`\varpi_{(1,1),0,0}^{(J)} = \varsigma_{0,0}^{(J)} ~~ (\mathbb{pp})_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
   * - Weak :math:`J`-coupling
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - :math:`\varpi_{(1,1),2,n}^{(J)} = \varsigma_{2,n}^{(J)} ~~ (\mathbb{pp})_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
   * - Weak dipolar-coupling
     - 1
     - 2
-    - :math:`\varpi_{2,n}^{(d)} = \varsigma_{2,n}^{(d)} ~~ \mathbb{d}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
+    - :math:`\varpi_{(1,1),2,n}^{(d)} = \varsigma_{2,n}^{(d)} ~~ (\mathbb{pp})_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S})`
 
 **References**
 
