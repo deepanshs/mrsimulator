@@ -306,7 +306,7 @@ Attribute Summaries
 .. cssclass:: table-bordered table-striped centered
 .. _table_sim_config:
 .. list-table:: The attributes of a Simulator object
-  :widths: 20 15 65
+  :widths: 25 10 65
   :header-rows: 1
 
   * - Attribute Name
