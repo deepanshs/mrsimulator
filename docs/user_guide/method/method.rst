@@ -284,11 +284,11 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 ----
 
 For a summary on spin transition symmetry functions in NMR, click on the disclosure
-triangle below.
+button below.
 
 .. raw:: html
 
-    <details>
+    <details class="reveal-theory">
     <summary><b>Spin Transition Symmetry Functions</b></summary>
 
 .. include:: spin_trans_symm.rst
@@ -1231,11 +1231,11 @@ the table below and in
 :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
 pulse sequence design by identifying how different frequency contributions
 refocus through the transition pathways.  For a summary on echo symmetry classification in NMR,
-click on the disclosure triangle below.
+click on the disclosure button below.
 
 .. raw:: html
 
-    <details>
+    <details class="reveal-theory">
     <summary><b>Echo Symmetry Classification</b></summary>
 
 .. include:: echo_symm_classes.rst
