@@ -29,4 +29,6 @@ speed for these methods is fixed at infinite speed.
         ],
     )
 
+**Examples**
+
 .. minigallery:: mrsimulator.method.lib.ST1_VAS mrsimulator.method.lib.ST2_VAS
