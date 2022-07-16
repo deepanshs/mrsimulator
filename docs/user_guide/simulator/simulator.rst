@@ -141,6 +141,8 @@ number of octants is deciphered from the value of the ``integration_volume`` att
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contributions are evaluated.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
     :caption: Low quality simulation from reduced integration density.
@@ -149,6 +151,8 @@ frequency contributions are evaluated.
     sim.config.integration_density = 10
     sim.run()
     plot(sim.methods[0].simulation)
+
+.. skip: next
 
 .. plot::
     :context: close-figs
