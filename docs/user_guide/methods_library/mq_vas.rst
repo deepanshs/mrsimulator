@@ -38,5 +38,3 @@ The other methods, employing five and seven quantum transitions, can be imported
     from mrsimulator.method.lib import SevenQ_VAS
 
 .. minigallery:: mrsimulator.method.lib.ThreeQ_VAS mrsimulator.method.lib.FiveQ_VAS mrsimulator.method.lib.SevenQ_VAS
-    :add-heading: Examples using the Multi-quantum VAS method.
-    :heading-level: "

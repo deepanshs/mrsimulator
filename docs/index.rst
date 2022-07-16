@@ -210,7 +210,7 @@ User Guide
 ----------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :caption: User Documentation
 
     user_guide/spin_system/spin_system

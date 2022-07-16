@@ -30,5 +30,3 @@ Bloch decay central transition selective spectrum.
 ..     from mrsimulator.method.lib import BlochDecayCentralTransitionSpectrum
 
 .. minigallery:: mrsimulator.method.lib.BlochDecayCTSpectrum
-    :add-heading: Examples using ``BlochDecayCTSpectrum``
-    :heading-level: "
