@@ -84,7 +84,7 @@ sim = Simulator()
 sim.spin_systems = spin_systems  # add the three spin systems
 sim.methods = methods  # add the four methods
 sim.config.integration_volume = "hemisphere"  # set averaging to hemisphere
-# decompose spectrum to individual spin systems.
+# config to decompose spectrum to individual spin systems.
 sim.config.decompose_spectrum = "spin_system"
 
 # %%

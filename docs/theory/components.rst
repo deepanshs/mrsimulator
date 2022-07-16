@@ -38,7 +38,7 @@ Each frequency component, :math:`\Omega_k (\Theta, i, j)`, is written as the pro
 where :math:`\omega_k` is the size of the :math:`k^\text{th}` frequency
 component, and :math:`\Xi_L^{(k)}(\Theta)` and :math:`\xi_\ell^{(k)}(i, j)` are
 the sample's spatial orientation and quantized NMR transition functions
-corresponding to the :math:`L^\text{th}` rank spatial and the 
+corresponding to the :math:`L^\text{th}` rank spatial and the
 :math:`\ell^\text{th}` rank spin irreducible spherical tensors, respectively.
 
 ----
@@ -439,7 +439,7 @@ The relation between :math:`\varrho_{L,n}^{(d)}` and :math:`\rho_{L,n}^{(d)}` fo
 .. _spin_transition_theory:
 
 Spin transition functions, :math:`\xi_\ell^{(k)}(i,j)`
-===================================================
+======================================================
 
 The spin transition function is typically
 manipulated via the coupling of the nuclear magnetic dipole moment with the

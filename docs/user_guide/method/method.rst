@@ -206,6 +206,8 @@ been assigned to those indexes. Instead, we need a spin-system agnostic approach
 for selecting transitions.
 
 
+.. _transition_query_documentation:
+
 Spin Transition Symmetry Functions
 ''''''''''''''''''''''''''''''''''
 
@@ -688,7 +690,7 @@ is given in the code below.
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
@@ -814,7 +816,7 @@ The code below will select the six *two-spin double-quantum transitions* where
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
@@ -921,7 +923,7 @@ The code below will select these *three-spin single-quantum transitions*.
 
     plt.figure(figsize=(10, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
-    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation))
+    ax.plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax.invert_xaxis()  # reverse x-axis
     plt.tight_layout()
     plt.grid()
@@ -1184,7 +1186,7 @@ individual frequency contributions to the overall transition frequency, given in
 the table below and in
 :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
 pulse sequence design by identifying how different frequency contributions
-refocus through the transition pathways.  For a summary on echo symmetry classification in NMR, 
+refocus through the transition pathways.  For a summary on echo symmetry classification in NMR,
 click on the disclosure triangle below.
 
 .. raw:: html
@@ -2185,9 +2187,9 @@ Attribute Summaries
 
   * - freq_contrib
     - ``List``
-    - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which 
-      contributions to include when calculating a transition frequency. For example, 
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and 
+    - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
+      contributions to include when calculating a transition frequency. For example,
+      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
       all frequency contributions are calculated.
 
   * - transition_queries
@@ -2210,8 +2212,8 @@ Attribute Summaries
 
   * - query
     - ``dict`` or :py:class:`~mrsimulator.method.MixingQuery`
-    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation, 
-      determines the complex amplitude of mixing between transitions in adjacent spectral 
+    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation,
+      determines the complex amplitude of mixing between transitions in adjacent spectral
       or delay events.
 
 ..   - The coordinates along each spectral dimension are

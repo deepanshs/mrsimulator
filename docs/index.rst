@@ -156,7 +156,6 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
     plt.tight_layout()
     plt.show()
 
-
 ----
 
 .. note::
@@ -195,15 +194,6 @@ The **mrsimulator** package offers the following
 
 ----
 
-.. Contribution
-.. ------------
-
-.. **mrsimulator** is a open source NMR simulation package. We are a small team
-.. working on developing the package for the NMR community. Any contribution and
-.. suggestion is greatly appreciated.
-
-----
-
 Introduction
 ------------
 
@@ -227,7 +217,6 @@ User Guide
     user_guide/spin_system_distributions/spin_system_distributions
     user_guide/methods_library/methods_library
     user_guide/method/method
-    user_guide/method/query_objects
     user_guide/simulator/simulator
     user_guide/signal_processor/signal_processor
     user_guide/io/mrsim_IO
@@ -264,7 +253,8 @@ API and references
     api_py/py-signal-processor
     api_py/py-model
     api_py/py-fitting
-    api_c/c_api
+
+.. api_c/c_api
 
 
 Project details
@@ -279,32 +269,6 @@ Project details
     credits/license
     credits/acknowledgment
 
-.. .. only:: html
-
-.. 	.. toctree::
-.. 		:maxdepth: 2
-.. 		:caption: Table of Contents:
-
-.. 		about
-.. 		installation
-.. 		requirements
-.. 		understanding-spin_systems
-.. 		getting_started
-.. 		using_mrsimulator_objects
-.. 		load_sample
-.. 		configuring_simulator
-.. 		benchmark
-.. 		examples/index
-.. 		theory/components
-.. 		api_py/py_api
-.. 		api_c/c_api
-
-
-.. understanding_system
-..    objects
-..    spectrum_object
-..    theory/wigner_rotations
-..    examples
 
 Reporting Bugs
 --------------

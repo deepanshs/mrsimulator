@@ -377,8 +377,8 @@ spectrum. Plot it and see how it compares to the experimental spectrum.
     # --------------------------
     plt.figure(figsize=(6, 3.0))
     ax = plt.subplot(projection="csdm")
-    ax.plot(exp_spectrum.real, label="Experiment")
-    ax.plot(processed_dataset.real, label="guess spectrum")
+    ax.plot(exp_spectrum, label="Experiment")
+    ax.plot(processed_dataset, label="guess spectrum")
     ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
@@ -566,8 +566,8 @@ best-fit simulation and the residuals as CSDM objects.
 .. plot::
     :context: close-figs
 
-    best_fit = sf.bestfit(sim, processor)[0]
-    residuals = sf.residuals(sim, processor)[0]
+    best_fit = sf.bestfit(sim, processor)[0].real
+    residuals = sf.residuals(sim, processor)[0].real
 
     # Plot the spectrum
     plt.figure(figsize=(6, 3.0))
@@ -607,8 +607,8 @@ parameter to be a fit parameter, and rerun the analysis.
     fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
     minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
     result = minner.minimize()
-    best_fit = sf.bestfit(sim, processor)[0]
-    residuals = sf.residuals(sim, processor)[0]
+    best_fit = sf.bestfit(sim, processor)[0].real
+    residuals = sf.residuals(sim, processor)[0].real
 
     # Plot the spectrum
     plt.figure(figsize=(6, 3.0))
