@@ -16,7 +16,7 @@ Introduction sections :ref:`getting_started`,
 
 .. note::
 
-    Before writing your own custom Method, it would be worthwhile to see if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
+    Before writing your own custom Method, check if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
 
 
 Overview
