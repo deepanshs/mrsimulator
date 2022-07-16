@@ -127,12 +127,12 @@ of the site without the tensor parameter.
 
     * - ``isotope``
       - ``str`` or list of ``str``
-      - A **required** string or list of strings representing the label of the ``isotope`` attribute
+      - A *required* string or list of strings representing the label of the ``isotope`` attribute
         of the :ref:`site_api` (e.g. ``"1H"`` or ``["29Si", "17O"]``).
 
     * - ``isotropic_chemical_shift``
       - ``float``, list of ``float``, or numpy array
-      - An **optional** number or list of numbers representing the ``isotropic_chemical_shift``
+      - An *optional* number or list of numbers representing the ``isotropic_chemical_shift``
         attribute of the :ref:`site_api` (e.g. ``17.3`` or ``[2.4, 19.5]``) in ppm.
         The default value is ``0``.
 
@@ -157,7 +157,7 @@ of the site without the tensor parameter.
     * - ``abundance``
       - ``float``, list of ``float``, or numpy array
       - An *optional* number or list of numbers representing the ``abundance`` attribute of
-        the **SpinSystem** (e.g. ``0.182`` or ``[85, 7.3]``. By default, the abundance
+        the SpinSystem (e.g. ``0.182`` or ``[85, 7.3]``. By default, the abundance
         of each spin system will be set to ``1 / n_sys`` where ``n_sys`` is the number of spin
         systems generated.
 

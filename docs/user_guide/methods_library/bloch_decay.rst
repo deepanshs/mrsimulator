@@ -23,6 +23,6 @@ Bloch decay spectrum.
         ],
     )
 
+**Examples**
+
 .. minigallery:: mrsimulator.method.lib.BlochDecaySpectrum
-    :add-heading: Examples using ``BlochDecaySpectrum``
-    :heading-level: "

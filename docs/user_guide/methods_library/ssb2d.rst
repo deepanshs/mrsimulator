@@ -30,6 +30,6 @@ dimension is fixed at infinite spinning speed
         ],
     )
 
+**Examples**
+
 .. minigallery:: mrsimulator.method.lib.SSB2D
-    :add-heading: Examples using ``SSB2D``
-    :heading-level: "
