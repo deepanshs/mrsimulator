@@ -6,7 +6,7 @@ Method
 ======
 
 While **mrsimulator**'s organization of the :ref:`spin_sys_api` object and its
-composite objects, :ref:`site_api`, and :ref:`coupling_api` are easily
+composite objects, :ref:`site_api` and :ref:`coupling_api`, are easily
 understood by anyone familiar with the underlying physical concepts, the
 organization of the :ref:`method_api` object in **mrsimulator** and its related
 composite objects require a more detailed explanation of their design. This
@@ -73,8 +73,8 @@ frequencies in each spectroscopic dimension of the dataset. To this end, a
 At the heart of a **Method** object, assigned to its attribute
 ``spectral_dimensions``, is an ordered list of :ref:`spectral_dim_api` objects
 in the same order as the time evolution dimensions of the experimental NMR
-sequence. In each **SpectralDimension** object, assigned to the attribute
-``events``, is an ordered list of :ref:`event_api` objects, which are divided
+sequence. In each **SpectralDimension** object, an ordered list of :ref:`event_api`
+objects assigned to the attribute ``events``; Event objects are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.DelayEvent`, and (3)
 :py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list of Event objects
@@ -104,7 +104,7 @@ Additionally, the user can affect transition frequencies during a spectral or
 delay event by changing other measurement attributes: ``rotor_frequency``,
 ``rotor_angle``, and ``magnetic_flux_density``. If left unspecified, these
 attributes default to the values of the identically named global attributes in
-the **Method** object. SpectralEvent**** objects use the ``fraction`` attribute to
+the **Method** object. SpectralEvent objects use the ``fraction`` attribute to
 calculate the weighted average frequency during the spectral dimension for each
 selected transition pathway.
 
@@ -118,7 +118,7 @@ through its initial and final eigenstate quantum numbers. Transition selection
 is done through **TransitionQuery** and
 :py:meth:`~mrsimulator.method.query.SymmetryQuery` objects during individual
 spectral or delay events. **TransitionQuery** objects can hold a
-**SymmetryQuery** object in ``ch1``, ``ch2``, or ``ch3``, which act on
+**SymmetryQuery** object in the attributes ``ch1``, ``ch2``, or ``ch3``, which act on
 specific isotopes defined by the ``channels`` attribute in **Method**. It is
 only during a simulation that the **Method** object uses its **TransitionQuery**
 objects to determine the selected transition pathways for a given **SpinSystem**
@@ -144,7 +144,7 @@ in each spectral dimension are determined. We outline the procedures for
 designing and creating **TransitionQuery** and **MixingQuery** for single- and
 multi-spin transitions and how to use them to select the transition pathways
 with the desired frequency and amplitudes in each **SpectralDimension** of your
-custom method object. In multi-dimensional spectra, we illustrate how the
+custom Method object. In multi-dimensional spectra, we illustrate how the
 desired frequency correlation can sometimes be achieved by using an appropriate
 affine transformation. We also examine how changing the frequency contributions
 in **SpectralEvent** of **DelayEvent** objects can be used to obtain the desired
@@ -345,7 +345,7 @@ below.
     )
     deuterium_system = SpinSystem(sites=[deuterium])
 
-    # This method selects all observable (p_I=–1) transitions
+    # This method selects all observable (p_I = –1) transitions
     method_both_transitions = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
@@ -358,7 +358,7 @@ below.
         ],
     )
 
-    # This method selects observable (p_I=–1) transitions with d_I = 1
+    # This method selects observable (p_I = –1) transitions with d_I = 1
     method_transition1 = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
@@ -371,7 +371,7 @@ below.
         ],
     )
 
-    # This method selects observable (p_I=–1) transitions with d_I = -1
+    # This method selects observable (p_I = –1) transitions with d_I = -1
     method_transition2 = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
@@ -515,7 +515,7 @@ matplotlib.pyplot module to
 return an image of the dataset on a 2D regular raster. We also use ``"gist_ncar_r"`` from
 `matpltolib's included colormaps
 <https://matplotlib.org/stable/gallery/color/colormap_reference.html>`__
-to map the dataset amplitude to colors; The `colorbar()
+to map the dataset amplitude to colors; the `colorbar()
 <https://matplotlib.org/stable/api/colorbar_api.html?highlight=colorbar#module-matplotlib.colorbar>`__
 function provides the visualization of the dataset mapping to color to the right
 of the plot.
@@ -1158,7 +1158,7 @@ function is independent of sample orientation, i.e., it will appear in all
 isotropic frequency contributions.  The :math:`\mathbb{D}(\Theta)` function has
 a second-rank dependence on sample orientation, and can be averaged away with
 fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
-is the root of the second-rank Legendre polynomial ":math:`P_2(\cos \theta_R)`.
+is the root of the second-rank Legendre polynomial :math:`P_2(\cos \theta_R)`.
 The other spatial symmetry functions are removed by spinning the sample about
 the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
 \theta_R)`.
@@ -1630,7 +1630,7 @@ transitions, and the second has two selected transitions, then **mrsimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
 passing from the first to second **SpectralEvent** objects.
 
-Additionally, this total mixing event assumes that every connection has a mixing
+Additionally, this *total mixing* assumes that every connection has a mixing
 amplitude of 1. This is unrealistic, but if used correctly gives a significant
 speed-up in the simulation by avoiding the need to calculate mixing amplitudes.
 
@@ -1719,7 +1719,7 @@ Finally, another useful result is
 
 While it's not surprising that a rotation through an angle of zero does nothing
 to the transition, this turns out to help act as the opposite of a total mixing
-event, i.e., a **no mixing** event. As a convenience, this is defined as a
+event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
 ``"NoMixing"`` query and can be implemented with the code below.
 
 .. plot::

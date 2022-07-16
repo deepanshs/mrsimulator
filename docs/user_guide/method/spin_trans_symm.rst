@@ -1,5 +1,5 @@
 .. note::
-    
+
     In the `symmetry pathway approach
     <https://doi.org/10.1016/j.pnmrs.2010.11.003>`_,  the idea of coherence order is extended to form
     a complete set of spin transition symmetry functions, :math:`\xi_\ell
@@ -9,7 +9,7 @@
 
         \xi_\ell(i,j) = \bra{j}  \hat{T}_{\ell,0} \ket{j} - \bra{i}  \hat{T}_{\ell,0} \ket{i},
 
-    where the :math:`\hat{T}_{l,0}` are irreducible tensor operators.  The function
+    where the :math:`\hat{T}_{\ell,0}` are irreducible tensor operators.  The function
     symbol :math:`\xi_\ell(i,j)` is replaced with the lower-case symbols
     :math:`\mathbb{p}(i,j)`, :math:`\mathbb{d}(i,j)`, :math:`\mathbb{f}
     (i,j)`, :math:`\ldots`, i.e., we follow the spectroscopic sub-shell letter
