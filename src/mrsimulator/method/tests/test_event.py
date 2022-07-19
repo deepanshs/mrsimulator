@@ -17,26 +17,40 @@ def test_freq_contrib():
     assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.json(units=False)["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0])
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0])
 
     event = BaseEvent(freq_contrib=["Shielding1_2"])
-    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0])
+    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
     event = BaseEvent()
     assert event.dict()["freq_contrib"] == freq_default
-    assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1])
+    assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     event = BaseEvent(freq_contrib=["J1_0", "Shielding1_0"])
     assert event.dict()["freq_contrib"] == ["J1_0", "Shielding1_0"]
-    assert np.all(event._freq_contrib_flags() == [1, 0, 0, 0, 0, 0, 1, 0, 0])
+    assert np.all(event._freq_contrib_flags() == [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
 
     event = BaseEvent(freq_contrib=["J1_0", "J1_2", "D1_2"])
     assert event.dict()["freq_contrib"] == ["J1_0", "J1_2", "D1_2"]
-    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 1, 1, 1])
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0])
 
     event = BaseEvent(freq_contrib=["Quad2_4", "J1_2", "D1_2", "Shielding1_2"])
     assert event.dict()["freq_contrib"] == ["Quad2_4", "J1_2", "D1_2", "Shielding1_2"]
-    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 1, 0, 1, 1])
+    assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0])
+
+    event = BaseEvent(
+        freq_contrib=[
+            "Quad_Shielding_cross_0",
+            "Quad_Shielding_cross_2",
+            "Quad_Shielding_cross_4",
+        ]
+    )
+    assert event.dict()["freq_contrib"] == [
+        "Quad_Shielding_cross_0",
+        "Quad_Shielding_cross_2",
+        "Quad_Shielding_cross_4",
+    ]
+    assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1])
 
 
 def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):

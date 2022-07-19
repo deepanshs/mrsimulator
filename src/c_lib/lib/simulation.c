@@ -25,7 +25,7 @@
  * list, where the stack is ordered according to the events. The variable
  * `FREQ_CONTRIB_INCREMENT` is the length of the freq contribs.
  */
-int FREQ_CONTRIB_INCREMENT = 9;
+int FREQ_CONTRIB_INCREMENT = 12;
 
 static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4) {
   *R0 = 0.0;
