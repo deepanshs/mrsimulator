@@ -13,6 +13,9 @@ freq_list_all = [
     "J1_0",
     "J1_2",
     "D1_2",
+    "Quad_Shielding_cross_0",
+    "Quad_Shielding_cross_2",
+    "Quad_Shielding_cross_4",
 ]
 
 
@@ -67,8 +70,13 @@ class FrequencyEnum(str, Enum):
     J1_0: str = freq_list_all[6]
     J1_2: str = freq_list_all[7]
 
-    # D1: str = "D"
+    # D1: str = "D1"
     D1_2: str = freq_list_all[8]
+
+    # Quad_Shielding: str = "Quad_Shielding_cross"
+    Quad_Shielding_cross_0: str = freq_list_all[9]
+    Quad_Shielding_cross_2: str = freq_list_all[10]
+    Quad_Shielding_cross_4: str = freq_list_all[11]
 
     class Config:
         extra = "forbid"
