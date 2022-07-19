@@ -1204,7 +1204,7 @@ a second-rank dependence on sample orientation, and can be averaged away with
 fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
 is the root of the second-rank Legendre polynomial :math:`P_2(\cos \theta_R)`.
 The other spatial symmetry functions are removed by spinning the sample about
-the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
+the corresponding root of the :math:`L^\text{th}`-rank Legendre polynomial ":math:`P_L(\cos
 \theta_R)`.
 
 .. note::
