@@ -45,7 +45,6 @@ from mrsimulator.signal_processor import SignalProcessor
 from mrsimulator.utils.error import FileConversionError
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
-from mrsimulator.utils.utils import _update_old_dict_struct
 import json
 import warnings
 from pydantic import Field
@@ -359,66 +358,20 @@ def parse(py_dict, parse_units: bool = True):
     # Check for difference in keys
     root_keys = set(Mrsimulator().dict().keys())
     if len(set(py_dict.keys()) - root_keys) != 0:
-        warnings.warn(
-            "An older JSON structure was detected. Attempting to convert dict to "
-            "a compatible format..."
-        )
-        py_copy_dict = deepcopy(py_dict)
-        try:
-            py_copy_dict = update_old_dict_struct(py_copy_dict)
-        except Exception as e:
-            raise FileConversionError() from e
-        py_dict = py_copy_dict
+        raise FileConversionError()
 
-    sim = Simulator.parse(py_dict["simulator"], parse_units)
+    py_copy_dict = deepcopy(py_dict)
+    sim = Simulator.parse(py_copy_dict["simulator"], parse_units)
 
     signal_processors = (
         [
             SignalProcessor.parse_dict_with_units(item)
-            for item in py_dict["signal_processors"]
+            for item in py_copy_dict["signal_processors"]
         ]
-        if "signal_processors" in py_dict
+        if "signal_processors" in py_copy_dict
         else [SignalProcessor() for _ in sim.methods]
     )
 
-    application = py_dict["application"] if "application" in py_dict else None
+    application = py_copy_dict["application"] if "application" in py_copy_dict else None
 
     return sim, signal_processors, application
-
-
-def update_old_dict_struct(py_dict):
-    """Convert an old dict serialization to the new format
-    1. Updates root JSON structure
-    2. Attempts to parse old transition queries to new format
-    3. Returns updated dictionary
-
-    Args:
-        dict py_dict: dict to update
-
-    Returns:
-        Dict: Updated JSON structure as dict
-    """
-    _update_old_dict_struct(py_dict)
-    return Mrsimulator.parse_dict_with_units(py_dict).json()
-
-
-def update_old_file_struct(oldfile: str, newfile: str = None):
-    """Convert an old mrsim file where Simulator object keywords existed at the root
-    level along with other serialized attributes to a structure where each object exists
-    under its own keyword. A dictionary representing the new Mrsimulator object is
-    returned. Will write a new mrsim file if newfile arg is provided.
-
-    Args:
-        str oldfile: String of path to mrsim file with old structure
-        str newfile: Will write new mrsim file to path represented by newfile if given
-
-    Returns:
-        Dict: Dictionary representation of Mrsimulator object with new structure
-    """
-    py_dict = import_json(oldfile)
-    py_dict = update_old_dict_struct(py_dict)
-
-    if newfile is not None:
-        Mrsimulator.parse_dict_with_units(py_dict).save(filename=newfile)
-
-    return py_dict
