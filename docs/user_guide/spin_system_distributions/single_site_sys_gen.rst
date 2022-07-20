@@ -28,7 +28,11 @@ have the same length, otherwise an error will be thrown. For example,
         isotropic_chemical_shift=[1.3, 3.7, 65.0],
     )
 
-.. code-block:: shell
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
 
     Traceback (most recent call last):
     ...
