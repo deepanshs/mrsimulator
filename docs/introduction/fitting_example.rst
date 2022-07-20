@@ -632,7 +632,7 @@ from 0 to 0.136, and the Gaussian FWHM decreased from 106 to 63 Hz. The
 MinimizerResult printout also shows a correlation of -0.74 between these two
 parameters.
 
-We close this section by noting that a compelling feature of mrsimulator& LMFit
+We close this section by noting that a compelling feature of mrsimulator and LMFit
 is that you can perform a simultaneous spectra fit from different methods for a
 single set of spin system parameters. Check out all the examples in
 the :ref:`fitting_examples`, notably the
