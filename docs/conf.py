@@ -70,6 +70,9 @@ extensions = [
     "versionwarning.extension",
 ]
 
+# sphinx-tabs
+sphinx_tabs_disable_tab_closing = True
+
 # generate autosummary even if no references
 autosummary_generate = True
 
