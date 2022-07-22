@@ -1868,6 +1868,7 @@ We use the deuterium Site defined earlier in this document.
     hahn_echo = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,  # in rads
         spectral_dimensions=[
             SpectralDimension(
                 count=512,
@@ -1896,6 +1897,7 @@ We use the deuterium Site defined earlier in this document.
     solid_echo = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,  # in rads
         spectral_dimensions=[
             SpectralDimension(
                 count=512,
@@ -1970,9 +1972,7 @@ each output spectrum, and plot the datasets.
 .. plot::
     :context: close-figs
 
-    sim = Simulator()
-    sim.spin_systems = [deuterium_system]
-    sim.methods = [hahn_echo, solid_echo]
+    sim = Simulator(spin_systems=[deuterium_system], methods=[hahn_echo, solid_echo])
     sim.run()
 
     processor = sp.SignalProcessor(
