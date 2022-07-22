@@ -6,45 +6,6 @@ __email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
 #     "Definition of the transition query object has changed since v0.7. Follow the "
 #     "documentation at https://mrsimulator.readthedocs.io/en/stable/ to find more."
 # )
-MRSIMULATOR_KEYS = {"simulator", "signal_processors", "version", "application"}
-SIM_KEYWORDS = {
-    "spin_systems",
-    "methods",
-    "config",
-    "name",
-    "label",
-    "description",
-    "indexes",
-}
-
-
-def _update_old_dict_struct(py_dict):
-    """Helper function for mrsimulator.update_old_dict_struct
-    1. Updates root JSON structure
-    2. Attempts to parse old transition queries to new format
-
-    Args:
-        dict py_dict: dict to update
-
-    Returns:
-        Dict: Updated JSON structure as dict
-    """
-    if "simulator" not in py_dict:
-        py_dict["simulator"] = {}
-
-    # Add values to simulator dictionary
-    for key in set(py_dict.keys()).intersection(SIM_KEYWORDS):
-        py_dict["simulator"][key] = py_dict.pop(key)
-
-    # Remove keys which are unknown
-    bad_keys = set(py_dict.keys()) - MRSIMULATOR_KEYS
-    _ = [py_dict.pop(key) for key in bad_keys]
-
-    # Attempt to convert old transition queries
-    if "methods" in py_dict["simulator"]:
-        _ = [convert_transition_queries(mtd) for mtd in py_dict["simulator"]["methods"]]
-
-    return py_dict
 
 
 def convert_transition_queries(py_dict):
