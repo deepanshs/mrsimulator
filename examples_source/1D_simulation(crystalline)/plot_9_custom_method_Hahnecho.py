@@ -6,7 +6,6 @@ Writing Custom methods (HahnEcho)
 Writing custom methods using the Event objects.
 """
 # %%
-# Import the relevant modules
 import numpy as np
 import matplotlib.pyplot as plt
 
