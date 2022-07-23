@@ -22,19 +22,37 @@ extract the *.tar.gz* file.
  Installing OS-dependent prerequisites is a one-time process. If upgrading to a newer version of
  mrsimulator, skip to the next section.
 
-.. tabs::
+.. only:: html
 
-   .. tab:: Linux
+  .. tabs::
+
+    .. tab:: Linux
 
       .. include:: source_install/linux.rst
 
-   .. tab:: Mac OSX
+    .. tab:: Mac OSX
 
       .. include:: source_install/macosx.rst
 
-   .. tab:: Windows
+    .. tab:: Windows
 
       .. include:: source_install/windows.rst
+
+
+.. only:: not html
+
+  **Linux**
+
+  .. include:: source_install/linux.rst
+
+  **Mac OSX**
+
+  .. include:: source_install/macosx.rst
+
+  **Windows**
+
+  .. include:: source_install/windows.rst
+
 
 **Building and Installing**
 

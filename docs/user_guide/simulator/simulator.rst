@@ -21,13 +21,10 @@ the following code pre-defines the plot function to use further in this document
     :context: reset
 
     import matplotlib.pyplot as plt
-    import matplotlib as mpl
-
-    mpl.rcParams["figure.figsize"] = (6, 3.5)
-    mpl.rcParams["font.size"] = 11
 
     # function to render figures.
     def plot(csdm_object):
+        plt.figure(figsize=(5, 3))
         ax = plt.subplot(projection="csdm")
         ax.plot(csdm_object.real, linewidth=1.5)
         ax.invert_xaxis()

@@ -122,7 +122,7 @@ of the site without the tensor parameter.
 .. cssclass:: table-bordered table-striped centered
 .. _single_site_sys_gen_table:
 .. list-table:: Arguments for ``single_site_system_generator``
-    :widths: 15 25 60
+    :widths: 30 20 50
     :header-rows: 1
 
     * - Name
