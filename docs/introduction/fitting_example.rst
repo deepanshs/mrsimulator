@@ -355,14 +355,15 @@ SignalProcessor.
     # Post Simulation Processing
     # --------------------------
     relative_intensity_factor = exp_spectrum.max() / sim.methods[0].simulation.max()
-    processor = sp.SignalProcessor(operations=[
+    processor = sp.SignalProcessor(
+        operations=[
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM="50 Hz"),
             sp.FFT(),
             sp.Scale(factor=relative_intensity_factor)
         ]
     )
-    processed_dataset=processor.apply_operations(dataset=sim.methods[0].simulation).real
+    processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 
 You now have set up and simulated the first guess in modeling the experimental
@@ -378,7 +379,7 @@ spectrum. Plot it and see how it compares to the experimental spectrum.
     plt.figure(figsize=(6, 3.0))
     ax = plt.subplot(projection="csdm")
     ax.plot(exp_spectrum, label="Experiment")
-    ax.plot(processed_dataset, label="guess spectrum")
+    ax.plot(processed_dataset, label="Guess Spectrum")
     ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
@@ -636,7 +637,8 @@ We close this section by noting that a compelling feature of mrsimulator and LMF
 is that you can perform a simultaneous spectra fit from different methods for a
 single set of spin system parameters. Check out all the examples in
 the :ref:`fitting_examples`, notably the
-:ref:`sphx_glr_fitting_1D_fitting_plot_2_13C_glycine_multi_spectra_fit.py` example.
+:ref:`sphx_glr_fitting_1D_fitting_plot_2_13C_glycine_multi_spectra_fit.py` example
+for fitting one set of spin systems to multiple spectra.
 
 
 .. plot::
