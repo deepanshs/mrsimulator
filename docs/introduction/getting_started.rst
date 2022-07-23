@@ -248,6 +248,7 @@ plot and a pdf file of the simulated spectrum:
 
     import matplotlib.pyplot as plt
 
+    plt.rcParams['pdf.fonttype'] = 42   # For using plots in Illustrator
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_simulation.real)
@@ -275,7 +276,8 @@ multi-dimensional datasets with a multi-component dependent variable discretely
 sampled at unique points in a multi-dimensional independent variable space. It
 can also hold correlated datasets assuming the different physical quantities
 (dependent variables) are sampled on the same orthogonal grid of independent
-variables. The CSDM can also serve as a re-usable building block in developing
+variables. It can even handle datasets with non-uniform sampling on a grid.
+The CSDM can also serve as a re-usable building block in developing
 more sophisticated portable scientific dataset file standards.
 
 **Mrsimulator** also uses CSDM internally as its object model for simulated and

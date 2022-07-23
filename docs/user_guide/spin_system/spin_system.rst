@@ -372,7 +372,7 @@ Attribute Summaries
 .. cssclass:: table-bordered table-striped centered
 .. _table_site:
 .. list-table::  The attributes of a Site object.
-  :widths: 30 15 50
+  :widths: 35 15 50
   :header-rows: 1
 
   * - Attribute name
