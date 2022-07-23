@@ -40,7 +40,8 @@ ConfigSimulator
 In mrsimulator, the default configuration settings apply to a wide range of simulations,
 including static, magic angle spinning (MAS), and variable angle spinning (VAS) spectra.
 In certain situations, however, the default settings are insufficient to represent the
-spectrum accurately. Consider the following simulator setup.
+spectrum accurately.  In this section, we use the simulator setup code below to illustrate
+some of these issues.
 
 .. plot::
     :context: close-figs
