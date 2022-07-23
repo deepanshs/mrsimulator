@@ -77,7 +77,14 @@ Welcome to the Mrsimulator documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
-**About**
+.. only:: html
+
+  **About**
+
+.. only:: not html
+
+  About
+  '''''
 
 **mrsimulator** is an open-source Python package for fast computation/analysis of nuclear
 magnetic resonance (NMR) spectra in fluid and solid phases.
