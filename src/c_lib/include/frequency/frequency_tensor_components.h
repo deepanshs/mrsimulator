@@ -224,11 +224,11 @@ static inline void FCF_NS_EQ_cross_tensor_components(
   double transition_fn = STF_d(mf, mi);
 
   // Spatial orientation function.
-  // R_2q and R_2s includes a factor w_q and sqrt(2/3)zeta_q, respectively.
+  // R_2q and R_2s includes a factor (w_q/3) and sqrt(2/3)*zeta_q, respectively.
   sSOT_NS_EQ_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
 
   // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
-  // factor from R_2s
+  // sqrt(2/3) factor from R_2s
   // frequency component function from the zeroth-rank irreducible tensor.
   *Lambda_0 *= -0.5070925528371099 * transition_fn;
 
