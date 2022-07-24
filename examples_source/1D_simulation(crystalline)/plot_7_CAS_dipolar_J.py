@@ -23,8 +23,6 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
-# **Spin Systems**
-#
 # Here, we create three 13C-1H spin systems with different relative orientations
 # between the shielding and dipolar tensors. The Euler angle orientations
 # :math:`\alpha=\gamma=0` and :math:`\beta` values are listed below.
@@ -58,8 +56,6 @@ spin_systems = [
     for beta in beta_orientation
 ]
 # %%
-# **Methods**
-#
 # Next, we create methods to simulate the sideband manifolds for the above spin
 # systems at four spinning rates: 3 kHz, 5 kHz, 8 kHz, 12 kHz.
 
@@ -77,8 +73,6 @@ methods = [
 ]
 
 # %%
-# **Simulator**
-#
 # Create the Simulator object and add the method and the spin system objects.
 sim = Simulator(spin_systems=spin_systems, methods=methods)
 sim.config.integration_volume = "hemisphere"  # set averaging to hemisphere
@@ -91,8 +85,6 @@ sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # %%
-# **Post-Simulation Processing**
-#
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
@@ -107,8 +99,6 @@ processed_dataset = [
 ]
 
 # %%
-# **Plot**
-#
 # Let's first plot a single simulation, the one corresponding to a relative orientation
 # of :math:`\beta=30^\circ` between the shielding and dipolar tensors and a spinning
 # speed of 3 kHz.

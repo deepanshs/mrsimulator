@@ -17,8 +17,6 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
-# **Spin Systems**
-#
 # Create a 13C-1H coupled spin system.
 spin_system = SpinSystem(
     sites=[
@@ -28,8 +26,6 @@ spin_system = SpinSystem(
     couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-2e4))],
 )
 # %%
-# **Methods**
-#
 # Create a BlochDecaySpectrum method.
 method = BlochDecaySpectrum(
     channels=["13C"],
@@ -40,15 +36,11 @@ method = BlochDecaySpectrum(
 )
 
 # %%
-# **Simulator**
-#
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # %%
-# **Post-Simulation Processing**
-#
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
@@ -60,8 +52,6 @@ processor = sp.SignalProcessor(
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # %%
-# **Plot**
-#
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(processed_dataset.real, color="black", linewidth=1)

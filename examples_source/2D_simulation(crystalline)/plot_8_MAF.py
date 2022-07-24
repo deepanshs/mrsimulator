@@ -43,15 +43,15 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic method, `Method`, to simulate a 2D Magic-Angle Flipping (MAF)
-# spectrum by customizing the method parameters, as shown below.
+# Use the generic `Method` class to simulate a 2D magic-angle Flipping (MAF) spectrum
+# by customizing the method parameters, as shown below.
 #
-# Here we include the special `MixingEvent` with query ``NoMixing`` to tell the MAF
-# method to not connect any of the transitions between the first and second
-# `SpectralEvent`. A query of ``NoMixing`` is equivalent to a rotational query where
-# each channel has a phase and angle of 0. Since all spin systems in this example have
-# a single site, defining no mixing between the two spectral events is superfluous, but
-# we include it so this method may be used with multi-site spin systems.
+# Here, we include a `MixingEvent` with a ``NoMixing`` query. A no mixing query
+# instructs the MAF method to not mix the transitions from the first and second
+# SpectralEvent. A no mixing query is equivalent to a rotation query where each
+# channel has a zero phase and angle. Since all spin systems in this example have a
+# single site, defining no mixing between the two spectral events is superfluous.
+# We include it such that the method is applicable with multi-site spin systems.
 maf = Method(
     name="Magic Angle Flipping",
     channels=["29Si"],

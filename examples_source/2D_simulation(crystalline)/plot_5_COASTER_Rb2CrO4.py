@@ -38,7 +38,7 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# Use the generic method, `Method`, to simulate a 2D COASTER spectrum by customizing
+# Use the generic `Method` class to simulate a 2D COASTER spectrum by customizing
 # the method parameters, as shown below.
 #
 # By default, all transitions selected from a `SpectralEvent` connect to all selected

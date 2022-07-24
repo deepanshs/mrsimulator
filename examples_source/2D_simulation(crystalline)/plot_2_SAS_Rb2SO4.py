@@ -36,7 +36,7 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic method, `Method`, to simulate a 2D SAS spectrum by customizing the
+# Use the generic `Method` class to simulate a 2D SAS spectrum by customizing the
 # method parameters, as shown below.
 sas = Method(
     name="Switched Angle Spinning",
