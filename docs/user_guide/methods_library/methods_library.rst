@@ -55,55 +55,86 @@ dimensions in this list, whereas a 1D method will only have one. See
 .. _ssb2d:
 .. include:: ssb2d.rst
 
-.. cssclass:: table-bordered table-striped centered
 
+Attribute Summaries
+-------------------
+
+.. cssclass:: table-bordered table-striped centered
 .. _table_generic_method:
 .. list-table:: Attribute description for generic library methods.
-  :widths: 25 75
+  :widths: 20 15 65
   :header-rows: 1
 
-  * - Keywords
+  * - Attribute Name
+    - Type
     - Description
 
   * - channels
-    - A list of isotope symbols over which the given method applies.
+    - ``list``
+    - A *required* list of isotopes given as strings over which the given method applies.
+      For example, ``["1H"]``.
 
   * - magnetic_flux_density
-    - The macroscopic magnetic flux density, in T, of the applied external magnetic field.
-
-  * - rotor_angle
-    - The angle between the sample rotation axis and the applied external magnetic field in radians.
+    - ``float``
+    - An *optional* float describing the macroscopic magnetic flux density of the applied
+      external magnetic field in tesla. For example, ``18.8`` tesla. The default value is
+      ``9.4`` tesla.
 
   * - rotor_frequency
-    - The sample rotation frequency in Hz.
+    - ``float``
+    - An *optional* float describing the sample rotation frequency in Hz. For example, ``2000`` Hz.
+      The default value is ``0`` Hz.
+
+  * - rotor_angle
+    - ``float``
+    - An *optional* float describing the angle between the sample rotation axis and the external
+      magnetic field in radians. The default value is the magic angle,
+      ``54.735 * 3.14159 / 180 = 0.955305`` radians.
 
   * - spectral_dimensions
-    - A list of spectral dimensions. The coordinates along each spectral dimension is
-      described with the keywords, ``count`` (:math:`N`), ``spectral_width``
-      (:math:`\nu_\text{sw}`), and ``reference_offset`` (:math:`\nu_0`). The
-      coordinates are given as,
+    - ``list``
+    - A list of :ref:`spectral_dim_api` objects describing the spectral dimensions for the method.
 
-      .. math::
-         \left([0, 1, 2, ... N-1] - \frac{T}{2}\right) \frac{\nu_\text{sw}}{N} + \nu_0
+  * - simulation
+    - CSDM object
+    - A CSDM object representing the spectrum simulated by the method. By default, the value is
+      ``None``. A value is assigned to this attribute when you run the
+      simulation using the :py:meth:`~mrsimulator.Simulator.run` method.
 
-      where :math:`T=N` when :math:`N` is even else :math:`T=N-1`.
+  * - experiment
+    - CSDM object
+    - An *optional* CSDM object holding an experimental measurement of the method. The default
+      value is ``None``
 
 
 .. cssclass:: table-bordered table-striped centered
-
 .. _table_generic_spectral_dimension:
 .. list-table:: Spectral dimension attributes for use with library methods.
-  :widths: 25 75
+  :widths: 20 15 65
   :header-rows: 1
 
-  * - Keywords
+  * - Attribute Name
+    - Type
     - Description
 
   * - count
-    - An integer representing the number of points in the spectral dimension
+    - ``int``
+    - An *optional* integer representing the number of points, :math:`N`, along the spectroscopic
+      dimension. For example, ``4096``. The default value is ``1024``.
 
   * - spectral_width
-    - The spectral width of the spectral dimension in Hz.
+    - ``float``
+    - An *optional* float representing the width, :math:`\Delta x`, of the spectroscopic dimension
+      in Hz. For example, ``10e3`` for 10 kHz. The default value is ``25000`` Hz.
 
   * - reference_offset
-    - The reference offset of the spectral dimension in Hz.
+    - ``float``
+    - An *optional* float representing the reference offset, :math:`x_0`, of the spectroscopic
+      dimension in Hz. For example, ``-8000`` Hz. The default value is ``0``.
+
+  * - origin_offset
+    - ``float``
+    - An *optional* float representing the origin offset, or Larmor frequency, along the
+      spectroscopic dimension in units of Hz. The default value is ``None`` and the origin offset
+      is set to the Larmor frequency of isotope from the :attr:`~mrsimulator.Method.channels`
+      attribute of the method containing the spectral dimension.

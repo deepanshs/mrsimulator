@@ -9,6 +9,11 @@ def template(tq):
 
 
 def test_convert_transition_queries():
+    tq = [{"ch1": {"P": -1, "D": -2}}, {"P": -1, "D": -2}]
+    mth = template(tq)
+    result = convert_transition_queries(mth)
+    assert result is None
+
     tq = {"P": -1, "D": -2}
     mth = template(tq)
     res = deepcopy(mth)

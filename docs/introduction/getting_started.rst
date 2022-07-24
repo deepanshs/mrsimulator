@@ -9,12 +9,11 @@ The three main classes we will use in this example are:
 :ref:`spin_system_documentation`, :ref:`method_documentation`, and
 :ref:`simulator_documentation`.
 
-:ref:`spin_system_documentation` defines the
+SpinSystem defines the
 spin system and its tensor parameters used to generate a particular
-subspectrum, and :ref:`method_documentation` defines the behavior and parameters
+subspectrum, and Method defines the behavior and parameters
 for the particular NMR measurement to be simulated. A list
-of :ref:`method_documentation` and
-:ref:`spin_system_documentation` objects are used to initialize a :ref:`simulator_documentation`
+of Method and SpinSystem objects are used to initialize a Simulator
 object, which is then used to generate the corresponding NMR spectra---returned
 as a CSDM object in each Method object. For more information on the CSDM
 (Core Scientific Dataset Model), see the `csdmpy documentation
@@ -66,7 +65,7 @@ and :math:`^{13}\text{C}` sites.
 Note that isotopes in **mrsimulator** are specified with a string that starts
 with the isotope's mass number followed by its element symbol.
 
-In the code above, you created two :ref:`site_api` objects in the variables
+In the code above, you created two Site objects in the variables
 ``H_site`` and ``C_site``. The ``H_site`` variable represents a proton site with a
 (default) chemical shift of  zero.  The ``C_site`` variable represents a
 carbon-13 site with a chemical shift of 100 ppm and a shielding
@@ -121,7 +120,7 @@ If you had wanted to create an uncoupled spin system, simply omit the
 Method
 ------
 
-A :ref:`method_documentation` object in **mrsimulator** describes an NMR method.
+A Method object in **mrsimulator** describes an NMR method.
 For this introduction, you can use the pre-defined
 method :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum`. This method
 simulations the spectrum obtained from the Fourier transform of a Bloch decay
@@ -153,10 +152,9 @@ familiar to an NMR spectroscopist.
     )
 
 The ``channel`` attribute holds a list of isotope strings.  In the
-:py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` method, however, only the
+BlochDecaySpectrum method, however, only the
 first isotope in the list, i.e., :math:`^{13}\text{C}`, is used to simulate
-the spectrum.  The
-:py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` method has one spectral
+the spectrum.  The BlochDecaySpectrum method has one spectral
 dimension.  In this example, that spectral dimension has 2048 points, spanning
 80 kHz with a reference offset of 6 kHz.
 
@@ -166,13 +164,13 @@ that will simulate the spectrum.
 Simulator
 ---------
 
-At the heart of **mrsimulator** is the :ref:`simulator_documentation` object, which
+At the heart of **mrsimulator** is the Simulator object, which
 calculates the NMR spectrum. **Mrsimulator** performs all calculations in the frequency domain,
 and all resonance frequencies are calculated in the weakly-coupled (Zeeman) basis for the spin system.
 
-In the code below, you create a :ref:`simulator_api` object,
+In the code below, you create a Simulator object,
 initialized with your previously defined spin system and method, and then call
-:py:meth:`~mrsimulator.Simulator.run` on your :ref:`simulator_api` object.
+:py:meth:`~mrsimulator.Simulator.run` on your Simulator object.
 
 .. plot::
     :context: close-figs
@@ -196,7 +194,7 @@ SignalProcessor
 
 A :ref:`signal_processor_api` object holds a list of operations applied
 sequentially to a dataset. For a comprehensive list of operations and further
-details on using the :ref:`signal_processor_api` object, consult
+details on using the SignalProcessor object, consult
 the :ref:`signal_processor_documentation` documentation.
 
 Use the code below to create a SignalProcessor object that performs a
@@ -250,6 +248,7 @@ plot and a pdf file of the simulated spectrum:
 
     import matplotlib.pyplot as plt
 
+    plt.rcParams['pdf.fonttype'] = 42   # For using plots in Illustrator
     plt.figure(figsize=(5, 3))  # set the figure size
     ax = plt.subplot(projection="csdm")
     ax.plot(processed_simulation.real)
@@ -277,7 +276,8 @@ multi-dimensional datasets with a multi-component dependent variable discretely
 sampled at unique points in a multi-dimensional independent variable space. It
 can also hold correlated datasets assuming the different physical quantities
 (dependent variables) are sampled on the same orthogonal grid of independent
-variables. The CSDM can also serve as a re-usable building block in developing
+variables. It can even handle datasets with non-uniform sampling on a grid.
+The CSDM can also serve as a re-usable building block in developing
 more sophisticated portable scientific dataset file standards.
 
 **Mrsimulator** also uses CSDM internally as its object model for simulated and
