@@ -389,7 +389,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
                                               complex128 *R4, bool reset,
                                               MRS_dimension *dim, double fraction) {
-  unsigned int i, gamma_idx, ptr;
+  unsigned int i, g_idx, ptr;
   double temp;
   double *f_complex;
   /**
@@ -419,13 +419,13 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
    */
 
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
-  for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
-    ptr = scheme->total_orientations * gamma_idx;
+  for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
+    ptr = scheme->total_orientations * g_idx;
     temp = dim->inverse_increment * 2 * fraction;
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
         f_complex =
-            (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + gamma_idx]);
+            (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + g_idx]);
         plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];
         cblas_daxpy(scheme->total_orientations, plan->buffer,
                     (double *)&(scheme->w2[i]), 6, &dim->local_frequency[ptr], 1);
@@ -443,13 +443,12 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
      * Similarly, calculate the normalized local anisotropic frequency contributions
      * from the fourth-rank tensor. `wigner_d2m0_vector[4] = d^4(0,0)(rotor_angle)`.
      */
-    for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
-      ptr = scheme->total_orientations * gamma_idx;
+    for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
+      ptr = scheme->total_orientations * g_idx;
       temp = dim->inverse_increment * 2 * fraction;
       if (plan->is_static) {
         for (i = 0; i < 4; i++) {
-          f_complex =
-              (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + gamma_idx]);
+          f_complex = (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + g_idx]);
           plan->buffer = temp * plan->wigner_d4m0_vector[i] * f_complex[0];
           cblas_daxpy(scheme->total_orientations, plan->buffer,
                       (double *)&scheme->w4[i], 10, &dim->local_frequency[ptr], 1);
@@ -481,8 +480,8 @@ static inline void MRS_rotate_single_site_interaction_components(
   unsigned int i, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz;
   float *mf = &transition[n_sites], *mi = transition;
-  double *R2_shield = malloc_double(10);
-  double *R2_quad = malloc_double(10);
+  double R2_shield[10];
+  double R2_quad[10];
 
   /* Frequency computation for sites */
   for (i = 0; i < n_sites; i++) {
@@ -518,6 +517,7 @@ static inline void MRS_rotate_single_site_interaction_components(
 
     // in-place update the R2 components.
     if (freq_contrib[2]) vm_double_add_inplace(10, (double *)R2_quad, (double *)R2);
+
     /*  Upto the second order */
     if (allow_4th_rank) {
       FCF_2nd_order_electric_quadrupole_tensor_components(
@@ -529,9 +529,11 @@ static inline void MRS_rotate_single_site_interaction_components(
       if (freq_contrib[4]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
       if (freq_contrib[5]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
     }
-    /* Shielding Quad cross term components ==========================================
-     */
-    sSOT_cross_NS_EQ_tensor_components(R0_temp, R2_temp, R4_temp, R2_shield, R2_quad);
+    /* ============================================================================== */
+
+    /* Shielding Quad cross term components ========================================= */
+    FCF_NS_EQ_cross_tensor_components(R0_temp, R2_temp, R4_temp, R2_shield, R2_quad,
+                                      *mf, *mi);
     if (freq_contrib[9]) *R0 += *R0_temp;
     if (freq_contrib[10]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
     if (freq_contrib[11]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
@@ -539,8 +541,6 @@ static inline void MRS_rotate_single_site_interaction_components(
     mi++;
     mf++;
   }
-  free(R2_shield);
-  free(R2_quad);
 }
 
 static inline void MRS_rotate_coupled_site_interaction_components(

@@ -181,6 +181,65 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
 }
 
 // =====================================================================================
+//                Shielding-Quad cross frequency tensor components
+// =====================================================================================
+
+/**
+ * The frequency tensor (FCF) components from the nuclear shielding and electric
+ * quadrupolar cross term, in the crystallite frame, @f$\mathcal{F}@f$, are
+ * @f[
+ *    {\Lambda'}_{0,0}^{(\sigma q)} &= \mathcal{R'}_{0,0}^{(\sigma q)}(\Theta)
+ *                                      ~~ \mathbb{d}(i, j), \\
+ *    {\Lambda'}_{2,n}^{(\sigma q)} &= \mathcal{R'}_{2,n}^{(\sigma q)}(\Theta)
+ *                                      ~~ \mathbb{d}(i, j),~\text{and} \\
+ *    {\Lambda'}_{4,n}^{(\sigma q)} &= \mathcal{R'}_{4,n}^{(\sigma q)}(\Theta)
+ *                                      ~~ \mathbb{d}(i, j),
+ * @f]
+ * where @f$\mathcal{R'}_{0,0}^{(\sigma q)}(\Theta)@f$,
+ * @f$\mathcal{R'}_{2,n}^{(\sigma q)}(\Theta)@f$, and,
+ * @f$\mathcal{R'}_{4,n}^{(\sigma q)}(\Theta)@f$
+ * are the spatial orientation functions in frame @f$\mathcal{F}@f$, and
+ * @f$\mathbb{d}(i, j)@f$ is spin transition functions for
+ * @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
+ *
+ * @param Lambda_0 A pointer to an array of length 1, where the frequency
+ *      component from @f${\Lambda'}_{0,0}^{(\sigma q)}@f$ is stored.
+ * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
+ *      components from @f$\Lambda_{2,n}^{(\sigma q)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(\sigma  q)}\right]_{n=-2}^2@f$.
+ * @param Lambda_4 A pointer to a complex array of length 9, where the frequency
+ *      components from @f${\Lambda'}_{4,n}^{(\sigma q)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
+ * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
+ *      tensor components.
+ * @param R_2q A pointer to a complex array of length 5 holding the nuclear shileding
+ *      tensor components.
+ * @param mf The spin quantum number of the final energy state.
+ * @param mi The spin quantum number of the initial energy state.
+ */
+static inline void FCF_NS_EQ_cross_tensor_components(
+    double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
+    const double *R_2q, const double *R_2s, const float mf, const float mi) {
+  // Spin transition function
+  double transition_fn = STF_d(mf, mi);
+
+  // Spatial orientation function.
+  // R_2q and R_2s includes a factor w_q and sqrt(2/3)zeta_q, respectively.
+  sSOT_NS_EQ_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
+
+  // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
+  // factor from R_2s
+  // frequency component function from the zeroth-rank irreducible tensor.
+  *Lambda_0 *= -0.5070925528371099 * transition_fn;
+
+  // frequency component function from the second-rank irreducible tensor.
+  cblas_dscal(10, 0.3030457633656632 * transition_fn, (double *)Lambda_2, 1);
+
+  // frequency component function from the fourth-rank irreducible tensor.
+  cblas_dscal(18, -0.5421047417431507 * transition_fn, (double *)Lambda_4, 1);
+}
+
+// =====================================================================================
 //      First-order J-coupling frequency tensor components (weakly coupling limit)
 // =====================================================================================
 
