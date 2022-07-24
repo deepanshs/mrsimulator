@@ -52,6 +52,15 @@ class FrequencyEnum(str, Enum):
 
     D1_2:
         Selects first-order and second-rank weak dipole frequency contributions.
+
+    Quad_Shielding_cross_0:
+        Selects zeroth-rank quad-shielding cross interaction.
+
+    Quad_Shielding_cross_2:
+        Selects second-rank quad-shielding cross interaction.
+
+    Quad_Shielding_cross_4:
+        Selects fourth-rank quad-shielding cross interaction.
     """
 
     # Shielding1: str = "Shielding1"
@@ -73,7 +82,7 @@ class FrequencyEnum(str, Enum):
     # D1: str = "D1"
     D1_2: str = freq_list_all[8]
 
-    # Quad_Shielding: str = "Quad_Shielding_cross"
+    # Quad_Shielding: str = "Quad_Shielding"
     Quad_Shielding_cross_0: str = freq_list_all[9]
     Quad_Shielding_cross_2: str = freq_list_all[10]
     Quad_Shielding_cross_4: str = freq_list_all[11]
