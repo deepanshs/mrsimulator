@@ -478,7 +478,7 @@ static inline void tensor_prod_element(const int rank, const int start_a,
 
 static inline void rank_2_tensor_products(const double *R_2a, const double *R_2b,
                                           double *R_0, double *R_2, double *R_4) {
-  double *R_2a_reverse = malloc_double(10);
+  double R_2a_reverse[10];
 
   // reverse R_2a
   for (int i = 0; i < 10; i += 2) {
@@ -533,34 +533,25 @@ static inline void rank_2_tensor_products(const double *R_2a, const double *R_2b
   R_4[11] = R_4[7];                                                // R4 1 imag
 
   tensor_prod_element(2, 0, CG_40, R_2a_reverse, R_2b, &R_4[8]);  // R4 0
-
-  free(R_2a_reverse);
 }
 
 // =====================================================================================
 //       Nuclear shielding electric quadrupolar cross spatial orientation tensor
 // =====================================================================================
 
-static inline void sSOT_cross_NS_EQ_tensor_components(double *restrict R_0,
+static inline void sSOT_NS_EQ_cross_tensor_components(double *restrict R_0,
                                                       void *restrict R_2,
                                                       void *restrict R_4,
                                                       const double *R_2q,
                                                       const double *R_2s) {
   // create a temp storage for R0, R0_res, because rank_2_tensor_products requires a
   // complex R0.
-  double *R0_res = malloc_double(2);
+  double R0_res[2];
   vm_double_zeros(10, (double *)R_2);
-  double *R_2_ = (double *)R_2;
   vm_double_zeros(18, (double *)R_4);
-  double *R_4_ = (double *)R_4;
 
-  rank_2_tensor_products(R_2q, R_2s, R0_res, R_2_, R_4_);
-
-  // extract the real part and store it in R_0,
-  R_0[0] = -0.5070925528 * R0_res[0];
-  cblas_dscal(10, 0.3030457634, R_2_, 1);
-  cblas_dscal(18, -0.4426266681, R_4_, 1);
-  free(R0_res);
+  rank_2_tensor_products(R_2q, R_2s, R0_res, (double *)R_2, (double *)R_4);
+  R_0[0] = R0_res[0];  // extract the real part and store it in R_0,
 }
 
 #endif /* __sptial_tensor_component__ */
