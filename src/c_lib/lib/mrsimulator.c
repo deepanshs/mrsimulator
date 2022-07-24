@@ -524,6 +524,7 @@ static inline void MRS_rotate_single_site_interaction_components(
           R0_temp, R2_temp, R4_temp, sites->spin[i], larmor_freq_in_MHz * 1e6,
           sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
           &sites->quadrupolar_orientation[3 * i], *mf, *mi);
+
       // in-place update the R0, R2, and R4 components.
       if (freq_contrib[3]) *R0 += *R0_temp;
       if (freq_contrib[4]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
