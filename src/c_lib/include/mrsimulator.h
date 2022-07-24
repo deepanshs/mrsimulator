@@ -62,6 +62,7 @@ struct MRS_plan {
   bool copy_for_rotor_angle;   // Set True if plan is copied from rotor angle update.
   bool copy_for_rotor_freq;    // Set True if plan is copied from rotor freq update.
   bool allow_4th_rank;         // If true, creates buffer/tables for 4th-rank tensors.
+  bool is_static;              // It true, compute static frequencies
   unsigned int size;           // # of angular orientations * number of sizebands.
   unsigned int n_octants;      // # of octants used in the orientational averaging.
   double *norm_amplitudes;     // array of normalized amplitudes per orientation.

@@ -13,7 +13,7 @@
  * List of function -
  *
  * vm_double_ramp -> creates a linear ramp, y = scale*x + offset.
- * vm_double_arrange -> Create a vector x = [0 .. count-1].
+ * vm_double_arange -> Create a vector x = [0 .. count-1].
  * vm_double_zeros -> Create a vector of zeros.
  * vm_double_ones -> Create a vector of ones.
  *
@@ -57,7 +57,7 @@ static inline void vm_double_add_offset_inplace(int count, const double offset,
  * Create a vector x = [0 .. count-1]
  *      res = 0 .. count-1
  */
-static inline void vm_double_arrange(int count, double *restrict res) {
+static inline void vm_double_arange(int count, double *restrict res) {
   //   x = __builtin_assume_aligned(x, 32);
   //   res = __builtin_assume_aligned(res, 32);
   double i = 0.0;

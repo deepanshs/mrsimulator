@@ -6,8 +6,8 @@ Writing Custom methods (HahnEcho)
 Writing custom methods using the Event objects.
 """
 # %%
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
@@ -46,6 +46,8 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 hahn_echo = Method(
     channels=["1H"],
     magnetic_flux_density=9.4,  # in T
+    rotor_angle=0,  # in rads
+    rotor_frequency=0,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=512,
@@ -97,11 +99,8 @@ pprint(hahn_echo.get_transition_pathways(spin_system_2))
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the
 # simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system_1, spin_system_2]  # add the spin systems
-sim.methods = [hahn_echo]  # add the method
+sim = Simulator(spin_systems=[spin_system_1, spin_system_2], methods=[hahn_echo])
 sim.config.decompose_spectrum = "spin_system"
-
 sim.run()
 
 # %%

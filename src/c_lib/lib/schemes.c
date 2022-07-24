@@ -117,6 +117,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
 void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->amplitudes);
   free(scheme->exp_Im_alpha);
+  free(scheme->exp_Im_gamma);
   free(scheme->w2);
   free(scheme->w4);
   free(scheme->wigner_2j_matrices);
@@ -128,9 +129,12 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
 /* Create a new orientation averaging scheme. */
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
                                                   bool allow_4th_rank,
+                                                  unsigned int n_gamma,
                                                   unsigned int integration_volume) {
+  int i;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
+  scheme->n_gamma = n_gamma;
   scheme->integration_density = integration_density;
   scheme->integration_volume = integration_volume;
   scheme->allow_4th_rank = allow_4th_rank;
@@ -142,6 +146,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   /* ................................................................................ */
   // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
   scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
+  scheme->exp_Im_gamma = malloc_complex128(4 * scheme->n_gamma);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
 
@@ -151,8 +156,26 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
   averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
+  // exp(-im gamma) for m=[-4,-1], and gamma=[0..8]*2pi/9
+  double *gamma = malloc_double(scheme->n_gamma);
+  double *temp = malloc_double(scheme->n_gamma);
+  double factor = CONST_2PI / (double)scheme->n_gamma;
+  vm_double_arange(scheme->n_gamma, gamma);
+  for (i = 4; i > 0; i--) {
+    cblas_dcopy(scheme->n_gamma, gamma, 1, temp, 1);
+    cblas_dscal(scheme->n_gamma, -(double)i * factor, temp, 1);
+    // for (unsigned int j=0; j<scheme->n_gamma; j++){
+    //   printf("%f ", temp[j]);
+    // }
+    // printf("\n");
+    vm_cosine_I_sine(scheme->n_gamma, temp,
+                     &scheme->exp_Im_gamma[(4 - i) * scheme->n_gamma]);
+  }
+
   // reallocate exp_I_beta memory as scrach.
   scheme->scrach = (double *)exp_I_beta;
+  free(gamma);
+  free(temp);
   return scheme;
 }
 

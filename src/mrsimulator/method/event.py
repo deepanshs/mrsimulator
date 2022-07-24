@@ -46,8 +46,8 @@ class BaseEvent(Parseable):
         A list of FrequencyEnum enumeration. The default is all frequency enumerations.
 
     transition_queries:
-        A TransitionQuery or an equivalent dict object listing the queries used in
-        selecting the active transitions during the event. Only the active transitions
+        A list of TransitionQuery or equivalent dict objects. The queries are used in
+        selecting the transitions during the event. Only selected transitions
         from this query will contribute to the net frequency.
     """
 

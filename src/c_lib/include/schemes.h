@@ -42,13 +42,15 @@ typedef struct MRS_averaging_scheme {
   unsigned int integration_density;  //  # triangles along the edge of the octahedron.
   unsigned int integration_volume;   //  0-octant, 1-hemisphere, 2-sphere.
   unsigned int octant_orientations;  //  # unique orientations on the face of an octant.
+  unsigned int n_gamma;              //  number of gamma angles
   double *amplitudes;                //  array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha;          //  array of cos_alpha per orientation.
+  complex128 *exp_Im_alpha;          //  array of e^in\alpha n=[0,4] per orientation.
+  complex128 *exp_Im_gamma;          //  array of e^im\gamma m=[0,4] per orientation.
   complex128 *w2;                    //  buffer for 2nd rank frequency calculation.
   complex128 *w4;                    //  buffer for 4nd rank frequency calculation.
   double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
   double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
-  double *scrach;                    // scrach memory for calculations.
+  double *scrach;                    //  sscrach memory for calculations.
   bool allow_4th_rank;  //  If true, compute wigner matrices for wigner-d 4j.
 } MRS_averaging_scheme;
 
@@ -72,6 +74,7 @@ typedef struct MRS_averaging_scheme {
  */
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
                                                   bool allow_4th_rank,
+                                                  unsigned int n_gamma,
                                                   unsigned int integration_volume);
 
 /**

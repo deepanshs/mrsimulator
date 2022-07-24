@@ -12,7 +12,7 @@ clib.generate_tables()
 @cython.profile(False)
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def one_d_spectrum(method,
+def core_simulator(method,
        list spin_systems,
        int verbose=0,  # for debug purpose only.
        unsigned int number_of_sidebands=90,
@@ -20,27 +20,10 @@ def one_d_spectrum(method,
        unsigned int decompose_spectrum=0,
        unsigned int integration_volume=1,
        unsigned int isotropic_interpolation=0,
-       bool_t interpolation=True):
-    """
-    :ivar number_of_sidebands:
-        The value is an integer which corresponds to the number of sidebands
-        simulated in the spectrum. The default value is 90. Note, when the
-        sample spinning frequency is low, computation of more sidebands may be
-        required for an acceptable result. The user is advised to ensure that
-        enough sidebands are requested for computation.
-    :ivar integration_density:
-        The value is an integer which represents the frequency of class I
-        geodesic polyhedra. These polyhedra are used in calculating the
-        spherical average. Presently we only use octahedral as the frequency1
-        polyhedra. As the frequency of the geodesic polyhedron increases, the
-        polyhedra approach a sphere geometry. A higher frequency will result in a
-        better powder averaging. The default value is 72.
-        Read more on the `Geodesic polyhedron <https://en.wikipedia.org/wiki/Geodesic_polyhedron>`_.
-    :ivar decompose_spectrum:
-        An unsigned integer. When value is 0, the spectrum is a sum of spectrum from all
-        spin systems. If value is 1, spectrum from individual spin systems is stored
-        separately.
-    """
+       unsigned int number_of_gamma_angles=1,
+       bool_t interpolation=True,
+       bool_t auto_switch=True):
+    """core simulator init"""
 
 # initialization and config
     # observed spin is always channel at index 0_______________________________________
@@ -67,15 +50,11 @@ def one_d_spectrum(method,
     cdef clib.MRS_averaging_scheme *averaging_scheme
     averaging_scheme = clib.MRS_create_averaging_scheme(
         integration_density=integration_density, allow_4th_rank=allow_4th_rank,
-        integration_volume=integration_volume
+        n_gamma=number_of_gamma_angles, integration_volume=integration_volume
     )
 
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
-    # if n_sequence > 1:
-    #     number_of_sidebands = 1
-
-    max_n_sidebands = number_of_sidebands
 
     n_points = 1
     cdef int n_ev
@@ -86,6 +65,8 @@ def one_d_spectrum(method,
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
+    cdef ndarray[unsigned int] n_dim_sidebands
+
     freq_contrib = np.asarray([])
 
     fr = []
@@ -96,31 +77,23 @@ def one_d_spectrum(method,
     count = []
     increment = []
     coordinates_offset = []
+    dim_sidebands = []
 
-    prev_n_sidebands = 0
     for i, dim in enumerate(method.spectral_dimensions):
         n_ev = 0
+        track = []
         for event in dim.events:
             if event.__class__.__name__ != "MixingEvent":
                 freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
+
                 if event.rotor_frequency < 1.0e-3:
-                    rotor_frequency_in_Hz = 1.0e9
-                    rotor_angle_in_rad = 0.0
-                    number_of_sidebands = 1
-                    if prev_n_sidebands == 0: prev_n_sidebands = 1
+                    rotor_frequency_in_Hz = 1.0e-6
+                    rotor_angle_in_rad = event.rotor_angle
                 else:
                     rotor_frequency_in_Hz = event.rotor_frequency
                     rotor_angle_in_rad = event.rotor_angle
-                    if prev_n_sidebands == 0: prev_n_sidebands = number_of_sidebands
 
-                if prev_n_sidebands != number_of_sidebands:
-                    raise ValueError(
-                        (
-                            'The library does not support spectral dimensions containing '
-                            'both zero and non-zero rotor frequencies. Consider using a '
-                            'smaller value instead of zero.'
-                        )
-                    )
+                track.append(event.rotor_frequency < 1e12 and event.rotor_frequency != 0)
 
                 fr.append(event.fraction) # fraction
                 Bo.append(event.magnetic_flux_density)  # in T
@@ -136,6 +109,8 @@ def one_d_spectrum(method,
         increment.append(dim.spectral_width / dim.count)
         event_i.append(n_ev)
 
+        dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
+
         if dim.origin_offset is None:
             dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
 
@@ -147,18 +122,31 @@ def one_d_spectrum(method,
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
     n_event = np.asarray(event_i, dtype=np.int32)
+    n_dim_sidebands = np.asarray(dim_sidebands, dtype=np.uint32)
+
+    # # special 1D case with 1 event.
+    # if np.all(srfiH == 1e-3) and np.all(rair - rair[0] == 0):
+    #     # rair[:] = 0.0
+    #     n_dim_sidebands[0] = 1
+    # if np.all(srfiH == 1e12):
+    #     n_dim_sidebands[0] = 1
+
+    if srfiH.size == 1 and srfiH[0] == 1e-6 and auto_switch:
+        rair[0] = 0.0
+        n_dim_sidebands[0] = 1
 
     # create spectral_dimensions
     dimensions = clib.MRS_create_dimensions(averaging_scheme, &cnt[0],
         &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
-        &srfiH[0], &rair[0], &n_event[0], n_dimension, number_of_sidebands)
+        &srfiH[0], &rair[0], &n_event[0], n_dimension, &n_dim_sidebands[0])
 
 # normalization factor for the spectrum
     norm = np.abs(np.prod(incre))
 
 # create fftw scheme __________________________________________________________
+    cdef unsigned int max_sidebands = n_dim_sidebands.max()
     cdef clib.MRS_fftw_scheme *fftw_scheme
-    fftw_scheme = clib.create_fftw_scheme(averaging_scheme.total_orientations, number_of_sidebands)
+    fftw_scheme = clib.create_fftw_scheme(averaging_scheme.total_orientations, max_sidebands)
 # _____________________________________________________________________________
 
 # frequency contrib

@@ -89,13 +89,13 @@ DAS = Method(
             events=[
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=37.38 * 3.14159 / 180,  # in rads
+                    rotor_angle=37.38 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=79.19 * 3.14159 / 180,  # in rads
+                    rotor_angle=79.19 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
@@ -106,7 +106,7 @@ DAS = Method(
             **spectral_dims[1],
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],

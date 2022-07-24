@@ -32,6 +32,7 @@ def hahn_method():
     return Method(
         channels=["1H"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,  # in rads
         spectral_dimensions=[
             SpectralDimension(
                 count=512,

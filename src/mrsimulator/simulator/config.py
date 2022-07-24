@@ -23,28 +23,31 @@ class ConfigSimulator(Parseable):
     ----------
 
     number_of_sidebands: int (optional).
-        The value is the requested number of sidebands that will be computed in the
-        simulation. The value cannot be zero or negative. The default value
-        is 64.
+        Number of sidebands to evaluate in the simulation. The default value is 64.
+        Value cannot be negative or zero.
+
+    number_of_gamma_angles: int (optional).
+        Number of gamma angles averages in the simulation. The default value is 1. Value
+        cannot be negative or zero.
 
     integration_volume: enum (optional).
-        The value is the volume over which the solid-state spectral frequency
-        integration is performed. The valid literals of this enumeration are
+        The spatial volume over which the spectral frequency integration/averaging
+        is performed. The valid literals of this enumeration are
 
         - ``octant`` (default), and
         - ``hemisphere``
 
     integration_density: int (optional).
-        The value represents the integration density or equivalently the number of
-        orientations over which the frequency integration is performed within a given
-        volume. If :math:`n` is the integration_density, then the total number of
+        The integration/sampling density or equivalently the number of (alpha, beta)
+        orientations over which the frequency spatial averaging is performed within the
+        given volume. If :math:`n` is the integration_density, then the total number of
         orientation is given as
 
         .. math::
-            n_\text{octants} \frac{(n+1)(n+2)}{2},
+            n_\text{octants} \frac{(n+1)(n+2)}{2} n_\gamma,
 
-        where :math:`n_\text{octants}` is the number of octants in the given volume.
-        The default value is 70.
+        where :math:`n_\text{octants}` is the number of octants in the given volume and
+        :math:`n_\gamma` is the number of gamma angles. The default value is 70.
 
     decompose_spectrum: enum (optional).
         The value specifies how a simulation result is decomposed into an array of
@@ -67,12 +70,14 @@ class ConfigSimulator(Parseable):
 
     >>> a = Simulator()
     >>> a.config.number_of_sidebands = 128
+    >>> a.config.number_of_gamma_angles = 10
     >>> a.config.integration_density = 96
     >>> a.config.integration_volume = 'hemisphere'
     >>> a.config.decompose_spectrum = 'spin_system'
     """
 
     number_of_sidebands: int = Field(default=64, gt=0)
+    number_of_gamma_angles: int = Field(default=1, gt=0)
     integration_volume: Literal["octant", "hemisphere"] = "octant"
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
@@ -80,6 +85,7 @@ class ConfigSimulator(Parseable):
 
     class Config:
         extra = "forbid"
+        allow_population_by_field_name = True
         validate_assignment = True
 
     def get_int_dict(self):
@@ -123,4 +129,4 @@ class ConfigSimulator(Parseable):
         vol = __integration_volume_octants__[
             __integration_volume_enum__[self.integration_volume]
         ]
-        return int(vol * (n + 1) * (n + 2) / 2)
+        return int(vol * (n + 1) * (n + 2) / 2) * self.number_of_gamma_angles

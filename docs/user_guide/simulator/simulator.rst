@@ -205,6 +205,63 @@ Conversely, 64 sidebands might be excessive, in which case reducing the number o
 may significantly improve simulation performance, especially in iterative algorithms, such as
 the least-squares minimization.
 
+
+Number of gamma angles
+''''''''''''''''''''''
+
+The :py:attr:`~mrsimulator.simulator.ConfigSimulator.number_of_gamma_angles` attribute determines
+the extent of gamma averaging in the simulation. The gamma angles range from :math:`0` to
+:math:`2\pi`. The default value is 1, corresponding to :math:`\gamma=0`.
+
+In most static powder simulations, you can get by with one gamma angle (default) by appropriately
+setting the `rotor_angle=0`. When evaluating a static powder simulation for a non-zero rotor_angle,
+use a large number of gamma angles for the simulation to converge.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Incorrect simulation from insufficient number of gamma angle averaging.
+
+    from mrsimulator.method import Method
+    from mrsimulator.method.event import SpectralEvent, MixingEvent
+
+    site = Site(isotope="29Si", shielding_symmetric={"zeta": 100, "eta": 0.2})
+    spin_system = SpinSystem(sites=[site])
+
+    solid_echo = Method(
+        channels=["29Si"],
+        rotor_frequency=0,  # in Hz
+        rotor_angle=54.734 * np.pi / 180,  # in rads
+        spectral_dimensions=[
+            SpectralDimension(
+                count=1024,
+                spectral_width=25000,
+                events=[
+                    SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query={"ch1": {"angle": np.pi / 2}}),
+                    SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
+                ]
+        )],
+    )
+
+    sim = Simulator(spin_systems=[spin_system], methods=[solid_echo])
+    sim.run()
+    plot(sim.methods[0].simulation)
+
+To resolve this, increase the number of gamma angles.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Accurate simulation from sufficiently large number of gamma angle averaging.
+
+    sim.config.number_of_gamma_angles=1000
+    sim.run()
+    plot(sim.methods[0].simulation)
+
+
 Decompose Spectrum
 ''''''''''''''''''
 
