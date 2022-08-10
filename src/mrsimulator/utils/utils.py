@@ -9,8 +9,8 @@ __email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
 
 
 def convert_transition_queries(py_dict):
-    """Convert transition_queries->P->... to transition_queries->ch1->P->... if no channel
-    is defined."""
+    """Convert transition_queries->P->... to transition_queries->ch1->P->...
+    if no channel is defined."""
     # check if old structure without channels
     missing_channels = (
         "ch1" not in tq

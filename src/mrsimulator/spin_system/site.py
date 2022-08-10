@@ -6,6 +6,7 @@ from typing import Union
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
 
+from .isotope import add_custom_isotope
 from .isotope import Isotope
 from .tensors import AntisymmetricTensor
 from .tensors import SymmetricTensor
@@ -201,8 +202,9 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        symbol = v["symbol"] if isinstance(v, dict) else v
-        return Isotope(symbol=symbol)
+        if isinstance(v, dict):  # Dict repr of custom isotope
+            return add_custom_isotope(**v)
+        return Isotope(symbol=v)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

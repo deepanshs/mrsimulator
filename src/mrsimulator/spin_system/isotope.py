@@ -59,7 +59,7 @@ class Isotope(BaseModel):
         if self.symbol in custom_isotope_data:
             return {
                 "symbol": self.symbol,
-                "spin": int(self.spin * 2),
+                "spin": self.spin,
                 "natural_abundance": self.natural_abundance,
                 "gyromagnetic_ratio": self.gyromagnetic_ratio,
                 "quadrupole_moment": self.quadrupole_moment,
@@ -125,7 +125,9 @@ def add_custom_isotope(
     atomic_number: int = -1,  # What to put for this value??
 ):
     """Add isotope data from a custom Isotope into the stored Isotope data and return an
-    instance of the new Isotope.
+    instance of the new Isotope. The isotope symbol cannot match an real isotope symbol;
+    if the provided symbol matches a known custom isotope symbol, then an instance of
+    that isotope is returned.
 
     Arguments:
         (str) symbol: Required symbol for custom isotope class. String cannot match
@@ -142,10 +144,13 @@ def add_custom_isotope(
         An Isotope class instance
     """
     # Check for symbol overlap in dictionaries
-    if symbol in ISOTOPE_DATA or symbol in custom_isotope_data:
+    if symbol in ISOTOPE_DATA:
         raise ValueError(
-            f"Custom isotope symbol cannot match a known isotope. Got {symbol}."
+            f"Custom isotope symbol cannot match a real isotope symbol. Got {symbol}."
         )
+
+    if symbol in custom_isotope_data:
+        return Isotope(symbol=symbol)
 
     # Check for spin integer or half integer
     if spin <= 0 or not float(2 * spin).is_integer():
@@ -156,7 +161,7 @@ def add_custom_isotope(
 
     if not 0 <= natural_abundance <= 100:
         raise ValueError(
-            f"Abundance must between 0 and 100, inclusive. Got {natural_abundance}."
+            f"Abundance must be between 0 and 100, inclusive. Got {natural_abundance}."
         )
 
     custom_isotope_data[symbol] = {

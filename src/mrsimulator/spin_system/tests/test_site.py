@@ -207,6 +207,25 @@ def test_site_object_methods():
     # assert the_site.to_freq_dict(9.4) == result, "Failed Site.json()"
 
 
+def test_site_parse_custom_isotope():
+    custom_isotope_dict = {
+        "symbol": "custom isotope",
+        "spin": 4,
+        "natural_abundance": 45.6,
+        "gyromagnetic_ratio": -8,
+        "quadrupole_moment": 0.123,
+        "atomic_number": 0,
+    }
+    site = Site(isotope=custom_isotope_dict)
+
+    assert site.isotope.symbol == "custom isotope"
+    assert site.isotope.atomic_number == 0
+    assert site.isotope.gyromagnetic_ratio == -8
+    assert site.isotope.natural_abundance == 45.6
+    assert site.isotope.quadrupole_moment == 0.123
+    assert site.isotope.spin == 4
+
+
 def test_site_quad_set_to_None():
     a = Site(isotope="27Al", quadrupolar=None)
     assert a.isotope.symbol == "27Al"
