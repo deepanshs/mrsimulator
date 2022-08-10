@@ -13,6 +13,7 @@ __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
+custom_isotope_data = {}
 
 
 class Isotope(BaseModel):
@@ -31,13 +32,13 @@ class Isotope(BaseModel):
     >>> carbon = Isotope(symbol='13C')
     >>> carbon.spin
     0.5
-    >>> carbon.natural_abundance # in %
+    >>> carbon.natural_abundance  # in percent
     1.11
-    >>> carbon.gyromagnetic_ratio # in MHz/T
+    >>> carbon.gyromagnetic_ratio  # in MHz/T
     10.708398861439887
     >>> carbon.atomic_number
     6
-    >>> carbon.quadrupole_moment # in eB
+    >>> carbon.quadrupole_moment  # in eB
     0.0
     """
 
@@ -49,10 +50,22 @@ class Isotope(BaseModel):
         validate_assignment = True
 
     @validator("symbol", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
+    def validate_symbol(cls, v, *, values, **kwargs):
+        if v in custom_isotope_data:
+            return v
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
+        if self.symbol in custom_isotope_data:
+            return {
+                "symbol": self.symbol,
+                "spin": int(self.spin * 2),
+                "natural_abundance": self.natural_abundance,
+                "gyromagnetic_ratio": self.gyromagnetic_ratio,
+                "quadrupole_moment": self.quadrupole_moment,
+                "atomic_number": self.atomic_number,
+            }
+
         return self.symbol
 
     @property
@@ -63,7 +76,7 @@ class Isotope(BaseModel):
 
     @property
     def natural_abundance(self):
-        """Natural abundance of the isotope in units of %."""
+        """Natural abundance of the isotope in units of percent."""
         isotope_data = get_isotope_data(self.symbol)
         return isotope_data["natural_abundance"]
 
@@ -103,6 +116,59 @@ class Isotope(BaseModel):
         return -self.gyromagnetic_ratio * B0
 
 
+def add_custom_isotope(
+    symbol: str,
+    spin: float,
+    gyromagnetic_ratio: float,
+    quadrupole_moment: float = 0,
+    natural_abundance: float = 100,
+    atomic_number: int = -1,  # What to put for this value??
+):
+    """Add isotope data from a custom Isotope into the stored Isotope data and return an
+    instance of the new Isotope.
+
+    Arguments:
+        (str) symbol: Required symbol for custom isotope class. String cannot match
+            another isotope symbol.
+        (float) spin: Required spin number for the isotope. Must be an integer or half-
+            integer greater than zero.
+        (float) gyromagnetic_ratio: Required gyromagnetic ratio of the isotope given in
+            MHz/T.
+        (float) quadrupole_moment: Optional quadrupole moment given in eB. Default is 0.
+        (float) natural_abundance: Optional natural abundance of the isotope given as
+            a percentage between 0 and 100. Default is 100.
+
+    Returns:
+        An Isotope class instance
+    """
+    # Check for symbol overlap in dictionaries
+    if symbol in ISOTOPE_DATA or symbol in custom_isotope_data:
+        raise ValueError(
+            f"Custom isotope symbol cannot match a known isotope. Got {symbol}."
+        )
+
+    # Check for spin integer or half integer
+    if spin <= 0 or not float(2 * spin).is_integer():
+        raise ValueError(
+            f"Isotope spin value must be greater than zero and must be an integer or "
+            f"half integer. Got {spin}."
+        )
+
+    if not 0 <= natural_abundance <= 100:
+        raise ValueError(
+            f"Abundance must between 0 and 100, inclusive. Got {natural_abundance}."
+        )
+
+    custom_isotope_data[symbol] = {
+        "spin": int(spin * 2),
+        "natural_abundance": natural_abundance,
+        "gyromagnetic_ratio": gyromagnetic_ratio,
+        "quadrupole_moment": quadrupole_moment,
+        "atomic_number": atomic_number,
+    }
+    return Isotope(symbol=symbol)
+
+
 def format_isotope_string(isotope_string: str) -> str:
     """Format the isotope string to {A}{symbol}, where A is the isotope number."""
     result = match(r"(\d+)\s*(\w+)", isotope_string)
@@ -121,7 +187,10 @@ def format_isotope_string(isotope_string: str) -> str:
 
 def get_isotope_data(isotope_string: str) -> dict:
     """Get the isotope's intrinsic properties from a JSON data file."""
-    formatted_isotope_string = format_isotope_string(isotope_string)
-    isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-    isotope_dict.update({"isotope": formatted_isotope_string})
+    if isotope_string in custom_isotope_data:
+        isotope_dict = dict(custom_isotope_data[isotope_string])
+    else:
+        isotope_string = format_isotope_string(isotope_string)
+        isotope_dict = dict(ISOTOPE_DATA[isotope_string])
+    isotope_dict.update({"isotope": isotope_string})
     return isotope_dict
