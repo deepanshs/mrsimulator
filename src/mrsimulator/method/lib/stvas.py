@@ -47,7 +47,7 @@ class ST_VAS(BaseNamedMethod2D):
 
         # select the coherence for the first event
         d = st**2 - (st - 1) ** 2
-        p = -1  if st == spin else 1
+        p = -1 if st == spin else 1
 
         # setting transition symmetry elements for spectral dimension 0
         events_0 = [
