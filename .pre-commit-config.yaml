@@ -13,7 +13,7 @@ repos:
         files: \.pyi?$
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.34.0
+    rev: v2.37.3
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -54,8 +54,7 @@ repos:
         args:
           [
             "--ignore=E402",
-            "--exclude=.eggs, *.egg,build, src/mrsimulator/__init__.py",
-            "--filename=*.pyx, *py",
+            "--exclude=.eggs/,*.egg,build,src/mrsimulator/__init__.py,examples/*",
             "--max-line-length=88",
             "--max-complexity=8",
             "--select=B,C,E,F,W,T,N8",
@@ -64,7 +63,7 @@ repos:
           ]
 
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.3.0
+    rev: v3.8.2
     hooks:
       - id: reorder-python-imports
         name: Reorder python imports
