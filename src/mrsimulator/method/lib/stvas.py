@@ -47,13 +47,14 @@ class ST_VAS(BaseNamedMethod2D):
 
         # select the coherence for the first event
         d = st**2 - (st - 1) ** 2
+        p = -1 if st == spin else 1
 
         # setting transition symmetry elements for spectral dimension 0
         events_0 = [
             {
                 "transition_queries": [
-                    {"ch1": {"P": [-1], "D": [d]}},
-                    {"ch1": {"P": [-1], "D": [-d]}},
+                    {"ch1": {"P":p, "D": [d]}},
+                    {"ch1": {"P":p, "D": [-d]}},
                 ]
             }
         ]
@@ -62,7 +63,7 @@ class ST_VAS(BaseNamedMethod2D):
 
         # method affine matrix shear factor
         k = shear_factor_ST_MAS[int(2 * st)][spin]
-        sign = 1  # if st == spin else -1
+        sign = 1 # if st == spin else -1
 
         return {
             "name": name,
