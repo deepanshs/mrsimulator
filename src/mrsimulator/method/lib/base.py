@@ -1,6 +1,7 @@
 from copy import deepcopy
 from typing import ClassVar
 
+import numpy as np
 from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.utils.error import ImmutableEventError
@@ -34,9 +35,10 @@ class BaseNamedMethod(Method):
 
     @validator("rotor_frequency", pre=True, always=True)
     def check_rotor_frequency(cls, v, *, values, **kwargs):
+        v = 1.0e12 if np.isinf(v) else v  # Allow np.inf for named methods
         a = (
             True if "name" not in values else values["name"] == "SSB2D",
-            v in ["1000000000000.0 Hz", 1.0e12],
+            v in ["1000000000000.0 Hz", 1.0e12, np.inf],
             cls.ndim == 1,
         )
         if any(a):
