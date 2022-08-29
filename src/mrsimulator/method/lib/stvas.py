@@ -39,15 +39,17 @@ class ST_VAS(BaseNamedMethod2D):
     def update(cls, **kwargs):
         name = cls.__name__
         st = ST_p_symmetry[name]["st"]
-        description = (
-            f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
-            "variable-angle spinning spectrum."
-        )
+
         spin = Isotope(symbol=kwargs["channels"][0]).spin
+        p = -1 if st == spin else 1
+
+        description = (
+            f"Simulate a P={p} (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+            "correlation spectrum."
+        )
 
         # select the coherence for the first event
         d = st**2 - (st - 1) ** 2
-        p = -1 if st == spin else 1
 
         # setting transition symmetry elements for spectral dimension 0
         events_0 = [
