@@ -222,14 +222,15 @@ def map_p_and_d_symmetry_to_v_7(py_dict):
 #             event[key] = f"{val} {unit}"
 #     return event
 # def _fill_missing_events_in_template(spectral_dimensions, s_template):
-#     """Fill the missing events in the template relative to the spectral dimensions."""
+#     """Fill the missing events in the template relative to the spectral dimension."""
 #     if "events" not in spectral_dimensions:
 #         return
 #     s_tem_len = len(s_template["events"])
 #     sp_evt_len = len(spectral_dimensions["events"])
 #     if s_tem_len < sp_evt_len:
 #         diff = sp_evt_len - s_tem_len
-#         _ = [s_template["events"].append(SpectralEvent().dict()) for _ in range(diff)]
+#         _ = [s_template["events"].append(SpectralEvent().dict()) for _ in range(diff)
+#             ]
 # def _check_rotor_frequency(common, name, kwargs):
 #     if common == set():
 #         return
