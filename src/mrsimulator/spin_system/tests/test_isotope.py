@@ -1,5 +1,4 @@
 import pytest
-from mrsimulator.spin_system.isotope import add_custom_isotope
 from mrsimulator.spin_system.isotope import Isotope
 
 __author__ = "Deepansh Srivastava"
@@ -52,7 +51,7 @@ def test_custom_isotope():
         "atomic_number": 0,
     }
 
-    iso = add_custom_isotope(**custom_isotope_dict)
+    iso = Isotope.add_new(**custom_isotope_dict)
 
     assert iso.atomic_number == 0
     assert iso.gyromagnetic_ratio == -8
@@ -62,24 +61,24 @@ def test_custom_isotope():
     assert iso.json() == custom_isotope_dict
 
     # Creating new isotope with same symbol
-    new_iso = add_custom_isotope(symbol="custom isotope", spin=4, gyromagnetic_ratio=-8)
+    new_iso = Isotope.add_new(symbol="custom isotope", spin=4, gyromagnetic_ratio=-8)
 
     assert new_iso.json() == iso.json()
 
     # Error on creating new isotope with overlapping symbol
     with pytest.raises(ValueError, match=".*cannot match a real isotope symbol.*"):
-        add_custom_isotope(symbol="1H", spin=0.5, gyromagnetic_ratio=42.57747920984721)
+        Isotope.add_new(symbol="1H", spin=0.5, gyromagnetic_ratio=42.57747920984721)
 
     # Error on spin less than zero or not half-integer
     with pytest.raises(ValueError, match=".*Isotope spin value must be greater than.*"):
-        add_custom_isotope(symbol="bad iso", spin=0, gyromagnetic_ratio=10)
+        Isotope.add_new(symbol="bad iso", spin=0, gyromagnetic_ratio=10)
 
     with pytest.raises(ValueError, match=".*Isotope spin value must be greater than.*"):
-        add_custom_isotope(symbol="bad iso", spin=1.75, gyromagnetic_ratio=10)
+        Isotope.add_new(symbol="bad iso", spin=1.75, gyromagnetic_ratio=10)
 
     # Error on abundance outsize of [0, 100]
     with pytest.raises(ValueError, match=".*Abundance must be between 0 and 100.*"):
-        add_custom_isotope(
+        Isotope.add_new(
             symbol="bad iso",
             spin=1.5,
             gyromagnetic_ratio=10,

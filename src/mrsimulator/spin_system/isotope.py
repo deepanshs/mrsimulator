@@ -55,6 +55,70 @@ class Isotope(BaseModel):
             return v
         return format_isotope_string(v)
 
+    @classmethod
+    def add_new(
+        cls,
+        symbol: str,
+        spin: float,
+        gyromagnetic_ratio: float,
+        quadrupole_moment: float = 0,
+        natural_abundance: float = 100,
+        atomic_number: int = -1,
+    ):
+        """Add isotope data from a custom Isotope into the stored Isotope data and
+        return an instance of the new Isotope. The isotope symbol cannot match an real
+        isotope symbol; if the provided symbol matches a known custom isotope symbol,
+        then an instance of that isotope is returned.
+
+        Arguments:
+            (str) symbol: Required symbol for custom isotope class. String cannot match
+                another isotope symbol.
+            (float) spin: Required spin number for the isotope. Must be an integer or
+                half-integer greater than zero.
+            (float) gyromagnetic_ratio: Required gyromagnetic ratio of the isotope given
+                in MHz/T.
+            (float) quadrupole_moment: Optional quadrupole moment given in eB. Default
+                is 0.
+            (float) natural_abundance: Optional natural abundance of the isotope given
+                as a percentage between 0 and 100. Default is 100.
+            (int) atomic_number: Optional atomic number for the custom isotope. Can take
+                any integer value and has no bering on simulated spectra.
+
+        Returns:
+            An Isotope class instance
+        """
+        # Check for symbol overlap in dictionaries
+        if symbol in ISOTOPE_DATA:
+            raise ValueError(
+                "Custom isotope symbol cannot match a real isotope symbol. "
+                f"Got {symbol}."
+            )
+
+        if symbol in custom_isotope_data:
+            return Isotope(symbol=symbol)
+
+        # Check for spin integer or half integer
+        if spin <= 0 or not float(2 * spin).is_integer():
+            raise ValueError(
+                f"Isotope spin value must be greater than zero and must be an integer "
+                f"or half integer. Got {spin}."
+            )
+
+        if not 0 <= natural_abundance <= 100:
+            raise ValueError(
+                "Abundance must be between 0 and 100, inclusive. "
+                f"Got {natural_abundance}."
+            )
+
+        custom_isotope_data[symbol] = {
+            "spin": int(spin * 2),
+            "natural_abundance": natural_abundance,
+            "gyromagnetic_ratio": gyromagnetic_ratio,
+            "quadrupole_moment": quadrupole_moment,
+            "atomic_number": atomic_number,
+        }
+        return Isotope(symbol=symbol)
+
     def json(self, **kwargs) -> dict:
         if self.symbol in custom_isotope_data:
             return {
@@ -114,64 +178,6 @@ class Isotope(BaseModel):
         >>> freq = silicon.larmor_freq(B0 = 9.4)
         """
         return -self.gyromagnetic_ratio * B0
-
-
-def add_custom_isotope(
-    symbol: str,
-    spin: float,
-    gyromagnetic_ratio: float,
-    quadrupole_moment: float = 0,
-    natural_abundance: float = 100,
-    atomic_number: int = -1,  # What to put for this value??
-):
-    """Add isotope data from a custom Isotope into the stored Isotope data and return an
-    instance of the new Isotope. The isotope symbol cannot match an real isotope symbol;
-    if the provided symbol matches a known custom isotope symbol, then an instance of
-    that isotope is returned.
-
-    Arguments:
-        (str) symbol: Required symbol for custom isotope class. String cannot match
-            another isotope symbol.
-        (float) spin: Required spin number for the isotope. Must be an integer or half-
-            integer greater than zero.
-        (float) gyromagnetic_ratio: Required gyromagnetic ratio of the isotope given in
-            MHz/T.
-        (float) quadrupole_moment: Optional quadrupole moment given in eB. Default is 0.
-        (float) natural_abundance: Optional natural abundance of the isotope given as
-            a percentage between 0 and 100. Default is 100.
-
-    Returns:
-        An Isotope class instance
-    """
-    # Check for symbol overlap in dictionaries
-    if symbol in ISOTOPE_DATA:
-        raise ValueError(
-            f"Custom isotope symbol cannot match a real isotope symbol. Got {symbol}."
-        )
-
-    if symbol in custom_isotope_data:
-        return Isotope(symbol=symbol)
-
-    # Check for spin integer or half integer
-    if spin <= 0 or not float(2 * spin).is_integer():
-        raise ValueError(
-            f"Isotope spin value must be greater than zero and must be an integer or "
-            f"half integer. Got {spin}."
-        )
-
-    if not 0 <= natural_abundance <= 100:
-        raise ValueError(
-            f"Abundance must be between 0 and 100, inclusive. Got {natural_abundance}."
-        )
-
-    custom_isotope_data[symbol] = {
-        "spin": int(spin * 2),
-        "natural_abundance": natural_abundance,
-        "gyromagnetic_ratio": gyromagnetic_ratio,
-        "quadrupole_moment": quadrupole_moment,
-        "atomic_number": atomic_number,
-    }
-    return Isotope(symbol=symbol)
 
 
 def format_isotope_string(isotope_string: str) -> str:
