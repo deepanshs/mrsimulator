@@ -467,13 +467,12 @@ static inline void tensor_prod_element(const int rank, const int start_a,
                                        const double *vec_b, double *res) {
   int l = (2 * rank) + 1;
   int size = l - (int)(start_a / 2);
-  double *vec_temp = malloc_double(10);
+  double vec_temp[10];
   cblas_dcopy(10, vec_a, 1, vec_temp, 1);
 
   vm_double_multiply_inplace(l, cg_factors, 1, vec_temp, 2);        // scale real
   vm_double_multiply_inplace(l, cg_factors, 1, vec_temp + 1, 2);    // scale imag
   cblas_zdotu_sub(size, &vec_temp[start_a], 1, &vec_b[0], 1, res);  // complex res
-  free(vec_temp);
 }
 
 static inline void rank_2_tensor_products(const double *R_2a, const double *R_2b,

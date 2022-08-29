@@ -212,31 +212,34 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
  *      @f$\left[{\Lambda'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
  * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
  *      tensor components.
- * @param R_2q A pointer to a complex array of length 5 holding the nuclear shileding
+ * @param R_2s A pointer to a complex array of length 5 holding the nuclear shileding
  *      tensor components.
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
 static inline void FCF_NS_EQ_cross_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
-    const double *R_2q, const double *R_2s, const float mf, const float mi) {
-  // Spin transition function
-  double transition_fn = STF_d(mf, mi);
+    const double *R_2q, const double *R_2s, const double larmor_freq, const float mf,
+    const float mi) {
+  // Spin transition function scalar
+  // R_2s is scale by -w0*STF_p and R_2q is scaled by STF_d. Since corss term depends on
+  // only RTF_d, the net scalar multiplier is -1/(w0*STF_p).
+  double transition_fn_scalar = -1.0 / (STF_p(mf, mi) * larmor_freq);
 
   // Spatial orientation function.
-  // R_2q and R_2s includes a factor (w_q/3) and sqrt(2/3)*zeta_q, respectively.
+  // R_2q and R_2s includes a factor (w_q/3) and sqrt(2/3), respectively.
   sSOT_NS_EQ_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
 
   // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
   // sqrt(2/3) factor from R_2s
   // frequency component function from the zeroth-rank irreducible tensor.
-  *Lambda_0 *= -0.5070925528371099 * transition_fn;
+  *Lambda_0 *= -0.5070925528371099 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.3030457633656632 * transition_fn, (double *)Lambda_2, 1);
+  cblas_dscal(10, -0.3030457633656632 * transition_fn_scalar, (double *)Lambda_2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, -0.5421047417431507 * transition_fn, (double *)Lambda_4, 1);
+  cblas_dscal(18, 0.5421047417431507 * transition_fn_scalar, (double *)Lambda_4, 1);
 }
 
 // =====================================================================================

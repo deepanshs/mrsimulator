@@ -499,8 +499,13 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 
   int orientation, two_l_pm, two_l_mm;
   int n1 = 2 * l + 1, m, mp, two_l = 2 * l, two_n1 = 2 * n1;
-  double S1, S2, S3, *temp, scale;
+  double S1, S2, S3, *temp, scale[5] = {1.0, -1.0, 1.0, -1.0, 1.0};
   double temp_initial_vector[18];  // maximum allocation for l=4; (2l + 1) * 2
+  int location_m[5];
+
+  for (m = 1; m <= l; m++) {
+    location_m[m] = (8 - 2 * m) * n;
+  }
 
   // Spherical tensor symmetry relations.
   // Y_{l, m} = (-1)^m Y_{l,-m}(conj)           (1)
@@ -526,7 +531,7 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
     for (m = 1; m <= l; m++) {
       two_l_pm += 2;
       two_l_mm -= 2;
-      temp = &exp_Im_alpha_[(8 - 2 * m) * n + 2 * orientation];
+      temp = &exp_Im_alpha_[location_m[m] + 2 * orientation];
 
       // temp_initial_vector[l - m] *= temp;
       // a = R_in_[two_l_mm]
@@ -545,9 +550,8 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
 
       // temp_initial_vector[l + m]
       // Use symmetry relation from Eq (1).
-      scale = (m % 2 == 0) ? 1 : -1;
-      temp_initial_vector[two_l_pm] = temp_initial_vector[two_l_mm] * scale;
-      temp_initial_vector[two_l_pm + 1] = -temp_initial_vector[two_l_mm + 1] * scale;
+      temp_initial_vector[two_l_pm] = temp_initial_vector[two_l_mm] * scale[m];
+      temp_initial_vector[two_l_pm + 1] = -temp_initial_vector[two_l_mm + 1] * scale[m];
     }
 
     // Apply wigner rotation to the temp inital vector
