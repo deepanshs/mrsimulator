@@ -191,9 +191,9 @@ class Mrsimulator(Parseable):
         _ = py_copy_dict.pop("version", None)
 
         return (
-            Mrsimulator.parse_dict_with_units(py_dict)
+            Mrsimulator.parse_dict_with_units(py_copy_dict)
             if parse_units
-            else Mrsimulator(**py_dict)
+            else Mrsimulator(**py_copy_dict)
         )
 
     @classmethod

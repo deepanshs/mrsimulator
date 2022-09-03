@@ -3,8 +3,11 @@ import os
 import mrsimulator.method.lib as NamedMethods
 import pytest
 from mrsimulator import Simulator
+from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
+from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.isotope import set_isotope_mappings
 from mrsimulator.utils.error import ImmutableEventError
 
 __author__ = "Deepansh J. Srivastava"
@@ -119,6 +122,16 @@ def test_read_write_methods():
         sim2 = sim.copy()
         sim2.load_spin_systems("test.mrsys")
         assert sim.spin_systems == sim2.spin_systems
+
+        # save/load spin systems with custom isotopes
+        Isotope.new(symbol="C13_a", copy_from="13C")
+        systems = [SpinSystem(sites=[Site(isotope=sym)]) for sym in ["13C", "C13_a"]]
+        sim.spin_systems = systems
+        sim.export_spin_systems("test.mrsys")
+        set_isotope_mappings({})  # Reset all mappings
+        sim.load_spin_systems("test.mrsys")
+        assert sim.spin_systems == systems
+        set_isotope_mappings({})  # Reset all mappings
 
     os.remove("test.mrsim")
     os.remove("test.mrsys")

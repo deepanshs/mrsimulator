@@ -1,4 +1,5 @@
 """Base Isotope class."""
+from copy import deepcopy
 from os import path
 from re import match
 from typing import ClassVar
@@ -166,6 +167,16 @@ def get_isotope_data(isotope_string: str) -> dict:
         isotope_dict = dict(ISOTOPE_DATA[isotope_string])
     isotope_dict.update({"isotope": isotope_string})
     return isotope_dict
+
+
+def get_isotope_mappings() -> dict:
+    return custom_isotope_mapping
+
+
+def set_isotope_mappings(py_dict: dict):
+    global custom_isotope_mapping
+    d = deepcopy(py_dict)
+    custom_isotope_mapping = d
 
 
 # @classmethod

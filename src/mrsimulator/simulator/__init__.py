@@ -13,7 +13,9 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.base_model import core_simulator
 from mrsimulator.method import Method
+from mrsimulator.spin_system.isotope import get_isotope_mappings
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.isotope import set_isotope_mappings
 from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
 from mrsimulator.utils.importer import import_json
@@ -192,6 +194,8 @@ class Simulator(Parseable):
         3
         """
         py_copy_dict = deepcopy(py_dict)
+        if "isotope_mappings" in py_copy_dict:
+            set_isotope_mappings(py_copy_dict.pop("isotope_mappings"))
 
         if "spin_systems" in py_copy_dict:
             spin_sys = py_copy_dict["spin_systems"]
@@ -267,15 +271,16 @@ class Simulator(Parseable):
         >>> sim.load_spin_systems(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        self.spin_systems = [SpinSystem.parse_dict_with_units(obj) for obj in contents]
+        _ = [Isotope.new(k, v) for k, v in contents["isotope_mappings"].items()]
+        contents.pop("isotope_mappings")
+        self.spin_systems = [
+            SpinSystem.parse_dict_with_units(obj) for obj in contents["spin_systems"]
+        ]
 
     def export_spin_systems(self, filename: str):
         """Export a list of spin systems to a JSON serialized file.
 
-        See an
-        `example <https://raw.githubusercontent.com/deepanshs/mrsimulator-examples/
-        master/spin_systems_v0.3.json>`_ of a JSON serialized file. For details, refer
-        to the :ref:`load_spin_systems` section.
+        For details, refer to the :ref:`load_spin_systems` section.
 
         Args:
             str filename: A filename of the serialized file.
@@ -286,9 +291,11 @@ class Simulator(Parseable):
         >>> sim.export_spin_systems(filename) # doctest:+SKIP
         """
         spin_sys = [SpinSystem.json(obj) for obj in self.spin_systems]
+        iso_mappings = get_isotope_mappings()
+        sys_data = {"spin_systems": spin_sys, "isotope_mappings": iso_mappings}
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                spin_sys, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
+                sys_data, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def load_methods(self, filename: str):
@@ -302,7 +309,9 @@ class Simulator(Parseable):
         >>> sim.load_methods(filename) # doctest:+SKIP
         """
         contents = import_json(filename)
-        self.methods = [Method.parse_dict_with_units(obj) for obj in contents]
+        self.methods = [
+            Method.parse_dict_with_units(obj) for obj in contents["methods"]
+        ]
 
     def export_methods(self, filename: str):
         """Export a list of methods to a JSON serialized file.
@@ -315,9 +324,10 @@ class Simulator(Parseable):
         >>> sim.export_methods(filename) # doctest:+SKIP
         """
         mth = [obj.json() for obj in self.methods]
+        mth_data = {"methods": mth}
         with open(filename, "w", encoding="utf8") as outfile:
             json.dump(
-                mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
+                mth_data, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
     def run(
@@ -398,6 +408,16 @@ class Simulator(Parseable):
             )
             amp = None
 
+    def json(self, exclude: dict = None, units: bool = True) -> dict:
+        exclude = {} if exclude is None else exclude
+        py_dict = super().json(units=units)
+
+        isotope_mappings = get_isotope_mappings()
+        if isotope_mappings:
+            py_dict["isotope_mappings"] = isotope_mappings
+
+        return py_dict
+
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
 
@@ -451,6 +471,9 @@ class Simulator(Parseable):
             dict py_dict: Dictionary object.
             bool parse_units: If true, parse quantity from string.
         """
+        if "isotope_mappings" in py_dict:
+            set_isotope_mappings(py_dict.pop("isotope_mappings"))
+
         return (
             Simulator.parse_dict_with_units(py_dict)
             if parse_units
