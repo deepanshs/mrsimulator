@@ -1,4 +1,5 @@
 import pytest
+from mrsimulator.spin_system.isotope import get_isotope_data
 from mrsimulator.spin_system.isotope import Isotope
 
 __author__ = "Deepansh Srivastava"
@@ -42,45 +43,17 @@ def test_isotope():
 
 
 def test_custom_isotope():
-    custom_isotope_dict = {
-        "symbol": "custom isotope",
-        "spin": 4,
-        "natural_abundance": 45.6,
-        "gyromagnetic_ratio": -8,
-        "quadrupole_moment": 0.123,
-        "atomic_number": 0,
-    }
+    Isotope.new(symbol="Si_a", copy_from="29Si")
+    Isotope.new(symbol="Si_b", copy_from="29Si")
 
-    iso = Isotope.add_new(**custom_isotope_dict)
+    assert get_isotope_data("Si_a") == get_isotope_data("29Si")
+    assert get_isotope_data("Si_b") == get_isotope_data("Si_a")
 
-    assert iso.atomic_number == 0
-    assert iso.gyromagnetic_ratio == -8
-    assert iso.natural_abundance == 45.6
-    assert iso.quadrupole_moment == 0.123
-    assert iso.spin == 4
-    assert iso.json() == custom_isotope_dict
+    # Overlapping isotope symbols
+    error = r".*The new symbol for the copied isotope cannot match any previous.*"
+    with pytest.raises(ValueError, match=error):
+        Isotope.new(symbol="17O", copy_from="17O")
 
-    # Creating new isotope with same symbol
-    new_iso = Isotope.add_new(symbol="custom isotope", spin=4, gyromagnetic_ratio=-8)
-
-    assert new_iso.json() == iso.json()
-
-    # Error on creating new isotope with overlapping symbol
-    with pytest.raises(ValueError, match=".*cannot match a real isotope symbol.*"):
-        Isotope.add_new(symbol="1H", spin=0.5, gyromagnetic_ratio=42.57747920984721)
-
-    # Error on spin less than zero or not half-integer
-    with pytest.raises(ValueError, match=".*Isotope spin value must be greater than.*"):
-        Isotope.add_new(symbol="bad iso", spin=0, gyromagnetic_ratio=10)
-
-    with pytest.raises(ValueError, match=".*Isotope spin value must be greater than.*"):
-        Isotope.add_new(symbol="bad iso", spin=1.75, gyromagnetic_ratio=10)
-
-    # Error on abundance outsize of [0, 100]
-    with pytest.raises(ValueError, match=".*Abundance must be between 0 and 100.*"):
-        Isotope.add_new(
-            symbol="bad iso",
-            spin=1.5,
-            gyromagnetic_ratio=10,
-            natural_abundance=150,
-        )
+    error = r".*The copy_from symbol must match a known isotope.*"
+    with pytest.raises(ValueError, match=error):
+        Isotope.new(symbol="new", copy_from="unknown")

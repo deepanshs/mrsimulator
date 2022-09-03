@@ -201,8 +201,6 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        if isinstance(v, dict):  # Dict repr of custom isotope
-            return Isotope.add_new(**v)
         return Isotope(symbol=v)
 
     @classmethod
