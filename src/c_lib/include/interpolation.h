@@ -10,6 +10,21 @@
 #include "config.h"
 
 /**
+ * @brief Bin random points onto a n-dimensional grid while performing linear
+ * interpolation.
+ *
+ * @param points Pointer to flattened array of points
+ * @param nearest_points Pointer to array of nearest grid coord for each point
+ * @param offsets Pointer to array of distances from nearest grid coord
+ * @param dim_sizes Pointer to array holding number of point in each grid dim
+ * @param n_dims Integer specifying total number of dimensions
+ * @param n_points Integer specifying total number of points
+ */
+void multidimensional_linear_interpolation(double *points, int *nearest_points,
+                                           double *offsets, double *amp, int *dim_sizes,
+                                           int n_dims, int n_points);
+
+/**
  * @brief Create a triangle with coordinates (f1, f2, f2) onto a 1D grid.
  *
  * @param f1 A pointer to the coordinate f11.

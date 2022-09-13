@@ -99,6 +99,148 @@ static void inline delta_fn_gauss_interpolation(const double *freq, const int *p
   if (p + 2 >= 0 && p + 2 < *points) spec[p2 + 4] += temp * a4;
 }
 
+static inline void int_to_bin_digit(int num, int count, int *out) {
+  unsigned int mask = 1U << (count - 1);
+  for (int i = count - 1; i >= 0; i--) {
+    out[i] = (num & mask) ? 1 : 0;
+    num <<= 1;
+  }
+}
+
+static inline double arr_min_double(double *arr, int count) {
+  int min_val = arr[0];
+  for (int i = 0; i < count; i++) {
+    if (arr[i] < min_val) min_val = arr[i];
+  }
+  return min_val;
+}
+
+static inline void arr_add_double(double *u, double *v, int count, double *out) {
+  for (int i = 0; i < count; i++) {
+    out[i] = u[i] + v[i];
+  }
+}
+
+static inline void arr_add_int(int *u, int *v, int count, int *out) {
+  for (int i = 0; i < count; i++) {
+    out[i] = u[i] + v[i];
+  }
+}
+
+static inline void arr_mult_int(int *u, int *v, int count, int *out) {
+  for (int i = 0; i < count; i++) {
+    out[i] = u[i] * v[i];
+  }
+}
+
+static inline int dot_prod_int(int *u, int *v, int count) {
+  int i, sum = 0;
+  for (i = 0; i < count; i++) {
+    sum += u[i] * v[i];
+  }
+  return sum;
+}
+
+static inline void fill_int(int *arr, int val, int count) {
+  for (int i = 0; i < count; i++) {
+    arr[i] = val;
+  }
+}
+
+static inline void fill_double(double *arr, double val, int count) {
+  for (int i = 0; i < count; i++) {
+    arr[i] = val;
+  }
+}
+
+/**
+ * @brief Bin random points onto a n-dimensional grid while performing linear
+ * interpolation.
+ *
+ * @param points Pointer to flattened array of points
+ * @param nearest_points Pointer to array of nearest grid coord for each point
+ * @param offsets Pointer to array of distances from nearest grid coord
+ * @param dim_sizes Pointer to array holding number of point in each grid dim
+ * @param n_dims Integer specifying total number of dimensions
+ * @param n_points Integer specifying total number of points
+ */
+void multidimensional_linear_interpolation(double *points, int *nearest_points,
+                                           double *offsets, double *amp, int *dim_sizes,
+                                           int n_dims, int n_points) {
+  int i, j, k, dir, n_dirs, lin_idx, dir_idx, zero_offset_dims,
+      total_bins = 1, dim_strides[n_dims], prev_directions[n_dims],
+      temp_int_arr1[n_dims], temp_int_arr2[n_dims];
+  double delta, maximum_vector[n_dims], temp_double_arr[n_dims];
+
+  // maximum allowed vector, but negative
+  for (i = 0; i < n_dims; i++) {
+    maximum_vector[i] = (double)(1 - dim_sizes[i]);
+    total_bins *= dim_sizes[i];
+  }
+
+  double temp_amp[total_bins];
+
+  // Roughly equivelent to numpy strides. Used to convert n-D to 1-D index
+  dim_strides[n_dims - 1] = 1;
+  for (i = n_dims - 2; i >= 0; i--) {
+    dim_strides[i] = dim_strides[i + 1] * dim_sizes[i + 1];
+  }
+
+  // Loop iterating over all points
+  for (i = 0; i < n_points * n_dims; i += n_dims) {
+    arr_add_double(points + i, maximum_vector, n_dims, temp_double_arr);
+    if (arr_min_double(points + i, n_dims) < -0.5 ||   // half bin width to "left"
+        arr_min_double(temp_double_arr, n_dims) > 0.5  // half bin width "right"
+    )
+      continue;
+
+    zero_offset_dims = 0;
+    fill_int(prev_directions, 0, n_dims);    // could use memset, but this
+    fill_double(temp_amp, 0.0, total_bins);  // is more comprehensible
+    temp_amp[dot_prod_int(dim_strides, nearest_points + i, n_dims)] = 1;
+
+    // iterate over all directions for a point
+    for (j = 0; j < n_dims; j++) {
+      n_dirs = (int)pow((double)2, (double)j);  // 2^j different combos
+      delta = offsets[i + j];
+
+      // Check if delta (offset) is zero, left or right
+      if (delta == 0.0) {
+        zero_offset_dims += 1 << j;
+        continue;
+      }
+      dir = 1;
+      if (delta < 0.0) {
+        dir = -1;
+        delta = -delta;
+      }
+
+      // Generate all combinations of directions (neighboring bins)
+      for (k = 0; k < n_dirs; k++) {
+        if (zero_offset_dims & k) continue;  // skip dirs with zero offsets
+
+        // put one combo of directions into temp_int_arr2
+        int_to_bin_digit(k, n_dims, temp_int_arr1);
+        arr_mult_int(temp_int_arr1, prev_directions, n_dims, temp_int_arr2);
+
+        // put cartesian index of bin with offset into temp_int_arr1
+        arr_add_int(temp_int_arr2, nearest_points + i, n_dims, temp_int_arr1);
+
+        // continue if new bin is outside of grid
+        if (temp_int_arr1[j] + dir < 0) continue;
+        if (temp_int_arr1[j] + dir >= dim_sizes[j]) continue;
+
+        lin_idx = dot_prod_int(dim_strides, temp_int_arr1, n_dims);
+        dir_idx = lin_idx + (dim_strides[j] * dir);
+        temp_amp[dir_idx] = temp_amp[lin_idx] * delta;
+        temp_amp[lin_idx] *= 1 - delta;
+      }
+      prev_directions[j] = dir;
+    }
+    arr_add_double(amp, temp_amp, total_bins, amp);
+  }
+}
+
 /**
  * @brief Get the clipping conditions object
  *

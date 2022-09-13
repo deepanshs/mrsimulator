@@ -2,6 +2,7 @@ cimport base_model as clib
 from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
+cimport numpy as cnp
 import cython
 
 __author__ = "Deepansh J. Srivastava"
@@ -590,6 +591,65 @@ def calculate_transition_connect_weight(
             spin[i], m1_f, m1_i, m2_f, m2_i, alpha[i], beta[i], gamma[i], &factor[0]
         )
     return complex(factor[0], factor[1])
+
+
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def bin_with_linear_interp(
+    ndarray[cnp.float64_t, ndim=2] _points,
+    _grid_dims  # list since ndarrays must have same shape
+):
+    """TODO: Docstring
+
+    Arguments:
+        (np.ndarray) points: random points
+        (np.ndarray) grid_dims: Numpy array of each dimension on the grid
+
+    Return: A distribution of points binned with linear interpolation.
+    """
+    for i in range(len(_grid_dims)):
+        dim = _grid_dims[i]
+        start = dim[0]
+        step = dim[1] - start
+        _points[i] = (_points[i] - start) / step
+
+    _points = np.vstack(_points).T
+    nearest = np.rint(_points)
+    distance = _points - nearest
+    cdef ndarray[cnp.float64_t, ndim=2] points = _points.copy()
+    cdef ndarray[cnp.float64_t, ndim=2] nearest_distance = distance
+    cdef ndarray[int, ndim=2] nearest_points = nearest.astype(np.int32)
+
+    cdef ndarray[int, ndim=1] dim_sizes = np.asarray(
+        [dim.size for dim in _grid_dims], dtype=np.int32
+    )
+    cdef ndarray[cnp.float64_t, ndim=1] amp = np.zeros(dim_sizes, dtype=np.float64).flatten()
+    # cdef ndarray[cnp.float64_t, ndim=1] temp_amp = np.zeros(dim_sizes, dtype=np.float64).flatten()
+
+    cdef int n_dims = len(dim_sizes)
+    cdef int n_points = points.size / n_dims
+
+    clib.multidimensional_linear_interpolation(
+        &points[0, 0],
+        &nearest_points[0, 0],
+        &nearest_distance[0, 0],
+        &amp[0],
+        &dim_sizes[0],
+        n_dims,
+        n_points,
+    )
+    # linear_interpolation(
+    #     &points[0, 0],
+    #     &nearest_points[0, 0],
+    #     &nearest_distance[0, 0],
+    #     &amp[0],
+    #     &dim_sizes[0],
+    #     n_dims,
+    #     n_points,
+    # )
+
+    return amp.reshape(dim_sizes)
 
 
 # @cython.profile(False)

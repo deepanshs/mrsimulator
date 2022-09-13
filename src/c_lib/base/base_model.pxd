@@ -157,3 +157,14 @@ cdef extern from "simulation.h":
         bool_t *freq_contrib,
         double *affine_matrix,
         )
+
+cdef extern from "interpolation.h":
+    void multidimensional_linear_interpolation(
+        double *points,
+        int *nearest_points,
+        double *offset_vectors,
+        double *amp,
+        int *dim_lengths,
+        int n_dims,
+        int n_points
+    )
