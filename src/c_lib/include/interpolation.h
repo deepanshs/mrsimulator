@@ -21,8 +21,9 @@
  * @param n_points Integer specifying total number of points
  */
 void multidimensional_linear_interpolation(double *points, int *nearest_points,
-                                           double *offsets, double *amp, int *dim_sizes,
-                                           int n_dims, int n_points);
+                                           double *offsets, double *amp,
+                                           double *temp_amp, int *dim_sizes, int n_dims,
+                                           int n_points);
 
 /**
  * @brief Create a triangle with coordinates (f1, f2, f2) onto a 1D grid.

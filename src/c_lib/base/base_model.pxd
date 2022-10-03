@@ -164,6 +164,7 @@ cdef extern from "interpolation.h":
         int *nearest_points,
         double *offset_vectors,
         double *amp,
+        double *temp_amp,
         int *dim_lengths,
         int n_dims,
         int n_points

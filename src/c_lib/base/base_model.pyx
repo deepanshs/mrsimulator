@@ -598,13 +598,15 @@ def calculate_transition_connect_weight(
 @cython.wraparound(False)
 def bin_with_linear_interp(
     ndarray[cnp.float64_t, ndim=2] _points,
-    _grid_dims  # list since ndarrays must have same shape
+    _grid_dims,  # list since 2d ndarrays can't have differnt shapes
+    # amp_out,
 ):
     """TODO: Docstring
 
     Arguments:
         (np.ndarray) points: random points
-        (np.ndarray) grid_dims: Numpy array of each dimension on the grid
+        (list) grid_dims: Numpy array of each dimension on the grid
+        # (np.ndarray) amp_out: Numpy array to add binned pdf to
 
     Return: A distribution of points binned with linear interpolation.
     """
@@ -615,41 +617,33 @@ def bin_with_linear_interp(
         _points[i] = (_points[i] - start) / step
 
     _points = np.vstack(_points).T
-    nearest = np.rint(_points)
+    nearest = np.floor(_points + 0.5).astype(np.int32)
     distance = _points - nearest
-    cdef ndarray[cnp.float64_t, ndim=2] points = _points.copy()
-    cdef ndarray[cnp.float64_t, ndim=2] nearest_distance = distance
-    cdef ndarray[int, ndim=2] nearest_points = nearest.astype(np.int32)
+    cdef ndarray[cnp.float64_t, ndim=1] points = _points.flatten()
+    cdef ndarray[cnp.float64_t, ndim=1] nearest_distance = distance.flatten()
+    cdef ndarray[int, ndim=1] nearest_points = nearest.astype(np.int32).flatten()
 
     cdef ndarray[int, ndim=1] dim_sizes = np.asarray(
         [dim.size for dim in _grid_dims], dtype=np.int32
     )
-    cdef ndarray[cnp.float64_t, ndim=1] amp = np.zeros(dim_sizes, dtype=np.float64).flatten()
-    # cdef ndarray[cnp.float64_t, ndim=1] temp_amp = np.zeros(dim_sizes, dtype=np.float64).flatten()
+    cdef ndarray[cnp.float64_t, ndim=1] amp = np.zeros(np.prod(dim_sizes), dtype=np.float64).flatten()
+    cdef ndarray[cnp.float64_t, ndim=1] temp_amp = np.zeros(np.prod(dim_sizes), dtype=np.float64)
 
     cdef int n_dims = len(dim_sizes)
     cdef int n_points = points.size / n_dims
 
     clib.multidimensional_linear_interpolation(
-        &points[0, 0],
-        &nearest_points[0, 0],
-        &nearest_distance[0, 0],
+        &points[0],
+        &nearest_points[0],
+        &nearest_distance[0],
         &amp[0],
+        &temp_amp[0],
         &dim_sizes[0],
         n_dims,
         n_points,
     )
-    # linear_interpolation(
-    #     &points[0, 0],
-    #     &nearest_points[0, 0],
-    #     &nearest_distance[0, 0],
-    #     &amp[0],
-    #     &dim_sizes[0],
-    #     n_dims,
-    #     n_points,
-    # )
 
-    return amp.reshape(dim_sizes)
+    return amp.reshape([dim.size for dim in _grid_dims])
 
 
 # @cython.profile(False)

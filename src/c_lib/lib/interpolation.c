@@ -165,8 +165,9 @@ static inline void fill_double(double *arr, double val, int count) {
  * @param n_points Integer specifying total number of points
  */
 void multidimensional_linear_interpolation(double *points, int *nearest_points,
-                                           double *offsets, double *amp, int *dim_sizes,
-                                           int n_dims, int n_points) {
+                                           double *offsets, double *amp,
+                                           double *temp_amp, int *dim_sizes, int n_dims,
+                                           int n_points) {
   int i, j, k, dir, n_dirs, lin_idx, dir_idx, zero_offset_dims,
       total_bins = 1, dim_strides[n_dims], prev_directions[n_dims],
       temp_int_arr1[n_dims], temp_int_arr2[n_dims];
@@ -177,8 +178,6 @@ void multidimensional_linear_interpolation(double *points, int *nearest_points,
     maximum_vector[i] = (double)(1 - dim_sizes[i]);
     total_bins *= dim_sizes[i];
   }
-
-  double temp_amp[total_bins];
 
   // Roughly equivelent to numpy strides. Used to convert n-D to 1-D index
   dim_strides[n_dims - 1] = 1;
@@ -191,6 +190,8 @@ void multidimensional_linear_interpolation(double *points, int *nearest_points,
     arr_add_double(points + i, maximum_vector, n_dims, temp_double_arr);
     if (arr_min_double(points + i, n_dims) < -0.5 ||   // half bin width to "left"
         arr_min_double(temp_double_arr, n_dims) > 0.5  // half bin width "right"
+        // if (arr_min_double(points + i, n_dims) < 0 ||
+        //     arr_min_double(temp_double_arr, n_dims) > 0
     )
       continue;
 
