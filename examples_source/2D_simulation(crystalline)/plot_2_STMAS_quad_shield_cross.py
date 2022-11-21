@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 """
-RbNO₃, ⁸⁷Rb (I=3/2) STMAS
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Co59 (I=7/2) STMAS
+^^^^^^^^^^^^^^^^^^
 
-⁸⁷Rb (I=3/2) satellite-transition off magic-angle spinning simulation.
+Co59 (I=7/2) satellite-transition magic-angle spinning simulation.
+(Quad-csa cross terms)
+
 """
 # %%
-# The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
-# :math:`^{87}\text{Rb}` tensor parameters were obtained from Massiot `et al.` [#f1]_.
+import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
@@ -20,21 +21,47 @@ from mrsimulator.method import SpectralDimension
 
 # %%
 # Generate the site and spin system objects.
-Co_site = Site(
-    isotope="59Co",  # 59Co
-    isotropic_chemical_shift=0,  # in ppm
-    shielding_symmetric=SymmetricTensor(zeta=-1750, eta=0.2),
-    quadrupolar=SymmetricTensor(Cq=3.1e6, eta=0),  # Cq is in Hz
-)
+Co_sites = [
+    Site(
+        isotope="59Co",  # 59Co
+        isotropic_chemical_shift=0,  # in ppm
+        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=0),
+        quadrupolar=SymmetricTensor(Cq=3.1e6, eta=0.2),  # Cq is in Hz
+        name="$\\alpha=\\beta=\\gamma=0$",
+    ),
+    Site(
+        isotope="59Co",  # 59Co
+        isotropic_chemical_shift=0,  # in ppm
+        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
+        quadrupolar=SymmetricTensor(Cq=3.1e6, eta=1, beta=np.pi / 2),  # Cq is in Hz
+        name="$\\beta=90, \\alpha=\\gamma=0$",
+    ),
+    Site(
+        isotope="59Co",  # 59Co
+        isotropic_chemical_shift=0,  # in ppm
+        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
+        quadrupolar=SymmetricTensor(
+            Cq=3.1e6, eta=1, alpha=np.pi / 2, beta=np.pi / 2
+        ),  # Cq is in Hz
+        name="$\\alpha=\\beta=90, \\gamma=0$",
+    ),
+    Site(
+        isotope="59Co",  # 59Co
+        isotropic_chemical_shift=0,  # in ppm
+        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
+        quadrupolar=SymmetricTensor(
+            Cq=3.1e6, eta=1, alpha=np.pi / 2, beta=np.pi / 2, gamma=np.pi / 2
+        ),  # Cq is in Hz
+        name="$\\alpha=\\beta=\\gamma=90$",
+    ),
+]
 
-spin_system = SpinSystem(sites=[Co_site])
+spin_systems = [SpinSystem(sites=[site], name=site.name) for site in Co_sites]
 
 # %%
 # Select a satellite-transition variable-angle spinning method. The
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
-# transitions to the central transition. Note, STMAS measurements are highly suspectable
-# to rotor angle mismatch. In the following, we show two methods, the first at the
-# magic angle and second deliberately miss-sets by approximately 0.0059 degrees.
+# transitions to the central transition.
 
 method = ST1_VAS(
     channels=["59Co"],
@@ -43,13 +70,13 @@ method = ST1_VAS(
     spectral_dimensions=[
         SpectralDimension(
             count=256,
-            spectral_width=2e3,  # in Hz
+            spectral_width=1e3,  # in Hz
             # reference_offset=-1e3,  # in Hz
             label="Isotropic dimension",
         ),
         SpectralDimension(
             count=512,
-            spectral_width=2e3,  # in Hz
+            spectral_width=3e3,  # in Hz
             reference_offset=-1e3,  # in Hz
             label="MAS dimension",
         ),
@@ -64,7 +91,8 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator(spin_systems=[spin_system], methods=[method])
+sim = Simulator(spin_systems=spin_systems, methods=[method])
+sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # %%
@@ -79,18 +107,22 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
+
 processed_dataset = processor.apply_operations(dataset=dataset)
-processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation.
 _ = [item.to("kHz", "nmr_frequency_ratio") for item in processed_dataset.x]
 
-plt.figure(figsize=(4.25, 3.0))
-ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
-plt.colorbar(cb)
-ax.invert_xaxis()
-ax.invert_yaxis()
+processed_dataset = processed_dataset.split()
+fig, ax = plt.subplots(
+    2, 2, figsize=(6, 4.5), sharex=True, sharey=True, subplot_kw={"projection": "csdm"}
+)
+ax[0, 0].imshow(processed_dataset[0].real, cmap="gist_ncar_r", aspect="auto")
+ax[0, 1].imshow(processed_dataset[1].real, cmap="gist_ncar_r", aspect="auto")
+ax[1, 0].imshow(processed_dataset[2].real, cmap="gist_ncar_r", aspect="auto")
+ax[1, 1].imshow(processed_dataset[3].real, cmap="gist_ncar_r", aspect="auto")
+ax[0, 0].invert_xaxis()
+ax[0, 0].invert_yaxis()
 plt.tight_layout()
 plt.show()
