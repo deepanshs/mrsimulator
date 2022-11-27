@@ -1,9 +1,11 @@
 import numpy as np
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.base_model import bin_with_linear_interp
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
 from .utils import x_y_from_zeta_eta
+from .utils import x_y_to_zeta_eta
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -68,7 +70,7 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
-    def pdf(self, pos, size: int = 400000):
+    def pdf(self, pos, size: int = 400000, interpolation: str = "none"):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
 
@@ -86,15 +88,29 @@ class AbstractDistribution:
             >>> eta = np.arange(21)/20
             >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
         """
-        delta_z = (pos[0][1] - pos[0][0]) / 2
-        delta_e = (pos[1][1] - pos[1][0]) / 2
-        x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
-        y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
-
-        x_size = pos[0].size
-        y_size = pos[1].size
+        if interpolation not in ["none", "linear"]:
+            raise ValueError(
+                f"Unrecognized interpolation type of {interpolation}. "
+                "Allowed values are \"none\" and \"linear\"."
+            )
+        
         zeta, eta = self.rvs(size)
-        hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
+
+        if interpolation == "linear":
+            x_dim = pos[0].astype(np.float64, copy=True)
+            y_dim = pos[1].astype(np.float64, copy=True)
+            dims = [x_dim, y_dim]
+            hist = bin_with_linear_interp(np.array([zeta, eta]), dims)
+
+        if interpolation == "none":
+            delta_z = (pos[0][1] - pos[0][0]) / 2
+            delta_e = (pos[1][1] - pos[1][0]) / 2
+            x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
+            y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
+
+            x_size = pos[0].size
+            y_size = pos[1].size
+            hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
 
         hist /= hist.sum()
 
@@ -140,6 +156,65 @@ class CzjzekDistribution(AbstractDistribution):
     def __init__(self, sigma: float, polar=False):
         self.sigma = sigma
         self.polar = polar
+
+    def _analytical_czjzek_pdf(self, zeta, eta, sigma):
+        """Analytical probability distribution function of (zeta, eta) for Czjzek
+        distribution.
+
+        TODO: complete docstring
+        """
+        denom = (2 * np.pi) ** 0.5 * sigma**5
+        res = (zeta**4 * eta) * (1 - eta**2 / 9) / denom
+        res *= np.exp(-(zeta**2 * (1 + (eta**2 / 3))) / (2 * sigma**2))
+        res /= res.sum()
+
+        return res
+
+
+    def cartesian_pdf(self, pos):
+        """TODO: Docstring"""
+        sigma_ = 2 * self.sigma
+        z_range = pos[0]
+        e_range = pos[1]
+        VV, ee = np.meshgrid(z_range, e_range)
+        amp = self._analytical_czjzek_pdf(zeta=VV, eta=ee, sigma=sigma_)
+
+        return VV, ee, amp
+
+    def polar_pdf(self, pos):
+        """TODO: Docstring"""
+        sigma_ = 2 * self.sigma
+        x_range = pos[0]
+        y_range = pos[1]
+        xx, yy = np.meshgrid(x_range, y_range)
+        z_points, e_points = x_y_to_zeta_eta(xx, yy)
+
+        # Call pdf method accepting (zeta, eta) grid as argument
+        amp = self._analytical_czjzek_pdf(
+            zeta=z_points, 
+            eta=e_points,
+            sigma=sigma_
+        )
+        amp = amp.reshape(xx.shape)
+
+        return xx, yy, amp
+
+
+
+    # def pdf(self, pos):
+    #     """Analytical solution to distribution of Cq and eta"""
+    #     sigma_ = 2 * self.sigma
+    #     z_range = pos[0]
+    #     e_range = pos[1]
+    #     x_, y_ = np.meshgrid(z_range, e_range)
+
+    #     V, e = np.meshgrid(z_range, e_range)
+    #     denom = (2 * np.pi) ** 0.5 * sigma_**5
+    #     res = (V**4 * e) * (1 - e**2 / 9) / denom
+    #     res *= np.exp(-(V**2 * (1 + (e**2 / 3))) / (2 * sigma_**2))
+    #     res /= res.sum()
+
+    #     return x_, y_, res
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
