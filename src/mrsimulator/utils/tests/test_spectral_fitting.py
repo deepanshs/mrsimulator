@@ -192,6 +192,28 @@ def test_raise_messages():
         sf.make_LMFIT_params(Simulator(spin_systems=[SpinSystem()]), 21)
 
 
+def test_no_exp_data():
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    mth = BlochDecaySpectrum(channels=["1H"])
+    sim = Simulator(spin_systems=[sys], methods=[mth])
+    params = sf.make_LMFIT_params(
+        sim,
+    )
+
+    e = r".*No experimental data found for method at index \[0\].*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+    sim = Simulator(spin_systems=[sys], methods=[mth] * 4)
+    params = sf.make_LMFIT_params(
+        sim,
+    )
+
+    e = r".*No experimental data found for method at index \[0, 1, 2, 3\].*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+
 H = {
     "isotope": "1H",
     "isotropic_chemical_shift": "10 ppm",
