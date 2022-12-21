@@ -54,6 +54,10 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
 
+      - name: check gcc version on linux system
+        if: startsWith(matrix.os, 'ubuntu')
+        run: gcc -v
+
       - name: Install macos system dependencies
         if: startsWith(matrix.os, 'mac')
         run: brew install openblas fftw
