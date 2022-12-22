@@ -9,8 +9,6 @@
 
 #include "simulation.h"
 
-#include "frequency_averaging.h"
-
 /**
  * Each event consists of the following freq contrib ordered as
  * 1. Shielding 1st order 0th rank

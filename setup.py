@@ -161,6 +161,7 @@ class LinuxSetup(Setup):
         self.extra_compile_args = [
             "-O3",
             "-ffast-math",
+            "-fcommon",
             # "-msse4.2",
             # "-ftree-vectorize",
             # "-fopt-info-vec-all",
