@@ -3,6 +3,7 @@ from typing import ClassVar
 from typing import Dict
 from typing import Optional
 
+from mrsimulator.utils.euler_angles import combine_euler_angles
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 
@@ -116,6 +117,35 @@ class SymmetricTensor(Parseable):
 
     class Config:
         extra = "forbid"
+
+    def rotate(self, euler_angles):
+        """Rotate the tensor by the given list of Euler angle rotations. Euler angles
+        are given as a list of (alpha, beta, gamma) tuples, and rotations happen in the
+        Haeberlen (ZYZ) convention.
+
+        Arguments:
+            (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
+                to rotate through.
+
+        Example
+        -------
+
+        >>> tensor = SymmetricTensor(zeta=10, eta=0.3, alpha=1, beta=1, gamma=1)
+        >>> angles = [(3.1415, 0, -3.1415), (1.5701, 1.5701, 1.5701)]
+        >>> tensor.rotate(angles)
+        """
+        # If tensor (alpha, beta, gamma) all initialized to None, then assume all zero
+        initial_angles = (
+            self.alpha if self.alpha is not None else 0,
+            self.beta if self.beta is not None else 0,
+            self.gamma if self.gamma is not None else 0,
+        )
+
+        alpha, beta, gamma = combine_euler_angles([initial_angles] + euler_angles)
+
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
 
     # Deprecated
     # def to_freq_dict(self, larmor_frequency: float) -> dict:

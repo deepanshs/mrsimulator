@@ -225,3 +225,18 @@ class Coupling(Parseable):
                         f"Error enforcing units for {k}.zeta: ppm. Use frequency units."
                     )
         return super().parse_dict_with_units(py_dict)
+
+    def rotate(self, euler_angles):
+        """Rotate the site tensors (shielding, quadrupolar) by the given list of Euler
+        angle rotations. Euler angles are given as a list of (alpha, beta, gamma)
+        tuples, and rotations happen in the Haeberlen (ZYZ) convention.
+
+        Arguments:
+            (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
+                to rotate through each tensor through.
+        """
+        if self.j_symmetric:  # not None
+            self.j_symmetric.rotate(euler_angles)
+
+        if self.dipolar:  # not None
+            self.dipolar.rotate(euler_angles)
