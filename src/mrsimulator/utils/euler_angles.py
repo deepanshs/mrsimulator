@@ -9,14 +9,14 @@ __email__ = "giammar.7@osu.edu"
 TWO_PI = np.pi * 2
 
 
-def wrap_between_pi(a: float):
+def wrap_between_pi(a: float) -> float:
     """Wraps the provided angle between (-pi and pi]"""
     a %= TWO_PI
     a -= np.sign(a) * TWO_PI if abs(a) > np.pi else 0
     return a
 
 
-def combine_euler_angles(euler_angles: list):
+def combine_euler_angles(euler_angles: list) -> tuple:
     """Takes a list of Euler angles as (alpha, beta, gamma) tuples and converts all
     sequential rotations to a single set of Euler angles. Uses ZYZ convention.
 
@@ -35,7 +35,7 @@ def combine_euler_angles(euler_angles: list):
     return alpha, beta, gamma
 
 
-def _angle_phase_to_euler_angles(angle: float, phase: float):
+def _angle_phase_to_euler_angles(angle: float, phase: float) -> tuple:
     """Takes angle and phase of a mixing query and converts to a set of euler angles in
     the ZYZ convention. The returned angles will be constrained between (-pi, pi]
 
@@ -52,14 +52,16 @@ def _angle_phase_to_euler_angles(angle: float, phase: float):
     return wrap_between_pi(alpha), wrap_between_pi(angle), wrap_between_pi(-alpha)
 
 
-def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
+def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float) -> tuple:
     """Takes a set of euler angles in the ZYZ convention and converts them to a
     mixing angle and phase. Provided alpha and gamma should be opposite of each other,
     otherwise a ValueError is raised since the rotation vector does not lie in the XY
     plane.
 
     Args:
-        alpha, beta, gamma: Set of euler angles to convert
+        alpha (float): First Euler angle in set
+        beta (float): Second Euler angle in set
+        gamma (float): Third Euler angle in set
 
     Returns:
         angle, phase: Angle and phase of the equivalent mixing query
@@ -77,7 +79,9 @@ def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float):
     return beta, phase
 
 
-def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
+def _add_two_euler_angles(
+    a1: float, b1: float, g1: float, a2: float, b2: float, g2: float
+) -> tuple:
     """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together.
     Also checks for edge cases where gimbal lock would occur.
 
@@ -89,8 +93,16 @@ def _add_two_euler_angles(a1, b1, g1, a2, b2, g2):
     element of the rotation matrix equals -cos(2*phase) and alpha and gamma are computed
     from there.
 
+    Arguments:
+        a1 (float): alpha for first Euler angle
+        b1 (float): beta for first Euler angle
+        g1 (float): gamma for first Euler angle
+        a2 (float): alpha for second Euler angle
+        b2 (float): beta for second Euler angle
+        g2 (float): gamma for second Euler angle
+
     Returns:
-        alpha, beta, gamma: The resulting Euler angles
+        alpha, beta, gamma: The resulting Euler angle
     """
     rot_1 = Rotation.from_euler("zyz", [a1, b1, g1])
     rot_2 = Rotation.from_euler("zyz", [a2, b2, g2])
