@@ -1,5 +1,5 @@
 
-numpy>=1.17
+numpy>=1.20
 matplotlib>=3.3.4
 csdmpy>=0.4.1
 pydantic>=1.9
