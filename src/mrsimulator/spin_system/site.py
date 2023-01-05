@@ -236,7 +236,7 @@ class Site(Parseable):
 
         return super().parse_dict_with_units(py_dict)
 
-    def rotate(self, euler_angles):
+    def rotate(self, euler_angles: list) -> None:
         """Rotate the site tensors (shielding, quadrupolar) by the given list of Euler
         angle rotations. Euler angles are given as a list of (alpha, beta, gamma)
         tuples, and rotations happen in the Haeberlen (ZYZ) convention.

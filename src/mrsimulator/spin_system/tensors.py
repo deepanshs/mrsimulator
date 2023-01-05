@@ -118,7 +118,7 @@ class SymmetricTensor(Parseable):
     class Config:
         extra = "forbid"
 
-    def rotate(self, euler_angles):
+    def rotate(self, euler_angles: list) -> None:
         """Rotate the tensor by the given list of Euler angle rotations. Euler angles
         are given as a list of (alpha, beta, gamma) tuples, and rotations happen in the
         Haeberlen (ZYZ) convention.
