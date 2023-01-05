@@ -16,7 +16,7 @@ following operating systems:
 
 **Required packages**
 
-- `NumPy>=1.17 <https://www.numpy.org>`_
+- `numpy>=1.20 <https://www.numpy.org>`_
 - `matplotlib>=3.3.4 <https://matplotlib.org>`_ for figures and visualization
 - `lmfit>=1.0.3 <https://lmfit.github.io/lmfit-py/>`_ for least-squares fitting
 - `pandas>=1.1.3 <https://pandas.pydata.org/docs/>`_
