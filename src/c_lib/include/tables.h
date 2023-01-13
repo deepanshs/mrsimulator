@@ -9,7 +9,7 @@ double cos_table[62833];
 double sin_table[62833];
 double trig_table_precision_inverse;
 
-static inline void generate_trig_table() {
+static inline void generate_trig_table(void) {
   extern double cos_table[62833];
   extern double sin_table[62833];
   extern double trig_table_precision_inverse;
@@ -31,7 +31,7 @@ static inline void generate_trig_table() {
 double gauss_table[1500];
 double gauss_table_precision_inverse;
 
-static inline void generate_gauss_table() {
+static inline void generate_gauss_table(void) {
   extern double gauss_table[1500];
   extern double gauss_table_precision_inverse;
 
@@ -46,7 +46,7 @@ static inline void generate_gauss_table() {
   }
 }
 
-static inline void generate_tables() {
+static inline void generate_tables(void) {
   generate_trig_table();
   generate_gauss_table();
 }

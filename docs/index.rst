@@ -24,8 +24,8 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub
-            :target: https://github.com/deepanshs/mrsimulator/actions
+        - .. image:: https://img.shields.io/github/actions/workflow/status/deepanshs/mrsimulator/continuous-integration-pip.yml?logo=GitHub
+            :target: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg
             :alt: GitHub Workflow Status
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
@@ -38,16 +38,8 @@ Welcome to the Mrsimulator documentation
             :alt: License
 
       * - Metrics
-        - .. image:: https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python
-            :alt: Language grade: Python
-
-          .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
+        - .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
             :target: https://codecov.io/gh/deepanshs/mrsimulator
-
-          .. image:: https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/
-            :alt: Total alerts
 
           .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
             :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
