@@ -132,7 +132,8 @@ class Simulator(Parseable):
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
-    # indexes = []
+    precomputed_pathways = []
+    precomputed_weights = []
 
     class Config:
         validate_assignment = True
@@ -320,6 +321,37 @@ class Simulator(Parseable):
                 mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
+    def optimize(self):
+        """Pre-compute transition pathways for each of the methods and the set of spin
+        systems held by the simulator object. This increases the efficiency during
+        least-squared fitting since pathways are not re-computed during every iteration.
+
+        TODO: Complete
+        """
+        # NOTE: Could possibly make this into a list comprehension
+        for mth in self.methods:
+            pathways = []
+            weights = []
+            for sys in self.spin_systems:
+                p, w = mth._get_transition_pathway_and_weights_np(sys)
+                # print(p)
+                # print(w)
+                pathways.append(p)
+                weights.append(w)
+
+            self.precomputed_pathways.append(pathways)
+            self.precomputed_weights.append(weights)
+
+        # print("opt", len(self.precomputed_pathways))
+
+    def release(self):
+        """Release the pre-computed optimizations.
+
+        TODO: Complete
+        """
+        self.precomputed_pathways = []
+        self.precomputed_weights = []
+
     def run(
         self,
         method_index: list = None,
@@ -349,19 +381,43 @@ class Simulator(Parseable):
         >>> sim.run() # doctest:+SKIP
         """
         verbose = 0
+        discard_optimizations_after_sim = False
+
+        if self.precomputed_pathways == [] or self.precomputed_weights == []:
+            discard_optimizations_after_sim = True
+            self.optimize()
+
         if method_index is None:
             method_index = np.arange(len(self.methods))
         elif isinstance(method_index, int):
             method_index = [method_index]
+
         for index in method_index:
             method = self.methods[index]
-            spin_sys = get_chunks(self.spin_systems, n_jobs)
-            kwargs_dict = self.config.get_int_dict()
+            spin_sys = get_chunks(
+                self.spin_systems, n_jobs
+            )  # Need to also chunk pathways and weights
+            pathways = get_chunks(self.precomputed_pathways[index], n_jobs)
+            weights = get_chunks(self.precomputed_weights[index], n_jobs)
+            # pathways = get_chunks(deepcopy(self.precomputed_pathways[index]), n_jobs)
+            # weights = get_chunks(deepcopy(self.precomputed_weights[index]), n_jobs)
+
+            for sys, pth, wht in zip(spin_sys, pathways, weights):
+                print(len(sys))
+                print(len(pth))
+                print(len(wht))
+
+            config_dict = self.config.get_int_dict()
             jobs = (
                 delayed(core_simulator)(
-                    method=method, spin_systems=sys, **kwargs_dict, **kwargs
+                    method=method,
+                    spin_systems=sys,
+                    transition_pathways=pth,
+                    transition_weights=wht,
+                    **config_dict,
+                    **kwargs,
                 )
-                for sys in spin_sys
+                for sys, pth, wht in zip(spin_sys, pathways, weights)
             )
             amp = Parallel(
                 n_jobs=n_jobs,
@@ -397,6 +453,10 @@ class Simulator(Parseable):
                 else np.asarray(simulated_dataset)
             )
             amp = None
+
+        # Clean up after running and storing the simulation
+        if discard_optimizations_after_sim:
+            self.release()
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.

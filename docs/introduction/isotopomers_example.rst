@@ -215,7 +215,7 @@ spin systems and the list of your two methods, and run the simulations.
 
     sim = Simulator(
         spin_systems = [isotopomer1, isotopomer2, isotopomer3],
-        methods=[method_H, method_C]
+        methods = [method_H, method_C]
     )
     sim.run()
 

@@ -14,6 +14,8 @@ clib.generate_tables()
 @cython.wraparound(False)
 def core_simulator(method,
        list spin_systems,
+       list transition_pathways,          # Same length as spin_systems list and
+       list transition_weights,  # elements coorespond to each system
        int verbose=0,  # for debug purpose only.
        unsigned int number_of_sidebands=90,
        unsigned int integration_density=72,
@@ -165,9 +167,7 @@ def core_simulator(method,
             affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
-    p_isotopes = None
-
-    cdef int number_of_sites, number_of_couplings, p_number_of_sites=0
+    cdef int number_of_sites, number_of_couplings
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
@@ -206,7 +206,7 @@ def core_simulator(method,
 
     # -------------------------------------------------------------------------
     # sample __________________________________________________________________
-    for spin_sys in spin_systems:
+    for spin_sys, segments, weights in zip(spin_systems, transition_pathways, transition_weights):
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
@@ -393,28 +393,11 @@ def core_simulator(method,
         #         amp_individual.append([])
         #     continue
 
-        if number_of_sites != p_number_of_sites and isotopes != p_isotopes:
-            transition_pathway = spin_sys.transition_pathways
-            if transition_pathway is None:
-                segments, weights = method._get_transition_pathway_and_weights_np(spin_sys)
-                transition_pathway = np.asarray(segments, dtype=np.float32)
-                transition_pathway_c = transition_pathway.ravel()
-                transition_pathway_weight_c = weights.view(dtype=np.float64)
-            else:
-                # convert transition objects to list
-                weights = [(item.weight.real, item.weight.imag) for item in transition_pathway]
-                transition_pathway_weight_c = np.asarray(weights, dtype=np.float64).ravel()
-                # transition_pathway_weight_c = weights
+        transition_pathway_c = np.asarray(segments, dtype=np.float32).ravel()  # NOTE: Why 32 then 64 bits?
+        transition_pathway_weight_c = weights.view(dtype=np.float64)
 
-                transition_pathway = np.asarray(transition_pathway)
-                lst = [item.tolist() for item in transition_pathway.ravel()]
-                transition_pathway_c = np.asarray(lst, dtype=np.float32).ravel()
-
-            pathway_count, transition_count_per_pathway = transition_pathway.shape[:2]
-            pathway_increment = 2*number_of_sites*transition_count_per_pathway
-
-            p_number_of_sites = number_of_sites
-            p_isotopes = isotopes
+        pathway_count, transition_count_per_pathway = segments.shape[:2]
+        pathway_increment = 2*number_of_sites*transition_count_per_pathway
 
         # if spin_sys.transitions is not None:
         #     transition_pathway_c = np.asarray(
