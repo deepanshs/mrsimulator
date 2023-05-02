@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: [3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -53,6 +53,10 @@ jobs:
       - name: Install linux system dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
+
+      - name: check gcc version on linux system
+        if: startsWith(matrix.os, 'ubuntu')
+        run: gcc -v
 
       - name: Install macos system dependencies
         if: startsWith(matrix.os, 'mac')
@@ -70,7 +74,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@v3.1.1
 
   # build_windows_test:
   #   needs: [code_lint]
@@ -110,13 +114,13 @@ jobs:
   #       run: pytest --cov=./ --cov-report=xml
 
   #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v3.1.0
+  #       uses: codecov/codecov-action@v3.1.1
 
   testing_windows:
     needs: [code_lint]
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
     runs-on: "windows-latest"
 
     steps:
@@ -146,4 +150,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v3.1.0
+        uses: codecov/codecov-action@v3.1.1

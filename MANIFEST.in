@@ -5,8 +5,8 @@ include CHANGELOG
 include pyproject.toml
 include settings.py
 
-recursive-include src/c_lib/include/ *.h
-recursive-include src/c_lib/lib/ *.c
+recursive-include src/c_lib/include *.h
+recursive-include src/c_lib/lib *.c
 
 include src/mrsimulator/method/tests/lib_tests/test_data.json
 include src/mrsimulator/spin_system/isotope_data.json
