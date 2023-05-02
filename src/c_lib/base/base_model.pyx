@@ -150,7 +150,7 @@ def core_simulator(method,
 # _____________________________________________________________________________
 
 # frequency contrib
-    cdef ndarray[bool_t] f_contrib = np.asarray(freq_contrib, dtype=bool)
+    cdef ndarray[bool_t] f_contrib = np.asarray(freq_contrib, dtype=np.bool_)
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
