@@ -151,6 +151,8 @@ def core_simulator(method,
 # _____________________________________________________________________________
 
 # frequency contrib
+    # numpy uint8 corresponds to an unsigned char C type
+    # More types found here: https://numpy.org/doc/stable/user/basics.types.html#array-types-and-conversions-between-types
     cdef ndarray[cnp.uint8_t] f_contrib = np.asarray(freq_contrib, dtype=np.uint8)
 
 # affine transformation
