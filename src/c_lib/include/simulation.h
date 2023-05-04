@@ -33,7 +33,7 @@ extern void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron.
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, unsigned int interpolate_type, bool *freq_contrib,
+    bool interpolation, unsigned int interpolate_type, unsigned char *freq_contrib,
     double *affine_matrix);
 
 extern void __mrsimulator_core(
@@ -69,6 +69,6 @@ extern void __mrsimulator_core(
      * a stack of boolean list, where the stack is ordered according to the
      * events.
      */
-    bool *freq_contrib,
+    unsigned char *freq_contrib,
     double *affine_matrix  // Affine transformation matrix.
 );
