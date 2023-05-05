@@ -51,9 +51,9 @@ void __mrsimulator_core(
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
     bool interpolation,                 // If true, perform a 1D interpolation.
-    unsigned int iso_intrp,  // Isotropic interpolation scheme (linear | Gaussian)
-    bool *freq_contrib,      // A list of freq_contrib booleans.
-    double *affine_matrix    // Affine transformation matrix.
+    unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
+    unsigned char *freq_contrib,  // A list of freq_contrib booleans.
+    double *affine_matrix         // Affine transformation matrix.
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
@@ -186,7 +186,7 @@ void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, unsigned int interpolate_type, bool *freq_contrib,
+    bool interpolation, unsigned int interpolate_type, unsigned char *freq_contrib,
     double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
