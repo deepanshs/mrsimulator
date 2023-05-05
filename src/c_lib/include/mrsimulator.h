@@ -219,7 +219,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     complex128 *R2_temp,         // The temporary R2 components.
     complex128 *R4_temp,         // The temporary R3 components.
     double B0_in_T,              // Magnetic flux density in T.
-    bool *freq_contrib           // The pointer to freq contribs boolean.
+    unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 );
 
 extern void get_sideband_phase_components(unsigned int number_of_sidebands,

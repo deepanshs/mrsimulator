@@ -137,7 +137,7 @@ cdef extern from "simulation.h":
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
         bool_t interpolation,
         unsigned int interpolate_type,
-        bool_t *freq_contrib,
+        unsigned char *freq_contrib,
         double *affine_matrix,
         )
 
@@ -154,6 +154,6 @@ cdef extern from "simulation.h":
         MRS_averaging_scheme *scheme, # the powder averaging scheme
         bool_t interpolation,
         unsigned int interpolate_type,
-        bool_t *freq_contrib,
+        unsigned char *freq_contrib,
         double *affine_matrix,
         )
