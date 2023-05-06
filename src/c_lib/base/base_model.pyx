@@ -112,9 +112,6 @@ def core_simulator(method,
 
         dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
 
-        if dim.origin_offset is None:
-            dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
-
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
