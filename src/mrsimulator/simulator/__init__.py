@@ -18,6 +18,7 @@ from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
+from pydantic import PrivateAttr
 
 from .config import ConfigSimulator
 
@@ -132,8 +133,8 @@ class Simulator(Parseable):
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
-    precomputed_pathways = []
-    precomputed_weights = []
+    _precomputed_pathways: list = PrivateAttr([])
+    _precomputed_weights: list = PrivateAttr([])
 
     class Config:
         validate_assignment = True
@@ -334,23 +335,19 @@ class Simulator(Parseable):
             weights = []
             for sys in self.spin_systems:
                 p, w = mth._get_transition_pathway_and_weights_np(sys)
-                # print(p)
-                # print(w)
                 pathways.append(p)
                 weights.append(w)
 
-            self.precomputed_pathways.append(pathways)
-            self.precomputed_weights.append(weights)
-
-        # print("opt", len(self.precomputed_pathways))
+            self._precomputed_pathways.append(pathways)
+            self._precomputed_weights.append(weights)
 
     def release(self):
         """Release the pre-computed optimizations.
 
         TODO: Complete
         """
-        self.precomputed_pathways = []
-        self.precomputed_weights = []
+        self._precomputed_pathways = []
+        self._precomputed_weights = []
 
     def run(
         self,
@@ -384,7 +381,7 @@ class Simulator(Parseable):
         discard_optimizations_after_sim = False  # If True, calls .release() after sim
 
         # Triggers when .optimize() has not been called for the simulator object yet.
-        if self.precomputed_pathways == [] or self.precomputed_weights == []:
+        if self._precomputed_pathways == [] or self._precomputed_weights == []:
             discard_optimizations_after_sim = True
             self.optimize()
 
@@ -395,18 +392,10 @@ class Simulator(Parseable):
 
         for index in method_index:
             method = self.methods[index]
-            spin_sys = get_chunks(
-                self.spin_systems, n_jobs
-            )  # Need to also chunk pathways and weights
-            pathways = get_chunks(self.precomputed_pathways[index], n_jobs)
-            weights = get_chunks(self.precomputed_weights[index], n_jobs)
-            # pathways = get_chunks(deepcopy(self.precomputed_pathways[index]), n_jobs)
-            # weights = get_chunks(deepcopy(self.precomputed_weights[index]), n_jobs)
-
-            for sys, pth, wht in zip(spin_sys, pathways, weights):
-                print(len(sys))
-                print(len(pth))
-                print(len(wht))
+            spin_sys = get_chunks(self.spin_systems, n_jobs)
+            # Need to also chunk pathways and weights
+            pathways = get_chunks(self._precomputed_pathways[index], n_jobs)
+            weights = get_chunks(self._precomputed_weights[index], n_jobs)
 
             config_dict = self.config.get_int_dict()
             jobs = (
@@ -424,16 +413,7 @@ class Simulator(Parseable):
                 n_jobs=n_jobs,
                 verbose=verbose,
                 backend="loky",
-                # **{
-                #     "backend": {
-                #         "threads": "threading",
-                #         "processes": "multithreading",
-                #         None: None,
-                #     }["threads"]
-                # },
             )(jobs)
-
-            # self.indexes.append(indexes)
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
@@ -444,22 +424,6 @@ class Simulator(Parseable):
             self._package_amp_after_simulation(
                 method=method, amp=amp, pack_as_csdm=pack_as_csdm
             )
-
-            # # TODO: Package this logic for storing the simulated amplitude
-            # # array into a helper function
-            # if isinstance(amp[0], list):
-            #     simulated_dataset = []
-            #     for item in amp:
-            #         simulated_dataset += item
-            # if isinstance(amp[0], np.ndarray):
-            #     simulated_dataset = [np.asarray(amp).sum(axis=0)]
-
-            # method.simulation = (
-            #     self._as_csdm_object(simulated_dataset, method)
-            #     if pack_as_csdm
-            #     else np.asarray(simulated_dataset)
-            # )
-            # amp = None
 
         # Clean up after running and storing the simulation
         if discard_optimizations_after_sim:
