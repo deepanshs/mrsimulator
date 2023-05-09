@@ -322,12 +322,20 @@ class Simulator(Parseable):
                 mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
-    def optimize(self):
-        """Pre-compute transition pathways for each of the methods and the set of spin
-        systems held by the simulator object. This increases the efficiency during
-        least-squared fitting since pathways are not re-computed during every iteration.
+    def optimize(self) -> None:
+        """Pre-computes transition pathways and associated weights for each of the
+        :py:class:`~mrsimulator.method.Method` and
+        :py:class:`~mrsimulator.spin_system.SpinSystem` objects held by the simulator.
+        This increases the efficiency during least-squared minimization since pathways
+        are not re-computed during every iteration.
 
-        TODO: Complete
+        Example
+        -------
+
+        >>> sim = Simulator()
+        >>> # Add spin systems and methods
+        >>> sim.optimize()
+        >>> sim.run()
         """
         # NOTE: Could possibly make this into a list comprehension
         for mth in self.methods:
@@ -341,10 +349,17 @@ class Simulator(Parseable):
             self._precomputed_pathways.append(pathways)
             self._precomputed_weights.append(weights)
 
-    def release(self):
-        """Release the pre-computed optimizations.
+    def release(self) -> None:
+        """Release the pre-computed pathways and weights held by the simulator.
 
-        TODO: Complete
+        Example
+        -------
+
+        >>> sim = Simulator()
+        >>> # Add spin systems and methods
+        >>> sim.optimize()
+        >>> # Run least-squares minimization
+        >>> sim.release()
         """
         self._precomputed_pathways = []
         self._precomputed_weights = []
@@ -366,7 +381,7 @@ class Simulator(Parseable):
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
                 otherwise, as a `ndarray
-                <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
+                <https://numpy.org/doc/stable/reference/arrays.html>`_
                 object.
                 The simulations are stored as the value of the
                 :attr:`~mrsimulator.Method.simulation` attribute of the corresponding

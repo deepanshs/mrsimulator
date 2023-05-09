@@ -8,6 +8,10 @@ What's new
 
 - Support gamma angle averaging.
 
+**Simulator**
+
+- New instance methods for the `Simulator` class -- `.optimize()` and `.release()` -- which pre-compute and discard, respectively, pathways before least-squares minimization. This improves the efficiency of multi-dataset fits.
+
 v0.7.0
 ------
 
