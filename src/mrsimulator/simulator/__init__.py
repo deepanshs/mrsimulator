@@ -381,15 +381,16 @@ class Simulator(Parseable):
         >>> sim.run() # doctest:+SKIP
         """
         verbose = 0
-        discard_optimizations_after_sim = False
+        discard_optimizations_after_sim = False  # If True, calls .release() after sim
 
+        # Triggers when .optimize() has not been called for the simulator object yet.
         if self.precomputed_pathways == [] or self.precomputed_weights == []:
             discard_optimizations_after_sim = True
             self.optimize()
 
-        if method_index is None:
+        if method_index is None:  # Simulate for all methods
             method_index = np.arange(len(self.methods))
-        elif isinstance(method_index, int):
+        elif isinstance(method_index, int):  # Package single method index as list
             method_index = [method_index]
 
         for index in method_index:
@@ -440,19 +441,25 @@ class Simulator(Parseable):
             for seq in method.spectral_dimensions:
                 seq.origin_offset = larmor_freq + seq.reference_offset
 
-            if isinstance(amp[0], list):
-                simulated_dataset = []
-                for item in amp:
-                    simulated_dataset += item
-            if isinstance(amp[0], np.ndarray):
-                simulated_dataset = [np.asarray(amp).sum(axis=0)]
-
-            method.simulation = (
-                self._as_csdm_object(simulated_dataset, method)
-                if pack_as_csdm
-                else np.asarray(simulated_dataset)
+            self._package_amp_after_simulation(
+                method=method, amp=amp, pack_as_csdm=pack_as_csdm
             )
-            amp = None
+
+            # # TODO: Package this logic for storing the simulated amplitude
+            # # array into a helper function
+            # if isinstance(amp[0], list):
+            #     simulated_dataset = []
+            #     for item in amp:
+            #         simulated_dataset += item
+            # if isinstance(amp[0], np.ndarray):
+            #     simulated_dataset = [np.asarray(amp).sum(axis=0)]
+
+            # method.simulation = (
+            #     self._as_csdm_object(simulated_dataset, method)
+            #     if pack_as_csdm
+            #     else np.asarray(simulated_dataset)
+            # )
+            # amp = None
 
         # Clean up after running and storing the simulation
         if discard_optimizations_after_sim:
@@ -591,6 +598,31 @@ class Simulator(Parseable):
             }
         }
         return obj
+
+    def _package_amp_after_simulation(self, method, amp, pack_as_csdm):
+        """Helper function for packaging frequency array (amp) into a numpy array or
+        CSDM object after a simulation. Puts the packaged simulation into the passed
+        method object and does not return anything
+
+        Args:
+            Method method: The :py:class:`~mrsimulator.Method` object for the simulated
+                spectrum.
+            np.ndarray amp: Calculated spectrum as a numpy array
+            bool pack_as_csdm: Packages the simulated spectrum as a CSDM object if true.
+                Otherwise kept as a numpy array.
+        """
+        if isinstance(amp[0], list):
+            simulated_dataset = []
+            for item in amp:
+                simulated_dataset += item
+        if isinstance(amp[0], np.ndarray):
+            simulated_dataset = [np.asarray(amp).sum(axis=0)]
+
+        method.simulation = (
+            self._as_csdm_object(simulated_dataset, method)
+            if pack_as_csdm
+            else np.asarray(simulated_dataset)
+        )
 
 
 class Sites(AbstractList):
