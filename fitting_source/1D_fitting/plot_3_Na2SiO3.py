@@ -104,13 +104,6 @@ MAS_CT = BlochDecayCTSpectrum(
     experiment=experiment,  # experimental dataset
 )
 
-# A method object queries every spin system for a list of transition pathways that are
-# relevant for the given method. Since the method and the number of spin systems remain
-# the same during the least-squares fit, a one-time query is sufficient. To avoid
-# querying for the transition pathways at every iteration in a least-squares fitting,
-# evaluate the transition pathways once and store it as follows
-for sys in spin_systems:
-    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
@@ -179,9 +172,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
+sim.optimize()
+
 minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
 result = minner.minimize()
 result
+
+sim.release()
 
 # %%
 # **Step 8:** The plot of the fit and the measurement dataset.
