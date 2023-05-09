@@ -1,4 +1,5 @@
 cimport base_model as clib
+cimport numpy as cnp
 from libcpp cimport bool as bool_t
 from numpy cimport ndarray
 import numpy as np
@@ -113,9 +114,6 @@ def core_simulator(method,
 
         dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
 
-        if dim.origin_offset is None:
-            dim.origin_offset = np.abs(Bo[0] * gyromagnetic_ratio * 1e6)
-
     frac = np.asarray(fr, dtype=np.float64)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
@@ -152,7 +150,9 @@ def core_simulator(method,
 # _____________________________________________________________________________
 
 # frequency contrib
-    cdef ndarray[bool_t] f_contrib = np.asarray(freq_contrib, dtype=bool)
+    # numpy uint8 corresponds to an unsigned char C type
+    # More types found here: https://numpy.org/doc/stable/user/basics.types.html#array-types-and-conversions-between-types
+    cdef ndarray[cnp.uint8_t] f_contrib = np.asarray(freq_contrib, dtype=np.uint8)
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
