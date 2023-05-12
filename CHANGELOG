@@ -10,7 +10,7 @@ What's new
 
 **Simulator**
 
-- New instance methods for the `Simulator` class -- `.optimize()` and `.release()` -- which pre-compute and discard, respectively, pathways before least-squares minimization. This improves the efficiency of multi-dataset fits.
+- New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
 
 v0.7.0
 ------

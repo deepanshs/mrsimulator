@@ -394,15 +394,11 @@ def test_parallel_chunks():
     check_chunks(items_list, -1, lst)
 
 
-def test_json_excludes_precomputed_pathways_and_weights():
+def test_sim_optimize():
     sim = Simulator()
     sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
     sim.methods = [BlochDecaySpectrum(channels=["1H"])]
 
-    sim.optimize()
-    json_keys = set(sim.json().keys())
+    opt = sim.optimize()
 
-    assert json_keys == {"spin_systems", "methods", "config"}
-
-    assert "_precomputed_pathways" not in json_keys
-    assert "_precomputed_weights" not in json_keys
+    assert set(opt.keys()) == {"precomputed_pathways", "precomputed_weights"}

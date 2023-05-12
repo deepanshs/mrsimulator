@@ -430,7 +430,11 @@ def _check_for_experiment_data(methods_list: list):
 
 
 def LMFIT_min_function(
-    params: Parameters, sim: Simulator, processors: list = None, sigma: list = None
+    params: Parameters,
+    sim: Simulator,
+    processors: list = None,
+    sigma: list = None,
+    opt: dict = None,
 ):
     """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
@@ -442,6 +446,8 @@ def LMFIT_min_function(
             Simulator object.
         sigma: A list of standard deviations corresponding to the experiments in the
             Simulator.methods attribute
+        opt: An optional dictionary containing pre-computed pathways and weights to pass
+            to the :py:mth:~`mrsimulator.Simulator.run()` method.
     Returns:
         Array of the differences between the simulation and the experimental datasets.
     """
@@ -452,7 +458,7 @@ def LMFIT_min_function(
     _check_for_experiment_data(sim.methods)
     update_mrsim_obj_from_params(params, sim, processors)
 
-    sim.run()
+    sim.run(opt=opt)
 
     processed_dataset = [
         item.apply_operations(dataset=data.simulation)

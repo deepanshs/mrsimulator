@@ -334,10 +334,10 @@ class Simulator(Parseable):
 
         >>> sim = Simulator()
         >>> # Add spin systems and methods
-        >>> sim.optimize()
-        >>> sim.run()
+        >>> optimization = sim.optimize()
+        >>> sim.run(opt=optimization)
         """
-        # NOTE: Could possibly make this into a list comprehension
+        opt = {"precomputed_pathways": [], "precomputed_weights": []}
         for mth in self.methods:
             pathways = []
             weights = []
@@ -346,29 +346,17 @@ class Simulator(Parseable):
                 pathways.append(p)
                 weights.append(w)
 
-            self._precomputed_pathways.append(pathways)
-            self._precomputed_weights.append(weights)
+            opt["precomputed_pathways"].append(pathways)
+            opt["precomputed_weights"].append(weights)
 
-    def release(self) -> None:
-        """Release the pre-computed pathways and weights held by the simulator.
-
-        Example
-        -------
-
-        >>> sim = Simulator()
-        >>> # Add spin systems and methods
-        >>> sim.optimize()
-        >>> # Run least-squares minimization
-        >>> sim.release()
-        """
-        self._precomputed_pathways = []
-        self._precomputed_weights = []
+        return opt
 
     def run(
         self,
         method_index: list = None,
         n_jobs: int = 1,
         pack_as_csdm: bool = True,
+        opt: dict = None,
         **kwargs,
     ):
         """Run the simulation and compute spectrum.
@@ -386,6 +374,10 @@ class Simulator(Parseable):
                 The simulations are stored as the value of the
                 :attr:`~mrsimulator.Method.simulation` attribute of the corresponding
                 method.
+            dict opt: An optional optimization dictionary storing pre-computed
+                transition pathways and transition weights for the given methods and
+                spin systems in the simulator. The default is None, that is, the
+                pathways and weights are calculated in the run method.
 
         Example
         -------
@@ -393,12 +385,9 @@ class Simulator(Parseable):
         >>> sim.run() # doctest:+SKIP
         """
         verbose = 0
-        discard_optimizations_after_sim = False  # If True, calls .release() after sim
 
-        # Triggers when .optimize() has not been called for the simulator object yet.
-        if self._precomputed_pathways == [] or self._precomputed_weights == []:
-            discard_optimizations_after_sim = True
-            self.optimize()
+        if opt is None:
+            opt = self.optimize()
 
         if method_index is None:  # Simulate for all methods
             method_index = np.arange(len(self.methods))
@@ -408,9 +397,10 @@ class Simulator(Parseable):
         for index in method_index:
             method = self.methods[index]
             spin_sys = get_chunks(self.spin_systems, n_jobs)
-            # Need to also chunk pathways and weights
-            pathways = get_chunks(self._precomputed_pathways[index], n_jobs)
-            weights = get_chunks(self._precomputed_weights[index], n_jobs)
+
+            # Chunking transition pathways and weights form the optimization dictionary
+            pathways = get_chunks(opt["precomputed_pathways"][index], n_jobs)
+            weights = get_chunks(opt["precomputed_weights"][index], n_jobs)
 
             config_dict = self.config.get_int_dict()
             jobs = (
@@ -439,10 +429,6 @@ class Simulator(Parseable):
             self._package_amp_after_simulation(
                 method=method, amp=amp, pack_as_csdm=pack_as_csdm
             )
-
-        # Clean up after running and storing the simulation
-        if discard_optimizations_after_sim:
-            self.release()
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.

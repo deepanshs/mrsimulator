@@ -172,13 +172,10 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
-sim.optimize()
-
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma, opt))
 result = minner.minimize()
 result
-
-sim.release()
 
 # %%
 # **Step 8:** The plot of the fit and the measurement dataset.

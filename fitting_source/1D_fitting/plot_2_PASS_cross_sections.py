@@ -118,11 +118,8 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # Run the minimization using LMFIT
-sim.optimize()
-
-sim.release()
-
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma, opt))
 result = minner.minimize()
 result
 

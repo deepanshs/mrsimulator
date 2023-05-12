@@ -160,14 +160,7 @@ params = sf.make_LMFIT_params(sim, processor, include={"rotor_frequency"})
 # abundance parameter.
 params.pop("sys_0_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
-# %%
-# A method object queries every spin system for a list of transition pathways that are
-# relevant to the given method. Since the method and the number of spin systems remains
-# unchanged during the least-squares analysis, a one-time query is sufficient. To avoid
-# querying for the transition pathways at every iteration in a least-squares fitting,
-# call the :py:mth:~`mrsimulator.Simulator.optimize()` method to pre-compute the
-# pathways
-sim.optimize()
+
 # %%
 # **Step 7:** Perform the least-squares minimization.
 # A method object queries every spin system for a list of transition pathways that are
@@ -183,13 +176,10 @@ sim.optimize()
 # difference vector between the simulation and experiment, based on
 # the parameters update. You may use this function directly as the argument of the
 # LMFIT Minimizer class, as follows,
-sim.optimize()
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()
+minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma, opt))
 result = minner.minimize()
 result
-
-# Discard pre-computed pathways and weights after fitting has competed
-sim.release()
 
 # %%
 # **Step 8:** The plot of the fit, measurement, and residuals.

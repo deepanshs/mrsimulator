@@ -206,7 +206,11 @@ def core_simulator(method,
 
     # -------------------------------------------------------------------------
     # sample __________________________________________________________________
-    for spin_sys, segments, weights in zip(spin_systems, transition_pathways, transition_weights):
+    for idx in range(len(spin_systems)):
+        spin_sys = spin_systems[idx]
+        segments = transition_pathways[idx]
+        weights = transition_weights[idx]
+
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
         if channel not in isotopes:
