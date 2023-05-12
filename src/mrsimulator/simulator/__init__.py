@@ -18,7 +18,6 @@ from mrsimulator.utils import flatten_dict
 from mrsimulator.utils.abstract_list import AbstractList
 from mrsimulator.utils.importer import import_json
 from mrsimulator.utils.parseable import Parseable
-from pydantic import PrivateAttr
 
 from .config import ConfigSimulator
 
@@ -133,8 +132,6 @@ class Simulator(Parseable):
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
-    _precomputed_pathways: list = PrivateAttr([])
-    _precomputed_weights: list = PrivateAttr([])
 
     class Config:
         validate_assignment = True
