@@ -478,7 +478,7 @@ static inline void MRS_rotate_single_site_interaction_components(
     unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 ) {
   unsigned int i, n_sites = sites->number_of_sites;
-  double larmor_freq_in_MHz;
+  double larmor_freq_in_MHz, larmor_freq_in_Hz;
   float *mf = &transition[n_sites], *mi = transition;
   double R2_shield[10];
   double R2_quad[10];
@@ -491,6 +491,8 @@ static inline void MRS_rotate_single_site_interaction_components(
       continue;
     }
     larmor_freq_in_MHz = -B0_in_T * sites->gyromagnetic_ratio[i];
+    larmor_freq_in_Hz = larmor_freq_in_MHz * 1.0e6;
+
     /* Nuclear shielding components ================================================= */
     /*  Upto the first order */
     FCF_1st_order_nuclear_shielding_tensor_components(
@@ -527,7 +529,7 @@ static inline void MRS_rotate_single_site_interaction_components(
     /*  Upto the second order */
     if (allow_4th_rank) {
       FCF_2nd_order_electric_quadrupole_tensor_components(
-          R0_temp, R2_temp, R4_temp, sites->spin[i], larmor_freq_in_MHz * 1e6,
+          R0_temp, R2_temp, R4_temp, sites->spin[i], larmor_freq_in_Hz,
           sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
           &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
@@ -540,7 +542,7 @@ static inline void MRS_rotate_single_site_interaction_components(
 
     /* Shielding Quad cross term components ========================================= */
     FCF_NS_EQ_cross_tensor_components(R0_temp, R2_temp, R4_temp, R2_shield, R2_quad,
-                                      larmor_freq_in_MHz * 1e6, *mf, *mi);
+                                      larmor_freq_in_Hz, *mf, *mi);
     if (freq_contrib[9]) *R0 += *R0_temp;
     if (freq_contrib[10]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
     if (freq_contrib[11]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
@@ -567,7 +569,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
   unsigned int i, j = 0, n_couplings = couplings->number_of_couplings;
   int site_index_I, site_index_S;
   float mIf, mSf, mIi, mSi;
-  double larmor_freq_in_MHz, spin_I, spin_S, temp, R_2q[10];
+  double larmor_freq_in_Hz, spin_I, spin_S, R_2q[10];
 
   /* Frequency computation for couplings */
   for (i = 0; i < n_couplings; i++) {
@@ -609,13 +611,13 @@ static inline void MRS_rotate_coupled_site_interaction_components(
           sites->quadrupolar_eta[site_index_S],
           &sites->quadrupolar_orientation[3 * site_index_S]);
 
-      larmor_freq_in_MHz = -B0_in_T * sites->gyromagnetic_ratio[site_index_S];
+      larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index_S] * 1.0e6;
 
       // Site S cross J-coupling
       FCF_Quad_coupling_cross_tensor_components(
           R0_temp, R2_temp, R4_temp, R_2q, couplings->j_symmetric_zeta_in_Hz[i],
           couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
-          larmor_freq_in_MHz, mIf, mIi, mSf, mSi);
+          larmor_freq_in_Hz, mIf, mIi, mSf, mSi);
 
       // in-place update the R2 components.
       *R0 += *R0_temp;
@@ -625,7 +627,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
       // Site S cross dipolar-coupling
       FCF_Quad_coupling_cross_tensor_components(
           R0_temp, R2_temp, R4_temp, R_2q, 2.0 * couplings->dipolar_coupling_in_Hz[i],
-          0, &couplings->dipolar_orientation[3 * i], larmor_freq_in_MHz, mIf, mIi, mSf,
+          0, &couplings->dipolar_orientation[3 * i], larmor_freq_in_Hz, mIf, mIi, mSf,
           mSi);
 
       // in-place update the R2 components.
@@ -643,13 +645,13 @@ static inline void MRS_rotate_coupled_site_interaction_components(
           sites->quadrupolar_eta[site_index_I],
           &sites->quadrupolar_orientation[3 * site_index_I]);
 
-      larmor_freq_in_MHz = -B0_in_T * sites->gyromagnetic_ratio[site_index_I];
+      larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index_I] * 1.0e6;
 
       // Site S cross J-coupling
       FCF_Quad_coupling_cross_tensor_components(
           R0_temp, R2_temp, R4_temp, R_2q, couplings->j_symmetric_zeta_in_Hz[i],
           couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
-          larmor_freq_in_MHz, mSf, mSi, mIf, mIi);
+          larmor_freq_in_Hz, mSf, mSi, mIf, mIi);
 
       // in-place update the R2 components.
       *R0 += *R0_temp;
@@ -660,7 +662,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
       FCF_Quad_coupling_cross_tensor_components(R0_temp, R2_temp, R4_temp, R_2q,
                                                 couplings->dipolar_coupling_in_Hz[i], 0,
                                                 &couplings->dipolar_orientation[3 * i],
-                                                larmor_freq_in_MHz, mSf, mSi, mIf, mIi);
+                                                larmor_freq_in_Hz, mSf, mSi, mIf, mIi);
 
       // in-place update the R2 components.
       *R0 += *R0_temp;
