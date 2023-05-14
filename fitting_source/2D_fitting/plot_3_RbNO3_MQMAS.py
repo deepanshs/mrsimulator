@@ -56,7 +56,7 @@ plt.show()
 #
 # Create a guess list of spin systems.
 
-shifts = [-26.4, -28.5, -31.3]  # in ppm
+shifts = [-26.8, -28.4, -31.2]  # in ppm
 Cq = [1.7e6, 2.0e6, 1.7e6]  # in  Hz
 eta = [0.2, 1.0, 0.6]
 abundance = [33.33, 33.33, 33.33]  # in %
