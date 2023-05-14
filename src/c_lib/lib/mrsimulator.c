@@ -617,10 +617,9 @@ static inline void MRS_rotate_coupled_site_interaction_components(
           couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
           larmor_freq_in_Hz, mIf, mIi, mSf, mSi);
 
-      // in-place update the R2 components.
-      *R0 += *R0_temp;
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      if (freq_contrib[12]) *R0 += *R0_temp;
+      if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
 
       // Site S cross dipolar-coupling
       FCF_Quad_coupling_cross_tensor_components(
@@ -629,9 +628,9 @@ static inline void MRS_rotate_coupled_site_interaction_components(
           mSi);
 
       // in-place update the R2 components.
-      *R0 += *R0_temp;
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      if (freq_contrib[15]) *R0 += *R0_temp;
+      if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
     }
 
     // Site I
@@ -649,21 +648,19 @@ static inline void MRS_rotate_coupled_site_interaction_components(
           couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
           larmor_freq_in_Hz, mSf, mSi, mIf, mIi);
 
-      // in-place update the R2 components.
-      *R0 += *R0_temp;
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      if (freq_contrib[12]) *R0 += *R0_temp;
+      if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
 
       // Site S cross dipolar-coupling
-      FCF_Quad_coupling_cross_tensor_components(R0_temp, R2_temp, R4_temp, R_2q,
-                                                couplings->dipolar_coupling_in_Hz[i], 0,
-                                                &couplings->dipolar_orientation[3 * i],
-                                                larmor_freq_in_Hz, mSf, mSi, mIf, mIi);
+      FCF_Quad_coupling_cross_tensor_components(
+          R0_temp, R2_temp, R4_temp, R_2q, 2.0 * couplings->dipolar_coupling_in_Hz[i],
+          0, &couplings->dipolar_orientation[3 * i], larmor_freq_in_Hz, mSf, mSi, mIf,
+          mIi);
 
-      // in-place update the R2 components.
-      *R0 += *R0_temp;
-      vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      if (freq_contrib[15]) *R0 += *R0_temp;
+      if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+      if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
     }
   }
 }
