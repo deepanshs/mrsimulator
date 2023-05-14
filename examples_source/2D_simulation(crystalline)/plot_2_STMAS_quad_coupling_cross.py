@@ -4,14 +4,13 @@ Co59 (I=7/2) STMAS
 ^^^^^^^^^^^^^^^^^^
 
 Co59 (I=7/2) satellite-transition magic-angle spinning simulation.
-(Quad-csa cross terms)
+(Quad-coupling cross terms)
 
 """
 # %%
-import numpy as np
 import matplotlib.pyplot as plt
 
-from mrsimulator import Simulator, SpinSystem, Site
+from mrsimulator import Simulator, SpinSystem, Site, Coupling
 from mrsimulator.method.lib import ST1_VAS
 from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -25,38 +24,14 @@ Co_sites = [
     Site(
         isotope="59Co",  # 59Co
         isotropic_chemical_shift=0,  # in ppm
-        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
+        # shielding_symmetric=SymmetricTensor(zeta=-1750, eta=0),
         quadrupolar=SymmetricTensor(Cq=3.1e6, eta=0.2),  # Cq is in Hz
-        name="$\\alpha=\\beta=\\gamma=0$",
     ),
-    Site(
-        isotope="59Co",  # 59Co
-        isotropic_chemical_shift=0,  # in ppm
-        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
-        quadrupolar=SymmetricTensor(Cq=3.1e6, eta=1, beta=np.pi / 2),  # Cq is in Hz
-        name="$\\beta=90, \\alpha=\\gamma=0$",
-    ),
-    Site(
-        isotope="59Co",  # 59Co
-        isotropic_chemical_shift=0,  # in ppm
-        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
-        quadrupolar=SymmetricTensor(
-            Cq=3.1e6, eta=1, alpha=np.pi / 2, beta=np.pi / 2
-        ),  # Cq is in Hz
-        name="$\\alpha=\\beta=90, \\gamma=0$",
-    ),
-    Site(
-        isotope="59Co",  # 59Co
-        isotropic_chemical_shift=0,  # in ppm
-        shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
-        quadrupolar=SymmetricTensor(
-            Cq=3.1e6, eta=1, alpha=np.pi / 2, beta=np.pi / 2, gamma=np.pi / 2
-        ),  # Cq is in Hz
-        name="$\\alpha=\\beta=\\gamma=90$",
-    ),
+    Site(isotope="1H", isotropic_chemical_shift=0),
 ]
 
-spin_systems = [SpinSystem(sites=[site], name=site.name) for site in Co_sites]
+coupling = [Coupling(site_index=[0, 1], dipolar={"D": 50000})]
+spin_systems = [SpinSystem(sites=Co_sites, couplings=coupling)]
 
 # %%
 # Select a satellite-transition variable-angle spinning method. The
@@ -115,14 +90,10 @@ processed_dataset = processor.apply_operations(dataset=dataset)
 _ = [item.to("kHz", "nmr_frequency_ratio") for item in processed_dataset.x]
 
 processed_dataset = processed_dataset.split()
-fig, ax = plt.subplots(
-    2, 2, figsize=(6, 4.5), sharex=True, sharey=True, subplot_kw={"projection": "csdm"}
-)
-ax[0, 0].imshow(processed_dataset[0].real, cmap="gist_ncar_r", aspect="auto")
-ax[0, 1].imshow(processed_dataset[1].real, cmap="gist_ncar_r", aspect="auto")
-ax[1, 0].imshow(processed_dataset[2].real, cmap="gist_ncar_r", aspect="auto")
-ax[1, 1].imshow(processed_dataset[3].real, cmap="gist_ncar_r", aspect="auto")
-ax[0, 0].invert_xaxis()
-ax[0, 0].invert_yaxis()
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
+ax.imshow(processed_dataset[0].real, cmap="gist_ncar_r", aspect="auto")
+ax.invert_xaxis()
+ax.invert_yaxis()
 plt.tight_layout()
 plt.show()

@@ -152,7 +152,7 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
  * @param spin The spin quantum number, @f$I@f$.
  * @param Cq_in_Hz The quadrupole coupling constant, @f$C_q@f$, in Hz.
  * @param eta The quadrupole asymmetry parameter, @f$\eta_q \in [0, 1]@f$.
- * @param v0_in_Hz The Larmor frequency, @f$\nu_0@f$, in Hz.
+ * @param larmor_freq_in_Hz The Larmor frequency, @f$\nu_0@f$, in Hz.
  * @param Theta A pointer to an array of Euler angles, in radians, of length 3,
  *      ordered as @f$[\alpha, \beta, \gamma]@f$.
  * @param mf The spin quantum number of the final energy state.
@@ -160,15 +160,15 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
  */
 static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
-    const double spin, const double v0_in_Hz, const double Cq_in_Hz, const double eta,
-    const double *Theta, const float mf, const float mi) {
+    const double spin, const double larmor_freq_in_Hz, const double Cq_in_Hz,
+    const double eta, const double *Theta, const float mf, const float mi) {
   // Composite spin transition functions
   double cl_value[3];
   STF_cL(cl_value, mf, mi, spin);
 
   // Spatial orientation function
   sSOT_2nd_order_electric_quadrupole_tensor_components(
-      Lambda_0, Lambda_2, Lambda_4, spin, v0_in_Hz, Cq_in_Hz, eta, Theta);
+      Lambda_0, Lambda_2, Lambda_4, spin, larmor_freq_in_Hz, Cq_in_Hz, eta, Theta);
 
   // frequency component function from the zeroth-rank irreducible tensor.
   *Lambda_0 *= cl_value[0];
@@ -219,8 +219,8 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
  */
 static inline void FCF_NS_EQ_cross_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
-    const double *R_2q, const double *R_2s, const double larmor_freq, const float mf,
-    const float mi) {
+    const double *R_2q, const double *R_2s, const double larmor_freq_in_Hz,
+    const float mf, const float mi) {
   // Spin transition function scalar
 
   // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
@@ -230,7 +230,7 @@ static inline void FCF_NS_EQ_cross_tensor_components(
   //      = [-1/2 ζη,    0, √3/2 ζ, 0 ,  -1/2 ζη  ] * -√2/3 * v_0 * p(mf, mi)
 
   // Divide R_2s by (-√2/3 v_0 p(mf, mi))
-  double transition_fn_scalar = -1.2247448714 / (STF_p(mf, mi) * larmor_freq);
+  double transition_fn_scalar = -1.2247448714 / (STF_p(mf, mi) * larmor_freq_in_Hz);
 
   // Spatial orientation function.
   sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
@@ -386,7 +386,7 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
 static inline void FCF_Quad_coupling_cross_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
     const double *R_2q, const double coupling_aniso_in_Hz, const double coupling_eta,
-    const double *coupling_theta, const double larmor_freq, const float mIf,
+    const double *coupling_theta, const double larmor_freq_in_Hz, const float mIf,
     const float mIi, const float mSf, const float mSi) {
   // Spin transition function scalar
 
@@ -394,7 +394,7 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
   double transition_fn_scalar = STF_pdIS(mIf, mIi, mSf, mSi);
 
   // Return if the transition is zero
-  if (transition_fn_scalar == 0.0) {
+  if (transition_fn_scalar == 0.0 || coupling_aniso_in_Hz == 0.0) {
     // zero the R0 and R2 components before populating with shielding components
     *Lambda_0 = 0.0;
     vm_double_zeros(10, (double *)Lambda_2);
@@ -411,14 +411,14 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
 
   sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2coupling);
 
-  transition_fn_scalar /= larmor_freq;
+  transition_fn_scalar /= larmor_freq_in_Hz;
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *Lambda_0 *= -0.4140393356054125 * transition_fn_scalar;
+  *Lambda_0 *= 0.4140393356054125 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.24743582965269675 * transition_fn_scalar, (double *)Lambda_2, 1);
+  cblas_dscal(10, -0.24743582965269675 * transition_fn_scalar, (double *)Lambda_2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, -0.4426266681379905 * transition_fn_scalar, (double *)Lambda_4, 1);
+  cblas_dscal(18, 0.4426266681379905 * transition_fn_scalar, (double *)Lambda_4, 1);
 }
