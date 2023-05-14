@@ -336,7 +336,7 @@ static inline void sSOT_2nd_order_electric_quadrupole_tensor_components(
  *      \begin{aligned}
  *      \varsigma_{2,0}^{(J)} &= 2 \pi \zeta_J, \\
  *      \varsigma_{2,\pm1}^{(J)} &= 0, \\
- *      \varsigma_{2,\pm2}^{(J)} &= 2\pi \frac{1}{\sqrt{6}} \eta_J \zeta_J,
+ *      \varsigma_{2,\pm2}^{(J)} &= -2\pi \frac{1}{\sqrt{6}} \eta_J \zeta_J,
  *      \end{aligned}
  *     \right\} \text{Rank-2},
  * @f]
@@ -535,21 +535,20 @@ static inline void rank_2_tensor_products(const double *R_2a, const double *R_2b
 }
 
 // =====================================================================================
-//       Nuclear shielding electric quadrupolar cross spatial orientation tensor
+//                      Generic cross spatial orientation tensor
 // =====================================================================================
 
-static inline void sSOT_NS_EQ_cross_tensor_components(double *restrict R_0,
-                                                      void *restrict R_2,
-                                                      void *restrict R_4,
-                                                      const double *R_2q,
-                                                      const double *R_2s) {
+static inline void sSOT_cross_tensor_components(double *restrict R_0,
+                                                void *restrict R_2, void *restrict R_4,
+                                                const double *R_2a,
+                                                const double *R_2x) {
   // create a temp storage for R0, R0_res, because rank_2_tensor_products requires a
   // complex R0.
   double R0_res[2];
   vm_double_zeros(10, (double *)R_2);
   vm_double_zeros(18, (double *)R_4);
 
-  rank_2_tensor_products(R_2q, R_2s, R0_res, (double *)R_2, (double *)R_4);
+  rank_2_tensor_products(R_2a, R_2x, R0_res, (double *)R_2, (double *)R_4);
   R_0[0] = R0_res[0];  // extract the real part and store it in R_0,
 }
 

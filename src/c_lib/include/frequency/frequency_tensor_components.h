@@ -222,24 +222,29 @@ static inline void FCF_NS_EQ_cross_tensor_components(
     const double *R_2q, const double *R_2s, const double larmor_freq, const float mf,
     const float mi) {
   // Spin transition function scalar
-  // R_2s is scale by -w0*STF_p and R_2q is scaled by STF_d. Since corss term depends on
-  // only RTF_d, the net scalar multiplier is -1/(w0*STF_p).
-  double transition_fn_scalar = 1.0 / (STF_p(mf, mi) * larmor_freq);
+
+  // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
+  //      = [-1/2 ζ_q η, 0, √3/2 ζ_q, 0 , -1/2 ζ_q η] * (v_q/3ζ_q) * d(mf, mi)
+  //
+  // R_2s = [1/√6 v_0ζη, 0, -v_0ζ,  0 , 1/√6 v_0ζη] * p(mf, mi)
+  //      = [-1/2 ζη,    0, √3/2 ζ, 0 ,  -1/2 ζη  ] * -√2/3 * v_0 * p(mf, mi)
+
+  // Divide R_2s by (-√2/3 v_0 p(mf, mi))
+  double transition_fn_scalar = -1.2247448714 / (STF_p(mf, mi) * larmor_freq);
 
   // Spatial orientation function.
-  // R_2q and R_2s includes a factor (w_q/3) and sqrt(2/3), respectively.
-  sSOT_NS_EQ_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
+  sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2s);
 
   // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
   // sqrt(2/3) factor from R_2s
   // frequency component function from the zeroth-rank irreducible tensor.
-  *Lambda_0 *= -0.5070925528371099 * transition_fn_scalar;
+  *Lambda_0 *= -0.4140393356054125 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.3030457633656632 * transition_fn_scalar, (double *)Lambda_2, 1);
+  cblas_dscal(10, 0.24743582965269675 * transition_fn_scalar, (double *)Lambda_2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, 0.5421047417431507 * transition_fn_scalar, (double *)Lambda_4, 1);
+  cblas_dscal(18, -0.4426266681379905 * transition_fn_scalar, (double *)Lambda_4, 1);
 }
 
 // =====================================================================================
@@ -355,4 +360,65 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
   sSOT_1st_order_weakly_coupled_dipolar_tensor_components(Lambda_2, D_in_Hz, Theta);
   // frequency component function from the second-rank irreducible tensor.
   cblas_dscal(10, transition_fn, (double *)Lambda_2, 1);
+}
+
+// =====================================================================================
+//                Quad-coupling cross frequency tensor components
+// =====================================================================================
+
+/**
+ *
+ * @param Lambda_0 A pointer to an array of length 1, where the frequency
+ *      component from @f${\Lambda'}_{0,0}^{(\sigma q)}@f$ is stored.
+ * @param Lambda_2 A pointer to a complex array of length 5, where the frequency
+ *      components from @f$\Lambda_{2,n}^{(\sigma q)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{2,n}^{(\sigma  q)}\right]_{n=-2}^2@f$.
+ * @param Lambda_4 A pointer to a complex array of length 9, where the frequency
+ *      components from @f${\Lambda'}_{4,n}^{(\sigma q)}@f$ are stored ordered as
+ *      @f$\left[{\Lambda'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
+ * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
+ *      tensor components.
+ * @param R_2s A pointer to a complex array of length 5 holding the J-coupling
+ *      tensor components.
+ * @param mf The spin quantum number of the final energy state.
+ * @param mi The spin quantum number of the initial energy state.
+ */
+static inline void FCF_Quad_coupling_cross_tensor_components(
+    double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
+    const double *R_2q, const double coupling_aniso_in_Hz, const double coupling_eta,
+    const double *coupling_theta, const double larmor_freq, const float mIf,
+    const float mIi, const float mSf, const float mSi) {
+  // Spin transition function scalar
+
+  double R_2coupling[10], temp;
+  double transition_fn_scalar = STF_pdIS(mIf, mIi, mSf, mSi);
+
+  // Return if the transition is zero
+  if (transition_fn_scalar == 0.0) {
+    // zero the R0 and R2 components before populating with shielding components
+    *Lambda_0 = 0.0;
+    vm_double_zeros(10, (double *)Lambda_2);
+    vm_double_zeros(18, (double *)Lambda_4);
+    return;
+  }
+
+  // R_2J = [-1/2 ζη, 0, √3/2 ζ, 0, -1/2 ζη]
+  temp = -0.5 * (coupling_aniso_in_Hz * coupling_eta);
+  R_2coupling[0] = temp;                                      // R2-2 real
+  R_2coupling[4] = 1.224744871391589 * coupling_aniso_in_Hz;  // R2 0 real
+  R_2coupling[8] = temp;                                      // R2 2 real
+  single_wigner_rotation(2, coupling_theta, R_2coupling, R_2coupling);
+
+  sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2coupling);
+
+  transition_fn_scalar /= larmor_freq;
+
+  // frequency component function from the zeroth-rank irreducible tensor.
+  *Lambda_0 *= -0.4140393356054125 * transition_fn_scalar;
+
+  // frequency component function from the second-rank irreducible tensor.
+  cblas_dscal(10, 0.24743582965269675 * transition_fn_scalar, (double *)Lambda_2, 1);
+
+  // frequency component function from the fourth-rank irreducible tensor.
+  cblas_dscal(18, -0.4426266681379905 * transition_fn_scalar, (double *)Lambda_4, 1);
 }
