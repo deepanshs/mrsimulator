@@ -59,7 +59,7 @@ plt.show()
 shifts = [-26.8, -28.4, -31.2]  # in ppm
 Cq = [1.7e6, 2.0e6, 1.7e6]  # in  Hz
 eta = [0.2, 1.0, 0.6]
-abundance = [33.33, 33.33, 33.33]  # in %
+abundance = [40.0, 25.0, 35.0]  # in %
 
 spin_systems = single_site_system_generator(
     isotope="87Rb",
@@ -100,9 +100,9 @@ processor = sp.SignalProcessor(
         # Gaussian convolution along both dimensions.
         sp.IFFT(dim_index=(0, 1)),
         sp.apodization.Gaussian(FWHM="0.08 kHz", dim_index=0),
-        sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
+        sp.apodization.Gaussian(FWHM="0.2 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=1e7),
+        sp.Scale(factor=2e7),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
