@@ -170,10 +170,16 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # provide a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`, for evaluating the
 # difference vector between the simulation and experiment, based on
-# the parameters update. You may use this function directly as the argument of the
-# LMFIT Minimizer class, as follows,
+# the parameters update. You may use this function directly to instantiate the
+# LMFIT Minimizer class where `fcn_args` and `fcn_kws` are arguments passed to the
+# function, as follows,
 opt = sim.optimize()
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma, opt))
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

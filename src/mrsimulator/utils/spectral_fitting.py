@@ -434,7 +434,7 @@ def LMFIT_min_function(
     sim: Simulator,
     processors: list = None,
     sigma: list = None,
-    opt: dict = None,
+    **sim_kwargs,
 ):
     """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
@@ -442,12 +442,12 @@ def LMFIT_min_function(
     Args:
         params: Parameters object containing parameters for OLS minimization.
         sim: Simulator object.
-        processors: A list of PostSimulator objects corresponding to the methods in the
-            Simulator object.
+        processors: A list of :py:class:~`mrsimulator.signal_processor.Processor`
+            objects to apply post-simulation processing to the simulated spectra.
         sigma: A list of standard deviations corresponding to the experiments in the
-            Simulator.methods attribute
-        opt: An optional dictionary containing pre-computed pathways and weights to pass
-            to the :py:mth:~`mrsimulator.Simulator.run()` method.
+            :py:attr:~`mrsimulator.Simulator.methods` attribute.
+        sim_kwargs: Keyword arguments to pass to the
+            :py:mth:~`mrsimulator.Simulator.run()` method.
     Returns:
         Array of the differences between the simulation and the experimental datasets.
     """
@@ -458,7 +458,7 @@ def LMFIT_min_function(
     _check_for_experiment_data(sim.methods)
     update_mrsim_obj_from_params(params, sim, processors)
 
-    sim.run(opt=opt)
+    sim.run(**sim_kwargs)
 
     processed_dataset = [
         item.apply_operations(dataset=data.simulation)
