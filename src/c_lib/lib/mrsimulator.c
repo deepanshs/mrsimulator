@@ -604,8 +604,6 @@ static inline void MRS_rotate_coupled_site_interaction_components(
     // Quad J-couplings cross components
     // Site S
     if (spin_S > 0.5) {
-      // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0, -1/6 v_q η]
-      //      = [-1/2 ζ_q η, 0, √3/2 ζ_q, 0, -1/2 ζ_q η] * (v_q/3ζ_q)
       sSOT_1st_order_electric_quadrupole_tensor_components(
           R_2q, spin_S, sites->quadrupolar_Cq_in_Hz[site_index_S],
           sites->quadrupolar_eta[site_index_S],
@@ -638,8 +636,6 @@ static inline void MRS_rotate_coupled_site_interaction_components(
 
     // Site I
     if (spin_I > 0.5) {
-      // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0, -1/6 v_q η]
-      //      = [-1/2 ζ_q η, 0, √3/2 ζ_q, 0, -1/2 ζ_q η] * (v_q/3ζ_q)
       sSOT_1st_order_electric_quadrupole_tensor_components(
           R_2q, spin_I, sites->quadrupolar_Cq_in_Hz[site_index_I],
           sites->quadrupolar_eta[site_index_I],

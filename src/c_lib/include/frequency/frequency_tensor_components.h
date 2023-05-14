@@ -363,7 +363,7 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
 }
 
 // =====================================================================================
-//                Quad-coupling cross frequency tensor components
+//                Quad-2nd rank tensor cross frequency tensor components
 // =====================================================================================
 
 /**
@@ -378,23 +378,26 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
  *      @f$\left[{\Lambda'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
  * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
  *      tensor components.
- * @param R_2s A pointer to a complex array of length 5 holding the J-coupling
- *      tensor components.
- * @param mf The spin quantum number of the final energy state.
- * @param mi The spin quantum number of the initial energy state.
+ * @param symm_aniso_in_Hz symmetric tensor anisotropy in Hz
+ * @param symm_eta symmetric tensor asymmetry in Hz
+ * @param symm_theta pointer to euler angle for symmetric tensor
+ * @param mIf The spin quantum number of the final energy state of site @f$I@f$.
+ * @param mIi The spin quantum number of the initial energy state of site @f$I@f$.
+ * @param mSf The spin quantum number of the final energy state of site @f$S@f$.
+ * @param mSi The spin quantum number of the initial energy state of site @f$S@f$.
  */
 static inline void FCF_Quad_coupling_cross_tensor_components(
     double *restrict Lambda_0, void *restrict Lambda_2, void *restrict Lambda_4,
-    const double *R_2q, const double coupling_aniso_in_Hz, const double coupling_eta,
-    const double *coupling_theta, const double larmor_freq_in_Hz, const float mIf,
+    const double *R_2q, const double symm_aniso_in_Hz, const double symm_eta,
+    const double *symm_theta, const double larmor_freq_in_Hz, const float mIf,
     const float mIi, const float mSf, const float mSi) {
   // Spin transition function scalar
 
-  double R_2coupling[10], temp;
+  double R_2tensor[10], temp;
   double transition_fn_scalar = STF_pdIS(mIf, mIi, mSf, mSi);
 
   // Return if the transition is zero
-  if (transition_fn_scalar == 0.0 || coupling_aniso_in_Hz == 0.0) {
+  if (transition_fn_scalar == 0.0 || symm_aniso_in_Hz == 0.0) {
     // zero the R0 and R2 components before populating with shielding components
     *Lambda_0 = 0.0;
     vm_double_zeros(10, (double *)Lambda_2);
@@ -402,14 +405,14 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
     return;
   }
 
-  // R_2J = [-1/2 ζη, 0, √3/2 ζ, 0, -1/2 ζη]
-  temp = -0.5 * (coupling_aniso_in_Hz * coupling_eta);
-  R_2coupling[0] = temp;                                      // R2-2 real
-  R_2coupling[4] = 1.224744871391589 * coupling_aniso_in_Hz;  // R2 0 real
-  R_2coupling[8] = temp;                                      // R2 2 real
-  single_wigner_rotation(2, coupling_theta, R_2coupling, R_2coupling);
+  // R_2tensor = [-1/2 ζη, 0, √3/2 ζ, 0, -1/2 ζη]
+  temp = -0.5 * (symm_aniso_in_Hz * symm_eta);
+  R_2tensor[0] = temp;                                  // R2-2 real
+  R_2tensor[4] = 1.224744871391589 * symm_aniso_in_Hz;  // R2 0 real
+  R_2tensor[8] = temp;                                  // R2 2 real
+  single_wigner_rotation(2, symm_theta, R_2tensor, R_2tensor);
 
-  sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2coupling);
+  sSOT_cross_tensor_components(Lambda_0, Lambda_2, Lambda_4, R_2q, R_2tensor);
 
   transition_fn_scalar /= larmor_freq_in_Hz;
 

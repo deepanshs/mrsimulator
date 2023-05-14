@@ -159,6 +159,9 @@ static inline void sSOT_1st_order_nuclear_shielding_tensor_components(
 static inline void sSOT_1st_order_electric_quadrupole_tensor_components(
     void *restrict R_2, const double spin, const double Cq_in_Hz, const double eta,
     const double *Theta) {
+  // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0, -1/6 v_q η]
+  //      = [-1/2 ζ_q η, 0, √3/2 ζ_q, 0, -1/2 ζ_q η] * (v_q/3ζ_q)
+
   /* vq is the Quadrupole coupling constant given as vq = 3*Cq/(2I(2I-1)), where `I` is
    * the spin quantum number. */
   double vq = 3.0 * Cq_in_Hz;
