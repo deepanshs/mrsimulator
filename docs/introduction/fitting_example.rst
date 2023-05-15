@@ -520,7 +520,15 @@ minimization, and print the
     :context: close-figs
 
     from lmfit import Minimizer
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+    # Optimize fitting by pre-computing transition pathways
+    opt = sim.optimize()
+
+    minner = Minimizer(
+        sf.LMFIT_min_function,
+        fit_parameters,
+        fcn_args=(sim, processor, sigma),
+        fcn_kws={"opt": opt}
+    )
     result = minner.minimize()
     result
 

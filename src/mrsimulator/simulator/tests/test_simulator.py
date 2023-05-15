@@ -392,3 +392,13 @@ def test_parallel_chunks():
         lst[i] += 1
     items_list = np.arange(85).tolist()
     check_chunks(items_list, -1, lst)
+
+
+def test_sim_optimize():
+    sim = Simulator()
+    sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
+    sim.methods = [BlochDecaySpectrum(channels=["1H"])]
+
+    opt = sim.optimize()
+
+    assert set(opt.keys()) == {"precomputed_pathways", "precomputed_weights"}
