@@ -14,6 +14,8 @@ __email__ = "srivastava.89@osu.edu"
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
+custom_isotope_data = {}
+
 
 class Isotope(BaseModel):
     """The Isotope class.
@@ -53,7 +55,113 @@ class Isotope(BaseModel):
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
-        return self.symbol
+        return get_isotope_data(self.symbol)
+        # return {
+        #     "symbol": self.symbol,
+        #     "spin": self.spin,
+        #     "natural_abundance": self.natural_abundance,
+        #     "gyromagnetic_ratio": self.gyromagnetic_ratio,
+        #     "quadrupole_moment": self.quadrupole_moment,
+        #     "atomic_number": self.atomic_number,
+        # }
+
+    def dict(self, **kwargs) -> dict:
+        return self.json()
+
+    @classmethod
+    def parse_value_from_str_or_dict(cls, val):
+        """Ensuring backwards compatibility with previous serializations and workflows
+        means that Isotope objects may need instantiated from string values (isotope
+        symbols) or dictionary objects (all defining attributes of the Isotope objects).
+        The library needs to perform this action in multiple places, so this utility
+        function reduces code overlap.
+
+        Arguments:
+            val: A string or dictionary object representing the isotope symbol or entire
+            :py:class:~`mrsimulator.spin_system.isotope.Isotope` object, respectively.
+
+        Returns:
+            An instance of the Isotope class
+        """
+        # String values should only appear for standard isotopes
+        if isinstance(val, str):
+            return Isotope(symbol=val)
+
+        # Value is dictionary, meaning string already valid
+        if val["symbol"] in get_all_isotope_symbols():
+            return Isotope(symbol=val["symbol"])
+
+        # New custom isotope from dictionary of val
+        return Isotope.add_new(**val)
+
+    @classmethod
+    def add_new(
+        cls,
+        symbol: str,
+        spin: float,
+        gyromagnetic_ratio: float,
+        quadrupole_moment: float = 0,
+        natural_abundance: float = 100,
+        atomic_number: int = -1,
+    ):
+        """Add isotope data from a custom Isotope into the stored Isotope data and
+        return an instance of the new Isotope. The isotope symbol cannot match an real
+        isotope symbol; if the provided symbol matches a known custom isotope symbol,
+        then an instance of that isotope is returned.
+
+        Arguments:
+            (str) symbol: Required symbol for custom isotope class. String cannot match
+                another isotope symbol.
+            (float) spin: Required spin number for the isotope. Must be an integer or
+                half-integer greater than zero.
+            (float) gyromagnetic_ratio: Required gyromagnetic ratio of the isotope given
+                in MHz/T.
+            (float) quadrupole_moment: Optional quadrupole moment given in eB. Default
+                is 0.
+            (float) natural_abundance: Optional natural abundance of the isotope given
+                as a percentage between 0 and 100. Default is 100.
+            (int) atomic_number: Optional atomic number for the custom isotope. Can take
+                any integer value and has no bering on simulated spectra.
+
+        Returns:
+            An instance of the Isotope class
+        """
+        # Check for symbol overlap in dictionaries
+        if symbol in ISOTOPE_DATA or symbol in custom_isotope_data:
+            raise ValueError(
+                f"Symbol, {symbol}, is already attributed to another Isotope. All "
+                "Isotope symbols must be unique; please choose a different symbol."
+            )
+
+        # Check for spin integer or half integer
+        if spin <= 0 or not float(2 * spin).is_integer():
+            raise ValueError(
+                f"Isotope spin value must be greater than zero and must be an integer "
+                f"or half integer. Got {spin}."
+            )
+
+        # Check abundance between 0 and 100, inclusive
+        if not 0 <= natural_abundance <= 100:
+            raise ValueError(
+                "Abundance must be between 0 and 100, inclusive. "
+                f"Got {natural_abundance}."
+            )
+
+        # Ensure atomic number is an integer value
+        if not float(atomic_number).is_integer():
+            raise ValueError(
+                f"Atomic number must be an integer value. Got {atomic_number}"
+            )
+
+        custom_isotope_data[symbol] = {
+            "spin": int(spin * 2),
+            "natural_abundance": natural_abundance,
+            "gyromagnetic_ratio": gyromagnetic_ratio,
+            "quadrupole_moment": quadrupole_moment,
+            "atomic_number": atomic_number,
+        }
+
+        return Isotope(symbol=symbol)
 
     @property
     def spin(self):
@@ -92,7 +200,7 @@ class Isotope(BaseModel):
             float B0: magnetic field strength in T
 
         Returns:
-            float: larmor frequency in MHz
+            float: Larmor frequency in MHz
 
         Example
         -------
@@ -105,10 +213,15 @@ class Isotope(BaseModel):
 
 def format_isotope_string(isotope_string: str) -> str:
     """Format the isotope string to {A}{symbol}, where A is the isotope number."""
+    # Skip formatting if the symbol is from a custom isotope
+    if isotope_string in custom_isotope_data:
+        return isotope_string
+
     result = match(r"(\d+)\s*(\w+)", isotope_string)
 
     if result is None:
         raise Exception(f"Could not parse isotope string {isotope_string}")
+
     isotope = result.group(2)
     A = result.group(1)
 
@@ -122,6 +235,18 @@ def format_isotope_string(isotope_string: str) -> str:
 def get_isotope_data(isotope_string: str) -> dict:
     """Get the isotope's intrinsic properties from a JSON data file."""
     formatted_isotope_string = format_isotope_string(isotope_string)
-    isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-    isotope_dict.update({"isotope": formatted_isotope_string})
+
+    # isotope_string is always unique, and only exists in one of the dictionaries
+    if formatted_isotope_string in ISOTOPE_DATA:
+        isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
+    else:
+        isotope_dict = dict(custom_isotope_data[formatted_isotope_string])
+
+    isotope_dict.update({"isotope": formatted_isotope_string, "symbol": isotope_string})
+
     return isotope_dict
+
+
+def get_all_isotope_symbols() -> list:
+    """Returns a list of all currently valid isotope symbols"""
+    return list(ISOTOPE_DATA.keys()) + list(custom_isotope_data.keys())
