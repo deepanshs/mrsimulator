@@ -132,7 +132,6 @@ class Simulator(Parseable):
     spin_systems: List[SpinSystem] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
-    # indexes = []
 
     class Config:
         validate_assignment = True
@@ -320,11 +319,41 @@ class Simulator(Parseable):
                 mth, outfile, ensure_ascii=False, sort_keys=False, allow_nan=False
             )
 
+    def optimize(self) -> None:
+        """Pre-computes transition pathways and associated weights for each of the
+        :py:class:`~mrsimulator.method.Method` and
+        :py:class:`~mrsimulator.spin_system.SpinSystem` objects held by the simulator.
+        This increases the efficiency during least-squared minimization since pathways
+        are not re-computed during every iteration.
+
+        Example
+        -------
+
+        >>> sim = Simulator()
+        >>> # Add spin systems and methods
+        >>> optimization = sim.optimize()
+        >>> sim.run(opt=optimization)
+        """
+        opt = {"precomputed_pathways": [], "precomputed_weights": []}
+        for mth in self.methods:
+            pathways = []
+            weights = []
+            for sys in self.spin_systems:
+                p, w = mth._get_transition_pathway_and_weights_np(sys)
+                pathways.append(p)
+                weights.append(w)
+
+            opt["precomputed_pathways"].append(pathways)
+            opt["precomputed_weights"].append(weights)
+
+        return opt
+
     def run(
         self,
         method_index: list = None,
         n_jobs: int = 1,
         pack_as_csdm: bool = True,
+        opt: dict = None,
         **kwargs,
     ):
         """Run the simulation and compute spectrum.
@@ -337,11 +366,15 @@ class Simulator(Parseable):
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
                 otherwise, as a `ndarray
-                <https://numpy.org/doc/1.18/reference/generated/numpy.ndarray.html>`_
+                <https://numpy.org/doc/stable/reference/arrays.html>`_
                 object.
                 The simulations are stored as the value of the
                 :attr:`~mrsimulator.Method.simulation` attribute of the corresponding
                 method.
+            dict opt: An optional optimization dictionary storing pre-computed
+                transition pathways and transition weights for the given methods and
+                spin systems in the simulator. The default is None, that is, the
+                pathways and weights are calculated in the run method.
 
         Example
         -------
@@ -349,34 +382,40 @@ class Simulator(Parseable):
         >>> sim.run() # doctest:+SKIP
         """
         verbose = 0
-        if method_index is None:
+
+        if opt is None:
+            opt = self.optimize()
+
+        if method_index is None:  # Simulate for all methods
             method_index = np.arange(len(self.methods))
-        elif isinstance(method_index, int):
+        elif isinstance(method_index, int):  # Package single method index as list
             method_index = [method_index]
+
         for index in method_index:
             method = self.methods[index]
             spin_sys = get_chunks(self.spin_systems, n_jobs)
-            kwargs_dict = self.config.get_int_dict()
+
+            # Chunking transition pathways and weights form the optimization dictionary
+            pathways = get_chunks(opt["precomputed_pathways"][index], n_jobs)
+            weights = get_chunks(opt["precomputed_weights"][index], n_jobs)
+
+            config_dict = self.config.get_int_dict()
             jobs = (
                 delayed(core_simulator)(
-                    method=method, spin_systems=sys, **kwargs_dict, **kwargs
+                    method=method,
+                    spin_systems=sys,
+                    transition_pathways=pth,
+                    transition_weights=wht,
+                    **config_dict,
+                    **kwargs,
                 )
-                for sys in spin_sys
+                for sys, pth, wht in zip(spin_sys, pathways, weights)
             )
             amp = Parallel(
                 n_jobs=n_jobs,
                 verbose=verbose,
                 backend="loky",
-                # **{
-                #     "backend": {
-                #         "threads": "threading",
-                #         "processes": "multithreading",
-                #         None: None,
-                #     }["threads"]
-                # },
             )(jobs)
-
-            # self.indexes.append(indexes)
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
@@ -384,19 +423,9 @@ class Simulator(Parseable):
             for seq in method.spectral_dimensions:
                 seq.origin_offset = larmor_freq + seq.reference_offset
 
-            if isinstance(amp[0], list):
-                simulated_dataset = []
-                for item in amp:
-                    simulated_dataset += item
-            if isinstance(amp[0], np.ndarray):
-                simulated_dataset = [np.asarray(amp).sum(axis=0)]
-
-            method.simulation = (
-                self._as_csdm_object(simulated_dataset, method)
-                if pack_as_csdm
-                else np.asarray(simulated_dataset)
+            self._package_amp_after_simulation(
+                method=method, amp=amp, pack_as_csdm=pack_as_csdm
             )
-            amp = None
 
     def save(self, filename: str, with_units: bool = True):
         """Serialize the simulator object to a JSON file.
@@ -531,6 +560,31 @@ class Simulator(Parseable):
             }
         }
         return obj
+
+    def _package_amp_after_simulation(self, method, amp, pack_as_csdm):
+        """Helper function for packaging frequency array (amp) into a numpy array or
+        CSDM object after a simulation. Puts the packaged simulation into the passed
+        method object and does not return anything
+
+        Args:
+            Method method: The :py:class:`~mrsimulator.Method` object for the simulated
+                spectrum.
+            np.ndarray amp: Calculated spectrum as a numpy array
+            bool pack_as_csdm: Packages the simulated spectrum as a CSDM object if true.
+                Otherwise kept as a numpy array.
+        """
+        if isinstance(amp[0], list):
+            simulated_dataset = []
+            for item in amp:
+                simulated_dataset += item
+        if isinstance(amp[0], np.ndarray):
+            simulated_dataset = [np.asarray(amp).sum(axis=0)]
+
+        method.simulation = (
+            self._as_csdm_object(simulated_dataset, method)
+            if pack_as_csdm
+            else np.asarray(simulated_dataset)
+        )
 
 
 class Sites(AbstractList):

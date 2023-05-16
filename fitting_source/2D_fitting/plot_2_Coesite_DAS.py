@@ -115,11 +115,6 @@ DAS = Method(
     experiment=experiment,  # also add the measurement to the method.
 )
 
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the das method.
-for sys in spin_systems:
-    sys.transition_pathways = DAS.get_transition_pathways(sys)
-
 # %%
 # **Guess Spectrum**
 
@@ -166,10 +161,15 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize(method="powell")
 result
-
 
 # %%
 # The best fit solution

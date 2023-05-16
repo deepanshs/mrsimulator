@@ -168,7 +168,7 @@ class Isotope(BaseModel):
     def spin(self):
         """Spin quantum number, I, of the isotope."""
         isotope_data = get_isotope_dict(self.symbol)
-        return isotope_data["spin"] / 2.0
+        return (isotope_data["spin_multiplicity"] - 1) / 2.0
 
     @property
     def natural_abundance(self):

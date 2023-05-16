@@ -479,12 +479,12 @@ class Method(Parseable):
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
-        return [
-            [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
-        ]
+        return np.array(
+            [[segments[i][j] for i, j in enumerate(item)] for item in cartesian_index]
+        )
 
-    def _get_transition_pathway_weights(self, pathways, spin_system):
-        if pathways == []:
+    def _get_transition_pathway_weights_np(self, pathways, spin_system):
+        if np.asarray(pathways).size == 0:
             return np.asarray([])
 
         symbol = [item.isotope.symbol for item in spin_system.sites]
@@ -546,7 +546,7 @@ class Method(Parseable):
 
     def _get_transition_pathway_and_weights_np(self, spin_system):
         segments = self._get_transition_pathways_np(spin_system)
-        weights = self._get_transition_pathway_weights(segments, spin_system)
+        weights = self._get_transition_pathway_weights_np(segments, spin_system)
         return segments, weights
         # indexes = np.where(weights != 0)[0]
         # return np.asarray(segments)[indexes], weights[indexes]
