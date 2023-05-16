@@ -487,6 +487,6 @@ def allowed_isotopes(spin_I: float = None) -> list:
         {
             isotope
             for isotope, data in ISOTOPE_DATA.items()
-            if data["spin"] == int(2 * spin_I)
+            if data["spin_multiplicity"] == int(2 * spin_I + 1)  # 2S+1
         }
     )
