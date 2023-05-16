@@ -204,7 +204,7 @@ class Site(Parseable):
         if isinstance(v, Isotope):
             return v
 
-        return Isotope.parse_value_from_str_or_dict(v)
+        return Isotope.get_isotope(v)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

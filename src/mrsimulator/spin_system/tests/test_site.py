@@ -57,7 +57,17 @@ def test_direct_init_site1():
         Site.parse_dict_with_units(dict(quadrupolar={"Cq": "5.1 MHz"}))
 
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
-    assert ax.json() == {"isotope": "29Si", "isotropic_chemical_shift": "0.0 ppm"}
+    assert ax.json() == {
+        "isotope": {
+            "spin": 1,
+            "natural_abundance": 4.683,
+            "gyromagnetic_ratio": -8.465499588373877,
+            "quadrupole_moment": 0.0,
+            "atomic_number": 14,
+            "isotope": "29Si",
+        },
+        "isotropic_chemical_shift": "0.0 ppm",
+    }
 
 
 def test_parse_json_site():
@@ -125,7 +135,14 @@ def test_site_object_methods():
 
     # testing method dict()
     result = {
-        "isotope": {"symbol": "14N"},
+        "isotope": {
+            "spin": 2,
+            "natural_abundance": 99.634,
+            "gyromagnetic_ratio": 3.0777058647746447,
+            "quadrupole_moment": 0.0193,
+            "atomic_number": 7,
+            "isotope": "14N",
+        },
         "isotropic_chemical_shift": -10.0,
         "property_units": {"isotropic_chemical_shift": "ppm"},
         "name": None,
@@ -152,11 +169,28 @@ def test_site_object_methods():
     # assert the_site.to_freq_dict(B0=9.4) == result, "Failed Site.to_freq_dict()"
 
     # testing method json()
-    result = {"isotope": "14N", "isotropic_chemical_shift": "-10.0 ppm"}
+    result = {
+        "isotope": {
+            "spin": 2,
+            "natural_abundance": 99.634,
+            "gyromagnetic_ratio": 3.0777058647746447,
+            "quadrupole_moment": 0.0193,
+            "atomic_number": 7,
+            "isotope": "14N",
+        },
+        "isotropic_chemical_shift": "-10.0 ppm",
+    }
     assert the_site.json() == result, "Failed Site.json()"
 
     result = {
-        "isotope": "27Al",
+        "isotope": {
+            "spin": 5,
+            "natural_abundance": 100.0,
+            "gyromagnetic_ratio": 11.103090335864373,
+            "quadrupole_moment": 0.15,
+            "atomic_number": 13,
+            "isotope": "27Al",
+        },
         "isotropic_chemical_shift": "10.0 ppm",
         "shielding_symmetric": {"zeta": "12.1 ppm", "eta": 0.1, "alpha": "2.1 rad"},
         "shielding_antisymmetric": {

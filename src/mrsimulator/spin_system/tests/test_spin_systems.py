@@ -12,6 +12,32 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+H1_isotope_json = {
+    "spin": 1,
+    "natural_abundance": 99.985,
+    "gyromagnetic_ratio": 42.57747920984721,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 1,
+    "isotope": "1H",
+}
+O17_isotope_json = {
+    "spin": 5,
+    "natural_abundance": 0.038,
+    "gyromagnetic_ratio": -5.774236332534915,
+    "quadrupole_moment": -0.02578,
+    "atomic_number": 8,
+    "isotope": "17O",
+}
+Si29_isotope_json = {
+    "spin": 1,
+    "natural_abundance": 4.683,
+    "gyromagnetic_ratio": -8.465499588373877,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 14,
+    "isotope": "29Si",
+}
+
+
 def test_failure():
     site = Site(isotope="29Si")
     e = "All entries must be of type `Site`."
@@ -44,11 +70,11 @@ def test_direct_init_spin_system():
     assert test_site.property_units["isotropic_chemical_shift"] == "ppm"
 
     assert test_site.json() == {
-        "isotope": "29Si",
+        "isotope": Si29_isotope_json,
         "isotropic_chemical_shift": "10.0 ppm",
     }
     assert test_site.json(units=False) == {
-        "isotope": "29Si",
+        "isotope": Si29_isotope_json,
         "isotropic_chemical_shift": 10.0,
     }
 
@@ -57,12 +83,14 @@ def test_direct_init_spin_system():
     assert isinstance(the_spin_system.sites[0], Site)
     assert the_spin_system.abundance == 10.0
     assert the_spin_system.json() == {
-        "sites": [{"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"}],
+        "sites": [
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": "10.0 ppm"}
+        ],
         "abundance": "10.0 %",
     }
     assert the_spin_system.json(units=False) == {
-        "sites": [{"isotope": "29Si", "isotropic_chemical_shift": 10.0}],
-        "abundance": 10,
+        "sites": [{"isotope": Si29_isotope_json, "isotropic_chemical_shift": 10.0}],
+        "abundance": 10.0,
     }
 
     # test-4 # two sites spin system
@@ -73,15 +101,15 @@ def test_direct_init_spin_system():
     assert the_spin_system.abundance == 10.0
     assert the_spin_system.json() == {
         "sites": [
-            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
-            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": "10.0 ppm"},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": "10.0 ppm"},
         ],
         "abundance": "10.0 %",
     }
     assert the_spin_system.json(units=False) == {
         "sites": [
-            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
-            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": 10.0},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": 10.0},
         ],
         "abundance": 10,
     }
@@ -118,8 +146,8 @@ def test_direct_init_spin_system():
     assert the_spin_system.abundance == 10.0
     assert the_spin_system.json() == {
         "sites": [
-            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
-            {"isotope": "29Si", "isotropic_chemical_shift": "10.0 ppm"},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": "10.0 ppm"},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": "10.0 ppm"},
         ],
         "couplings": [
             {
@@ -132,8 +160,8 @@ def test_direct_init_spin_system():
     }
     assert the_spin_system.json(units=False) == {
         "sites": [
-            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
-            {"isotope": "29Si", "isotropic_chemical_shift": 10.0},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": 10.0},
+            {"isotope": Si29_isotope_json, "isotropic_chemical_shift": 10.0},
         ],
         "couplings": [
             {"site_index": [0, 1], "isotropic_j": 10.0, "dipolar": {"D": 100.0}}
@@ -146,9 +174,9 @@ def test_direct_init_spin_system():
         name="Just a test",
         description="The same",
         sites=[
-            {"isotope": "1H", "isotropic_chemical_shift": 0},
+            {"isotope": H1_isotope_json, "isotropic_chemical_shift": 0},
             {
-                "isotope": "17O",
+                "isotope": O17_isotope_json,
                 "isotropic_chemical_shift": -10,
                 "quadrupolar": {"Cq": 5.1e6, "eta": 0.5},
             },
@@ -173,9 +201,9 @@ def test_direct_init_spin_system():
         "name": "Just a test",
         "description": "The same",
         "sites": [
-            {"isotope": "1H", "isotropic_chemical_shift": "0.0 ppm"},
+            {"isotope": H1_isotope_json, "isotropic_chemical_shift": "0.0 ppm"},
             {
-                "isotope": "17O",
+                "isotope": O17_isotope_json,
                 "isotropic_chemical_shift": "-10.0 ppm",
                 "quadrupolar": {"Cq": "5100000.0 Hz", "eta": 0.5},
             },
@@ -190,9 +218,9 @@ def test_direct_init_spin_system():
         "name": "Just a test",
         "description": "The same",
         "sites": [
-            {"isotope": "1H", "isotropic_chemical_shift": 0},
+            {"isotope": H1_isotope_json, "isotropic_chemical_shift": 0},
             {
-                "isotope": "17O",
+                "isotope": O17_isotope_json,
                 "isotropic_chemical_shift": -10.0,
                 "quadrupolar": {"Cq": 5100000, "eta": 0.5},
             },
@@ -207,7 +235,7 @@ def test_parse_json_spin_system():
     good_json = {"sites": [], "abundance": "10%"}
 
     good_json2 = {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "0 ppm"}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": "0 ppm"}],
         "abundance": "10%",
     }
 
@@ -226,11 +254,11 @@ def test_parse_json_spin_system():
     assert iso2.sites[0].isotropic_chemical_shift == 0
     assert iso2.abundance == 10
     assert iso2.json() == {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "0.0 ppm"}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": "0.0 ppm"}],
         "abundance": "10.0 %",
     }
     assert iso2.json(units=False) == {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": 0}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": 0}],
         "abundance": 10,
     }
 
@@ -241,21 +269,21 @@ def test_parse_json_spin_system():
 
 def test_spin_system_methods():
     good_json2 = {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2 ppm"}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": "2 ppm"}],
         "abundance": "10%",
     }
 
     # json()
     iso1 = SpinSystem.parse_dict_with_units(good_json2).json()
     result = {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": "2.0 ppm"}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": "2.0 ppm"}],
         "abundance": "10.0 %",
     }
     assert iso1 == result
 
     # json(units=False)
     assert SpinSystem.parse_dict_with_units(good_json2).json(units=False) == {
-        "sites": [{"isotope": "1H", "isotropic_chemical_shift": 2.0}],
+        "sites": [{"isotope": H1_isotope_json, "isotropic_chemical_shift": 2.0}],
         "abundance": 10,
     }
 

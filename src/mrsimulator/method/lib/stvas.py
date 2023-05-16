@@ -43,7 +43,7 @@ class ST_VAS(BaseNamedMethod2D):
             f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
             "variable-angle spinning spectrum."
         )
-        spin = Isotope(symbol=kwargs["channels"][0]).spin
+        spin = Isotope.get_isotope(val=kwargs["channels"][0]).spin
 
         # select the coherence for the first event
         d = st**2 - (st - 1) ** 2

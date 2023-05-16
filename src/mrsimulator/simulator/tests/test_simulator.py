@@ -117,14 +117,34 @@ def test_simulator_1():
         "spin_systems": [
             {
                 "sites": [
-                    {"isotope": "1H", "isotropic_chemical_shift": 0.0},
-                    {"isotope": "23Na", "isotropic_chemical_shift": 0.0},
+                    {
+                        "isotope": {
+                            "spin": 1,
+                            "natural_abundance": 99.985,
+                            "gyromagnetic_ratio": 42.57747920984721,
+                            "quadrupole_moment": 0.0,
+                            "atomic_number": 1,
+                            "isotope": "1H",
+                        },
+                        "isotropic_chemical_shift": 0.0,
+                    },
+                    {
+                        "isotope": {
+                            "spin": 3,
+                            "natural_abundance": 100.0,
+                            "gyromagnetic_ratio": 11.268835291595886,
+                            "quadrupole_moment": 0.1006,
+                            "atomic_number": 11,
+                            "isotope": "23Na",
+                        },
+                        "isotropic_chemical_shift": 0.0,
+                    },
                 ],
             }
         ],
         "methods": [
             {
-                "channels": ["1H"],
+                "channels": ["1H"],  # TODO: Adjust line based on serialization decision
                 "name": "BlochDecaySpectrum",
                 "magnetic_flux_density": 9.4,
                 "rotor_angle": 0.9553166181245,

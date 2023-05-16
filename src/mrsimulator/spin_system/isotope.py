@@ -14,8 +14,6 @@ __email__ = "srivastava.89@osu.edu"
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
-custom_isotope_data = {}
-
 
 class Isotope(BaseModel):
     """The Isotope class.
@@ -44,55 +42,58 @@ class Isotope(BaseModel):
     """
 
     symbol: str
-    test_vars: ClassVar[Dict] = {"symbol": "1H"}
+    # test_vars: ClassVar[Dict] = {"symbol": "1H"}
+    custom_isotope_data: ClassVar[Dict] = {}
 
     class Config:
         extra = "forbid"
         validate_assignment = True
 
     @validator("symbol", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
+    def validate_symbol(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
-        return get_isotope_data(self.symbol)
-        # return {
-        #     "symbol": self.symbol,
-        #     "spin": self.spin,
-        #     "natural_abundance": self.natural_abundance,
-        #     "gyromagnetic_ratio": self.gyromagnetic_ratio,
-        #     "quadrupole_moment": self.quadrupole_moment,
-        #     "atomic_number": self.atomic_number,
-        # }
+        return get_isotope_dict(self.symbol)
 
     def dict(self, **kwargs) -> dict:
         return self.json()
 
     @classmethod
-    def parse_value_from_str_or_dict(cls, val):
+    def get_isotope(cls, val):
         """Ensuring backwards compatibility with previous serializations and workflows
         means that Isotope objects may need instantiated from string values (isotope
-        symbols) or dictionary objects (all defining attributes of the Isotope objects).
-        The library needs to perform this action in multiple places, so this utility
-        function reduces code overlap.
+        symbols), dictionary objects (all defining attributes of the Isotope objects),
+        or Isotope objects themselves. This utility function parses the type of val and
+        returns the corresponding isotope object
 
         Arguments:
-            val: A string or dictionary object representing the isotope symbol or entire
+            val: A string, dictionary, or Isotope object representing the isotope
+            symbol, isotope data in dictionary form, or
             :py:class:~`mrsimulator.spin_system.isotope.Isotope` object, respectively.
 
         Returns:
             An instance of the Isotope class
         """
-        # String values should only appear for standard isotopes
+        # Return Isotope object, no further checking needed
+        if isinstance(val, Isotope):
+            return val
+
+        # Check if string symbol recognized, then return Isotope object
         if isinstance(val, str):
+            if val not in get_all_isotope_symbols():
+                raise ValueError(f"{val} is an unrecognized Isotope symbol.")
+
             return Isotope(symbol=val)
 
-        # Value is dictionary, meaning string already valid
-        if val["symbol"] in get_all_isotope_symbols():
-            return Isotope(symbol=val["symbol"])
+        # Value is dictionary, meaning either need to add custom isotope or get symbol
+        if isinstance(val, dict):
+            if val["isotope"] in get_all_isotope_symbols():  # Already known symbol
+                return Isotope(symbol=val["isotope"])
 
-        # New custom isotope from dictionary of val
-        return Isotope.add_new(**val)
+            return Isotope.add_new(**val)
+
+        raise ValueError(f"Type {type(val)} is invalid for this method.")
 
     @classmethod
     def add_new(
@@ -127,7 +128,7 @@ class Isotope(BaseModel):
             An instance of the Isotope class
         """
         # Check for symbol overlap in dictionaries
-        if symbol in ISOTOPE_DATA or symbol in custom_isotope_data:
+        if symbol in ISOTOPE_DATA or symbol in Isotope.custom_isotope_data:
             raise ValueError(
                 f"Symbol, {symbol}, is already attributed to another Isotope. All "
                 "Isotope symbols must be unique; please choose a different symbol."
@@ -153,7 +154,7 @@ class Isotope(BaseModel):
                 f"Atomic number must be an integer value. Got {atomic_number}"
             )
 
-        custom_isotope_data[symbol] = {
+        Isotope.custom_isotope_data[symbol] = {
             "spin": int(spin * 2),
             "natural_abundance": natural_abundance,
             "gyromagnetic_ratio": gyromagnetic_ratio,
@@ -166,31 +167,31 @@ class Isotope(BaseModel):
     @property
     def spin(self):
         """Spin quantum number, I, of the isotope."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["spin"] / 2.0
 
     @property
     def natural_abundance(self):
         """Natural abundance of the isotope in units of %."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["natural_abundance"]
 
     @property
     def gyromagnetic_ratio(self):
         """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["gyromagnetic_ratio"]
 
     @property
     def quadrupole_moment(self):
         """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["quadrupole_moment"]
 
     @property
     def atomic_number(self):
         """Atomic number of the isotope."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["atomic_number"]
 
     def larmor_freq(self, B0=9.4):
@@ -214,7 +215,7 @@ class Isotope(BaseModel):
 def format_isotope_string(isotope_string: str) -> str:
     """Format the isotope string to {A}{symbol}, where A is the isotope number."""
     # Skip formatting if the symbol is from a custom isotope
-    if isotope_string in custom_isotope_data:
+    if isotope_string in Isotope.custom_isotope_data:
         return isotope_string
 
     result = match(r"(\d+)\s*(\w+)", isotope_string)
@@ -232,7 +233,7 @@ def format_isotope_string(isotope_string: str) -> str:
     return formatted_string
 
 
-def get_isotope_data(isotope_string: str) -> dict:
+def get_isotope_dict(isotope_string: str) -> dict:
     """Get the isotope's intrinsic properties from a JSON data file."""
     formatted_isotope_string = format_isotope_string(isotope_string)
 
@@ -240,13 +241,13 @@ def get_isotope_data(isotope_string: str) -> dict:
     if formatted_isotope_string in ISOTOPE_DATA:
         isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
     else:
-        isotope_dict = dict(custom_isotope_data[formatted_isotope_string])
+        isotope_dict = dict(Isotope.custom_isotope_data[formatted_isotope_string])
 
-    isotope_dict.update({"isotope": formatted_isotope_string, "symbol": isotope_string})
+    isotope_dict.update({"isotope": formatted_isotope_string})
 
     return isotope_dict
 
 
 def get_all_isotope_symbols() -> list:
     """Returns a list of all currently valid isotope symbols"""
-    return list(ISOTOPE_DATA.keys()) + list(custom_isotope_data.keys())
+    return list(ISOTOPE_DATA.keys()) + list(Isotope.custom_isotope_data.keys())

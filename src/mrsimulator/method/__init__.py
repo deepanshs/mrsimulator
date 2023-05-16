@@ -175,14 +175,7 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        lst = []
-        for val in v:
-            if isinstance(val, Isotope):
-                lst.append(val)
-
-            lst.append(Isotope.parse_value_from_str_or_dict(val))
-
-        return lst
+        return [Isotope.get_isotope(_v) for _v in v]
 
     def __init__(self, **kwargs):
         Method.check(kwargs)

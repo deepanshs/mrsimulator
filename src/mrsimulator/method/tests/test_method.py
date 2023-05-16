@@ -159,7 +159,16 @@ def test_method():
     method_dictionary_ = {
         "name": "test-1-d",
         "description": "Test-1",
-        "channels": ["29Si"],
+        "channels": [
+            {
+                "spin": 1,
+                "natural_abundance": 4.683,
+                "gyromagnetic_ratio": -8.465499588373877,
+                "quadrupole_moment": 0.0,
+                "atomic_number": 14,
+                "isotope": "29Si",
+            }
+        ],
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",

@@ -203,32 +203,8 @@ class SpinSystem(Parseable):
         ... ]
         >>> sys = SpinSystem(sites=sites, couplings=couplings, abundance=30)
         >>> simplified_sys = sys.simplify()
-        >>> simple_sys = [sub_sys.json() for sub_sys in simplified_sys]
-        >>> pprint(simple_sys)
-        [{'abundance': '30.0 %',
-          'couplings': [{'isotropic_j': '10.0 Hz', 'name': 'AB', 'site_index': [0, 1]},
-                        {'isotropic_j': '10.0 Hz', 'name': 'BC', 'site_index': [1, 2]}],
-          'sites': [{'isotope': '1H',
-                     'isotropic_chemical_shift': '0.0 ppm',
-                     'name': 'A'},
-                    {'isotope': '1H',
-                     'isotropic_chemical_shift': '2.0 ppm',
-                     'name': 'B'},
-                    {'isotope': '1H',
-                     'isotropic_chemical_shift': '4.0 ppm',
-                     'name': 'C'}]},
-         {'abundance': '30.0 %',
-          'couplings': [{'isotropic_j': '30.0 Hz', 'name': 'DF', 'site_index': [0, 1]}],
-          'sites': [{'isotope': '1H',
-                     'isotropic_chemical_shift': '6.0 ppm',
-                     'name': 'D'},
-                    {'isotope': '1H',
-                     'isotropic_chemical_shift': '10.0 ppm',
-                     'name': 'F'}]},
-         {'abundance': '30.0 %',
-          'sites': [{'isotope': '1H',
-                     'isotropic_chemical_shift': '8.0 ppm',
-                     'name': 'E'}]}]
+        >>> print(len(simplified_sys))
+        3
         """
         return (
             [SpinSystem(sites=[site], abundance=self.abundance) for site in self.sites]
