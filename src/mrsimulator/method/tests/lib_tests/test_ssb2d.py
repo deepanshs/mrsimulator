@@ -55,7 +55,16 @@ def test_SSB_general():
     _ = serialize.pop("affine_matrix")
 
     assert serialize == {
-        "channels": ["87Rb"],
+        "channels": [
+            {
+                "natural_abundance": 27.83,
+                "gyromagnetic_ratio": 13.983992836343669,
+                "quadrupole_moment": 0.127,
+                "atomic_number": 37,
+                "spin_multiplicity": 4,
+                "isotope": "87Rb",
+            }
+        ],
         "description": mth.description,
         "magnetic_flux_density": "9.4 T",
         "name": "SSB2D",

@@ -59,7 +59,7 @@ def test_direct_init_site1():
     ax = Site.parse_dict_with_units({"isotope": "29Si"})
     assert ax.json() == {
         "isotope": {
-            "spin": 1,
+            "spin_multiplicity": 2,
             "natural_abundance": 4.683,
             "gyromagnetic_ratio": -8.465499588373877,
             "quadrupole_moment": 0.0,
@@ -136,7 +136,7 @@ def test_site_object_methods():
     # testing method dict()
     result = {
         "isotope": {
-            "spin": 2,
+            "spin_multiplicity": 3,
             "natural_abundance": 99.634,
             "gyromagnetic_ratio": 3.0777058647746447,
             "quadrupole_moment": 0.0193,
@@ -171,7 +171,7 @@ def test_site_object_methods():
     # testing method json()
     result = {
         "isotope": {
-            "spin": 2,
+            "spin_multiplicity": 3,
             "natural_abundance": 99.634,
             "gyromagnetic_ratio": 3.0777058647746447,
             "quadrupole_moment": 0.0193,
@@ -184,7 +184,7 @@ def test_site_object_methods():
 
     result = {
         "isotope": {
-            "spin": 5,
+            "spin_multiplicity": 6,
             "natural_abundance": 100.0,
             "gyromagnetic_ratio": 11.103090335864373,
             "quadrupole_moment": 0.15,

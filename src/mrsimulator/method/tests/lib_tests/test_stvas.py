@@ -95,7 +95,16 @@ def test_ST1_VAS_general():
     _ = serialize.pop("affine_matrix")
 
     assert serialize == {
-        "channels": ["87Rb"],
+        "channels": [
+            {
+                "natural_abundance": 27.83,
+                "gyromagnetic_ratio": 13.983992836343669,
+                "quadrupole_moment": 0.127,
+                "atomic_number": 37,
+                "spin_multiplicity": 4,
+                "isotope": "87Rb",
+            }
+        ],
         "description": des,
         "magnetic_flux_density": "11.7 T",
         "name": "ST1_VAS",
@@ -154,7 +163,16 @@ def test_ST2_VAS_general():
     _ = serialize.pop("affine_matrix")
 
     assert serialize == {
-        "channels": ["17O"],
+        "channels": [
+            {
+                "natural_abundance": 0.038,
+                "gyromagnetic_ratio": -5.774236332534915,
+                "quadrupole_moment": -0.02578,
+                "atomic_number": 8,
+                "spin_multiplicity": 6,
+                "isotope": "17O",
+            }
+        ],
         "description": des,
         "name": "ST2_VAS",
         **sample_test_output(4),

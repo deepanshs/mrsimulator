@@ -15,6 +15,32 @@ from pydantic import ValidationError
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
+
+H1_isotope_json = {
+    "natural_abundance": 99.985,
+    "gyromagnetic_ratio": 42.57747920984721,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 1,
+    "spin_multiplicity": 2,
+    "isotope": "1H",
+}
+O17_isotope_json = {
+    "natural_abundance": 0.038,
+    "gyromagnetic_ratio": -5.774236332534915,
+    "quadrupole_moment": -0.02578,
+    "atomic_number": 8,
+    "spin_multiplicity": 6,
+    "isotope": "17O",
+}
+Si29_isotope_json = {
+    "spin_multiplicity": 2,
+    "natural_abundance": 4.683,
+    "gyromagnetic_ratio": -8.465499588373877,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 14,
+    "isotope": "29Si",
+}
+
 event_dictionary = {
     "fraction": 0.5,
     "freq_contrib": freq_default,
@@ -61,7 +87,7 @@ def basic_method_tests(the_method):
     serialize = {
         "name": "test worked",
         "description": "test worked again",
-        "channels": ["1H", "17O"],
+        "channels": [H1_isotope_json, O17_isotope_json],
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
@@ -79,7 +105,7 @@ def basic_method_tests(the_method):
     assert the_method.json(units=False) == {
         "name": "test worked",
         "description": "test worked again",
-        "channels": ["1H", "17O"],
+        "channels": [H1_isotope_json, O17_isotope_json],
         "magnetic_flux_density": 9.6,
         "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,
@@ -100,7 +126,7 @@ def test_method():
     method_dictionary = {
         "name": "test-1-d",
         "description": "Test-1",
-        "channels": ["29Si"],
+        "channels": [Si29_isotope_json],
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
@@ -115,7 +141,7 @@ def test_method():
     method_dictionary = {
         "name": "test-1-d",
         "description": "Test-1",
-        "channels": ["29Si"],
+        "channels": [Si29_isotope_json],
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
@@ -159,16 +185,7 @@ def test_method():
     method_dictionary_ = {
         "name": "test-1-d",
         "description": "Test-1",
-        "channels": [
-            {
-                "spin": 1,
-                "natural_abundance": 4.683,
-                "gyromagnetic_ratio": -8.465499588373877,
-                "quadrupole_moment": 0.0,
-                "atomic_number": 14,
-                "isotope": "29Si",
-            }
-        ],
+        "channels": [Si29_isotope_json],
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
@@ -190,7 +207,7 @@ def test_method():
     method_dictionary_ = {
         "name": "test-1-d",
         "description": "Test-1",
-        "channels": ["29Si"],
+        "channels": [Si29_isotope_json],
         "magnetic_flux_density": 9.6,
         "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,

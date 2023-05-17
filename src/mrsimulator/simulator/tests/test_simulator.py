@@ -22,6 +22,24 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+H1_isotope_json = {
+    "natural_abundance": 99.985,
+    "gyromagnetic_ratio": 42.57747920984721,
+    "quadrupole_moment": 0.0,
+    "atomic_number": 1,
+    "spin_multiplicity": 2,
+    "isotope": "1H",
+}
+Na23_isotope_json = {
+    "spin_multiplicity": 4,
+    "natural_abundance": 100.0,
+    "gyromagnetic_ratio": 11.268835291595886,
+    "quadrupole_moment": 0.1006,
+    "atomic_number": 11,
+    "isotope": "23Na",
+}
+
+
 def test_simulator_assignments():
     a = Simulator()
     assert a.spin_systems == []
@@ -117,34 +135,14 @@ def test_simulator_1():
         "spin_systems": [
             {
                 "sites": [
-                    {
-                        "isotope": {
-                            "spin": 1,
-                            "natural_abundance": 99.985,
-                            "gyromagnetic_ratio": 42.57747920984721,
-                            "quadrupole_moment": 0.0,
-                            "atomic_number": 1,
-                            "isotope": "1H",
-                        },
-                        "isotropic_chemical_shift": 0.0,
-                    },
-                    {
-                        "isotope": {
-                            "spin": 3,
-                            "natural_abundance": 100.0,
-                            "gyromagnetic_ratio": 11.268835291595886,
-                            "quadrupole_moment": 0.1006,
-                            "atomic_number": 11,
-                            "isotope": "23Na",
-                        },
-                        "isotropic_chemical_shift": 0.0,
-                    },
+                    {"isotope": H1_isotope_json, "isotropic_chemical_shift": 0.0},
+                    {"isotope": Na23_isotope_json, "isotropic_chemical_shift": 0.0},
                 ],
             }
         ],
         "methods": [
             {
-                "channels": ["1H"],  # TODO: Adjust line based on serialization decision
+                "channels": [H1_isotope_json],
                 "name": "BlochDecaySpectrum",
                 "magnetic_flux_density": 9.4,
                 "rotor_angle": 0.9553166181245,

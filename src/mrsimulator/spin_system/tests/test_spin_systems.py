@@ -13,7 +13,7 @@ __email__ = "srivastava.89@osu.edu"
 
 
 H1_isotope_json = {
-    "spin": 1,
+    "spin_multiplicity": 2,
     "natural_abundance": 99.985,
     "gyromagnetic_ratio": 42.57747920984721,
     "quadrupole_moment": 0.0,
@@ -21,7 +21,7 @@ H1_isotope_json = {
     "isotope": "1H",
 }
 O17_isotope_json = {
-    "spin": 5,
+    "spin_multiplicity": 6,
     "natural_abundance": 0.038,
     "gyromagnetic_ratio": -5.774236332534915,
     "quadrupole_moment": -0.02578,
@@ -29,7 +29,7 @@ O17_isotope_json = {
     "isotope": "17O",
 }
 Si29_isotope_json = {
-    "spin": 1,
+    "spin_multiplicity": 2,
     "natural_abundance": 4.683,
     "gyromagnetic_ratio": -8.465499588373877,
     "quadrupole_moment": 0.0,

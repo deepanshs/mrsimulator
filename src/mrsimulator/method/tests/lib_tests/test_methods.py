@@ -117,7 +117,16 @@ def test_BlochDecaySpectrum():
 
     should_be = {
         "name": "BlochDecaySpectrum",
-        "channels": ["1H"],
+        "channels": [
+            {
+                "natural_abundance": 99.985,
+                "gyromagnetic_ratio": 42.57747920984721,
+                "quadrupole_moment": 0.0,
+                "atomic_number": 1,
+                "spin_multiplicity": 2,
+                "isotope": "1H",
+            }
+        ],
         "magnetic_flux_density": "9.4 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553166181245 rad",
@@ -147,7 +156,16 @@ def test_BlochDecaySpectrum():
 
     should_be = {
         "name": "BlochDecaySpectrum",
-        "channels": ["29Si"],
+        "channels": [
+            {
+                "natural_abundance": 4.683,
+                "gyromagnetic_ratio": -8.465499588373877,
+                "quadrupole_moment": 0.0,
+                "atomic_number": 14,
+                "spin_multiplicity": 2,
+                "isotope": "29Si",
+            }
+        ],
         "magnetic_flux_density": "11.7 T",
         "rotor_frequency": "0.0 Hz",
         "rotor_angle": f"{angle} rad",

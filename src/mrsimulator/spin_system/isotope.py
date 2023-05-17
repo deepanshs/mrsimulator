@@ -88,7 +88,14 @@ class Isotope(BaseModel):
 
         # Value is dictionary, meaning either need to add custom isotope or get symbol
         if isinstance(val, dict):
-            if val["isotope"] in get_all_isotope_symbols():  # Already known symbol
+            if val["isotope"] in get_all_isotope_symbols():
+                # Ensure pre-existing data for symbol matches that of the passed dict
+                if val != get_isotope_dict(val["isotope"]):
+                    raise ValueError(
+                        "Stored isotope data does not match the provided dictionary for"
+                        f" {val['isotope']}."
+                    )
+
                 return Isotope(symbol=val["isotope"])
 
             return Isotope.add_new(**val)
@@ -155,7 +162,7 @@ class Isotope(BaseModel):
             )
 
         Isotope.custom_isotope_data[symbol] = {
-            "spin": int(spin * 2),
+            "spin_multiplicity": int(spin * 2) + 1,
             "natural_abundance": natural_abundance,
             "gyromagnetic_ratio": gyromagnetic_ratio,
             "quadrupole_moment": quadrupole_moment,

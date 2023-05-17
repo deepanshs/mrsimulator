@@ -78,7 +78,16 @@ def test_3Q_VAS_general():
     serialize = mth.json()
     _ = serialize.pop("affine_matrix")
     assert serialize == {
-        "channels": ["87Rb"],
+        "channels": [
+            {
+                "natural_abundance": 27.83,
+                "gyromagnetic_ratio": 13.983992836343669,
+                "quadrupole_moment": 0.127,
+                "atomic_number": 37,
+                "spin_multiplicity": 4,
+                "isotope": "87Rb",
+            }
+        ],
         "description": "Simulate a 3Q variable-angle spinning spectrum.",
         "name": "ThreeQ_VAS",
         **sample_test_output(-3),
@@ -109,7 +118,16 @@ def test_5Q_VAS_general():
     _ = serialize.pop("affine_matrix")
 
     assert serialize == {
-        "channels": ["17O"],
+        "channels": [
+            {
+                "natural_abundance": 0.038,
+                "gyromagnetic_ratio": -5.774236332534915,
+                "quadrupole_moment": -0.02578,
+                "atomic_number": 8,
+                "spin_multiplicity": 6,
+                "isotope": "17O",
+            }
+        ],
         "description": "Simulate a 5Q variable-angle spinning spectrum.",
         "name": "FiveQ_VAS",
         **sample_test_output(-5),
@@ -136,7 +154,16 @@ def test_7Q_VAS_general():
     _ = serialize.pop("affine_matrix")
 
     assert serialize == {
-        "channels": ["51V"],
+        "channels": [
+            {
+                "natural_abundance": 99.75,
+                "gyromagnetic_ratio": 11.213282696036105,
+                "quadrupole_moment": -0.052,
+                "atomic_number": 23,
+                "spin_multiplicity": 8,
+                "isotope": "51V",
+            }
+        ],
         "description": "Simulate a 7Q variable-angle spinning spectrum.",
         "name": "SevenQ_VAS",
         **sample_test_output(-7),

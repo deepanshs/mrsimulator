@@ -40,7 +40,7 @@ def test_isotope():
 
     # Full isotope dictionary serialized
     assert nitrogen.json() == {
-        "spin": 2,
+        "spin_multiplicity": 3,
         "natural_abundance": 99.634,
         "gyromagnetic_ratio": 3.0777058647746447,
         "quadrupole_moment": 0.0193,
@@ -71,7 +71,7 @@ def test_custom_isotope():
 
     assert custom.json() == {
         "isotope": "custom",
-        "spin": 3,
+        "spin_multiplicity": 4,
         "gyromagnetic_ratio": -12.3,
         "quadrupole_moment": 0.1,
         "natural_abundance": 50,
