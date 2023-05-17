@@ -18,7 +18,7 @@ H1_isotope_json = {
     "gyromagnetic_ratio": 42.57747920984721,
     "quadrupole_moment": 0.0,
     "atomic_number": 1,
-    "isotope": "1H",
+    "symbol": "1H",
 }
 O17_isotope_json = {
     "spin_multiplicity": 6,
@@ -26,7 +26,7 @@ O17_isotope_json = {
     "gyromagnetic_ratio": -5.774236332534915,
     "quadrupole_moment": -0.02578,
     "atomic_number": 8,
-    "isotope": "17O",
+    "symbol": "17O",
 }
 Si29_isotope_json = {
     "spin_multiplicity": 2,
@@ -34,7 +34,7 @@ Si29_isotope_json = {
     "gyromagnetic_ratio": -8.465499588373877,
     "quadrupole_moment": 0.0,
     "atomic_number": 14,
-    "isotope": "29Si",
+    "symbol": "29Si",
 }
 
 

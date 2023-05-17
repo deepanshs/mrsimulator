@@ -124,7 +124,7 @@ def test_BlochDecaySpectrum():
                 "quadrupole_moment": 0.0,
                 "atomic_number": 1,
                 "spin_multiplicity": 2,
-                "isotope": "1H",
+                "symbol": "1H",
             }
         ],
         "magnetic_flux_density": "9.4 T",
@@ -163,7 +163,7 @@ def test_BlochDecaySpectrum():
                 "quadrupole_moment": 0.0,
                 "atomic_number": 14,
                 "spin_multiplicity": 2,
-                "isotope": "29Si",
+                "symbol": "29Si",
             }
         ],
         "magnetic_flux_density": "11.7 T",

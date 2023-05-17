@@ -28,7 +28,7 @@ H1_isotope_json = {
     "quadrupole_moment": 0.0,
     "atomic_number": 1,
     "spin_multiplicity": 2,
-    "isotope": "1H",
+    "symbol": "1H",
 }
 Na23_isotope_json = {
     "spin_multiplicity": 4,
@@ -36,7 +36,7 @@ Na23_isotope_json = {
     "gyromagnetic_ratio": 11.268835291595886,
     "quadrupole_moment": 0.1006,
     "atomic_number": 11,
-    "isotope": "23Na",
+    "symbol": "23Na",
 }
 
 
@@ -307,7 +307,7 @@ def test_sites():
     # test sites to pd
     sites_table = sim.sites().to_pd()
 
-    assert list(sites_table["isotope"]) == ["13C"] * len(iso)
+    assert list(sites_table["isotope.symbol"]) == ["13C"] * len(iso)
     assert list(sites_table["isotropic_chemical_shift"]) == [
         f"{i} ppm" if i is not None else None for i in iso
     ]
@@ -357,7 +357,7 @@ def test_sites_to_pandas_df():
     sim.spin_systems = spin_systems
     pd_o = sim.sites().to_pd()
 
-    assert list(pd_o["isotope"]) == isotopes
+    assert list(pd_o["isotope.symbol"]) == isotopes
     assert list(pd_o["isotropic_chemical_shift"]) == [
         f"{i} ppm" if i is not None else None for i in shifts
     ]

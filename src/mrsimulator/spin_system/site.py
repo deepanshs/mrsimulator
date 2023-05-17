@@ -201,9 +201,6 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        if isinstance(v, Isotope):
-            return v
-
         return Isotope.get_isotope(v)
 
     @classmethod

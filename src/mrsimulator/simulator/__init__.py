@@ -597,7 +597,7 @@ class Sites(AbstractList):
             "name",
             "label",
             "description",
-            "isotope.isotope",
+            "isotope.symbol",
             "isotropic_chemical_shift",
             *[f"shielding_symmetric.{_}" for _ in ["zeta", "eta", *euler]],
             *[f"quadrupolar.{_}" for _ in ["Cq", "eta", *euler]],
@@ -628,11 +628,6 @@ class Sites(AbstractList):
         for item in self.site_labels:
             if row[item] == nones:
                 row.pop(item)
-
-        # Rename "isotope.isotope" key to only "isotope".
-        # NOTE: Only isotope labels are included in the DataFrame, not all isotope attrs
-        if "isotope.isotope" in row:
-            row["isotope"] = row.pop("isotope.isotope")
 
         return pd.DataFrame(row)
 

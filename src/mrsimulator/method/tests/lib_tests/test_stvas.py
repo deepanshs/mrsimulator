@@ -102,7 +102,7 @@ def test_ST1_VAS_general():
                 "quadrupole_moment": 0.127,
                 "atomic_number": 37,
                 "spin_multiplicity": 4,
-                "isotope": "87Rb",
+                "symbol": "87Rb",
             }
         ],
         "description": des,
@@ -170,7 +170,7 @@ def test_ST2_VAS_general():
                 "quadrupole_moment": -0.02578,
                 "atomic_number": 8,
                 "spin_multiplicity": 6,
-                "isotope": "17O",
+                "symbol": "17O",
             }
         ],
         "description": des,

@@ -62,7 +62,7 @@ def test_SSB_general():
                 "quadrupole_moment": 0.127,
                 "atomic_number": 37,
                 "spin_multiplicity": 4,
-                "isotope": "87Rb",
+                "symbol": "87Rb",
             }
         ],
         "description": mth.description,

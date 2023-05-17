@@ -85,7 +85,7 @@ def test_3Q_VAS_general():
                 "quadrupole_moment": 0.127,
                 "atomic_number": 37,
                 "spin_multiplicity": 4,
-                "isotope": "87Rb",
+                "symbol": "87Rb",
             }
         ],
         "description": "Simulate a 3Q variable-angle spinning spectrum.",
@@ -125,7 +125,7 @@ def test_5Q_VAS_general():
                 "quadrupole_moment": -0.02578,
                 "atomic_number": 8,
                 "spin_multiplicity": 6,
-                "isotope": "17O",
+                "symbol": "17O",
             }
         ],
         "description": "Simulate a 5Q variable-angle spinning spectrum.",
@@ -161,7 +161,7 @@ def test_7Q_VAS_general():
                 "quadrupole_moment": -0.052,
                 "atomic_number": 23,
                 "spin_multiplicity": 8,
-                "isotope": "51V",
+                "symbol": "51V",
             }
         ],
         "description": "Simulate a 7Q variable-angle spinning spectrum.",

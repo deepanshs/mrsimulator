@@ -64,7 +64,7 @@ def test_direct_init_site1():
             "gyromagnetic_ratio": -8.465499588373877,
             "quadrupole_moment": 0.0,
             "atomic_number": 14,
-            "isotope": "29Si",
+            "symbol": "29Si",
         },
         "isotropic_chemical_shift": "0.0 ppm",
     }
@@ -141,7 +141,7 @@ def test_site_object_methods():
             "gyromagnetic_ratio": 3.0777058647746447,
             "quadrupole_moment": 0.0193,
             "atomic_number": 7,
-            "isotope": "14N",
+            "symbol": "14N",
         },
         "isotropic_chemical_shift": -10.0,
         "property_units": {"isotropic_chemical_shift": "ppm"},
@@ -176,7 +176,7 @@ def test_site_object_methods():
             "gyromagnetic_ratio": 3.0777058647746447,
             "quadrupole_moment": 0.0193,
             "atomic_number": 7,
-            "isotope": "14N",
+            "symbol": "14N",
         },
         "isotropic_chemical_shift": "-10.0 ppm",
     }
@@ -189,7 +189,7 @@ def test_site_object_methods():
             "gyromagnetic_ratio": 11.103090335864373,
             "quadrupole_moment": 0.15,
             "atomic_number": 13,
-            "isotope": "27Al",
+            "symbol": "27Al",
         },
         "isotropic_chemical_shift": "10.0 ppm",
         "shielding_symmetric": {"zeta": "12.1 ppm", "eta": 0.1, "alpha": "2.1 rad"},
@@ -258,3 +258,23 @@ def test_equality():
 
     c = Site(isotope="1H", isotropic_chemical_shift=16)
     assert a != c
+
+
+def test_isotope_validation():
+    from_str = Site(isotope="1H")
+    from_dict = Site(
+        isotope={
+            "natural_abundance": 99.985,
+            "gyromagnetic_ratio": 42.57747920984721,
+            "quadrupole_moment": 0.0,
+            "atomic_number": 1,
+            "spin_multiplicity": 2,
+            "symbol": "1H",
+        }
+    )
+    iso = Isotope(symbol="1H")
+    from_obj = Site(isotope=iso)
+
+    assert from_str == from_dict
+    assert from_str == from_obj
+    assert from_dict == from_obj

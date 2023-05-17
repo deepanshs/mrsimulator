@@ -88,16 +88,24 @@ class Isotope(BaseModel):
 
         # Value is dictionary, meaning either need to add custom isotope or get symbol
         if isinstance(val, dict):
-            if val["isotope"] in get_all_isotope_symbols():
+            if val["symbol"] in get_all_isotope_symbols():
+
+                # Dictionary with only key "symbol" sometimes passed depending on
+                # validation order. Here should return known isotope and skip next check
+                if set(val.keys()) == {"symbol"}:
+                    return Isotope(symbol=val["symbol"])
+
                 # Ensure pre-existing data for symbol matches that of the passed dict
-                if val != get_isotope_dict(val["isotope"]):
-                    raise ValueError(
-                        "Stored isotope data does not match the provided dictionary for"
-                        f" {val['isotope']}."
-                    )
+                if val == get_isotope_dict(val["symbol"]):
+                    return Isotope(symbol=val["symbol"])
 
-                return Isotope(symbol=val["isotope"])
+                raise ValueError(
+                    "Stored isotope data does not match the provided dictionary for"
+                    f" {val['symbol']}."
+                )
 
+            # Sometimes a dictionary with only key "symbol" is passed depending on
+            # validation order. Here, we should check the string value
             return Isotope.add_new(**val)
 
         raise ValueError(f"Type {type(val)} is invalid for this method.")
@@ -106,7 +114,7 @@ class Isotope(BaseModel):
     def add_new(
         cls,
         symbol: str,
-        spin: float,
+        spin_multiplicity: int,
         gyromagnetic_ratio: float,
         quadrupole_moment: float = 0,
         natural_abundance: float = 100,
@@ -120,8 +128,9 @@ class Isotope(BaseModel):
         Arguments:
             (str) symbol: Required symbol for custom isotope class. String cannot match
                 another isotope symbol.
-            (float) spin: Required spin number for the isotope. Must be an integer or
-                half-integer greater than zero.
+            (float) spin_multiplicity: Required spin multiplicity number for the isotope
+                equivalent to (2*I + 1) where I is the spin of the isotope. Must be an
+                integer.
             (float) gyromagnetic_ratio: Required gyromagnetic ratio of the isotope given
                 in MHz/T.
             (float) quadrupole_moment: Optional quadrupole moment given in eB. Default
@@ -142,10 +151,10 @@ class Isotope(BaseModel):
             )
 
         # Check for spin integer or half integer
-        if spin <= 0 or not float(2 * spin).is_integer():
+        if not isinstance(spin_multiplicity, int) or spin_multiplicity <= 1:
             raise ValueError(
-                f"Isotope spin value must be greater than zero and must be an integer "
-                f"or half integer. Got {spin}."
+                f"Isotope spin_multiplicity value must be greater than one and must "
+                f"be an integer. Got {spin_multiplicity}."
             )
 
         # Check abundance between 0 and 100, inclusive
@@ -162,7 +171,7 @@ class Isotope(BaseModel):
             )
 
         Isotope.custom_isotope_data[symbol] = {
-            "spin_multiplicity": int(spin * 2) + 1,
+            "spin_multiplicity": spin_multiplicity,
             "natural_abundance": natural_abundance,
             "gyromagnetic_ratio": gyromagnetic_ratio,
             "quadrupole_moment": quadrupole_moment,
@@ -250,7 +259,7 @@ def get_isotope_dict(isotope_string: str) -> dict:
     else:
         isotope_dict = dict(Isotope.custom_isotope_data[formatted_isotope_string])
 
-    isotope_dict.update({"isotope": formatted_isotope_string})
+    isotope_dict.update({"symbol": formatted_isotope_string})
 
     return isotope_dict
 
