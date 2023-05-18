@@ -59,10 +59,14 @@ def core_simulator(method,
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
 
+    # Define and allocate C numpy arrays
     n_points = 1
     cdef int n_ev
     cdef ndarray[int] n_event
-    cdef ndarray[double] magnetic_flux_density_in_T, frac
+    cdef ndarray[double] magnetic_flux_density_in_T
+    cdef ndarray[double] frac   # for SpectralEvent
+    cdef ndarray[double] dur    # for DelayEvent
+    cdef ndarray[unsigned char] is_spectral
     cdef ndarray[double] srfiH
     cdef ndarray[double] rair
     cdef ndarray[int] cnt
@@ -70,9 +74,12 @@ def core_simulator(method,
     cdef ndarray[double] incre
     cdef ndarray[unsigned int] n_dim_sidebands
 
+    # Loop through dimensions and grab attributes/values in python
     freq_contrib = np.asarray([])
 
-    fr = []
+    fr = []  # fraction attribute
+    du = []  # duration attribute
+    is_spec = []  # if event is a SpectralEvent
     Bo = []
     vr = []
     th = []
@@ -98,7 +105,16 @@ def core_simulator(method,
 
                 track.append(event.rotor_frequency < 1e12 and event.rotor_frequency != 0)
 
-                fr.append(event.fraction) # fraction
+                # Update event attribute depending on event type
+                if event.__class__.__name__ == "SpectralEvent":
+                    fr.append(event.fraction)
+                    du.append(0)
+                    is_spec.append(True)
+                elif event.__class__.__name__ == "DelayEvent":
+                    fr.append(0)
+                    du.append(event.duration)
+                    is_spec.append(False)
+
                 Bo.append(event.magnetic_flux_density)  # in T
                 vr.append(rotor_frequency_in_Hz) # in Hz
                 th.append(rotor_angle_in_rad) # in rad
@@ -114,7 +130,10 @@ def core_simulator(method,
 
         dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
 
+    # Assing values to previously defined C numpy arrays
     frac = np.asarray(fr, dtype=np.float64)
+    dur = np.asarray(du, dtype=np.float64)
+    is_spectral = np.asarray(is_spec, dtype=np.uint8)
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
     rair = np.asarray(th, dtype=np.float64)
@@ -137,8 +156,9 @@ def core_simulator(method,
 
     # create spectral_dimensions
     dimensions = clib.MRS_create_dimensions(averaging_scheme, &cnt[0],
-        &coord_off[0], &incre[0], &frac[0], &magnetic_flux_density_in_T[0],
-        &srfiH[0], &rair[0], &n_event[0], n_dimension, &n_dim_sidebands[0])
+        &coord_off[0], &incre[0], &frac[0], &dur[0], &is_spectral[0],
+        &magnetic_flux_density_in_T[0], &srfiH[0], &rair[0],
+        &n_event[0], n_dimension, &n_dim_sidebands[0])
 
 # normalization factor for the spectrum
     norm = np.abs(np.prod(incre))
