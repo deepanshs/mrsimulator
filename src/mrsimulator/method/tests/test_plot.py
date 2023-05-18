@@ -270,7 +270,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 #     error = (
 #         r".*The DataFrame does not contain any SpectralEvents or "
-#         r"ConstantDurationEvents. At least one must be present to construct a plot.*"
+#         r"DelayEvents. At least one must be present to construct a plot.*"
 #     )
 #     with pytest.raises(ValueError, match=error):
 #         _make_normal_and_offset_x_data(no_events_df1)

@@ -64,13 +64,13 @@ def get_iso_dict(channels, isotopes):
 
 def nearest_nonmixing_event(event_name, i):
     """Return the indexes of the nearest non mixing events (SpectralEvent and
-    ConstantDurationEvent) about a mixing event at index `i`.
+    DelayEvent) about a mixing event at index `i`.
 
     Args:
         event_name: List of event class names.
         i: Int index of the mixing event.
     """
-    options = ["SpectralEvent", "ConstantDurationEvent"]
+    options = ["SpectralEvent", "DelayEvent"]
     low_range = event_name[:i]
     high_range = event_name[i:]
     upper = [high_range.index(item) for item in options if item in high_range]
