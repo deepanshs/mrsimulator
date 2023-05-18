@@ -169,10 +169,10 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
-    r"""Base ConstantDurationEvent class defines the spin environment and the
+class DelayEvent(BaseEvent):
+    r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
-    event contribute to the spectrum as amplitudes.
+    event contribute to the spectrum as complex amplitude modulations.
 
     Attributes
     ----------
@@ -278,4 +278,4 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]
+    event: Union[MixingEvent, DelayEvent, SpectralEvent]

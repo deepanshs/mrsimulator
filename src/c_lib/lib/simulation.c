@@ -63,7 +63,7 @@ void __mrsimulator_core(
   bool reset;
   unsigned int evt;
   int dim;
-  double B0_in_T, fraction;
+  double B0_in_T, fraction, duration;
 
   // Allocate memory for zeroth, second, and fourth-rank tensor components.
   // variable with _temp allocate temporary memory for tensor components
@@ -90,6 +90,7 @@ void __mrsimulator_core(
       plan = event->plan;
       B0_in_T = event->magnetic_flux_density_in_T;
       fraction = event->fraction;
+      duration = event->duration;
 
       /* Initialize with zeroing all spatial components */
       __zero_components(&R0, R2, R4);
@@ -115,6 +116,8 @@ void __mrsimulator_core(
 
       /* Get frequencies and amplitudes per octant .................................. */
       /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
+      // NOTE: How to incorporate both "fraction" and "duration" into this function?
+      // Possibly calculate normalized frequencies first, then decide if frac or dur
       MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, reset,
                                                &dimensions[dim], fraction);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);

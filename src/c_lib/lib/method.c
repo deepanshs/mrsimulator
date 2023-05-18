@@ -39,23 +39,29 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
 }
 
 /**
- * @brief Polulates event structs and creates/updates new plans based on the plan from
+ * @brief Populates event structs and creates/updates new plans based on the plan from
  * the first event along the dimension.
  *
  * @param event The pointer to the event.
  * @param fraction The fraction/weight of the event.
+ * @param duration The duration of a delay event in µs.
+ * @param is_spectral True (1) if the event is a SpectralEvent, False (0) if a
+ * DelayEvent
  * @param magnetic_flux_density_in_T The external field flux density at the event.
  * @param rotor_frequency_in_Hz The rotor frequency at the event.
  * @param rotor_angle_in_rad The rotor angle at the event.
  * @param inverse_increment The inverse increment of the corresponding dimension.
  * @param plan The MRS plan of the first event along the dimension.
  */
-static inline void MRS_set_event(MRS_event *event, double fraction,
+static inline void MRS_set_event(MRS_event *event, double fraction, double duration,
+                                 unsigned char is_spectral,
                                  double magnetic_flux_density_in_T,
                                  double rotor_frequency_in_Hz,
                                  double rotor_angle_in_rad, double inverse_increment,
                                  MRS_plan *plan) {
   event->fraction = fraction;
+  event->duration = duration;
+  event->is_spectral = is_spectral;
   event->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
   event->rotor_angle_in_rad = rotor_angle_in_rad;
   event->magnetic_flux_density_in_T = magnetic_flux_density_in_T;
@@ -123,6 +129,9 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
  * @param coordinates_offset (double) The coordinates offset in Hz along the dimension.
  * @param n_events (int) The number of events within the dimension.
  * @param fraction A pointer to the fraction/weight of the events along the dimension.
+ * @param duration A pointer to the duration of delay events along the dimension.
+ * @param is_spectral A pointer to a unsigned char array describing which event comes
+ * from
  * @param rotor_frequency_in_Hz A pointer to rotor frequency in Hz per event.
  * @param rotor_angle_in_rad A pointer to rotor angle in rads per event.
  * @param magnetic_flux_density_in_T A pointer to field fluc density in T per event.
@@ -130,9 +139,10 @@ static inline void MRS_set_event(MRS_event *event, double fraction,
  */
 static inline void create_plans_for_events_in_dimension(
     MRS_dimension *dim, MRS_averaging_scheme *scheme, int count, double increment,
-    double coordinates_offset, int n_events, double *fraction,
-    double *rotor_frequency_in_Hz, double *rotor_angle_in_rad,
-    double *magnetic_flux_density_in_T, unsigned int number_of_sidebands) {
+    double coordinates_offset, int n_events, double *fraction, double *duration,
+    unsigned char *is_spectral, double *rotor_frequency_in_Hz,
+    double *rotor_angle_in_rad, double *magnetic_flux_density_in_T,
+    unsigned int number_of_sidebands) {
   int i;
   dim->count = count;
   dim->coordinates_offset = coordinates_offset;
@@ -156,9 +166,9 @@ static inline void create_plans_for_events_in_dimension(
     //   dim->events[i].freq_amplitude = malloc_double(plan->size);
     //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);
     // }
-    MRS_set_event(&(dim->events[i]), *fraction++, *magnetic_flux_density_in_T++,
-                  *rotor_frequency_in_Hz++, *rotor_angle_in_rad++,
-                  dim->inverse_increment, plan);
+    MRS_set_event(&(dim->events[i]), *fraction++, *duration++, *is_spectral++,
+                  *magnetic_flux_density_in_T++, *rotor_frequency_in_Hz++,
+                  *rotor_angle_in_rad++, dim->inverse_increment, plan);
     if (i == 0) dim->events->plan->copy = false;
   }
 
@@ -178,17 +188,18 @@ static inline void create_plans_for_events_in_dimension(
  **/
 MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
-    double *increment, double *fractions, double *magnetic_flux_density_in_T,
-    double *rotor_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
-    unsigned int n_dim, unsigned int *number_of_sidebands) {
+    double *increment, double *fractions, double *durations, unsigned char *is_spectral,
+    double *magnetic_flux_density_in_T, double *rotor_frequency_in_Hz,
+    double *rotor_angle_in_rad, int *n_events, unsigned int n_dim,
+    unsigned int *number_of_sidebands) {
   unsigned int i;
   MRS_dimension *dimension = (MRS_dimension *)malloc(n_dim * sizeof(MRS_dimension));
 
   for (i = 0; i < n_dim; i++) {
     create_plans_for_events_in_dimension(
         &(dimension[i]), scheme, count[i], increment[i], coordinates_offset[i],
-        n_events[i], fractions, rotor_frequency_in_Hz, rotor_angle_in_rad,
-        magnetic_flux_density_in_T, number_of_sidebands[i]);
+        n_events[i], fractions, durations, is_spectral, rotor_frequency_in_Hz,
+        rotor_angle_in_rad, magnetic_flux_density_in_T, number_of_sidebands[i]);
 
     fractions += n_events[i];
     rotor_frequency_in_Hz += n_events[i];
