@@ -11,6 +11,7 @@ What's new
 **Simulator**
 
 - New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
+- Capability to add isotopes with user-defined attributes using the method `Isotope.add_new()`.
 
 v0.7.0
 ------

@@ -142,6 +142,27 @@ class Isotope(BaseModel):
 
         Returns:
             An instance of the Isotope class
+
+        Example
+        -------
+
+        >>> # Create new custom isotope
+        >>> iso = Isotope.add_new(
+        ...     symbol="custom_iso",
+        ...     spin_multiplicity=4,
+        ...     gyromagnetic_ratio=12.345,
+        ...     quadrupole_moment=-0.06789,
+        ... )
+        >>> iso.spin
+        1.5
+        >>> iso.gyromagnetic_ratio
+        12.345
+        >>> iso.quadrupole_moment
+        -0.06789
+        >>> # Create same isotope from symbol
+        >>> iso2 = Isotope(symbol="custom_iso")
+        >>> iso == iso2
+        True
         """
         # Check for symbol overlap in dictionaries
         if symbol in ISOTOPE_DATA or symbol in Isotope.custom_isotope_data:
