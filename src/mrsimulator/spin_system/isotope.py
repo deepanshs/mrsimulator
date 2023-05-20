@@ -14,6 +14,14 @@ __email__ = "srivastava.89@osu.edu"
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
 
+DEFAULT_ISOTOPE = {
+    "spin_multiplicity": 1,
+    "gyromagnetic_ratio": 0,
+    "quadrupole_moment": 0,
+    "natural_abundance": 100,
+    "atomic_number": 0,
+}
+
 
 class Isotope(BaseModel):
     """The Isotope class.
@@ -42,22 +50,42 @@ class Isotope(BaseModel):
     """
 
     symbol: str
-    # test_vars: ClassVar[Dict] = {"symbol": "1H"}
+    spin_multiplicity: int = 1
+    gyromagnetic_ratio: float = 0
+    quadrupole_moment: float = 0
+    natural_abundance: float = 100
+    atomic_number: int = 0
+
+    test_vars: ClassVar[Dict] = {"symbol": "1H"}
     custom_isotope_data: ClassVar[Dict] = {}
 
     class Config:
         extra = "forbid"
         validate_assignment = True
+        allow_mutation = False
+
+    def __init__(self, **kwargs):
+        symbol = kwargs["symbol"]
+        if symbol in get_all_isotope_symbols():
+            kwargs_new = get_isotope_dict(symbol)
+            for k, v in kwargs.items():
+                if v != kwargs_new[k]:
+                    raise ValueError(f"{k} for {symbol} cannot be assigned.")
+        else:
+            kwargs_new = DEFAULT_ISOTOPE.copy()
+            kwargs_new.update(kwargs)
+            Isotope.custom_isotope_data[symbol] = kwargs_new
+        super().__init__(**kwargs_new)
 
     @validator("symbol", always=True)
     def validate_symbol(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
-        return get_isotope_dict(self.symbol)
+        return self.dict()
 
-    def dict(self, **kwargs) -> dict:
-        return self.json()
+    # def dict(self, **kwargs) -> dict:
+    #     return self.json()
 
     @classmethod
     def get_isotope(cls, val):
@@ -207,29 +235,29 @@ class Isotope(BaseModel):
         isotope_data = get_isotope_dict(self.symbol)
         return (isotope_data["spin_multiplicity"] - 1) / 2.0
 
-    @property
-    def natural_abundance(self):
-        """Natural abundance of the isotope in units of %."""
-        isotope_data = get_isotope_dict(self.symbol)
-        return isotope_data["natural_abundance"]
+    # @property
+    # def natural_abundance(self):
+    #     """Natural abundance of the isotope in units of %."""
+    #     isotope_data = get_isotope_dict(self.symbol)
+    #     return isotope_data["natural_abundance"]
 
-    @property
-    def gyromagnetic_ratio(self):
-        """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
-        isotope_data = get_isotope_dict(self.symbol)
-        return isotope_data["gyromagnetic_ratio"]
+    # @property
+    # def gyromagnetic_ratio(self):
+    #     """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
+    #     isotope_data = get_isotope_dict(self.symbol)
+    #     return isotope_data["gyromagnetic_ratio"]
 
-    @property
-    def quadrupole_moment(self):
-        """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
-        isotope_data = get_isotope_dict(self.symbol)
-        return isotope_data["quadrupole_moment"]
+    # @property
+    # def quadrupole_moment(self):
+    #     """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
+    #     isotope_data = get_isotope_dict(self.symbol)
+    #     return isotope_data["quadrupole_moment"]
 
-    @property
-    def atomic_number(self):
-        """Atomic number of the isotope."""
-        isotope_data = get_isotope_dict(self.symbol)
-        return isotope_data["atomic_number"]
+    # @property
+    # def atomic_number(self):
+    #     """Atomic number of the isotope."""
+    #     isotope_data = get_isotope_dict(self.symbol)
+    #     return isotope_data["atomic_number"]
 
     def larmor_freq(self, B0=9.4):
         """Return the Larmor frequency of the isotope at a magnetic field strength B0.
