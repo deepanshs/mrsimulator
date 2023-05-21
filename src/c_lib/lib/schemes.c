@@ -123,6 +123,10 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
   free(scheme->wigner_2j_matrices);
   free(scheme->wigner_4j_matrices);
   free(scheme->scrach);
+  free(scheme->amps_real);
+  free(scheme->amps_imag);
+  free(scheme->phase);
+  free(scheme->exp_I_phase);
   free(scheme);
 }
 
@@ -174,6 +178,11 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
   // reallocate exp_I_beta memory as scrach.
   scheme->scrach = (double *)exp_I_beta;
+  scheme->amps_real = malloc_double(scheme->total_orientations);
+  scheme->amps_imag = malloc_double(scheme->total_orientations);
+  scheme->phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
+  scheme->exp_I_phase = malloc_complex128(scheme->n_gamma * scheme->total_orientations);
+
   free(gamma);
   free(temp);
   return scheme;

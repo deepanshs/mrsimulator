@@ -166,8 +166,10 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, bool refresh,
-                                              MRS_dimension *dim, double fraction);
+                                              complex128 *R4, unsigned char refresh,
+                                              MRS_dimension *dim, double fraction,
+                                              unsigned char is_spectral, double *phase,
+                                              double duration);
 
 void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,

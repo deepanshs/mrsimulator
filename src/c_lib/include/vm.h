@@ -89,13 +89,14 @@ static inline void vm_double_subtract_inplace(int count, const double *restrict 
  *      res = x * y
  */
 static inline void vm_double_multiply(int count, const double *restrict x,
-                                      const double *restrict y, double *restrict res) {
+                                      const int stride_x, const double *restrict y,
+                                      double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = *x++ * *y++;
-    // x += stride_x;
+    *res++ = *x * *y++;
+    x += stride_x;
     // y += stride_y;
     // res += stride_res;
   }

@@ -387,11 +387,24 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, bool reset,
-                                              MRS_dimension *dim, double fraction) {
+                                              complex128 *R4, unsigned char reset,
+                                              MRS_dimension *dim, double fraction,
+                                              unsigned char is_spectral, double *phase,
+                                              double duration) {
   unsigned int i, g_idx, ptr;
-  double temp;
-  double *f_complex;
+  unsigned int freq_size = scheme->n_gamma * scheme->total_orientations;
+  double temp, scalar_norm;
+  double *f_complex, *local_frequency;
+
+  if (is_spectral) {
+    local_frequency = dim->local_frequency;
+    scalar_norm = dim->inverse_increment;
+  } else {
+    local_frequency = dim->local_phase;
+    cblas_dscal(freq_size, 0.0, local_frequency, 1);
+    scalar_norm = 1.0;
+  }
+
   /**
    * Rotate the R2 and R4 components from the common frame to the rotor frame over all
    * the orientations (alpha, beta). The componets are stored in w2 and w4 of the
@@ -403,13 +416,12 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /* If reset is true, zero the local_frequencies before update. */
   if (reset) {
-    cblas_dscal(scheme->n_gamma * scheme->total_orientations, 0.0, dim->local_frequency,
-                1);
+    cblas_dscal(freq_size, 0.0, local_frequency, 1);
     dim->R0_offset = 0.0;
   }
 
   /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
-  dim->R0_offset += R0 * dim->inverse_increment * fraction;
+  dim->R0_offset += R0 * scalar_norm * fraction;
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
@@ -421,22 +433,23 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
   for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
     ptr = scheme->total_orientations * g_idx;
-    temp = dim->inverse_increment * 2 * fraction;
+    temp = scalar_norm * 2 * fraction;
+
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
         f_complex =
             (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + g_idx]);
         plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];
         cblas_daxpy(scheme->total_orientations, plan->buffer,
-                    (double *)&(scheme->w2[i]), 6, &dim->local_frequency[ptr], 1);
+                    (double *)&(scheme->w2[i]), 6, &local_frequency[ptr], 1);
         plan->buffer = -temp * plan->wigner_d2m0_vector[i] * f_complex[1];
         cblas_daxpy(scheme->total_orientations, plan->buffer,
-                    (double *)&(scheme->w2[i]) + 1, 6, &dim->local_frequency[ptr], 1);
+                    (double *)&(scheme->w2[i]) + 1, 6, &local_frequency[ptr], 1);
       }
     }
-    plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
+    plan->buffer = scalar_norm * plan->wigner_d2m0_vector[2] * fraction;
     cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
-                &dim->local_frequency[ptr], 1);
+                &local_frequency[ptr], 1);
   }
   if (plan->allow_4th_rank) {
     /**
@@ -445,22 +458,28 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
      */
     for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
       ptr = scheme->total_orientations * g_idx;
-      temp = dim->inverse_increment * 2 * fraction;
+      temp = scalar_norm * 2 * fraction;
       if (plan->is_static) {
         for (i = 0; i < 4; i++) {
           f_complex = (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + g_idx]);
           plan->buffer = temp * plan->wigner_d4m0_vector[i] * f_complex[0];
           cblas_daxpy(scheme->total_orientations, plan->buffer,
-                      (double *)&scheme->w4[i], 10, &dim->local_frequency[ptr], 1);
+                      (double *)&scheme->w4[i], 10, &local_frequency[ptr], 1);
           plan->buffer = -temp * plan->wigner_d4m0_vector[i] * f_complex[1];
           cblas_daxpy(scheme->total_orientations, plan->buffer,
-                      (double *)&scheme->w4[i] + 1, 10, &dim->local_frequency[ptr], 1);
+                      (double *)&scheme->w4[i] + 1, 10, &local_frequency[ptr], 1);
         }
       }
-      plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
+      plan->buffer = scalar_norm * plan->wigner_d4m0_vector[4] * fraction;
       cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4],
-                  10, &dim->local_frequency[ptr], 1);
+                  10, &local_frequency[ptr], 1);
     }
+  }
+
+  if (!is_spectral) {  // compute phase.
+    plan->buffer = R0 * fraction;
+    vm_double_add_offset_inplace(freq_size, plan->buffer, local_frequency);
+    cblas_daxpy(freq_size, duration, local_frequency, 1, phase, 1);
   }
 }
 
