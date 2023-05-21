@@ -68,17 +68,6 @@ class Setup:
         self.extra_compile_args = ["/DUSE_OPENBLAS"]
 
         print(sys.version)
-        miniconda = join("C:", "Miniconda")
-        self.include_dirs += self.check_valid_path(
-            [
-                join(miniconda, "Library", "include", "fftw"),
-                join(miniconda, "Library", "include", "openblas"),
-                join(miniconda, "Library", "include"),
-                join(miniconda, "include"),
-            ]
-        )
-        self.library_dirs += self.check_valid_path([join(miniconda, "Library", "lib")])
-
         loc = dirname(sys.executable)
         print("executable location", loc)
         if "conda" not in loc:
