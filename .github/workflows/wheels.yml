@@ -125,11 +125,11 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-latest
-            name: mac 64-bit arm64
-            cibw:
-              arch: arm64
-              build: "cp3*"
+          # - os: macos-latest
+          #   name: mac 64-bit arm64
+          #   cibw:
+          #     arch: arm64
+          #     build: "cp3*"
 
           - os: ubuntu-latest
             name: linux 64-bit x86_64
