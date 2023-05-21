@@ -65,8 +65,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
-          set LIBPATH=C:\Miniconda\Library\lib
-          set INCLUDE="C:\Miniconda\Library\include;C:\Miniconda\Library\include\openblas"
+          set CL="/IC:\Miniconda\Library\include /IC:\Miniconda\Library\include\openblas /LIBPATH:C:\Miniconda\Library\lib"
 
       - name: Install dependencies
         run: |
