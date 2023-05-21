@@ -34,12 +34,12 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
 
-  test_matrix:
+  testing_unix:
     needs: [code_lint]
     strategy:
       matrix:
-        os: ["windows-latest"]
-        python-version: ["3.11"]
+        os: ["ubuntu-latest", "macos-latest"]
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -60,11 +60,6 @@ jobs:
       - name: Install macos system dependencies
         if: startsWith(matrix.os, 'mac')
         run: brew install openblas fftw
-
-      - name: Install windows system dependencies
-        if: startsWith(matrix.os, 'windows')
-        run: |
-          C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
       - name: Install dependencies
         run: |
@@ -121,38 +116,38 @@ jobs:
   #     - name: Upload coverage
   #       uses: codecov/codecov-action@v3.1.3
 
-  # testing_windows:
-  #   needs: [code_lint]
-  #   strategy:
-  #     matrix:
-  #       python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
-  #   runs-on: "windows-latest"
+  testing_windows:
+    needs: [code_lint]
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
+    runs-on: "windows-latest"
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Setup Miniconda
-  #       uses: conda-incubator/setup-miniconda@v2
-  #       env:
-  #         ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
-  #       with:
-  #         auto-update-conda: true
-  #         auto-activate-base: false
-  #         miniconda-version: "latest"
-  #         python-version: ${{ matrix.python-version }}
-  #         environment-file: environment-dev.yml
-  #         activate-environment: mrsimulator-dev
-  #     - run: |
-  #         conda --version
-  #         which python
-  #     - name: Build and install package from source
-  #       shell: pwsh
-  #       run: |
-  #         conda --version
-  #         which python
-  #         python setup.py develop
-  #     - name: Test with pytest
-  #       shell: pwsh
-  #       run: pytest --cov=./ --cov-report=xml
-  #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v3.1.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          miniconda-version: "latest"
+          python-version: ${{ matrix.python-version }}
+          environment-file: environment-dev.yml
+          activate-environment: mrsimulator-dev
+      - run: |
+          conda --version
+          which python
+      - name: Build and install package from source
+        shell: pwsh
+        run: |
+          conda --version
+          which python
+          python setup.py develop
+      - name: Test with pytest
+        shell: pwsh
+        run: pytest --cov=./ --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3.1.3
