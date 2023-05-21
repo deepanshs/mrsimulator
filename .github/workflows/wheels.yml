@@ -89,6 +89,7 @@ jobs:
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
 
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
+      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
@@ -124,17 +125,17 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-latest
-            name: mac 64-bit arm64
-            cibw:
-              arch: arm64
-              build: "cp3*"
+          # - os: macos-latest
+          #   name: mac 64-bit arm64
+          #   cibw:
+          #     arch: arm64
+          #     build: "cp3*"
 
           - os: ubuntu-latest
             name: linux 64-bit x86_64
             cibw:
               build: "cp3*manylinux_x86_64"
-              manylinux_image: manylinux2010
+              manylinux_image: manylinux2014
 
           # - os: ubuntu-latest
           #   name: linux 32-bit i686
@@ -179,8 +180,8 @@ jobs:
       - name: customize mac-arm-64
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.4.app
-          echo 'SDKROOT=/Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
+          sudo xcode-select -switch /Applications/Xcode_13.1.app
+          echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
           echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
