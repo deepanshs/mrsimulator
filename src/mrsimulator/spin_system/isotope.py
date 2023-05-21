@@ -285,6 +285,11 @@ def get_isotope_dict(isotope_string: str) -> dict:
     return isotope_dict
 
 
+def get_all_isotope_data() -> dict:
+    """Return a dictionary of all isotopes, both real and custom"""
+    return ISOTOPE_DATA | Isotope.custom_isotope_data
+
+
 def get_all_isotope_symbols() -> list:
     """Returns a list of all currently valid isotope symbols"""
-    return list(ISOTOPE_DATA.keys()) + list(Isotope.custom_isotope_data.keys())
+    return list(get_all_isotope_data().keys())
