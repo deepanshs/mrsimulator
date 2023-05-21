@@ -135,7 +135,7 @@ jobs:
             name: linux 64-bit x86_64
             cibw:
               build: "cp3*manylinux_x86_64"
-              manylinux_image: manylinux2010
+              manylinux_image: manylinux2014
 
           # - os: ubuntu-latest
           #   name: linux 32-bit i686
