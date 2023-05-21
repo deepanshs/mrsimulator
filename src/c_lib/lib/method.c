@@ -16,8 +16,8 @@ void MRS_free_event(MRS_event *the_event) {
     MRS_free_plan(the_event->plan);
     the_event->plan = NULL;
   }
-  free(the_event->freq_amplitude);
-  if (DEBUG) printf("freed event->freq_amplitude\n");
+  free(the_event->event_freq_amplitude);
+  if (DEBUG) printf("freed event->event_freq_amplitude\n");
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
@@ -31,6 +31,7 @@ void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
     }
     free(dimensions[dim].events);
     free(dimensions[dim].local_frequency);
+    free(dimensions[dim].local_phase);
     free(dimensions[dim].freq_offset);
     free(dimensions[dim].freq_amplitude);
     if (DEBUG) printf("freed events, local_frequency, freq_offset, freq_amplitude\n");
@@ -161,7 +162,7 @@ static inline void create_plans_for_events_in_dimension(
   cblas_dscal(number_of_sidebands, dim->inverse_increment, plan->vr_freq, 1);
 
   for (i = 0; i < n_events; i++) {
-    dim->events[i].freq_amplitude = NULL;
+    dim->events[i].event_freq_amplitude = NULL;
     // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
     //   dim->events[i].freq_amplitude = malloc_double(plan->size);
     //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);
@@ -178,6 +179,7 @@ static inline void create_plans_for_events_in_dimension(
   /* buffer to hold the local frequencies and frequency offset. The buffer is useful
    * when the rotor angle is off magic angle (54.735 deg). */
   dim->local_frequency = malloc_double(scheme->n_gamma * scheme->total_orientations);
+  dim->local_phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
   dim->freq_amplitude = malloc_double(plan->size);
 }
