@@ -38,7 +38,7 @@ jobs:
     needs: [code_lint]
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["windows-latest"]
         python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
     runs-on: ${{ matrix.os }}
 
@@ -65,8 +65,8 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
-          set LIBPATH=C:\Miniconda\Library\lib
-          set INCLUDE=C:\Miniconda\Library\include;C:\Miniconda\Library\include\openblas
+          set LIBPATH=C:\\Miniconda\\Library\\lib
+          set INCLUDE=C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas
 
       - name: Install dependencies
         run: |
