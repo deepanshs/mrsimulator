@@ -13,6 +13,15 @@ freq_list_all = [
     "J1_0",
     "J1_2",
     "D1_2",
+    "Quad_Shielding_cross_0",
+    "Quad_Shielding_cross_2",
+    "Quad_Shielding_cross_4",
+    "Quad_J_cross_0",
+    "Quad_J_cross_2",
+    "Quad_J_cross_4",
+    "Quad_Dipolar_cross_0",
+    "Quad_Dipolar_cross_2",
+    "Quad_Dipolar_cross_4",
 ]
 
 
@@ -49,6 +58,33 @@ class FrequencyEnum(str, Enum):
 
     D1_2:
         Selects first-order and second-rank weak dipole frequency contributions.
+
+    Quad_Shielding_cross_0:
+        Selects zeroth-rank quad-shielding cross interaction.
+
+    Quad_Shielding_cross_2:
+        Selects second-rank quad-shielding cross interaction.
+
+    Quad_Shielding_cross_4:
+        Selects fourth-rank quad-shielding cross interaction.
+
+    Quad_J_cross_0:
+        Selects zeroth-rank quad-J-coupling cross interaction.
+
+    Quad_J_cross_2:
+        Selects second-rank quad-J-coupling cross interaction.
+
+    Quad_J_cross_4:
+        Selects fourth-rank quad-J-coupling cross interaction.
+
+    Quad_Dipolar_cross_0:
+        Selects zeroth-rank quad-dipolar coupling cross interaction.
+
+    Quad_Dipolar_cross_2:
+        Selects second-rank quad-dipolar coupling cross interaction.
+
+    Quad_Dipolar_cross_4:
+        Selects fourth-rank quad-dipolar coupling cross interaction.
     """
 
     # Shielding1: str = "Shielding1"
@@ -67,8 +103,21 @@ class FrequencyEnum(str, Enum):
     J1_0: str = freq_list_all[6]
     J1_2: str = freq_list_all[7]
 
-    # D1: str = "D"
+    # D1: str = "D1"
     D1_2: str = freq_list_all[8]
+
+    # Quad_Shielding: str = "Quad_Shielding"
+    Quad_Shielding_cross_0: str = freq_list_all[9]
+    Quad_Shielding_cross_2: str = freq_list_all[10]
+    Quad_Shielding_cross_4: str = freq_list_all[11]
+
+    Quad_J_cross_0: str = freq_list_all[12]
+    Quad_J_cross_2: str = freq_list_all[13]
+    Quad_J_cross_4: str = freq_list_all[14]
+
+    Quad_Dipolar_cross_0: str = freq_list_all[15]
+    Quad_Dipolar_cross_2: str = freq_list_all[16]
+    Quad_Dipolar_cross_4: str = freq_list_all[17]
 
     class Config:
         extra = "forbid"
