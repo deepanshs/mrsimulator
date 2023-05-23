@@ -271,3 +271,121 @@ def rank_2_tensor_products(np.ndarray[double complex] tensor_a, np.ndarray[doubl
     clib.rank_2_tensor_products(&R_a[0], &R_b[0], &R_0[0], &R_2[0], &R_4[0])
 
     return R_0.view(dtype=complex), R_2.view(dtype=complex), R_4.view(dtype=complex)
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_add(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_add(A.size, &A[0], &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_add_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_add_inplace(A.size, &A[0], &B[0])
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sub(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_subtract(A.size, &A[0], &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sub_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_subtract_inplace(A.size, &A[0], &B[0])
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_mult(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_multiply(A.size, &A[0], 1, &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_mult_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_multiply_inplace(A.size, &A[0], 1, &B[0], 1)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_div(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_divide(A.size, &A[0], &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_div_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_divide_inplace(A.size, &A[0], &B[0])
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cmult(np.ndarray[complex] A, np.ndarray[complex] B):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_double_complex_multiply(A.size, &A[0], &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sq(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square(A.size, &A[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sq_inplace(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_inplace(A.size, &A[0])
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sqrt(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_root(A.size, &A[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sqrt_inplace(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_root_inplace(A.size, &A[0])
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cos(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_cosine(A.size, &A[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sin(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_sine(A.size, &A[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cos_I_sin(np.ndarray[double] A):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_cosine_I_sine(A.size, &A[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_exp(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_exp(A.size, &A[0], &res[0], 1)
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_I_exp(np.ndarray[complex] A):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_double_complex_exp(A.size, &A[0], &res[0])
+    return res
