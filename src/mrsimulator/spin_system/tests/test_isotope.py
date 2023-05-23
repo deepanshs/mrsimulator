@@ -50,7 +50,7 @@ def test_isotope():
 
 
 def test_custom_isotope():
-    custom = Isotope.add_new(
+    custom = Isotope(
         symbol="custom",
         spin_multiplicity=4,
         gyromagnetic_ratio=-12.3,
@@ -61,6 +61,7 @@ def test_custom_isotope():
     assert isinstance(custom, Isotope)
     assert custom.symbol == "custom"
     assert custom.spin == 1.5
+    assert custom.spin_multiplicity == 4
     assert custom.gyromagnetic_ratio == -12.3
     assert custom.quadrupole_moment == 0.1
     assert custom.natural_abundance == 50
@@ -76,26 +77,31 @@ def test_custom_isotope():
         "gyromagnetic_ratio": -12.3,
         "quadrupole_moment": 0.1,
         "natural_abundance": 50,
-        "atomic_number": -1,
+        "atomic_number": 0,
     }
 
-
-def test_add_new():
-    # Ensuring no overlap on symbols
-    e = "already attributed to another Isotope. All Isotope symbols must be unique;"
+    # Extra fields passed to Isotope
+    e = "Extra keywords, {'im_an_extra_key'}, are prohibited"
     with pytest.raises(Exception, match=e):
-        Isotope.add_new(symbol="custom", spin_multiplicity=3, gyromagnetic_ratio=1)
+        Isotope(symbol="foo", im_an_extra_key=1)
+
+
+def test_validate():
+    # # Ensuring no overlap on symbols
+    # e = "already attributed to another Isotope. All Isotope symbols must be unique;"
+    # with pytest.raises(Exception, match=e):
+    #     Isotope(symbol="custom", spin_multiplicity=3, gyromagnetic_ratio=1)
 
     # Errors for arguments out of allowed ranges:
-    e = "spin_multiplicity value must be greater than one and must be an integer"
+    e = "Isotope spin_multiplicity value must an integer value greater than one"
     with pytest.raises(Exception, match=e):
-        Isotope.add_new(symbol="foo", spin_multiplicity=1, gyromagnetic_ratio=1)
+        Isotope(symbol="foo", spin_multiplicity=1, gyromagnetic_ratio=1)
     with pytest.raises(Exception, match=e):
-        Isotope.add_new(symbol="foo", spin_multiplicity=1.2, gyromagnetic_ratio=1)
+        Isotope(symbol="foo", spin_multiplicity=1.2, gyromagnetic_ratio=1)
 
     e = "Abundance must be between 0 and 100, inclusive."
     with pytest.raises(Exception, match=e):
-        Isotope.add_new(
+        Isotope(
             symbol="foo",
             spin_multiplicity=3,
             gyromagnetic_ratio=1,
@@ -104,7 +110,7 @@ def test_add_new():
 
     e = "Atomic number must be an integer value."
     with pytest.raises(Exception, match=e):
-        Isotope.add_new(
+        Isotope(
             symbol="foo", spin_multiplicity=3, gyromagnetic_ratio=1, atomic_number=5.5
         )
 
@@ -133,12 +139,12 @@ def test_get_isotope():
     assert Isotope.get_isotope(good_1H_dict) == iso_1H
 
     # Passing dictionary with different stored data
-    e = "Stored isotope data does not match the provided dictionary"
+    e = "cannot be assigned"
     with pytest.raises(Exception, match=e):
         Isotope.get_isotope(val=bad_1H_dict)
 
     # Passing an unknown symbol to get_isotope
-    e = "is an unrecognized Isotope symbol."
+    e = "Could not parse isotope string"
     with pytest.raises(Exception, match=e):
         Isotope.get_isotope(val="unknown_symbol")
 

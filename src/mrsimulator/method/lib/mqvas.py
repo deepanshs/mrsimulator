@@ -49,7 +49,7 @@ class MQ_VAS(BaseNamedMethod2D):
 
         mq = MQ_p_symmetry[name]["mq"]
         iso = kwargs["channels"][0]
-        spin = iso.spin if isinstance(iso, Isotope) else Isotope.get_isotope(iso).spin
+        spin = Isotope.get_isotope(iso).spin
 
         # select the coherence for the first event
         P = int(2 * mq)

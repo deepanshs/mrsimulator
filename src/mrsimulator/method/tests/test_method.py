@@ -71,7 +71,7 @@ def basic_method_tests(the_method):
     the_method.channels = ["1H", "17O"]
     assert the_method.channels == [Isotope(symbol="1H"), Isotope(symbol="17O")]
 
-    with pytest.raises(ValidationError, match=".*value is not a valid list.*"):
+    with pytest.raises(AttributeError, match=".*value is not a valid list.*"):
         the_method.channels = "6Li"
 
     dimension = SpectralDimension.parse_dict_with_units(dimension_dictionary)
