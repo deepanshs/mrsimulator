@@ -476,7 +476,7 @@ class Method(Parseable):
             for evt in dim.events
             if evt.__class__.__name__ != "MixingEvent"
         ]
-        if np.asarray(segments).size == 0:
+        if all([sg.size == 0 for sg in segments]):  # List of empty segments
             return np.asarray([])
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
