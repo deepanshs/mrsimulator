@@ -18,6 +18,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
