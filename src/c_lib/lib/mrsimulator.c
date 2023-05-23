@@ -389,20 +389,20 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
                                               complex128 *R4, unsigned char reset,
                                               MRS_dimension *dim, double fraction,
-                                              unsigned char is_spectral, double *phase,
+                                              unsigned char is_spectral,
                                               double duration) {
   unsigned int i, g_idx, ptr;
   unsigned int freq_size = scheme->n_gamma * scheme->total_orientations;
-  double temp, scalar_norm;
+  double temp, fraction_duration;
   double *f_complex, *local_frequency;
 
   if (is_spectral) {
     local_frequency = dim->local_frequency;
-    scalar_norm = dim->inverse_increment;
+    fraction_duration = dim->inverse_increment * fraction;
   } else {
     local_frequency = dim->local_phase;
     cblas_dscal(freq_size, 0.0, local_frequency, 1);
-    scalar_norm = 1.0;
+    fraction_duration = CONST_2PI * duration;
   }
 
   /**
@@ -421,7 +421,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 
   /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
-  dim->R0_offset += R0 * scalar_norm * fraction;
+  if (is_spectral) dim->R0_offset += R0 * fraction_duration;
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
@@ -433,7 +433,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
   for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
     ptr = scheme->total_orientations * g_idx;
-    temp = scalar_norm * 2 * fraction;
+    temp = 2 * fraction_duration;
 
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
@@ -447,7 +447,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                     (double *)&(scheme->w2[i]) + 1, 6, &local_frequency[ptr], 1);
       }
     }
-    plan->buffer = scalar_norm * plan->wigner_d2m0_vector[2] * fraction;
+    plan->buffer = plan->wigner_d2m0_vector[2] * fraction_duration;
     cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
                 &local_frequency[ptr], 1);
   }
@@ -458,7 +458,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
      */
     for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
       ptr = scheme->total_orientations * g_idx;
-      temp = scalar_norm * 2 * fraction;
+      temp = 2 * fraction_duration;
       if (plan->is_static) {
         for (i = 0; i < 4; i++) {
           f_complex = (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + g_idx]);
@@ -470,16 +470,16 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                       (double *)&scheme->w4[i] + 1, 10, &local_frequency[ptr], 1);
         }
       }
-      plan->buffer = scalar_norm * plan->wigner_d4m0_vector[4] * fraction;
+      plan->buffer = plan->wigner_d4m0_vector[4] * fraction_duration;
       cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4],
                   10, &local_frequency[ptr], 1);
     }
   }
 
   if (!is_spectral) {  // compute phase.
-    plan->buffer = R0 * fraction;
-    vm_double_add_offset_inplace(freq_size, plan->buffer, local_frequency);
-    cblas_daxpy(freq_size, duration, local_frequency, 1, phase, 1);
+    plan->buffer = R0 * fraction_duration;
+    vm_double_add_vector_offset_inplace(freq_size, local_frequency, plan->buffer,
+                                        scheme->phase);
   }
 }
 
@@ -642,14 +642,11 @@ static inline void MRS_rotate_coupled_site_interaction_components(
   unsigned int i, j = 0, n_couplings = couplings->number_of_couplings;
   int site_index_I, site_index_S;
   float mIf, mSf, mIi, mSi;
-  double larmor_freq_in_Hz, spin_I, spin_S, R_2q[10];
 
   /* Frequency computation for couplings */
   for (i = 0; i < n_couplings; i++) {
     site_index_I = couplings->site_index[j++];
     site_index_S = couplings->site_index[j++];
-    spin_I = sites->spin[site_index_I];
-    spin_S = sites->spin[site_index_S];
 
     mIi = transition[site_index_I];
     mSi = transition[site_index_S];

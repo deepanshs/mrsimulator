@@ -45,7 +45,7 @@ void __mrsimulator_core(
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
     float *transition_pathway,          // Pointer to the transition pathway,
-    double *transition_pathway_weight,  // The comlpex weight of transition pathway.
+    double *transition_pathway_weight,  // The complex weight of transition pathway.
     int n_dimension,                    // The total number of spectroscopic dimensions.
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
@@ -122,7 +122,7 @@ void __mrsimulator_core(
       // Possibly calculate normalized frequencies first, then decide if frac or dur
       MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, reset,
                                                &dimensions[dim], fraction, is_spectral,
-                                               scheme->phase, duration);
+                                               duration);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
@@ -143,9 +143,7 @@ void __mrsimulator_core(
   }               // end dimensions
 
   // calculate phase exponent of delay events
-  cblas_dscal(total_pts, CONST_2PI, scheme->phase, 1);
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
-
   cblas_zscal(total_pts, transition_pathway_weight, (double *)scheme->exp_I_phase, 1);
 
   /* ---------------------------------------------------------------------
