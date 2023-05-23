@@ -252,21 +252,17 @@ class SpinSystem(Parseable):
         Example
         -------
 
-        >>> spin_systems.get_isotopes() # three spin systems
-        [Isotope(symbol='13C'), Isotope(symbol='1H'), Isotope(symbol='27Al')]
+        >>> len(spin_systems.get_isotopes()) # three spin systems
+        3
         >>> spin_systems.get_isotopes(symbol=True) # three spin systems
         ['13C', '1H', '27Al']
 
-        >>> spin_systems.get_isotopes(spin_I=0.5) # isotopes with I=0.5
-        [Isotope(symbol='13C'), Isotope(symbol='1H')]
         >>> spin_systems.get_isotopes(spin_I=0.5, symbol=True) # isotopes with I=0.5
         ['13C', '1H']
 
         >>> spin_systems.get_isotopes(spin_I=1.5) # isotopes with I=1.5
         []
 
-        >>> spin_systems.get_isotopes(spin_I=2.5) # isotopes with I=2.5
-        [Isotope(symbol='27Al')]
         >>> spin_systems.get_isotopes(spin_I=2.5, symbol=True) # isotopes with I=2.5
         ['27Al']
         """

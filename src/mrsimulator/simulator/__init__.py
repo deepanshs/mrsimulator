@@ -220,21 +220,17 @@ class Simulator(Parseable):
         Example
         -------
 
-        >>> sim.get_isotopes()
-        [Isotope(symbol='13C'), Isotope(symbol='1H'), Isotope(symbol='27Al')]
+        >>> len(sim.get_isotopes())
+        3
         >>> sim.get_isotopes(symbol=True)
         ['13C', '1H', '27Al']
 
-        >>> sim.get_isotopes(spin_I=0.5)
-        [Isotope(symbol='13C'), Isotope(symbol='1H')]
         >>> sim.get_isotopes(spin_I=0.5, symbol=True)
         ['13C', '1H']
 
         >>> sim.get_isotopes(spin_I=1.5)
         []
 
-        >>> sim.get_isotopes(spin_I=2.5)
-        [Isotope(symbol='27Al')]
         >>> sim.get_isotopes(spin_I=2.5, symbol=True)
         ['27Al']
         """

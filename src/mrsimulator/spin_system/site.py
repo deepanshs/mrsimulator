@@ -1,6 +1,7 @@
 """Base Site class."""
 from typing import ClassVar
 from typing import Dict
+from typing import Union
 
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
@@ -149,7 +150,7 @@ class Site(Parseable):
     ... )
     """
 
-    isotope: str = "1H"
+    isotope: Union[str, Isotope] = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None

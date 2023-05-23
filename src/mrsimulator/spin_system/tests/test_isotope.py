@@ -32,10 +32,44 @@ def test_isotope():
     assert nitrogen.spin == 1
     assert nitrogen.larmor_freq(B0=18.79) == -57.830093199115574
 
-    with pytest.raises(Exception, match="Could not parse isotope string"):
-        Isotope(symbol="x")
+    error = "is immutable and does not support item assignment"
+    with pytest.raises(Exception, match=error):
+        nitrogen.spin_multiplicity = 4
 
-    with pytest.raises(Exception, match="Could not parse isotope string"):
-        Isotope(symbol="14F")
+    error = "spin_multiplicity for 1H cannot be assigned."
+    with pytest.raises(Exception, match=error):
+        _ = Isotope(symbol="1H", spin_multiplicity=5)
 
     assert nitrogen.json() == "14N"
+
+
+def test_custom_isotope():
+    custom = Isotope(
+        symbol="custom",
+        spin_multiplicity=4,
+        gyromagnetic_ratio=-12.3,
+        quadrupole_moment=0.1,
+        natural_abundance=50,
+    )
+
+    assert isinstance(custom, Isotope)
+    assert custom.symbol == "custom"
+    assert custom.spin == 1.5
+    assert custom.spin_multiplicity == 4
+    assert custom.gyromagnetic_ratio == -12.3
+    assert custom.quadrupole_moment == 0.1
+    assert custom.natural_abundance == 50
+
+    # Instantiating Isotope from just string
+    custom_from_string = Isotope(symbol="custom")
+
+    assert custom == custom_from_string
+
+    assert custom.json() == {
+        "symbol": "custom",
+        "spin_multiplicity": 4,
+        "gyromagnetic_ratio": -12.3,
+        "quadrupole_moment": 0.1,
+        "natural_abundance": 50,
+        "atomic_number": 0,
+    }

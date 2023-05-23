@@ -6,6 +6,7 @@ from typing import Dict
 
 from monty.serialization import loadfn
 from pydantic import BaseModel
+from pydantic import Field
 from pydantic import validator
 
 __author__ = "Deepansh Srivastava"
@@ -13,6 +14,14 @@ __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
+
+DEFAULT_ISOTOPE = {
+    "spin_multiplicity": 2,
+    "gyromagnetic_ratio": 0,
+    "quadrupole_moment": 0,
+    "natural_abundance": 100,
+    "atomic_number": 0,
+}
 
 
 class Isotope(BaseModel):
@@ -42,48 +51,50 @@ class Isotope(BaseModel):
     """
 
     symbol: str
+    spin_multiplicity: int = Field(default=2, ge=2)
+    gyromagnetic_ratio: float = 0
+    quadrupole_moment: float = 0
+    natural_abundance: float = Field(default=100, ge=0, le=100)
+    atomic_number: int = Field(default=0)
+
     test_vars: ClassVar[Dict] = {"symbol": "1H"}
+    custom_isotope_data: ClassVar[Dict] = {}
 
     class Config:
         extra = "forbid"
         validate_assignment = True
+        allow_mutation = False
+
+    def __init__(self, **kwargs):
+        symbol = kwargs["symbol"]
+        if symbol in get_all_isotope_symbols():
+            kwargs_new = get_isotope_dict(symbol)
+            for k, v in kwargs.items():
+                if v != kwargs_new[k]:
+                    raise ValueError(f"{k} for {symbol} cannot be assigned.")
+        else:
+            kwargs_new = DEFAULT_ISOTOPE.copy()
+            kwargs_new.update(kwargs)
+            Isotope.custom_isotope_data[symbol] = kwargs_new
+        super().__init__(**kwargs_new)
 
     @validator("symbol", always=True)
-    def get_isotope(cls, v, *, values, **kwargs):
+    def validate_symbol(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
-        return self.symbol
+        return self.symbol if self.symbol in ISOTOPE_DATA else self.dict()
+
+    def dict(self, **kwargs) -> dict:
+        return (
+            {"symbol": self.symbol} if self.symbol in ISOTOPE_DATA else super().dict()
+        )
 
     @property
     def spin(self):
         """Spin quantum number, I, of the isotope."""
-        isotope_data = get_isotope_data(self.symbol)
+        isotope_data = get_isotope_dict(self.symbol)
         return (isotope_data["spin_multiplicity"] - 1) / 2.0
-
-    @property
-    def natural_abundance(self):
-        """Natural abundance of the isotope in units of %."""
-        isotope_data = get_isotope_data(self.symbol)
-        return isotope_data["natural_abundance"]
-
-    @property
-    def gyromagnetic_ratio(self):
-        """Reduced gyromagnetic ratio of the nucleus given in units of MHz/T."""
-        isotope_data = get_isotope_data(self.symbol)
-        return isotope_data["gyromagnetic_ratio"]
-
-    @property
-    def quadrupole_moment(self):
-        """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
-        isotope_data = get_isotope_data(self.symbol)
-        return isotope_data["quadrupole_moment"]
-
-    @property
-    def atomic_number(self):
-        """Atomic number of the isotope."""
-        isotope_data = get_isotope_data(self.symbol)
-        return isotope_data["atomic_number"]
 
     def larmor_freq(self, B0=9.4):
         """Return the Larmor frequency of the isotope at a magnetic field strength B0.
@@ -92,7 +103,7 @@ class Isotope(BaseModel):
             float B0: magnetic field strength in T
 
         Returns:
-            float: larmor frequency in MHz
+            float: Larmor frequency in MHz
 
         Example
         -------
@@ -105,10 +116,15 @@ class Isotope(BaseModel):
 
 def format_isotope_string(isotope_string: str) -> str:
     """Format the isotope string to {A}{symbol}, where A is the isotope number."""
+    # Skip formatting if the symbol is from a custom isotope
+    if isotope_string in Isotope.custom_isotope_data:
+        return isotope_string
+
     result = match(r"(\d+)\s*(\w+)", isotope_string)
 
     if result is None:
         raise Exception(f"Could not parse isotope string {isotope_string}")
+
     isotope = result.group(2)
     A = result.group(1)
 
@@ -119,9 +135,21 @@ def format_isotope_string(isotope_string: str) -> str:
     return formatted_string
 
 
-def get_isotope_data(isotope_string: str) -> dict:
+def get_isotope_dict(isotope_string: str) -> dict:
     """Get the isotope's intrinsic properties from a JSON data file."""
     formatted_isotope_string = format_isotope_string(isotope_string)
-    isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
-    isotope_dict.update({"isotope": formatted_isotope_string})
+
+    # isotope_string is always unique, and only exists in one of the dictionaries
+    if formatted_isotope_string in ISOTOPE_DATA:
+        isotope_dict = dict(ISOTOPE_DATA[formatted_isotope_string])
+    else:
+        isotope_dict = dict(Isotope.custom_isotope_data[formatted_isotope_string])
+
+    isotope_dict.update({"symbol": formatted_isotope_string})
+
     return isotope_dict
+
+
+def get_all_isotope_symbols() -> list:
+    """Returns a list of all currently valid isotope symbols"""
+    return list(ISOTOPE_DATA.keys()) + list(Isotope.custom_isotope_data.keys())
