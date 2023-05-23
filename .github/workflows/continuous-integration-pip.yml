@@ -33,6 +33,7 @@ jobs:
           flake8 . --count --select=B,C,E,F,W,T,N8 --ignore=E402 --max-line-length=88 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
+
   testing_unix:
     needs: [code_lint]
     strategy:
@@ -52,11 +53,9 @@ jobs:
 
       - name: Install linux system dependencies
         if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
-
-      - name: check gcc version on linux system
-        if: startsWith(matrix.os, 'ubuntu')
-        run: gcc -v
+        run: |
+          sudo apt-get install --yes libopenblas-dev libfftw3-dev
+          gcc -v
 
       - name: Install macos system dependencies
         if: startsWith(matrix.os, 'mac')
@@ -67,6 +66,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest cython setuptools pytest-cov sympy sybil
           pip install -r requirements.txt
+
       - name: Build and install package from source
         run: python setup.py develop
 
@@ -74,7 +74,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3.1.3
+        uses: codecov/codecov-action@v3.1.4
 
   # build_windows_test:
   #   needs: [code_lint]
@@ -114,7 +114,7 @@ jobs:
   #       run: pytest --cov=./ --cov-report=xml
 
   #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v3.1.3
+  #       uses: codecov/codecov-action@v3.1.4
 
   testing_windows:
     needs: [code_lint]
@@ -150,4 +150,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v3.1.3
+        uses: codecov/codecov-action@v3.1.4

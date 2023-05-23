@@ -76,8 +76,8 @@ def test_ST1_VAS_general():
     assert mth.name == "ST1_VAS"
 
     des = (
-        "Simulate a 1.5 -> 0.5 and -0.5 -> -1.5 satellite-transition variable-angle "
-        "spinning spectrum."
+        "Simulate a P=-1 (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+        "correlation spectrum."
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_queries == [
@@ -144,8 +144,8 @@ def test_ST2_VAS_general():
     assert mth.name == "ST2_VAS"
 
     des = (
-        "Simulate a 2.5 -> 1.5 and -1.5 -> -2.5 satellite-transition variable-angle "
-        "spinning spectrum."
+        "Simulate a P=-1 (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+        "correlation spectrum."
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_queries == [

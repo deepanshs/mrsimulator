@@ -69,6 +69,7 @@ class Setup:
 
         print(sys.version)
         loc = dirname(sys.executable)
+        print("executable location", loc)
         if "conda" not in loc:
             return
 

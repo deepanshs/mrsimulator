@@ -6,7 +6,9 @@ What's new
 
 **Features**
 
-- Support gamma angle averaging.
+- Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
+- Support for quadrupolar-shielding cross frequency interactions. `freq_contrib` includes
+  new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
 
 **Simulator**
 
@@ -22,9 +24,9 @@ What's new
 **Features**
 
 - Support for complex amplitude simulation.
-- New isotropic interpolation schemes. Added `isotropic_interpolation` as a `sim.config` parameter.
-  Allowed values are `linear` and `Gaussian`.
-- New `larmor_freq(B0)` function added to the `Isotope` class which returns the Larmor frequency
+- New isotropic interpolation schemes. Added ``isotropic_interpolation`` as a `sim.config` parameter.
+  Allowed values are ``linear`` and ``Gaussian``.
+- New ``larmor_freq(B0)`` function added to the `Isotope` class which returns the Larmor frequency
   of the isotope, given a magnetic flux density. For example, `H1.larmor_freq(B0=9.40)`
 - New weak J and dipolar coupling enumerations added to `freq_contrib`.
 - New command-line interface (CLI) tools for mrsimulator.

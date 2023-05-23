@@ -140,3 +140,37 @@ static inline double STF_dIS(const double mIf, const double mIi, const double mS
                              const double mSi) {
   return mIf * mSf - mIi * mSi;
 }
+
+// =====================================================================================
+//              Quad-coupling cross spin transition functions
+// =====================================================================================
+/**
+ * @brief The @f$\mathbb{d}_{IS}@f$ spin transition symmetry function.
+ *
+ * Spin transition fumction of cross interaction between Quad and weak coupled nuclei
+ *
+ * @f[
+ *   \mathbb{pd}_{IS}(m_{f_I}, m_{f_S}, m_{i_I}, m_{i_S}) &=
+ *   \left<m_{f_I}m_{f_S}|\hat{T}_{10}(I)~\hat{T}_{20}(S)|m_{f_I} m_{f_S}\right>
+ * -\left<m_{i_I}m_{i_S}|\hat{T}_{10}(I)~\hat{T}_{20}(S)|m_{i_I} m_{i_S}\right>
+ * \\
+ *   &= \sqrt{\frac{3}{2}} \left(m_{f_I} m^2_{f_S} - m_{i_I} m^2_{i_S} \right),
+ * @f]
+ * where @f$\hat{T}_{10}(I)@f$ and @f$\hat{T}_{20}(S)@f$ are the irreducible first-rank
+ * and second-rank spherical tensor operators in the rotating tilted frame for spin I
+ * and S, respectively.
+ *
+ * @param mIf The quantum number associated with the quantized final energy state
+ *      corresponding to spin I.
+ * @param mSf The quantum number associated with the quantized final energy state
+ *      corresponding to spin S.
+ * @param mIi The quantum number associated with the quantized initial energy state
+ *      corresponding to spin I.
+ * @param mSi The quantum number associated with the quantized initial energy state
+ *      corresponding to spin S.
+ * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
+ */
+static inline double STF_pdIS(const double mIf, const double mIi, const double mSf,
+                              const double mSi) {
+  return 1.2247448714 * (mIf * mSf * mSf - mIi * mSi * mSi);
+}
