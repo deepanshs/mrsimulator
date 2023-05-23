@@ -585,7 +585,6 @@ class Method(Parseable):
                 weight=w,
             )
             for item, w in zip(segments, weights)
-            if w != 0
         ]
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
