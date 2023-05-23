@@ -271,7 +271,9 @@ def get_isotope_dict(isotope_string: str) -> dict:
 
 def get_all_isotope_data() -> dict:
     """Return a dictionary of all isotopes, both real and custom"""
+    # # Dictionary union not garmented below Python 3.9
     return ISOTOPE_DATA | Isotope.custom_isotope_data
+    # return {**ISOTOPE_DATA, **Isotope.custom_isotope_data}
 
 
 def get_all_isotope_symbols() -> list:
