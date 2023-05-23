@@ -476,6 +476,8 @@ class Method(Parseable):
             for evt in dim.events
             if evt.__class__.__name__ != "MixingEvent"
         ]
+        if np.asarray(segments).size == 0:
+            return np.asarray([])
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
@@ -547,9 +549,9 @@ class Method(Parseable):
     def _get_transition_pathway_and_weights_np(self, spin_system):
         segments = self._get_transition_pathways_np(spin_system)
         weights = self._get_transition_pathway_weights_np(segments, spin_system)
-        return segments, weights
-        # indexes = np.where(weights != 0)[0]
-        # return np.asarray(segments)[indexes], weights[indexes]
+        indexes = np.where(weights != 0)[0]
+
+        return np.asarray(segments)[indexes], np.asarray(weights)[indexes]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
         """Return a list of transition pathways from the given spin system that satisfy
