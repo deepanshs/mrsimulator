@@ -36,7 +36,7 @@ def test_isotope():
     with pytest.raises(Exception, match=error):
         nitrogen.spin_multiplicity = 4
 
-    error = "spin_multiplicity for 1H cannot be assigned."
+    error = "spin_multiplicity for `1H` cannot be assigned."
     with pytest.raises(Exception, match=error):
         _ = Isotope(symbol="1H", spin_multiplicity=5)
 
@@ -73,9 +73,9 @@ def test_custom_isotope():
     assert custom.json() == {
         "symbol": "custom",
         "spin_multiplicity": 4,
-        "gyromagnetic_ratio": -12.3,
-        "quadrupole_moment": 0.1,
-        "natural_abundance": 50,
+        "gyromagnetic_ratio": "-12.3 MHz/T",
+        "quadrupole_moment": "0.1 barn",
+        "natural_abundance": "50.0 %",
         "atomic_number": 0,
     }
 

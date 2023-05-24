@@ -5,7 +5,7 @@ from typing import ClassVar
 from typing import Dict
 
 from monty.serialization import loadfn
-from pydantic import BaseModel
+from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 from pydantic import validator
 
@@ -14,7 +14,7 @@ __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
-
+OPTIONAL = ["name", "description", "label", "property_units"]
 DEFAULT_ISOTOPE = {
     "spin_multiplicity": 2,
     "gyromagnetic_ratio": 0,
@@ -24,7 +24,7 @@ DEFAULT_ISOTOPE = {
 }
 
 
-class Isotope(BaseModel):
+class Isotope(Parseable):
     """The Isotope class.
 
     Attributes
@@ -57,6 +57,21 @@ class Isotope(BaseModel):
     natural_abundance: float = Field(default=100, ge=0, le=100)
     atomic_number: int = Field(default=0)
 
+    property_unit_types: ClassVar[Dict] = {
+        "gyromagnetic_ratio": "unknown",
+        "quadrupole_moment": "area",
+        "natural_abundance": "dimensionless",
+    }
+    property_default_units: ClassVar[Dict] = {
+        "gyromagnetic_ratio": "MHz/T",
+        "quadrupole_moment": "barn",
+        "natural_abundance": "%",
+    }
+    property_units: Dict = {
+        "gyromagnetic_ratio": "MHz/T",
+        "quadrupole_moment": "barn",
+        "natural_abundance": "%",
+    }
     test_vars: ClassVar[Dict] = {"symbol": "1H"}
     custom_isotope_data: ClassVar[Dict] = {}
 
@@ -69,14 +84,25 @@ class Isotope(BaseModel):
         symbol = kwargs["symbol"]
         if symbol not in get_all_isotope_symbols():
             raise Exception(f"Isotope symbol `{symbol}` not recognized.")
+
         kwargs_new = get_isotope_dict(symbol)
-        for k, v in kwargs.items():
-            if v != kwargs_new[k]:
-                raise ValueError(f"{k} for {symbol} cannot be assigned.")
+        if symbol in ISOTOPE_DATA.keys():
+            for k, v in kwargs.items():
+                if k not in OPTIONAL:
+                    if v != kwargs_new[k]:
+                        raise ValueError(f"{k} for `{symbol}` cannot be assigned.")
         super().__init__(**kwargs_new)
 
     @classmethod
     def register(cls, symbol, copy_from=None, **kwargs):
+        """Register a new isotope using the given kwargs. If `copy_form` is True, any
+        non-specified isotope argument is copied from the `copy_from` isotope attribute.
+
+        Args:
+            symbol: isotope symbol str
+            copy_from: isotopr symbol to copy attributes from.
+            kwargs: additional isotope attributes.
+        """
         if symbol in ISOTOPE_DATA.keys():
             raise KeyError(
                 f"`{symbol}` is an immutable registry symbol. Use a different symbol."
@@ -93,18 +119,24 @@ class Isotope(BaseModel):
 
     @classmethod
     def parse(cls, item):
+        """Parse str or dictionary to create an Isotope object."""
         if isinstance(item, str):
             return Isotope(symbol=item)
         if isinstance(item, dict):
+            symbol = item["symbol"]
+            if symbol not in ISOTOPE_DATA.keys():
+                Isotope.register(item["symbol"])
             return Isotope(**item)
-        return item
+        if isinstance(item, Isotope):
+            return item
+        raise ValueError(f"Cannot parse type {type(item)} into an Isotope")
 
     @validator("symbol", always=True)
     def validate_symbol(cls, v, *, values, **kwargs):
         return format_isotope_string(v)
 
     def json(self, **kwargs) -> dict:
-        return self.symbol if self.symbol in ISOTOPE_DATA else self.dict()
+        return self.symbol if self.symbol in ISOTOPE_DATA else super().json()
 
     def dict(self, **kwargs) -> dict:
         return (
