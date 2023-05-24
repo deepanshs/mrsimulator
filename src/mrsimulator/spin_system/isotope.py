@@ -67,16 +67,37 @@ class Isotope(BaseModel):
 
     def __init__(self, **kwargs):
         symbol = kwargs["symbol"]
-        if symbol in get_all_isotope_symbols():
-            kwargs_new = get_isotope_dict(symbol)
-            for k, v in kwargs.items():
-                if v != kwargs_new[k]:
-                    raise ValueError(f"{k} for {symbol} cannot be assigned.")
-        else:
-            kwargs_new = DEFAULT_ISOTOPE.copy()
-            kwargs_new.update(kwargs)
-            Isotope.custom_isotope_data[symbol] = kwargs_new
+        if symbol not in get_all_isotope_symbols():
+            raise Exception(f"Isotope symbol `{symbol}` not recognized.")
+        kwargs_new = get_isotope_dict(symbol)
+        for k, v in kwargs.items():
+            if v != kwargs_new[k]:
+                raise ValueError(f"{k} for {symbol} cannot be assigned.")
         super().__init__(**kwargs_new)
+
+    @classmethod
+    def register(cls, symbol, copy_from=None, **kwargs):
+        if symbol in ISOTOPE_DATA.keys():
+            raise KeyError(
+                f"`{symbol}` is an immutable registry symbol. Use a different symbol."
+            )
+
+        kwargs_new = (
+            get_isotope_dict(copy_from)
+            if copy_from is not None
+            else DEFAULT_ISOTOPE.copy()
+        )
+        kwargs_new.update(kwargs)
+        kwargs_new["symbol"] = symbol
+        cls.custom_isotope_data[symbol] = kwargs_new
+
+    @classmethod
+    def parse(cls, item):
+        if isinstance(item, str):
+            return Isotope(symbol=item)
+        if isinstance(item, dict):
+            return Isotope(**item)
+        return item
 
     @validator("symbol", always=True)
     def validate_symbol(cls, v, *, values, **kwargs):

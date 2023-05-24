@@ -150,7 +150,7 @@ class Site(Parseable):
     ... )
     """
 
-    isotope: Union[str, Isotope] = "1H"
+    isotope: Union[str, dict, Isotope] = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
@@ -201,7 +201,7 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        return Isotope(symbol=v)
+        return Isotope.parse(v)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

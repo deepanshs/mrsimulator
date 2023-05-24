@@ -44,13 +44,15 @@ def test_isotope():
 
 
 def test_custom_isotope():
-    custom = Isotope(
+    Isotope.register(
         symbol="custom",
         spin_multiplicity=4,
         gyromagnetic_ratio=-12.3,
         quadrupole_moment=0.1,
         natural_abundance=50,
     )
+
+    custom = Isotope(symbol="custom")
 
     assert isinstance(custom, Isotope)
     assert custom.symbol == "custom"
@@ -59,11 +61,6 @@ def test_custom_isotope():
     assert custom.gyromagnetic_ratio == -12.3
     assert custom.quadrupole_moment == 0.1
     assert custom.natural_abundance == 50
-
-    # Instantiating Isotope from just string
-    custom_from_string = Isotope(symbol="custom")
-
-    assert custom == custom_from_string
 
     assert custom.json() == {
         "symbol": "custom",
