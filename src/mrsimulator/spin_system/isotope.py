@@ -144,14 +144,14 @@ def format_isotope_string(isotope_string: str) -> str:
     result = match(r"(\d+)\s*(\w+)", isotope_string)
 
     if result is None:
-        raise Exception(f"Could not parse isotope string {isotope_string}")
+        raise Exception(f"Could not parse isotope string `{isotope_string}`")
 
     isotope = result.group(2)
     A = result.group(1)
 
     formatted_string = f"{A}{isotope}"
     if formatted_string not in ISOTOPE_DATA:
-        raise Exception(f"Could not parse isotope string {isotope_string}")
+        raise Exception(f"Could not parse isotope string `{isotope_string}`")
 
     return formatted_string
 
@@ -174,3 +174,10 @@ def get_isotope_dict(isotope_string: str) -> dict:
 def get_all_isotope_symbols() -> list:
     """Returns a list of all currently valid isotope symbols"""
     return list(ISOTOPE_DATA.keys()) + list(Isotope.custom_isotope_data.keys())
+
+
+def get_all_isotope_data() -> dict:
+    """Returns an intersected dictionary of the real and custom isotope data"""
+    iso_dict = ISOTOPE_DATA.copy()
+    iso_dict.update(Isotope.custom_isotope_data)
+    return iso_dict

@@ -40,6 +40,14 @@ def test_isotope():
     with pytest.raises(Exception, match=error):
         _ = Isotope(symbol="1H", spin_multiplicity=5)
 
+    # error = "Could not parse isotope string `x`"
+    # with pytest.raises(Exception, match=error):
+    #     _ = Isotope(symbol="x")
+
+    # error = "Could not parse isotope string `20H`"
+    # with pytest.raises(Exception, match=error):
+    #     _ = Isotope(symbol="20H")
+
     assert nitrogen.json() == "14N"
 
 
@@ -70,3 +78,30 @@ def test_custom_isotope():
         "natural_abundance": 50,
         "atomic_number": 0,
     }
+
+    # Attempt to register a custom isotope under a real symbol
+    error = "`1H` is an immutable registry symbol"
+    with pytest.raises(Exception, match=error):
+        _ = Isotope.register(symbol="1H", spin_multiplicity=5)
+
+
+def test_isotope_parse():
+    test_iso = Isotope(symbol="1H")
+    test_iso_dict = test_iso.json()
+
+    # Parse from string
+    iso = Isotope.parse("1H")
+    assert iso == test_iso
+
+    # Parse from dict
+    iso = Isotope.parse(test_iso_dict)
+    assert iso == test_iso
+
+    # Parse from Isotope object
+    iso = Isotope.parse(test_iso)
+    assert iso == test_iso
+
+    # # Check for error when unparsable type passed
+    # error = ""
+    # with pytest.raises(ValueError, match=error):
+    #     _ = Isotope.parse(123)
