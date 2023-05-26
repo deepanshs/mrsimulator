@@ -40,7 +40,7 @@ class ST_VAS(BaseNamedMethod2D):
         name = cls.__name__
         st = ST_p_symmetry[name]["st"]
 
-        spin = Isotope(symbol=kwargs["channels"][0]).spin
+        spin = Isotope.parse(kwargs["channels"][0]).spin
         p = -1 if st == spin else 1
 
         description = (
