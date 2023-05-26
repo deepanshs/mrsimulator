@@ -1,6 +1,7 @@
 """Base Site class."""
 from typing import ClassVar
 from typing import Dict
+from typing import Union
 
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
@@ -149,7 +150,7 @@ class Site(Parseable):
     ... )
     """
 
-    isotope: str = "1H"
+    isotope: Union[str, dict, Isotope] = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
@@ -174,8 +175,7 @@ class Site(Parseable):
         )
         if property_values == {None}:  # All values of symmetric tensor are None
             return None
-        isotope = values["isotope"]
-        isotope = Isotope(**isotope) if isinstance(isotope, dict) else isotope
+        isotope = Isotope.parse(values["isotope"])
         spin_I = isotope.spin
         if spin_I < 1:
             message = (
@@ -200,7 +200,7 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        return Isotope(symbol=v)
+        return Isotope.parse(v)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

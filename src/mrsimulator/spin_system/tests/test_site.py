@@ -224,3 +224,42 @@ def test_equality():
 
     c = Site(isotope="1H", isotropic_chemical_shift=16)
     assert a != c
+
+
+def test_custom_isotope_site():
+    # 1. Register new custom isotope
+    Isotope.register(symbol="custom", gyromagnetic_ratio=3.14, spin_multiplicity=4)
+
+    # 2. Create site with custom isotope symbol
+    site = Site(isotope="custom")
+    assert site.isotope.symbol == "custom"
+    assert site.isotope.spin == 1.5
+    assert site.isotope.spin_multiplicity == 4
+    assert site.isotope.gyromagnetic_ratio == 3.14
+    assert site.isotope.quadrupole_moment == 0
+    assert site.isotope.natural_abundance == 100
+
+    site_json = site.json()
+
+    assert site_json == {
+        "isotope": {
+            "spin_multiplicity": 4,
+            "gyromagnetic_ratio": 3.14,
+            "quadrupole_moment": 0,
+            "natural_abundance": 100,
+            "atomic_number": 0,
+            "symbol": "custom",
+        },
+        "isotropic_chemical_shift": "0.0 ppm",
+    }
+
+    # 3. Deregister the custom isotope and test parsing in during a new session
+    Isotope.custom_isotope_data = {}
+
+    new_site = Site.parse_dict_with_units(site_json)
+    assert new_site.isotope.symbol == "custom"
+    assert new_site.isotope.spin == 1.5
+    assert new_site.isotope.spin_multiplicity == 4
+    assert new_site.isotope.gyromagnetic_ratio == 3.14
+    assert new_site.isotope.quadrupole_moment == 0
+    assert new_site.isotope.natural_abundance == 100

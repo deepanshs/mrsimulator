@@ -15,7 +15,8 @@ from pydantic import Field
 from pydantic import validator
 
 from .coupling import Coupling
-from .isotope import ISOTOPE_DATA
+from .isotope import get_all_isotope_data
+from .isotope import get_all_isotope_symbols
 from .site import Site
 from .split_spinsystems import build_new_systems
 from .zeemanstate import ZeemanState
@@ -482,11 +483,11 @@ def allowed_isotopes(spin_I: float = None) -> list:
         allowed isotopes is returned instead.
     """
     if spin_I is None:
-        return list(ISOTOPE_DATA.keys())
+        return get_all_isotope_symbols()
     return list(
         {
             isotope
-            for isotope, data in ISOTOPE_DATA.items()
+            for isotope, data in get_all_isotope_data().items()
             if data["spin_multiplicity"] == int(2 * spin_I + 1)  # 2S+1
         }
     )

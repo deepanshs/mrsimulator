@@ -5,6 +5,7 @@ from mrsimulator.method.lib import FiveQ_VAS
 from mrsimulator.method.lib import SevenQ_VAS
 from mrsimulator.method.lib import ThreeQ_VAS
 from mrsimulator.method.query import TransitionQuery
+from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils.error import MixedSpectralDimensionTypeError
 
 __author__ = "Deepansh J. Srivastava"
@@ -147,3 +148,17 @@ def test_mix_SpectralDimension_and_dict():
     e = ".*Both dict and SpectralDimension objects found in spectral dimension list.*"
     with pytest.raises(MixedSpectralDimensionTypeError, match=e):
         _ = SevenQ_VAS(channels=["51V"], spectral_dimensions=[{}, SpectralDimension()])
+
+
+def test_mqvas_custom_isotopes():
+    Isotope.register(symbol="custom", spin_multiplicity=4)  # spin of 3/2
+    threeQ_mas = ThreeQ_VAS(channels=["custom"])
+
+    assert np.allclose(threeQ_mas.affine_matrix, [0.5625, 0.4375, 0, 1])
+    assert threeQ_mas.channels[0].spin == 1.5
+
+    threeQ_mas_json = threeQ_mas.json()
+    Isotope.custom_isotope_data = {}
+
+    threeQ_mas_new = ThreeQ_VAS.parse_dict_with_units(threeQ_mas_json)
+    assert threeQ_mas == threeQ_mas_new
