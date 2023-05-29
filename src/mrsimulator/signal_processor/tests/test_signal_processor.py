@@ -33,7 +33,7 @@ def test_01():
     with pytest.raises(ValueError, match="The dataset must be a CSDM object."):
         post_sim.apply_operations([])
 
-    dataset = cp.as_csdm(np.arange(20))
+    dataset = cp.as_csdm(np.arange(20), dtype=float)
     dataset.x[0] = cp.LinearDimension(count=20, increment="10 K")
     post_sim.apply_operations(dataset)
 
