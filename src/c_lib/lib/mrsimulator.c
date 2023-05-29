@@ -387,8 +387,8 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, unsigned char reset,
-                                              MRS_dimension *dim, double fraction,
+                                              complex128 *R4, MRS_dimension *dim,
+                                              double fraction,
                                               unsigned char is_spectral,
                                               double duration) {
   unsigned int i, g_idx, ptr;
@@ -413,12 +413,6 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
-
-  /* If reset is true, zero the local_frequencies before update. */
-  if (reset && is_spectral) {
-    cblas_dscal(freq_size, 0.0, local_frequency, 1);
-    dim->R0_offset = 0.0;
-  }
 
   /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
   if (is_spectral) dim->R0_offset += R0 * fraction_duration;

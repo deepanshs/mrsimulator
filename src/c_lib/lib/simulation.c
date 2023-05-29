@@ -60,7 +60,7 @@ void __mrsimulator_core(
   et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
-  unsigned char reset, is_spectral;
+  unsigned char is_spectral;
   unsigned int evt;
   int dim, total_pts = scheme->n_gamma * scheme->total_orientations;
   double B0_in_T, fraction, duration;
@@ -82,7 +82,10 @@ void __mrsimulator_core(
 
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
-    reset = 1;  // If 1, reset the freqs to zero, else keep adding the freqs.
+    // Reset the freqs to zero at the start of each spectral dimension.
+    cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
+    dimensions[dim].R0_offset = 0.0;
+
     plan = dimensions[dim].events->plan;
     vm_double_ones(plan->size, dimensions[dim].freq_amplitude);
     // Loop over the events per dimension.
@@ -120,9 +123,8 @@ void __mrsimulator_core(
       /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
       // NOTE: How to incorporate both "fraction" and "duration" into this function?
       // Possibly calculate normalized frequencies first, then decide if frac or dur
-      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, reset,
-                                               &dimensions[dim], fraction, is_spectral,
-                                               duration);
+      MRS_get_normalized_frequencies_from_plan(
+          scheme, plan, R0, R2, R4, &dimensions[dim], fraction, is_spectral, duration);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
@@ -138,7 +140,6 @@ void __mrsimulator_core(
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-      if (is_spectral) reset = 0;          // set to zero at the first spectral event.
     }                                      // end events
   }                                        // end dimensions
 
