@@ -178,7 +178,7 @@ class DelayEvent(BaseEvent):
     ----------
 
     duration:
-        The duration of the event in units of µs. The default is 0.
+        The duration of the event in units of s. The default is 0.
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
@@ -208,11 +208,11 @@ class DelayEvent(BaseEvent):
         **BaseEvent.property_unit_types,
     }
     property_default_units: ClassVar[Dict] = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent.property_default_units,
     }
     property_units: Dict = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent().property_default_units,
     }
 
