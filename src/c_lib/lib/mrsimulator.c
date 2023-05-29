@@ -415,7 +415,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
 
   /* If reset is true, zero the local_frequencies before update. */
-  if (reset) {
+  if (reset && is_spectral) {
     cblas_dscal(freq_size, 0.0, local_frequency, 1);
     dim->R0_offset = 0.0;
   }

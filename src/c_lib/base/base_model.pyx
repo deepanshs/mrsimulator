@@ -436,7 +436,7 @@ def core_simulator(method,
         # number_of_transitions = int((transition_pathway_c.size)/transition_increment)
 
         # print('pathway', transition_pathway_c)
-        # print('weight', transition_pathway_weight)
+        # print('weight', transition_pathway_weight_c)
         # print('pathway_count, inc', pathway_count, pathway_increment)
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(

@@ -138,9 +138,9 @@ void __mrsimulator_core(
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-      reset = 0;  // reset the freqs to zero for next dimension.
-    }             // end events
-  }               // end dimensions
+      if (is_spectral) reset = 0;          // set to zero at the first spectral event.
+    }                                      // end events
+  }                                        // end dimensions
 
   // calculate phase exponent of delay events
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
