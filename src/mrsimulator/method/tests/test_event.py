@@ -123,7 +123,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         }
 
     if type_ == "constant_duration":
-        should_be_units = dict(duration="1.2 µs", **should_be_units)
+        should_be_units = dict(duration="1.2 s", **should_be_units)
         assert the_event.json() == should_be_units
         assert the_event.json(units=False) == {
             "duration": 1.2,
@@ -143,7 +143,7 @@ def test_spectral_and_constant_time_events():
     the_event = SpectralEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
-    evt_dict = {"duration": "0.5 µs", **base_event_dictionary}
+    evt_dict = {"duration": "0.5 s", **base_event_dictionary}
     the_event = DelayEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="constant_duration")
 
