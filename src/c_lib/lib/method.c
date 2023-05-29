@@ -204,6 +204,8 @@ MRS_dimension *MRS_create_dimensions(
         rotor_angle_in_rad, magnetic_flux_density_in_T, number_of_sidebands[i]);
 
     fractions += n_events[i];
+    durations += n_events[i];
+    is_spectral += n_events[i];
     rotor_frequency_in_Hz += n_events[i];
     rotor_angle_in_rad += n_events[i];
     magnetic_flux_density_in_T += n_events[i];

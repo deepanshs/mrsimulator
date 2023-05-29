@@ -98,22 +98,21 @@ def core_simulator(method,
 
                 if event.rotor_frequency < 1.0e-3:
                     rotor_frequency_in_Hz = 1.0e-6
-                    rotor_angle_in_rad = event.rotor_angle
                 else:
                     rotor_frequency_in_Hz = event.rotor_frequency
-                    rotor_angle_in_rad = event.rotor_angle
 
+                rotor_angle_in_rad = event.rotor_angle
                 track.append(event.rotor_frequency < 1e12 and event.rotor_frequency != 0)
 
                 # Update event attribute depending on event type
                 if event.__class__.__name__ == "SpectralEvent":
                     fr.append(event.fraction)
                     du.append(0)
-                    is_spec.append(True)
+                    is_spec.append(1)
                 elif event.__class__.__name__ == "DelayEvent":
                     fr.append(0)
                     du.append(event.duration)
-                    is_spec.append(False)
+                    is_spec.append(0)
 
                 Bo.append(event.magnetic_flux_density)  # in T
                 vr.append(rotor_frequency_in_Hz) # in Hz
