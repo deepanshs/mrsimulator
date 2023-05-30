@@ -199,6 +199,7 @@ class SpectralDimension(Parseable):
             label=label,
             description=description,
             complex_fft=True,
+            period=f"{self.spectral_width} Hz",
             reciprocal=reciprocal,
         )
         if self.origin_offset is not None:
