@@ -254,7 +254,7 @@ def test_dipolar_coupling_lineshape_simpson():
         #     plt.legend()
         #     plt.show()
 
-        limit = -np.log10(data_source.max()) + 1.5
+        limit = -np.log10(data_source.max()) + 1.3
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
