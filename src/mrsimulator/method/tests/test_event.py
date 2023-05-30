@@ -4,7 +4,7 @@ from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import ConstantDurationEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import SpectralEvent
-from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.method.query import MixingEnum
 from pydantic import ValidationError
 
@@ -12,18 +12,19 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+# TODO: Update these test to reflect sets, or ensure an ordering in freq_contrib attr
 def test_freq_contrib():
     event = BaseEvent(freq_contrib=["Quad2_4", "Quad2_0"])
     assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
     assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert event.json(units=False)["freq_contrib"] == ["Quad2_4", "Quad2_0"]
+    assert event.json(units=False)["freq_contrib"] == ["Quad2_0", "Quad2_4"]
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0] + [0] * 9)
 
     event = BaseEvent(freq_contrib=["Shielding1_2"])
     assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0] + [0] * 9)
 
     event = BaseEvent()
-    assert event.dict()["freq_contrib"] == freq_default
+    assert event.dict()["freq_contrib"] == FREQ_LIST_ALL
     assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1] + [1] * 9)
 
     event = BaseEvent(freq_contrib=["J1_0", "Shielding1_0"])
