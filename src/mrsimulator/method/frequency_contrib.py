@@ -150,6 +150,46 @@ class FrequencyEnum(str, Enum):
 
     Quad_Dipolar_cross_4:
         Selects fourth-rank quad-dipolar coupling cross interaction.
+
+
+    There are also shortcuts for including/excluding sets of contributions together.
+    Frequency contributions can be excluded by including an exclamation mark in-front of
+    of the string, for example ``"!Shielding"`` excludes all shielding interactions. The
+    allowed shortcuts are:
+
+    Shortcuts
+    ---------
+
+    ``"Shielding"``:
+        Selects all shielding interactions
+    ``"Isotropic"``:
+        Selects first-order zeroth-rank shielding and first-order zeroth-rank J coupling
+        interactions
+    ``"Quad"``:
+        Selects all quadrupolar interactions
+    ``"J"``:
+        Selects all J coupling interactions
+    ``"D"``:
+        Selects all dipolar interactions
+    ``"cross"``:
+        Selects all cross-term interactions
+    ``"Quad_Shielding_cross"``:
+        Selects all quadrupolar-shielding cross terms
+    ``"Quad_J_cross"``:
+        Selects all quadrupolar-J-coupling cross terms
+    ``"Quad_D_cross"``:
+        Selects all quadrupolar-dipolar-coupling cross terms
+    ``"First_order"``:
+        Selects all first-order interactions
+    ``"Second_order"``:
+        Selects all second-order interactions
+        Selects
+    ``"Zeroth_rank"``:
+        Selects all zeroth-rank interactions
+    ``"Second_rank"``:
+        Selects all second-rank interactions
+    ``"Fourth_rank"``:
+        Selects all fourth-rank interactions
     """
 
     # Shielding1: str = "Shielding1"
