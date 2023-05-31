@@ -55,7 +55,7 @@ class BaseEvent(Parseable):
     magnetic_flux_density: float = Field(default=None, ge=0.0)
     rotor_frequency: float = Field(default=None, ge=0.0)
     rotor_angle: float = Field(default=None, ge=0.0, le=1.5707963268)
-    freq_contrib: List[FrequencyEnum] = default_freq_contrib
+    freq_contrib: List[Union[FrequencyEnum, str]] = default_freq_contrib
     transition_queries: List[TransitionQuery] = [TransitionQuery()]
 
     property_unit_types: ClassVar[Dict] = {
@@ -97,12 +97,13 @@ class BaseEvent(Parseable):
             elif item in FREQ_LIST_ALL:
                 additive.add(item)
 
-            # String is a Frequency Contribution shortcut
+            # String is a Frequency Contribution shortcut (set of strings)
             elif item[0] == "!":
                 subtractive.update(FREQ_ENUM_SHORTCUT[item[1:]])
             else:
                 additive.update(FREQ_ENUM_SHORTCUT[item])
 
+        # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive
         return [FrequencyEnum(item) for item in list(additive - subtractive)]
 
@@ -117,15 +118,19 @@ class BaseEvent(Parseable):
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
 
+    def dict(self, **kwargs) -> dict:
+        """Return a JSON compliant dictionary of the instance of the event."""
+        py_dict = super().dict()
+        py_dict["freq_contrib"] = [
+            fq.value if isinstance(fq, FrequencyEnum) else fq
+            for fq in py_dict["freq_contrib"]
+        ]
+        return py_dict
+
     def _freq_contrib_flags(self) -> np.ndarray:
         """Get an array (binary) of frequency contributions flags for the event."""
         array = np.zeros(len(FREQ_LIST_ALL), dtype=int)  # Final array to return
-
-        for item in self.freq_contrib:
-            foo = item.index()
-            array[foo] = 1
-            print(array.sum())
-        # array[[item.index() for item in self.freq_contrib]] = 1
+        array[[item.index() for item in self.freq_contrib]] = 1
         return array
 
     def combination(self, isotopes, channels):

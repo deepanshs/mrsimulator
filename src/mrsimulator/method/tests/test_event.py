@@ -4,6 +4,7 @@ from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import ConstantDurationEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import SpectralEvent
+from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.method.query import MixingEnum
 from pydantic import ValidationError
@@ -12,47 +13,85 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
-# TODO: Update these test to reflect sets, or ensure an ordering in freq_contrib attr
 def test_freq_contrib():
     event = BaseEvent(freq_contrib=["Quad2_4", "Quad2_0"])
-    assert event.json()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert event.dict()["freq_contrib"] == ["Quad2_4", "Quad2_0"]
-    assert event.json(units=False)["freq_contrib"] == ["Quad2_0", "Quad2_4"]
+    assert set(event.dict()["freq_contrib"]) == {"Quad2_4", "Quad2_0"}
+    assert set(event.dict()["freq_contrib"]) == {"Quad2_4", "Quad2_0"}
+    assert set(event.json(units=False)["freq_contrib"]) == {"Quad2_0", "Quad2_4"}
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0] + [0] * 9)
 
     event = BaseEvent(freq_contrib=["Shielding1_2"])
     assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0] + [0] * 9)
 
     event = BaseEvent()
-    assert event.dict()["freq_contrib"] == FREQ_LIST_ALL
+    assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL)
     assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1] + [1] * 9)
 
     event = BaseEvent(freq_contrib=["J1_0", "Shielding1_0"])
-    assert event.dict()["freq_contrib"] == ["J1_0", "Shielding1_0"]
+    assert set(event.dict()["freq_contrib"]) == {"J1_0", "Shielding1_0"}
     assert np.all(event._freq_contrib_flags() == [1, 0, 0, 0, 0, 0, 1, 0, 0] + [0] * 9)
 
     event = BaseEvent(freq_contrib=["J1_0", "J1_2", "D1_2"])
-    assert event.dict()["freq_contrib"] == ["J1_0", "J1_2", "D1_2"]
+    assert set(event.dict()["freq_contrib"]) == {"J1_0", "J1_2", "D1_2"}
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 1, 1, 1] + [0] * 9)
 
     event = BaseEvent(freq_contrib=["Quad2_4", "J1_2", "D1_2", "Shielding1_2"])
-    assert event.dict()["freq_contrib"] == ["Quad2_4", "J1_2", "D1_2", "Shielding1_2"]
+    assert set(event.dict()["freq_contrib"]) == {
+        "Quad2_4",
+        "J1_2",
+        "D1_2",
+        "Shielding1_2",
+    }
     assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 1, 0, 1, 1] + [0] * 9)
 
     tag = "Quad_Shielding_cross"
     event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
-    assert event.dict()["freq_contrib"] == [f"{tag}_{i}" for i in [0, 2, 4]]
+    assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 9 + [1] * 3 + [0] * 6)
 
     tag = "Quad_J_cross"
     event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
-    assert event.dict()["freq_contrib"] == [f"{tag}_{i}" for i in [0, 2, 4]]
+    assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 12 + [1] * 3 + [0] * 3)
 
     tag = "Quad_Dipolar_cross"
     event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
-    assert event.dict()["freq_contrib"] == [f"{tag}_{i}" for i in [0, 2, 4]]
+    assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 15 + [1] * 3)
+
+
+def test_freq_contrib_shortcuts():
+    # Just shortcuts, no negations
+    for k, v in FREQ_ENUM_SHORTCUT.items():
+        event = BaseEvent(freq_contrib=[k])
+        assert set(event.dict()["freq_contrib"]) == v
+
+    # All negations (from default list of all)
+    for k, v in FREQ_ENUM_SHORTCUT.items():
+        event = BaseEvent(freq_contrib=[f"!{k}"])
+        assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL) - v
+
+    # Some combinations of shortcuts and negated shortcuts
+    event = BaseEvent(freq_contrib=["Quad", "!Second_order"])
+    assert set(event.dict()["freq_contrib"]) == {"Quad1_2"}
+
+    event = BaseEvent(freq_contrib=["First_order", "!J", "!D"])
+    assert set(event.dict()["freq_contrib"]) == {
+        "Shielding1_0",
+        "Shielding1_2",
+        "Quad1_2",
+    }
+
+    event = BaseEvent(freq_contrib=["First_order", "Second_rank", "!cross"])
+    assert set(event.dict()["freq_contrib"]) == {
+        "Shielding1_0",
+        "Shielding1_2",
+        "Quad1_2",
+        "Quad2_2",
+        "J1_0",
+        "J1_2",
+        "D1_2",
+    }
 
 
 def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):

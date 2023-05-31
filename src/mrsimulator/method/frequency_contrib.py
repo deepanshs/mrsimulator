@@ -26,6 +26,7 @@ FREQ_LIST_ALL = [
 
 FREQ_ENUM_SHORTCUT = {
     "Shielding": {"Shielding1_0", "Shielding1_2"},
+    "Isotropic": {"Shielding1_0", "J1_0"},
     "Quad": {"Quad1_2", "Quad2_0", "Quad2_2", "Quad2_4"},
     "J": {"J1_0", "J1_2"},
     "D": {"D1_2"},
@@ -192,6 +193,10 @@ class FrequencyEnum(str, Enum):
     def json(self, **kwargs) -> str:
         """Parse the class object to a JSON compliant python dictionary object."""
         return self.value
+
+    # def dict(self, **kwargs) -> str:
+    #     """Parse the class object to a JSON compliant python dictionary object."""
+    #     return self.json()
 
     def index(self) -> int:
         """Get the index of enumeration relative to FREQ_LIST_ALL."""
