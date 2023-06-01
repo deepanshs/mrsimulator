@@ -234,10 +234,6 @@ class FrequencyEnum(str, Enum):
         """Parse the class object to a JSON compliant python dictionary object."""
         return self.value
 
-    # def dict(self, **kwargs) -> str:
-    #     """Parse the class object to a JSON compliant python dictionary object."""
-    #     return self.json()
-
     def index(self) -> int:
         """Get the index of enumeration relative to FREQ_LIST_ALL."""
         return FREQ_LIST_ALL.index(self.value)
