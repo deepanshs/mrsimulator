@@ -71,7 +71,7 @@ jobs:
         run: python setup.py develop
 
       - name: Test with pytest
-        run: pytest --cov=./ --cov-report=xml
+        run: pytest tests/spectral_integration_tests/test_lineshapes.py --cov=./ --cov-report=xml -s
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3.1.4

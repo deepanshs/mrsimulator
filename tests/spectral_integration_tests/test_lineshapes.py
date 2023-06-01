@@ -1,7 +1,10 @@
 """Lineshape Test."""
+import sys
 from os import path
 
 import numpy as np
+
+np.set_printoptions(threshold=sys.maxsize)
 
 from .utils import c_setup
 from .utils import c_setup_random_euler_angles
@@ -246,6 +249,11 @@ def test_dipolar_coupling_lineshape_simpson():
         data_mrsimulator, data_source = c_setup(
             filename=filename, integration_volume="hemisphere"
         )
+
+        print()
+        print("mrsim", data_mrsimulator)
+        print("simpson", data_source)
+        print()
 
         # if SHOW_PLOTS:
         #     plt.plot(data_mrsimulator, "k", label="mrsims")
