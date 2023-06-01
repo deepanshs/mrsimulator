@@ -10,7 +10,8 @@ from pydantic import Field
 from pydantic import validator
 
 from .frequency_contrib import default_freq_contrib
-from .frequency_contrib import freq_list_all
+from .frequency_contrib import FREQ_ENUM_SHORTCUT
+from .frequency_contrib import FREQ_LIST_ALL
 from .frequency_contrib import FrequencyEnum
 from .query import MixingEnum
 from .query import MixingQuery
@@ -54,7 +55,7 @@ class BaseEvent(Parseable):
     magnetic_flux_density: float = Field(default=None, ge=0.0)
     rotor_frequency: float = Field(default=None, ge=0.0)
     rotor_angle: float = Field(default=None, ge=0.0, le=1.5707963268)
-    freq_contrib: List[FrequencyEnum] = default_freq_contrib
+    freq_contrib: List[Union[FrequencyEnum, str]] = default_freq_contrib
     transition_queries: List[TransitionQuery] = [TransitionQuery()]
 
     property_unit_types: ClassVar[Dict] = {
@@ -84,6 +85,28 @@ class BaseEvent(Parseable):
             return 1e12 if np.isinf(v) else v
         return v
 
+    @validator("freq_contrib", always=True, pre=True)
+    def validate_freq_contrib(cls, v, **kwargs):
+        additive = set()
+        subtractive = set()
+        for item in v:
+            if isinstance(item, FrequencyEnum):
+                additive.add(item.value)
+
+            # Item is a string of a recognized freq contrib string
+            elif item in FREQ_LIST_ALL:
+                additive.add(item)
+
+            # String is a Frequency Contribution shortcut (set of strings)
+            elif item[0] == "!":
+                subtractive.update(FREQ_ENUM_SHORTCUT[item[1:]])
+            else:
+                additive.update(FREQ_ENUM_SHORTCUT[item])
+
+        # Set additive to all frequency enumerations if none passed (default)
+        additive = set(FREQ_LIST_ALL) if additive == set() else additive
+        return [FrequencyEnum(item) for item in list(additive - subtractive)]
+
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
         """Parse the physical quantities of an Event object from a python dictionary
@@ -95,8 +118,18 @@ class BaseEvent(Parseable):
         py_dict_copy = deepcopy(py_dict)
         return super().parse_dict_with_units(py_dict_copy)
 
+    def dict(self, **kwargs) -> dict:
+        """Return a JSON compliant dictionary of the instance of the event."""
+        py_dict = super().dict()
+        py_dict["freq_contrib"] = [
+            fq.value if isinstance(fq, FrequencyEnum) else fq
+            for fq in py_dict["freq_contrib"]
+        ]
+        return py_dict
+
     def _freq_contrib_flags(self) -> np.ndarray:
-        array = np.zeros(len(freq_list_all), dtype=int)
+        """Get an array (binary) of frequency contributions flags for the event."""
+        array = np.zeros(len(FREQ_LIST_ALL), dtype=int)  # Final array to return
         array[[item.index() for item in self.freq_contrib]] = 1
         return array
 

@@ -7,7 +7,7 @@ import pytest
 from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
-from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils.error import MissingSpectralDimensionError
 from pydantic import ValidationError
@@ -17,7 +17,7 @@ __email__ = "srivastava.89@osu.edu"
 
 event_dictionary = {
     "fraction": 0.5,
-    "freq_contrib": freq_default,
+    "freq_contrib": FREQ_LIST_ALL,
     "magnetic_flux_density": "9.6 T",
     "rotor_frequency": "0 kHz",
     "rotor_angle": "54.735 deg",

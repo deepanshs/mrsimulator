@@ -102,7 +102,9 @@ contributions they evolve. No coherence transfer among transitions or
 populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
 :ref:`enumeration literals<freq_contrib_api>` and placed in the ``freq_contrib``
-attribute of the event. If ``freq_contrib`` is left unspecified, i.e., the
+attribute of the event. Frequency contributions can be individually excluded by
+placing an exclamation mark in front of the string representing the enumeration
+literal. If ``freq_contrib`` is left unspecified, i.e., the
 value of ``freq_contrib`` is set to ``None``, a default list holding the
 enumeration literals for *all* contributions is generated for the event.
 
@@ -2026,7 +2028,7 @@ contributions).
 While these two examples nicely illustrate numerous important concepts for
 building custom methods, it should also be noted that identical spectra could
 have been obtained with a simpler custom method that used the ``freq_contrib``
-to remove the undesired frequency contributions. The code for these two methods
+to only select the desired frequency contributions. The code for these two methods
 is illustrated below.
 
 .. plot::
@@ -2097,6 +2099,12 @@ is illustrated below.
     ax[1].grid()
     plt.tight_layout()
     plt.show()
+
+.. note::
+    mrsimulator also includes shortcuts for addressing groups of frequency contributions together.
+    For example, the ``shielding_only`` method could have selected all shielding contributions by
+    using ``freq_contrib=["Shielding"]`` which expands to zeroth- and second-rank shielding.
+    A complete list of shortcuts are listed in :ref:`freq_contrib_api`.
 
 
 
@@ -2252,8 +2260,10 @@ Attribute Summaries
     - ``List``
     - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
       contributions to include when calculating a transition frequency. For example,
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
-      all frequency contributions are calculated.
+      ``["Shielding1_0", "Shielding1_2"]``. String shortcuts encapsulating multiple contributions
+      can also be passed, for example ``["Shielding"]`` selects all shielding interactions. By
+      default, the list is all frequency enumerations and all frequency contributions are
+      calculated.
 
   * - transition_queries
     - ``list``
