@@ -443,7 +443,7 @@ def core_simulator(method,
 
         # print('pathway', transition_pathway_c)
         # print('weight', transition_pathway_weight_c)
-        # print('pathway_count, inc', pathway_count, pathway_increment)
+        print('pathway_count, inc', pathway_count, pathway_increment)
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 &amp[0],  # as complex array
