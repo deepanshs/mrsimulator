@@ -385,6 +385,7 @@ class Simulator(Parseable):
 
         if opt is None:
             opt = self.optimize()
+            print(opt)
 
         if method_index is None:  # Simulate for all methods
             method_index = np.arange(len(self.methods))
@@ -416,6 +417,8 @@ class Simulator(Parseable):
                 verbose=verbose,
                 backend="loky",
             )(jobs)
+
+            print(amp)
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
