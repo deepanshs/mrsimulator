@@ -418,7 +418,7 @@ class Simulator(Parseable):
                 backend="loky",
             )(jobs)
 
-            print(amp)
+            print("amp length", len(amp[0]))
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
