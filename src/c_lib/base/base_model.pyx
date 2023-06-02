@@ -28,7 +28,10 @@ def core_simulator(method,
        bool_t auto_switch=True):
     """core simulator init"""
 
-# initialization and config
+    print(len(spin_systems), len(transition_pathways), len(transition_weights))
+
+
+    # initialization and config
     # observed spin is always channel at index 0_______________________________________
     channel = method.channels[0].symbol
     cdef double spin_quantum_number = method.channels[0].spin
@@ -232,6 +235,7 @@ def core_simulator(method,
         spin_sys = spin_systems[idx]
         segments = transition_pathways[idx]
         weights = transition_weights[idx]
+        print(spin_sys, segments, weights)
 
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]

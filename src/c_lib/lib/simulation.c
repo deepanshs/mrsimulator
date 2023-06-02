@@ -147,6 +147,9 @@ void __mrsimulator_core(
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
   cblas_zscal(total_pts, transition_pathway_weight, (double *)scheme->exp_I_phase, 1);
 
+  double *exp_I_phase_ = (double *)scheme->exp_I_phase;
+  printf("phase %f +i %f\n", exp_I_phase_[0], exp_I_phase_[1]);
+
   /* ---------------------------------------------------------------------
    *              Delta and triangle tenting interpolation
    */
