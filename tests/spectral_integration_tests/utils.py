@@ -157,6 +157,9 @@ def c_setup(
     sim = simulator_setup(
         data_object, integration_volume, integration_density, number_of_sidebands
     )
+
+    print(sim.json())
+
     data_mrsimulator = simulator_process(sim, data_object)
     return data_mrsimulator.real, data_source.real
 
