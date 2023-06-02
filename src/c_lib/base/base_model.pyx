@@ -159,6 +159,9 @@ def core_simulator(method,
         &magnetic_flux_density_in_T[0], &srfiH[0], &rair[0],
         &n_event[0], n_dimension, &n_dim_sidebands[0])
 
+    print(cnt, coord_off, incre, frac, dur, is_spectral,
+            magnetic_flux_density_in_T, srfiH, rair, n_event)
+
 # normalization factor for the spectrum
     norm = np.abs(np.prod(incre))
 
