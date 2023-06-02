@@ -251,8 +251,10 @@ def test_dipolar_coupling_lineshape_simpson():
         )
 
         print()
-        print("mrsim", data_mrsimulator)
-        print("simpson", data_source)
+        print(f"{i} mrsim", data_mrsimulator)
+        print(f"{i} simpson", data_source)
+        print()
+        print()
         print()
 
         # if SHOW_PLOTS:
