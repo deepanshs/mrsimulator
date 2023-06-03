@@ -186,7 +186,10 @@ class SpectralDimension(Parseable):
         label = "" if self.label is None else self.label
         description = "" if self.description is None else self.description
 
-        default_reciprocal = {"coordinates_offset": f"{-1/(2*increment)} s"}
+        default_reciprocal = {
+            "coordinates_offset": f"{-1/(2*increment)} s",
+            "period": f"{1/increment} s",
+        }
         reciprocal = (
             default_reciprocal if self.reciprocal is None else self.reciprocal.json()
         )
@@ -199,6 +202,7 @@ class SpectralDimension(Parseable):
             label=label,
             description=description,
             complex_fft=True,
+            period=f"{self.spectral_width} Hz",
             reciprocal=reciprocal,
         )
         if self.origin_offset is not None:
