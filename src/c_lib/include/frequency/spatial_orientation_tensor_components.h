@@ -547,7 +547,7 @@ static inline void sSOT_cross_tensor_components(double *restrict R_0,
                                                 const double *R_2x) {
   // create a temp storage for R0, R0_res, because rank_2_tensor_products requires a
   // complex R0.
-  double R0_res[2];
+  double R0_res[2] = {0.0, 0.0};
   vm_double_zeros(10, (double *)R_2);
   vm_double_zeros(18, (double *)R_4);
 

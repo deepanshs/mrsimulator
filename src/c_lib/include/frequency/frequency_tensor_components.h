@@ -405,6 +405,7 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
     return;
   }
 
+  vm_double_zeros(10, (double *)R_2tensor);
   // R_2tensor = [-1/2 ζη, 0, √3/2 ζ, 0, -1/2 ζη]
   temp = -0.5 * (symm_aniso_in_Hz * symm_eta);
   R_2tensor[0] = temp;                                  // R2-2 real
