@@ -7,6 +7,7 @@
 # The following is a quadrupolar lineshape fitting example for the 11B MAS NMR of
 # lithium orthoborate crystal. The dataset was shared by Dr. Nathan Barrow.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
@@ -17,7 +18,7 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -25,9 +26,6 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "11B_lithum_orthoborate.csdf"
 experiment = cp.load(host + filename)
-
-# standard deviation of noise from the dataset
-sigma = 0.08078374
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -43,6 +41,23 @@ ax.set_xlim(100, -100)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(np.logical_and(coords < -75e-6, coords > -100e-6))
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.plot(noise_data, label="noise")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
