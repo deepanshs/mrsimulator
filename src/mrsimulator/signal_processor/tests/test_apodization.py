@@ -252,8 +252,8 @@ def test_2D_area():
     data = np.zeros((256, 128), dtype=float)
     data[128, 64] = 1.0
     csdm_obj = cp.as_csdm(data)
-    csdm_obj.x[0].period = "1"
-    csdm_obj.x[1].period = "1"
+    csdm_obj.x[0].period = "256"
+    csdm_obj.x[1].period = "128"
 
     # test00
     PS = [
