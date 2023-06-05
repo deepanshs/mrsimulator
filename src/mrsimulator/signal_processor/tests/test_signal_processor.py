@@ -34,7 +34,7 @@ def test_01():
         post_sim.apply_operations([])
 
     dataset = cp.as_csdm(np.arange(20, dtype=float))
-    dataset.x[0] = cp.LinearDimension(count=20, increment="10 K")
+    dataset.x[0] = cp.LinearDimension(count=20, increment="10 K", period="200 K")
     post_sim.apply_operations(dataset)
 
     # to dict with units
