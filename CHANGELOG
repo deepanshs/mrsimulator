@@ -11,6 +11,7 @@ What's new
   new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
 - Shortcuts for frequency contributions, such as ``Shielding``, ``Isotropic``, and ``cross``.
   Sets of contributions can also be excluded by placing an exclamation mark in-front of the string, for example ``"!Shielding"`` excludes shielding interactions.
+- Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use-cases and examples.
 
 **Simulator**
 
