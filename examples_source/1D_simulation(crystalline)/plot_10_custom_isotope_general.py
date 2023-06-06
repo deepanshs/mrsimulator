@@ -9,22 +9,18 @@ Simulating spectra of custom isotopes.
 # Mrsimulator includes the capability for simulating isotopes with user-defined
 # attributes. In this example, we show how to define a custom isotopes and simulate
 # spectra using custom isotopes.
-# TODO: Cut down on imports
 from mrsimulator.spin_system.isotope import Isotope
-from mrsimulator import Site, SpinSystem, Coupling, Simulator, Method
-from mrsimulator.method import SpectralDimension, SpectralEvent
-from mrsimulator.method.lib import BlochDecaySpectrum, BlochDecayCTSpectrum
-from mrsimulator.method.query import TransitionQuery
-import mrsimulator.signal_processor as sp
+from mrsimulator import Site, SpinSystem, Simulator
+from mrsimulator.method import SpectralDimension
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 
-import numpy as np
 import matplotlib.pyplot as plt
 
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
 # First, we register a new isotope symbol with custom attributes using the
-# :py:mth:~`mrsimulator.spin_system.isotope.Isotope.register` method. The new symbol
+# :py:meth:`~mrsimulator.spin_system.isotope.Isotope.register` method. The new symbol
 # cannot match any real isotope symbols, and re-calling register on a custom symbol will
 # update the stored attributes of that isotope.
 Isotope.register(
@@ -35,8 +31,8 @@ Isotope.register(
 )
 
 # %%
-# Create :py:class:~`mrsimulator.spin_system.Site` and
-# :py:class:~`mrsimulator.method.Method` objects using the new isotope symbol. The
+# Create :py:class:`~mrsimulator.spin_system.Site` and
+# :py:class:`~mrsimulator.method.Method` objects using the new isotope symbol. The
 # syntax is the same as any other isotope.
 site = Site(
     isotope="custom",
