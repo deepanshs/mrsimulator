@@ -19,16 +19,13 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
 qmat_dataset = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 6.530634
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
 qmat_dataset = qmat_dataset.real
@@ -49,6 +46,22 @@ ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+noise_region = np.where(qmat_dataset.dimensions[0].coordinates < -175e-6)
+noise_data = qmat_dataset[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data.T, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
