@@ -166,7 +166,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # relevant to the given method. Since the method and the number of spin systems remains
 # unchanged during the least-squares analysis, a one-time query is sufficient. To avoid
 # querying for the transition pathways at every iteration in a least-squares fitting,
-# call the :py:mth:~`mrsimulator.Simulator.optimize()` method to pre-compute the
+# call the :py:meth:`~mrsimulator.Simulator.optimize()` method to pre-compute the
 # pathways.
 #
 # For the user's convenience, we

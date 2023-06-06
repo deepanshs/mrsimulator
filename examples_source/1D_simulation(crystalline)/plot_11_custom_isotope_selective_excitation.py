@@ -7,18 +7,18 @@ Simulating spectra of custom isotopes
 """
 
 # %%
-# The isotope register method has the `copy_from` argument which can be used to create
+# The isotope register method has the ``copy_from`` argument which can be used to create
 # individually addressable channels which the same isotope attributes. This
 # functionality can be used to emulate selective-excitation experiments by querying
 # specific transitions on different sites
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator import Site, SpinSystem, Coupling, Simulator, Method
 from mrsimulator.method import SpectralDimension, SpectralEvent
-from mrsimulator.method.lib import BlochDecaySpectrum, BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.method.query import TransitionQuery
 import mrsimulator.signal_processor as sp
 
-import numpy as np
+from pprint import pprint
 import matplotlib.pyplot as plt
 
 # %%
@@ -86,5 +86,112 @@ ax[1].plot(spec_b, label="1H-b")
 ax[1].legend()
 ax[1].set_title("Individual proton spectra")
 
+plt.tight_layout()
+plt.show()
+# %%
+# Custom isotopes can be used in conjunction with custom method objects to query
+# different transitions on custom isotopes. Below, we create a custom Method which
+# simulates a coupled 1H-13C spectrum where the carbon site simultaneous undergoes a
+# transitions with only one of the proton sites.
+proton_a_custom = Site(isotope="1H-a", isotropic_chemical_shift=0.0)
+proton_b_custom = Site(isotope="1H-b", isotropic_chemical_shift=20)
+carbon = Site(isotope="13C", isotropic_chemical_shift=-40)
+
+# J- and dipolar-couplings for the system
+coupling_ab = Coupling(site_index=[0, 1], isotropic_j=48)  # 1H-a, 1H-b
+coupling_ac = Coupling(site_index=[0, 2], dipolar={"D": 2000})  # 1H-a, 13C
+coupling_bc = Coupling(site_index=[1, 2], dipolar={"D": 1000})  # 1H-b, 13C
+
+sys_custom = SpinSystem(
+    sites=[proton_a_custom, proton_b_custom, carbon],
+    couplings=[coupling_ab, coupling_ac, coupling_bc],
+)
+# %%
+# Next, we create the Method object which has three different channels; the first
+# channel is the observed nucleus, here 13C, and the other two are for the custom proton
+# isotopes.
+mth_custom = Method(
+    channels=["13C", "1H-a", "1H-b"],
+    spectral_dimensions=[
+        SpectralDimension(
+            reference_offset=-9000,
+            events=[
+                SpectralEvent(
+                    transition_queries=[
+                        TransitionQuery(
+                            ch1={"P": [-1]}, ch2={"P": [-1]}, ch3={"P": [0]}
+                        )
+                    ]
+                )
+            ],
+        )
+    ],
+)
+pprint(mth_custom.get_transition_pathways(sys_custom))
+
+# %%
+# The equivalent SpinSystem and Method without custom isotopes or selective
+# excitations as a comparison.
+proton_a = Site(isotope="1H", isotropic_chemical_shift=0.0)
+proton_b = Site(isotope="1H", isotropic_chemical_shift=-20)
+carbon = Site(isotope="13C", isotropic_chemical_shift=-40)
+
+# J- and dipolar-couplings for the system
+coupling_ab = Coupling(site_index=[0, 1], isotropic_j=48)  # 1H-a, 1H-b
+coupling_ac = Coupling(site_index=[0, 2], dipolar={"D": 2000})  # 1H-a, 13C
+coupling_bc = Coupling(site_index=[1, 2], dipolar={"D": 1000})  # 1H-b, 13C
+
+sys = SpinSystem(
+    sites=[proton_a, proton_b, carbon],
+    couplings=[coupling_ab, coupling_ac, coupling_bc],
+)
+
+mth = Method(
+    channels=["13C", "1H"],
+    spectral_dimensions=[
+        SpectralDimension(
+            reference_offset=-9000,
+            events=[
+                SpectralEvent(
+                    transition_queries=[
+                        TransitionQuery(
+                            ch1={"P": [-1]},
+                            ch2={"P": [-1]},
+                        )
+                    ]
+                )
+            ],
+        )
+    ],
+)
+pprint(mth.get_transition_pathways(sys))
+
+# %%
+# Create and run Simulator objects for the selective and non-selective spectra.
+sim_custom = Simulator(spin_systems=[sys_custom], methods=[mth_custom])
+sim = Simulator(spin_systems=[sys], methods=[mth])
+
+sim_custom.run()
+sim.run()
+# %%
+# Plot the simulated spectra
+plt.figure(figsize=(4.5, 3))
+plt.subplot(projection="csdm")
+plt.plot(
+    sim.methods[0].simulation.real,
+    color="black",
+    alpha=0.3,
+    linewidth=2,
+    label="Non-selective excitation",
+)
+plt.plot(
+    sim_custom.methods[0].simulation.real,
+    linestyle="--",
+    alpha=1.0,
+    linewidth=0.75,
+    label="Selective excitation",
+)
+
+plt.legend()
 plt.tight_layout()
 plt.show()
