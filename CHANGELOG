@@ -9,6 +9,7 @@ What's new
 - Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
 - Support for quadrupolar-shielding cross frequency interactions. `freq_contrib` includes
   new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
+- Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use-cases and examples.
 
 **Simulator**
 
