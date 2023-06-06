@@ -45,7 +45,7 @@ plt.show()
 # %%
 # Estimate noise statistics from the dataset
 coords = experiment.dimensions[0].coordinates
-noise_region = np.where(np.logical_and(coords < -75e-6, coords > -100e-6))
+noise_region = np.where(np.logical_and(coords < -140e-6, coords > -200e-6))
 noise_data = experiment[noise_region]
 
 plt.figure(figsize=(3.75, 2.5))
