@@ -92,6 +92,7 @@ def test_config():
         "name": None,
         "description": None,
         "label": None,
+        "sample_state": "solid",
     }
 
     assert a.config.get_int_dict() == {
