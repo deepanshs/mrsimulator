@@ -204,6 +204,19 @@ class Method(Parseable):
                 f"{speeds}."
             )
 
+    def get_reference_B0(self, isotope, experiment):
+        # get reference freq from the dataset
+        # = w_rf - b = origin_offset - coordinates_offset
+        dim = experiment.x[0]
+        v_ref = dim.origin_offset - dim.get_nmr_reference_offset()
+        print(f"reference frequency = {v_ref}")
+
+        # calculate B0 from the reference freq and gyromagnetic ratio
+        gamma = np.abs(Isotope(symbol=isotope).gyromagnetic_ratio)
+        B0 = v_ref.to("MHz").value / gamma
+        print(f"B0 = {B0} T")
+        return B0
+
     @classmethod
     def check(cls, kwargs, is_named_method=False, ndim=None):
         check_for_number_of_spectral_dimensions(kwargs, is_named_method, ndim)
