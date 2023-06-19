@@ -81,8 +81,5 @@ def test_inadequate():
     max_intensity = processed_data.max()
     min_intensity = processed_data.min()
 
-    print(max_intensity)
-    print(min_intensity)
-
     # Ensure peaks are anti phase
     assert np.allclose(max_intensity, -min_intensity, rtol=1e-4)
