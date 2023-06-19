@@ -135,7 +135,7 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    channels: List[str]
+    channels: List[Union[str, dict, Isotope]]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
@@ -176,7 +176,7 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        return [Isotope(symbol=_) for _ in v]
+        return [Isotope.parse(_v) for _v in v]
 
     def __init__(self, **kwargs):
         Method.check(kwargs)

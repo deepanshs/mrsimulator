@@ -18,6 +18,7 @@
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
@@ -28,7 +29,7 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -40,9 +41,6 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
 filename = "31P Phosphate 6kHz.csdf"
 experiment = cp.load(host + filename)
-
-# standard deviation of noise from the dataset
-sigma = 1.523217
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -58,6 +56,23 @@ ax.set_xlim(150, -150)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords < -100e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.plot(noise_data, label="noise")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -166,7 +181,7 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # relevant to the given method. Since the method and the number of spin systems remains
 # unchanged during the least-squares analysis, a one-time query is sufficient. To avoid
 # querying for the transition pathways at every iteration in a least-squares fitting,
-# call the :py:mth:~`mrsimulator.Simulator.optimize()` method to pre-compute the
+# call the :py:meth:`~mrsimulator.Simulator.optimize()` method to pre-compute the
 # pathways.
 #
 # For the user's convenience, we

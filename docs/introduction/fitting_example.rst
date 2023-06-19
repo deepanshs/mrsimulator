@@ -612,10 +612,17 @@ parameter to be a fit parameter, and rerun the analysis.
 .. plot::
     :context: close-figs
 
-    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0.05
     fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+
+    minner = Minimizer(
+        sf.LMFIT_min_function,
+        fit_parameters,
+        fcn_args=(sim, processor, sigma),
+        fcn_kws={"opt": opt}
+    )
     result = minner.minimize()
+
     best_fit = sf.bestfit(sim, processor)[0].real
     residuals = sf.residuals(sim, processor)[0].real
 

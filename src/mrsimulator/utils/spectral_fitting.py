@@ -454,6 +454,7 @@ def LMFIT_min_function(
     processors = processors if isinstance(processors, list) else [processors]
     sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
     sigma = sigma if isinstance(sigma, list) else [sigma]
+    sigma = [item.value if hasattr(item, "value") else item for item in sigma]
 
     _check_for_experiment_data(sim.methods)
     update_mrsim_obj_from_params(params, sim, processors)

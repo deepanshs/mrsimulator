@@ -18,16 +18,13 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/RbNO3_MQMAS.csdf"
 experiment = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 175.5476
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -50,6 +47,22 @@ plt.tight_layout()
 plt.show()
 
 # %%
+# Estimate noise statistics from the dataset.
+noise_region = np.where(experiment.dimensions[0].coordinates > -25e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
+
+# %%
 # Create a fitting model
 # ----------------------
 # **Guess model**
@@ -58,7 +71,7 @@ plt.show()
 
 shifts = [-26.8, -28.4, -31.2]  # in ppm
 Cq = [1.7e6, 2.0e6, 1.7e6]  # in  Hz
-eta = [0.2, 1.0, 0.6]
+eta = [0.2, 0.95, 0.6]
 abundance = [40.0, 25.0, 35.0]  # in %
 
 spin_systems = single_site_system_generator(
@@ -166,7 +179,14 @@ fig, ax = plt.subplots(
 )
 vmax, vmin = experiment.max(), experiment.min()
 for i, dat in enumerate([experiment, best_fit, residuals]):
-    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].imshow(
+        dat,
+        aspect="auto",
+        cmap="gist_ncar_r",
+        vmax=vmax,
+        vmin=vmin,
+        interpolation="none",
+    )
     ax[i].set_xlim(-20, -50)
 ax[0].set_ylim(-45, -65)
 plt.tight_layout()
