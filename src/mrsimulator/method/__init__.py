@@ -178,6 +178,12 @@ class Method(Parseable):
     def validate_channels(cls, v, *, values, **kwargs):
         return [Isotope.parse(_v) for _v in v]
 
+    @validator("rotor_frequency", always=True, pre=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        if v is not None:
+            return 1e12 if np.isinf(v) else v
+        return v
+
     def __init__(self, **kwargs):
         Method.check(kwargs)
         super().__init__(**kwargs)
