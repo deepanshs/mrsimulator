@@ -18,6 +18,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
@@ -32,7 +33,7 @@ from .utils import to_euler_list
 
 # from .utils import convert_transition_query
 
-# from .event import ConstantDurationEvent  # noqa: F401
+# from .event import DelayEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
@@ -134,7 +135,7 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    channels: List[str]
+    channels: List[Union[str, dict, Isotope]]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
@@ -175,7 +176,7 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        return [Isotope(symbol=_) for _ in v]
+        return [Isotope.parse(_v) for _v in v]
 
     def __init__(self, **kwargs):
         Method.check(kwargs)
@@ -623,7 +624,7 @@ class Method(Parseable):
             - (str) type: Event type
             - (int) spec_dim_index: Index of spectral dimension which event belongs to
             - (str) label: Event label
-            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
             - (MixingQuery) query: MixingQuery object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
@@ -652,7 +653,7 @@ class Method(Parseable):
              'p',
              'd']
         """
-        CD = "ConstantDurationEvent"
+        CD = "DelayEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
 

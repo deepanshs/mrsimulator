@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from mrsimulator.method.event import BaseEvent
-from mrsimulator.method.event import ConstantDurationEvent
+from mrsimulator.method.event import DelayEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
@@ -163,7 +163,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         }
 
     if type_ == "constant_duration":
-        should_be_units = dict(duration="1.2 µs", **should_be_units)
+        should_be_units = dict(duration="1.2 s", **should_be_units)
         assert the_event.json() == should_be_units
         assert the_event.json(units=False) == {
             "duration": 1.2,
@@ -183,8 +183,8 @@ def test_spectral_and_constant_time_events():
     the_event = SpectralEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
-    evt_dict = {"duration": "0.5 µs", **base_event_dictionary}
-    the_event = ConstantDurationEvent.parse_dict_with_units(evt_dict)
+    evt_dict = {"duration": "0.5 s", **base_event_dictionary}
+    the_event = DelayEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="constant_duration")
 
     # direct initialization
@@ -195,7 +195,7 @@ def test_spectral_and_constant_time_events():
     the_event = SpectralEvent(fraction=0.5, **base_event_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
-    the_event = ConstantDurationEvent(duration=0.5, **base_event_dict)
+    the_event = DelayEvent(duration=0.5, **base_event_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="constant_time")
 
 
