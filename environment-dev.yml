@@ -14,7 +14,8 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.4.1
+      - csdmpy>=0.6.dev2
+      - astropy<=5.1
       - pydantic>=1.9
       - typing-extensions>=3.7
       - flake8
