@@ -387,11 +387,24 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, bool reset,
-                                              MRS_dimension *dim, double fraction) {
+                                              complex128 *R4, MRS_dimension *dim,
+                                              double fraction,
+                                              unsigned char is_spectral,
+                                              double duration) {
   unsigned int i, g_idx, ptr;
-  double temp;
-  double *f_complex;
+  unsigned int freq_size = scheme->n_gamma * scheme->total_orientations;
+  double temp, fraction_duration;
+  double *f_complex, *local_frequency;
+
+  if (is_spectral) {
+    local_frequency = dim->local_frequency;
+    fraction_duration = dim->inverse_increment * fraction;
+  } else {
+    local_frequency = dim->local_phase;
+    cblas_dscal(freq_size, 0.0, local_frequency, 1);
+    fraction_duration = CONST_2PI * duration;
+  }
+
   /**
    * Rotate the R2 and R4 components from the common frame to the rotor frame over all
    * the orientations (alpha, beta). The componets are stored in w2 and w4 of the
@@ -401,15 +414,8 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                           scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
                           R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
 
-  /* If reset is true, zero the local_frequencies before update. */
-  if (reset) {
-    cblas_dscal(scheme->n_gamma * scheme->total_orientations, 0.0, dim->local_frequency,
-                1);
-    dim->R0_offset = 0.0;
-  }
-
   /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
-  dim->R0_offset += R0 * dim->inverse_increment * fraction;
+  if (is_spectral) dim->R0_offset += R0 * fraction_duration;
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
@@ -421,22 +427,23 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   /* Normalized local anisotropic frequency contributions from the 2nd-rank tensor. */
   for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
     ptr = scheme->total_orientations * g_idx;
-    temp = dim->inverse_increment * 2 * fraction;
+    temp = 2 * fraction_duration;
+
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
         f_complex =
             (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + g_idx]);
         plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];
         cblas_daxpy(scheme->total_orientations, plan->buffer,
-                    (double *)&(scheme->w2[i]), 6, &dim->local_frequency[ptr], 1);
+                    (double *)&(scheme->w2[i]), 6, &local_frequency[ptr], 1);
         plan->buffer = -temp * plan->wigner_d2m0_vector[i] * f_complex[1];
         cblas_daxpy(scheme->total_orientations, plan->buffer,
-                    (double *)&(scheme->w2[i]) + 1, 6, &dim->local_frequency[ptr], 1);
+                    (double *)&(scheme->w2[i]) + 1, 6, &local_frequency[ptr], 1);
       }
     }
-    plan->buffer = dim->inverse_increment * plan->wigner_d2m0_vector[2] * fraction;
+    plan->buffer = plan->wigner_d2m0_vector[2] * fraction_duration;
     cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&(scheme->w2[2]), 6,
-                &dim->local_frequency[ptr], 1);
+                &local_frequency[ptr], 1);
   }
   if (plan->allow_4th_rank) {
     /**
@@ -445,22 +452,28 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
      */
     for (g_idx = 0; g_idx < scheme->n_gamma; g_idx++) {
       ptr = scheme->total_orientations * g_idx;
-      temp = dim->inverse_increment * 2 * fraction;
+      temp = 2 * fraction_duration;
       if (plan->is_static) {
         for (i = 0; i < 4; i++) {
           f_complex = (double *)&(scheme->exp_Im_gamma[i * scheme->n_gamma + g_idx]);
           plan->buffer = temp * plan->wigner_d4m0_vector[i] * f_complex[0];
           cblas_daxpy(scheme->total_orientations, plan->buffer,
-                      (double *)&scheme->w4[i], 10, &dim->local_frequency[ptr], 1);
+                      (double *)&scheme->w4[i], 10, &local_frequency[ptr], 1);
           plan->buffer = -temp * plan->wigner_d4m0_vector[i] * f_complex[1];
           cblas_daxpy(scheme->total_orientations, plan->buffer,
-                      (double *)&scheme->w4[i] + 1, 10, &dim->local_frequency[ptr], 1);
+                      (double *)&scheme->w4[i] + 1, 10, &local_frequency[ptr], 1);
         }
       }
-      plan->buffer = dim->inverse_increment * plan->wigner_d4m0_vector[4] * fraction;
+      plan->buffer = plan->wigner_d4m0_vector[4] * fraction_duration;
       cblas_daxpy(scheme->total_orientations, plan->buffer, (double *)&scheme->w4[4],
-                  10, &dim->local_frequency[ptr], 1);
+                  10, &local_frequency[ptr], 1);
     }
+  }
+
+  if (!is_spectral) {  // compute phase.
+    plan->buffer = R0 * fraction_duration;
+    vm_double_add_vector_offset_inplace(freq_size, local_frequency, plan->buffer,
+                                        scheme->phase);
   }
 }
 
@@ -552,6 +565,60 @@ static inline void MRS_rotate_single_site_interaction_components(
   }
 }
 
+static inline void quad_coupling_cross_terms(
+    coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
+    site_struct *sites,          // Pointer to a list of sites within a spin system.
+    int site_index,              // site index
+    unsigned int coupling_index,  // coupled index
+    double *R0,                   // The R0 components.
+    complex128 *R2,               // The R2 components.
+    complex128 *R4,               // The R4 components.
+    double *R0_temp,              // The temporary R0 components.
+    complex128 *R2_temp,          // The temporary R2 components.
+    complex128 *R4_temp,          // The temporary R4 components.
+    double B0_in_T,               // Magnetic flux density in T.
+    unsigned char *freq_contrib,  // The pointer to freq contribs boolean.
+    float mIi,   // inital transition state of site coupled to the quad site (p)
+    float mSqi,  // inital transition state of the quad site (d)
+    float mIf,   // final transition state of site coupled to the quad site (p)
+    float mSqf   // final transition state of the quad site (d)
+) {
+  double larmor_freq_in_Hz, spin, R_2q[10];
+
+  spin = sites->spin[site_index];
+  if (spin == 0.5) return;
+
+  sSOT_1st_order_electric_quadrupole_tensor_components(
+      R_2q, spin, sites->quadrupolar_Cq_in_Hz[site_index],
+      sites->quadrupolar_eta[site_index],
+      &sites->quadrupolar_orientation[3 * site_index]);
+
+  larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index] * 1.0e6;
+
+  // Site S cross J-coupling
+  FCF_Quad_coupling_cross_tensor_components(
+      R0_temp, R2_temp, R4_temp, R_2q,
+      couplings->j_symmetric_zeta_in_Hz[coupling_index],
+      couplings->j_symmetric_eta[coupling_index],
+      &couplings->j_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi, mSqf,
+      mSqi);  // transition function is pd (p for spin I, and d for spin S)
+
+  if (freq_contrib[12]) *R0 += *R0_temp;
+  if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+  if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+
+  // Site S cross dipolar-coupling
+  FCF_Quad_coupling_cross_tensor_components(
+      R0_temp, R2_temp, R4_temp, R_2q,
+      2.0 * couplings->dipolar_coupling_in_Hz[coupling_index], 0,
+      &couplings->dipolar_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi,
+      mSqf, mSqi);  // transition function is pd (p for spin I, and d for spin S)
+
+  if (freq_contrib[15]) *R0 += *R0_temp;
+  if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+  if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+}
+
 static inline void MRS_rotate_coupled_site_interaction_components(
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
     site_struct *sites,          // Pointer to a list of sites within a spin system.
@@ -569,14 +636,11 @@ static inline void MRS_rotate_coupled_site_interaction_components(
   unsigned int i, j = 0, n_couplings = couplings->number_of_couplings;
   int site_index_I, site_index_S;
   float mIf, mSf, mIi, mSi;
-  double larmor_freq_in_Hz, spin_I, spin_S, R_2q[10];
 
   /* Frequency computation for couplings */
   for (i = 0; i < n_couplings; i++) {
     site_index_I = couplings->site_index[j++];
     site_index_S = couplings->site_index[j++];
-    spin_I = sites->spin[site_index_I];
-    spin_S = sites->spin[site_index_S];
 
     mIi = transition[site_index_I];
     mSi = transition[site_index_S];
@@ -603,65 +667,13 @@ static inline void MRS_rotate_coupled_site_interaction_components(
 
     // Quad J-couplings cross components
     // Site S
-    if (spin_S > 0.5) {
-      sSOT_1st_order_electric_quadrupole_tensor_components(
-          R_2q, spin_S, sites->quadrupolar_Cq_in_Hz[site_index_S],
-          sites->quadrupolar_eta[site_index_S],
-          &sites->quadrupolar_orientation[3 * site_index_S]);
-
-      larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index_S] * 1.0e6;
-
-      // Site S cross J-coupling
-      FCF_Quad_coupling_cross_tensor_components(
-          R0_temp, R2_temp, R4_temp, R_2q, couplings->j_symmetric_zeta_in_Hz[i],
-          couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
-          larmor_freq_in_Hz, mIf, mIi, mSf, mSi);
-
-      if (freq_contrib[12]) *R0 += *R0_temp;
-      if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-
-      // Site S cross dipolar-coupling
-      FCF_Quad_coupling_cross_tensor_components(
-          R0_temp, R2_temp, R4_temp, R_2q, 2.0 * couplings->dipolar_coupling_in_Hz[i],
-          0, &couplings->dipolar_orientation[3 * i], larmor_freq_in_Hz, mIf, mIi, mSf,
-          mSi);
-
-      // in-place update the R2 components.
-      if (freq_contrib[15]) *R0 += *R0_temp;
-      if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-    }
-
+    quad_coupling_cross_terms(couplings, sites, site_index_S, i, R0, R2, R4, R0_temp,
+                              R2_temp, R4_temp, B0_in_T, freq_contrib, mIi, mSi, mIf,
+                              mSf);
     // Site I
-    if (spin_I > 0.5) {
-      sSOT_1st_order_electric_quadrupole_tensor_components(
-          R_2q, spin_I, sites->quadrupolar_Cq_in_Hz[site_index_I],
-          sites->quadrupolar_eta[site_index_I],
-          &sites->quadrupolar_orientation[3 * site_index_I]);
-
-      larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index_I] * 1.0e6;
-
-      // Site S cross J-coupling
-      FCF_Quad_coupling_cross_tensor_components(
-          R0_temp, R2_temp, R4_temp, R_2q, couplings->j_symmetric_zeta_in_Hz[i],
-          couplings->j_symmetric_eta[i], &couplings->j_orientation[3 * i],
-          larmor_freq_in_Hz, mSf, mSi, mIf, mIi);
-
-      if (freq_contrib[12]) *R0 += *R0_temp;
-      if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-
-      // Site S cross dipolar-coupling
-      FCF_Quad_coupling_cross_tensor_components(
-          R0_temp, R2_temp, R4_temp, R_2q, 2.0 * couplings->dipolar_coupling_in_Hz[i],
-          0, &couplings->dipolar_orientation[3 * i], larmor_freq_in_Hz, mSf, mSi, mIf,
-          mIi);
-
-      if (freq_contrib[15]) *R0 += *R0_temp;
-      if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
-    }
+    quad_coupling_cross_terms(couplings, sites, site_index_I, i, R0, R2, R4, R0_temp,
+                              R2_temp, R4_temp, B0_in_T, freq_contrib, mSi, mIi, mSf,
+                              mIf);
   }
 }
 

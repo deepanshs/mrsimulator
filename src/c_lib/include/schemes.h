@@ -50,8 +50,12 @@ typedef struct MRS_averaging_scheme {
   complex128 *w4;                    //  buffer for 4nd rank frequency calculation.
   double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
   double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
-  double *scrach;                    //  sscrach memory for calculations.
+  double *scrach;                    //  scrach memory for calculations.
   bool allow_4th_rank;  //  If true, compute wigner matrices for wigner-d 4j.
+  double *amps_real;
+  double *amps_imag;
+  double *phase;
+  complex128 *exp_I_phase;
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;

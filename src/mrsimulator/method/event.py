@@ -202,16 +202,16 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
-    r"""Base ConstantDurationEvent class defines the spin environment and the
+class DelayEvent(BaseEvent):
+    r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
-    event contribute to the spectrum as amplitudes.
+    event contribute to the spectrum as complex amplitude modulations.
 
     Attributes
     ----------
 
     duration:
-        The duration of the event in units of µs. The default is 0.
+        The duration of the event in units of s. The default is 0.
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
@@ -241,11 +241,11 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
         **BaseEvent.property_unit_types,
     }
     property_default_units: ClassVar[Dict] = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent.property_default_units,
     }
     property_units: Dict = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent().property_default_units,
     }
 
@@ -311,4 +311,4 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]
+    event: Union[MixingEvent, DelayEvent, SpectralEvent]

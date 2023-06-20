@@ -37,7 +37,7 @@ def test_warnings():
 
 ME = "MixingEvent"
 SE = "SpectralEvent"
-CE = "ConstantDurationEvent"
+CE = "DelayEvent"
 
 
 def test_nearest_mixing_query():
