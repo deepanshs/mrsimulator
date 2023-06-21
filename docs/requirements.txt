@@ -1,6 +1,7 @@
 numpy>=1.20
 matplotlib>=3.3.3
-csdmpy>=0.4.1
+csdmpy>=0.6.dev2
+astropy<=5.1
 pydantic>=1.0
 monty>=2.0.4
 typing-extensions>=3.7
@@ -14,10 +15,10 @@ nmrglue>=0.9
 
 # Building Docs requirements
 sphinxjp.themes.basicstrap
-sphinx>=2.0
+sphinx<5.0.0
 sphinx-gallery>0.6.2
 pillow>=7.1.2
-breathe==4.34.0
+breathe>=4.34.0
 sphinx_copybutton>=0.3.0
 sphinx_tabs>3.0
 recommonmark

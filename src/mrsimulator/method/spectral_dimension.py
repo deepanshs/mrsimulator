@@ -78,15 +78,15 @@ class SpectralDimension(Parseable):
     events: List[Union[MixingEvent, DelayEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
-        "spectral_width": ["frequency", "dimensionless"],
-        "reference_offset": ["frequency", "dimensionless"],
-        "origin_offset": ["frequency", "dimensionless"],
+        "spectral_width": ["frequency"],
+        "reference_offset": ["frequency"],
+        "origin_offset": ["frequency"],
     }
 
     property_default_units: ClassVar[Dict] = {
-        "spectral_width": ["Hz", "ppm"],
-        "reference_offset": ["Hz", "ppm"],
-        "origin_offset": ["Hz", "ppm"],
+        "spectral_width": ["Hz"],
+        "reference_offset": ["Hz"],
+        "origin_offset": ["Hz"],
     }
 
     property_units: Dict = {
@@ -177,7 +177,7 @@ class SpectralDimension(Parseable):
             )
             return
 
-        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        denominator = self.origin_offset / 1e6
         return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:

@@ -60,7 +60,7 @@ def basic_spectral_dimension_tests(the_dimension):
     the_dimension.reference_offset = -4
     the_dimension.origin_offset = 5e6
     assert np.allclose(the_dimension.coordinates_Hz(), coordinates - 4)
-    assert np.allclose(the_dimension.coordinates_ppm(), (coordinates - 4) / (5 - 4e-6))
+    assert np.allclose(the_dimension.coordinates_ppm(), (coordinates - 4) / 5)
 
     the_dimension.count = 31
     the_dimension.reference_offset = 0
