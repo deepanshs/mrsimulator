@@ -37,6 +37,8 @@ INCLUDE_LIST = [
     "ch1",
     "P",
     "channels",
+    "angle",
+    "phase",
 ]
 
 CONST = string_to_quantity("1")

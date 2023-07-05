@@ -295,7 +295,10 @@ class Method(Parseable):
                     ev.update({k: glb[k]})
                     for ev in dim["events"]
                     for k in glb
-                    if k not in set(ev.keys()).intersection(glb_keys)
+                    if (
+                        "query" not in ev and
+                        k not in set(ev.keys()).intersection(glb_keys)
+                    )
                 ],
             )
             for dim in py_dict["spectral_dimensions"]
