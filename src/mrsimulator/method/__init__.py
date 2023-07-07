@@ -40,6 +40,9 @@ __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
 
 
+DEFAULT_EVENT = {}
+
+
 class Method(Parseable):
     r"""Base Method class. A method class represents the NMR method.
 
@@ -288,21 +291,16 @@ class Method(Parseable):
         ]
         glb_keys = set(glb.keys())
 
-        _ = [
-            (
-                None if "events" in dim else dim.update({"events": [{}]}),
-                [
-                    ev.update({k: glb[k]})
-                    for ev in dim["events"]
-                    for k in glb
-                    if (
-                        "query" not in ev and
-                        k not in set(ev.keys()).intersection(glb_keys)
-                    )
-                ],
-            )
-            for dim in py_dict["spectral_dimensions"]
-        ]
+        for dim in py_dict["spectral_dimensions"]:
+            if "events" not in dim:
+                dim.update({"events": [DEFAULT_EVENT.copy()]})  # Set default if empty
+
+            # Iterate over Events and update to global attributes, if necessary
+            for ev in dim["events"]:
+                shared_keys = set(ev.keys()).intersection(glb_keys)
+                for k in glb:
+                    if k not in shared_keys and "query" not in ev:  # Skip MixingEvent
+                        ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
         mth = super().dict(**kwargs)
