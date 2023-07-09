@@ -17,6 +17,9 @@ What's new
 
 - New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
 
+**Czjzek and Extended Czjzek**
+- The Czjzek model now uses an analytical expression for calculating the probability distribution greatly improving quality and calculation speed.
+
 v0.7.0
 ------
 

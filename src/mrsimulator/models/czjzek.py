@@ -3,10 +3,32 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
-from .utils import x_y_from_zeta_eta
+from .utils import zeta_eta_to_x_y
+from .utils import x_y_to_zeta_eta
+
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+def _analytical_czjzek_pdf(zeta, eta, sigma):
+    """Computes the probability density on a (zeta, eta) grid point for a Czjzek
+    distribution for a given value of sigma.
+    
+    Arguments:
+        (float) zeta: Zeta value of probability to calculate
+        (float) eta: Eta value of probability to calculate
+        (float) sigma: The size of the noise for the Czjzek distribution
+
+    Returns:
+        The normalized probability density function as a numpy array
+    """
+    denom = (2 * np.pi) ** 0.5 * sigma**5
+    res = (zeta**4 * eta) * (1 - eta**2 / 9) / denom
+    res *= np.exp(-(zeta**2 * (1 + (eta**2 / 3))) / (2 * sigma**2))
+    res /= res.sum()  # Normalize total probability to 1
+
+    return res
 
 
 def _czjzek_random_distribution_tensors(sigma, n):
@@ -158,8 +180,33 @@ class CzjzekDistribution(AbstractDistribution):
         tensors = _czjzek_random_distribution_tensors(self.sigma, size)
         if not self.polar:
             return get_Haeberlen_components(tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(tensors))
+        return zeta_eta_to_x_y(*get_Haeberlen_components(tensors))
 
+    def pdf(self, pos, **kwargs):
+        """Overloaded function which uses the analytical expression for the Czjzek
+        distribution to calculate the probability density on the given grid.
+        Additional arguments such as size are ignored.
+
+        Arguments:
+            (tuple) pos: Coordinates along the two dimensions given as numpy arrays to
+                calculate the probability density on
+
+        Returns:
+            The me probability density on the grid given as a numpy array
+        """
+        _sigma = 2 * self.sigma
+        VV, ee = np.meshgrid(pos[0], pos[1])
+
+        # If the polar attribute is true, pos is assumed to be (x, y) grid and must be
+        # converted to (zeta, eta) before passing to the analytical pdf function
+        if self.polar:
+            VV, ee = x_y_to_zeta_eta(x=VV, y=ee)
+
+        amp = _analytical_czjzek_pdf(zeta=VV, eta=ee, sigma=_sigma)
+        amp = amp.reshape((pos[1].size, pos[0].size))  # Reshape into 2D grid array
+
+        # Meshgrid called again to handle the polar and cartesian case
+        return *np.meshgrid(pos[0], pos[1]), amp
 
 class ExtCzjzekDistribution(AbstractDistribution):
     r"""An extended Czjzek distribution distribution model.
@@ -249,4 +296,4 @@ class ExtCzjzekDistribution(AbstractDistribution):
 
         if not self.polar:
             return get_Haeberlen_components(total_tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(total_tensors))
+        return zeta_eta_to_x_y(*get_Haeberlen_components(total_tensors))

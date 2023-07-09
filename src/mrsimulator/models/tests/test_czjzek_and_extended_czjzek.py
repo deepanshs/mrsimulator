@@ -3,7 +3,7 @@ from os import path
 import numpy as np
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
-from mrsimulator.models.utils import x_y_from_zeta_eta
+from mrsimulator.models.utils import zeta_eta_to_x_y
 from mrsimulator.models.utils import x_y_to_zeta_eta
 
 __author__ = "Deepansh J. Srivastava"
@@ -29,7 +29,7 @@ def test_extended_czjzek_eta_distribution_1():
 def test_extended_czjzek_polar():
     S0 = {"zeta": 1, "eta": 0.1}
     x, y = ExtCzjzekDistribution(S0, eps=0.05, polar=True).rvs(size=COUNT)
-    x1, y1 = x_y_from_zeta_eta(*x_y_to_zeta_eta(x, y))
+    x1, y1 = zeta_eta_to_x_y(*x_y_to_zeta_eta(x, y))
     np.testing.assert_almost_equal(x, x1)
     np.testing.assert_almost_equal(y, y1)
 
@@ -118,6 +118,6 @@ def test_czjzek_pdf():
 
 def test_czjzek_polar():
     x, y = CzjzekDistribution(sigma=0.5, polar=True).rvs(size=COUNT)
-    x1, y1 = x_y_from_zeta_eta(*x_y_to_zeta_eta(x, y))
+    x1, y1 = zeta_eta_to_x_y(*x_y_to_zeta_eta(x, y))
     np.testing.assert_almost_equal(x, x1)
     np.testing.assert_almost_equal(y, y1)
