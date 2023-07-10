@@ -126,7 +126,11 @@ class Gaussian(Apodization):
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
+        return (
+            np.ones_like(x)
+            if self.FWHM == 0.0
+            else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
+        )
 
 
 class Exponential(Apodization):
@@ -175,7 +179,11 @@ class Exponential(Apodization):
 
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))
+        return (
+            np.ones_like(x)
+            if self.FWHM == 0.0
+            else np.exp(-self.FWHM * np.pi * np.abs(x))
+        )
 
 
 class SkewedGaussian(Apodization):
