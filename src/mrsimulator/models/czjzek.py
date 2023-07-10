@@ -3,8 +3,8 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
-from .utils import zeta_eta_to_x_y
 from .utils import x_y_to_zeta_eta
+from .utils import zeta_eta_to_x_y
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -14,7 +14,7 @@ __email__ = "srivastava.89@osu.edu"
 def _analytical_czjzek_pdf(zeta, eta, sigma):
     """Computes the probability density on a (zeta, eta) grid point for a Czjzek
     distribution for a given value of sigma.
-    
+
     Arguments:
         (float) zeta: Zeta value of probability to calculate
         (float) eta: Eta value of probability to calculate
@@ -29,6 +29,57 @@ def _analytical_czjzek_pdf(zeta, eta, sigma):
     res /= res.sum()  # Normalize total probability to 1
 
     return res
+
+
+def _extended_czjzek_pdf_from_tensors(pos, tensors, zeta0, eta0, epsilon, polar):
+    """Takes in a list of random noise tensors along with the parameters for
+    a given Extended Czjzek distribution, applies the requisite math to
+    the tensors, then diagonalizes the tensors to get the (zeta, eta)
+    distribution. This allows the same sampling points to be drawn between different
+    minimization steps
+
+    Arguments:
+        (tuple) pos: Two np.ndarrays defining the grid on which to calculate the pdf
+        (np.ndarray) tensors: A np.ndarray with shape (n, 3, 3) representing
+            the random tensors in the Extended Czjzek model
+        (float) zeta0: The zeta value of the central tensor
+        (float) eta0: The eta value of the central tensor
+        (float) epsilon: The noise parameter for the Extended Czjzek distribution
+        (bool) polar: Weather the distribution should be sampled in polar coordinates.
+
+    Returns:
+        (np.ndarray, np.ndarray) of the zeta and eta distributions, respectively
+    """
+    T0 = np.asarray([zeta0 * (eta0 - 1) / 2, -zeta0 * (eta0 + 1) / 2, zeta0])
+
+    norm_T0 = np.linalg.norm(T0)
+    rho = epsilon * norm_T0 / np.sqrt(30)
+
+    if rho != 0:
+        ext_tensors = (rho * tensors) + np.diag(T0)
+    else:
+        ext_tensors = tensors.copy()
+
+    zeta_dist, eta_dist = get_Haeberlen_components(ext_tensors)
+    if polar:
+        zeta_dist, eta_dist = zeta_eta_to_x_y(zeta_dist, eta_dist)
+
+    delta_0 = (pos[0][1] - pos[0][0]) / 2
+    delta_1 = (pos[1][1] - pos[1][0]) / 2
+    pts_0 = [pos[0][0] - delta_0, pos[0][-1] + delta_0]
+    pts_1 = [pos[1][0] - delta_1, pos[1][-1] + delta_1]
+
+    size_0 = pos[0].size
+    size_1 = pos[1].size
+
+    hist, _, _ = np.histogram2d(
+        zeta_dist, eta_dist, bins=[size_0, size_1], range=[pts_0, pts_1]
+    )
+
+    hist /= hist.sum()
+    xx, yy = np.meshgrid(pos[0], pos[1])
+
+    return xx, yy, hist.T
 
 
 def _czjzek_random_distribution_tensors(sigma, n):
@@ -207,6 +258,7 @@ class CzjzekDistribution(AbstractDistribution):
 
         # Meshgrid called again to handle the polar and cartesian case
         return *np.meshgrid(pos[0], pos[1]), amp
+
 
 class ExtCzjzekDistribution(AbstractDistribution):
     r"""An extended Czjzek distribution distribution model.

@@ -1,7 +1,11 @@
+import csdmpy as cp
 import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
+from mrsimulator.models.czjzek import _extended_czjzek_pdf_from_tensors
+from mrsimulator.models.czjzek import CzjzekDistribution
+from mrsimulator.spin_system.tensors import SymmetricTensor
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -142,7 +146,7 @@ def _traverse_dictionaries(instance, parent="spin_systems"):
     return []
 
 
-def _post_sim_LMFIT_params(params, process, index):
+def _make_params_single_processor(params, process, index):
     """Creates a LMFIT Parameters object for SignalProcessor operations involved in
     spectrum fitting.
 
@@ -179,7 +183,10 @@ def make_signal_processor_params(processors: list):
         raise ValueError("Expecting a list of `SignalProcessor` objects.")
 
     params = Parameters()
-    _ = [_post_sim_LMFIT_params(params, obj, i) for i, obj in enumerate(processors)]
+    _ = [
+        _make_params_single_processor(params, proc, i)
+        for i, proc in enumerate(processors)
+    ]
     return params
 
 
@@ -520,3 +527,495 @@ def residuals(sim: Simulator, processors: list = None):
         res.y[0].components[0] *= -1
 
     return residual_
+
+
+def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq_Hz):
+    """Apply isotropic chemical shift to a CSDM object using the FFT shift theorem."""
+    csdm_obj = csdm_obj.fft()
+    time_coords = csdm_obj.x[0].coordinates.value
+    iso_shift_Hz = larmor_freq_Hz * iso_shift_ppm
+    csdm_obj.y[0].components[0] *= np.exp(-np.pi * 2j * time_coords * iso_shift_Hz)
+    csdm_obj = csdm_obj.fft()
+
+    return csdm_obj
+
+
+def make_LMFIT_params_Czjzek(
+    cz_models: list,
+    weights: list = None,
+    iso_shifts: list = None,
+    processor: sp.SignalProcessor = None,
+) -> Parameters:
+    """Generates the LMfit Parameters object with the proper keywords for a Czjzek
+    distribution. Each distribution has the following parameters:
+    - czjzek_i_sigma
+    - czjzek_i_iso_shift
+    - czjzek_i_weight
+
+    where *i* refers to the :math:i^\text{th} Czjzek distribution
+
+    Arguments:
+        (list) cz_models: A list of :class:`~mrsimulator.models.CzjzekDistribution`
+            objects used to set initial values.
+        (list) weights: An optional list of float values defining the relative weight of
+            each Czjzek distribution. The default is (1 / n_dist), that is, all
+            distributions have the same weight
+        (list) iso_shifts: An optional list of float values defining the central
+            isotropic chemical shift for each distribution.
+        (sp.SignalProcessor) processor: An optional signal processor to apply
+            post-simulation signal processing to each guess spectrum.
+
+    Returns:
+        A LMfit Parameters object
+    """
+    n_dist = len(cz_models)
+    iso_shifts = [0] * n_dist if iso_shifts is None else iso_shifts
+    weights = np.ones(n_dist) if weights is None else np.asarray(weights)
+    weights /= weights.sum()  # Normalize weights array to total of 1
+
+    params = Parameters()
+    for i in range(n_dist):
+        params.add(f"czjzek_{i}_sigma", value=cz_models[i].sigma, min=0)
+        params.add(f"czjzek_{i}_iso_shift", value=iso_shifts[i])
+        params.add(f"czjzek_{i}_weight", value=weights[i], min=0, max=1)
+
+    # Set last weight parameter as a non-free variable
+    expr = "-".join([f"czjzek_{i}_weight" for i in range(n_dist - 1)])
+    expr = "1" if expr == "" else f"1-{expr}"
+    params[f"czjzek_{n_dist-1}_weight"].vary = False
+    params[f"czjzek_{n_dist-1}_weight"].expr = expr
+
+    # Add SignalProcessor parameters, if requested
+    if processor is not None:
+        _make_params_single_processor(params, processor, 0)
+
+    return params
+
+
+def _make_spectrum_from_Czjzek_distribution_parameters(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+) -> cp.CSDM:
+    """Helper function for generating a spectrum from a set of LMfit Parameters and
+    and arguments for defining the grid, kernel, etc. The other functions used in least-
+    squares minimization use this function to reduce code overlap.
+
+    Arguments:
+        (Parameters) params: The LMfit parameters object holding parameters used during
+            the least-squares minimization.
+        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
+        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
+            sample the distribution.
+        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
+            is defined using the Haberlen components.
+        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
+            on the same grid defined by pos.
+        (int) n_dist: The number of Czjzek distributions to fit for.
+        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
+            theorem to apply an isotropic chemical shift to each distribution.
+        (sp.SignalProcessor) processor: A
+            :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
+            post-simulation signal processing to the resulting spectrum.
+            TODO: expand processor to apply to individual distributions (as a list)
+
+    Returns:
+        Guess spectrum as a cp.CSDM object
+
+    """
+    guess_spectrum = exp_spectrum.copy()
+    guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
+
+    for i in range(n_dist):
+        _, _, amp = CzjzekDistribution(
+            sigma=params[f"czjzek_{i}_sigma"], polar=polar
+        ).pdf(pos)
+
+        # Dot amplitude with kernel, then package as CSDM object
+        spec_tmp = guess_spectrum.copy()
+        spec_tmp.y[0].components[0] = np.dot(amp.flatten(), kernel)
+
+        # Apply isotropic chemical shift to distribution using FFT shift theorem
+        spec_tmp = _apply_iso_shift(
+            csdm_obj=spec_tmp,
+            iso_shift_ppm=params[f"czjzek_{i}_iso_shift"].value,
+            larmor_freq_Hz=larmor_freq_Hz,
+        )
+
+        guess_spectrum += spec_tmp.real * params[f"czjzek_{i}_weight"].value
+
+    if processor is not None:
+        _update_processors_from_LMFIT_params(params, [processor])
+        guess_spectrum = processor.apply_operations(dataset=guess_spectrum).real
+
+    return guess_spectrum
+
+
+def LMFIT_min_function_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+) -> np.ndarray:
+    """The minimization routine for fitting a set of Czjzek models to an experimental
+    spectrum.
+
+    Arguments:
+        (Parameters) params: The LMfit parameters object holding parameters used during
+            the least-squares minimization.
+        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
+        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
+            sample the distribution.
+        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
+            is defined using the Haberlen components.
+        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
+            on the same grid defined by pos.
+        (int) n_dist: The number of Czjzek distributions to fit for.
+        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
+            theorem to apply an isotropic chemical shift to each distribution.
+        (sp.SignalProcessor) processor: A
+            :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
+            post-simulation signal processing to the resulting spectrum.
+            TODO: expand processor to apply to individual distributions (as a list)
+
+        Returns:
+            A residual array as a numpy array.
+    """
+    guess_spectrum = _make_spectrum_from_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+    )
+
+    return (exp_spectrum - guess_spectrum).y[0].components[0]
+
+
+def bestfit_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+) -> cp.CSDM:
+    """Returns the best-fit spectrum as a CSDM object"""
+    return _make_spectrum_from_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+    )
+
+
+def residuals_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+) -> cp.CSDM:
+    """Returns the residuals spectrum as a CSDM object"""
+    bestfit = _make_spectrum_from_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+    )
+
+    return exp_spectrum - bestfit
+
+
+def make_LMFIT_params_extended_Czjzek(
+    ext_cz_models: list,
+    weights: list = None,
+    iso_shifts: list = None,
+    processor: sp.SignalProcessor = None,
+    tensor_type: str = "shielding",
+) -> Parameters:
+    """Generates the LMfit Parameters object with the proper keywords for an Extended
+    Czjzek distribution. Each distribution has the following parameters:
+    - ext_czjzek_i_zeta0 *or* ext_czjzek_i_Cq0
+    - ext_czjzek_i_eta0
+    - ext_czjzek_i_epsilon
+    - ext_czjzek_i_iso_shift
+    - ext_czjzek_i_weight
+
+    where *i* refers to the :math:i^\text{th} Extended Czjzek distribution. Note that
+    Cq values are assumed to be in units of MHz.
+
+    Arguments:
+        (list) ext_cz_models: A list of
+            :class:`~mrsimulator.models.ExtCzjzekDistribution` objects used to set
+            initial values.
+        (list) weights: An optional list of float values defining the relative weight of
+            each Czjzek distribution. The default is (1 / n_dist), that is, all
+            distributions have the same weight
+        (list) iso_shifts: An optional list of float values defining the central
+            isotropic chemical shift for each distribution.
+        (sp.SignalProcessor) processor: An optional signal processor to apply
+            post-simulation signal processing to each guess spectrum.
+        (str) tensor_type: A string literal describing if the Extended Czjzek models
+            define a distribution of symmetric shielding or quadrupolar tensors. The
+            allowed values are `shielding` and `quadrupolar`.
+
+    Returns:
+        A LMfit Parameters object
+    """
+    if tensor_type not in {"shielding", "quadrupolar"}:
+        raise ValueError(f"Unrecognized value of {tensor_type} for `tensor_type.")
+
+    n_dist = len(ext_cz_models)
+    iso_shifts = [0] * n_dist if iso_shifts is None else iso_shifts
+    weights = np.ones(n_dist) if weights is None else np.asarray(weights)
+    weights /= weights.sum()  # Normalize weights array to total of 1
+
+    params = Parameters()
+    for i in range(n_dist):
+        dominant_tensor = ext_cz_models[i].symmetric_tensor
+        if isinstance(dominant_tensor, dict):  # Convert to a SymmetricTensor object
+            dominant_tensor = SymmetricTensor(**dominant_tensor)
+
+        if tensor_type == "shielding":
+            params.add(f"ext_czjzek_{i}_zeta0", value=dominant_tensor.zeta)
+        elif tensor_type == "quadrupolar":
+            params.add(f"ext_czjzek_{i}_Cq0", value=dominant_tensor.Cq)
+
+        params.add(f"ext_czjzek_{i}_eta0", value=dominant_tensor.eta, min=0, max=1)
+        params.add(f"ext_czjzek_{i}_epsilon", value=ext_cz_models[i].eps, min=0)
+        params.add(f"ext_czjzek_{i}_iso_shift", value=iso_shifts[i])
+        params.add(f"ext_czjzek_{i}_weight", value=weights[i], min=0, max=1)
+
+    # Set last weight parameter as a non-free variable
+    expr = "-".join([f"ext_czjzek_{i}_weight" for i in range(n_dist - 1)])
+    expr = "1" if expr == "" else f"1-{expr}"
+    params[f"ext_czjzek_{n_dist-1}_weight"].vary = False
+    params[f"ext_czjzek_{n_dist-1}_weight"].expr = expr
+
+    # Add SignalProcessor parameters, if requested
+    if processor is not None:
+        _make_params_single_processor(params, processor, 0)
+
+    return params
+
+
+def _make_spectrum_from_extended_Czjzek_distribution_parameters(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    tensors: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+    tensor_type: str = "shielding",
+) -> cp.CSDM:
+    """Helper function for generating a spectrum from a set of LMfit Parameters and
+    and arguments for defining the grid, kernel, etc. The other functions used in least-
+    squares minimization use this function to reduce code overlap.
+
+    Arguments:
+        (Parameters) params: The LMfit parameters object holding parameters used during
+            the least-squares minimization.
+        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
+        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
+            sample the distribution.
+        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
+            is defined using the Haberlen components.
+        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
+            on the same grid defined by pos.
+        (int) n_dist: The number of Czjzek distributions to fit for.
+        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
+            theorem to apply an isotropic chemical shift to each distribution.
+        (sp.SignalProcessor) processor: A
+            :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
+            post-simulation signal processing to the resulting spectrum.
+            TODO: expand processor to apply to individual distributions (as a list)
+
+    Returns:
+        Guess spectrum as a cp.CSDM object
+
+    """
+    if tensor_type not in {"shielding", "quadrupolar"}:
+        raise ValueError(f"Unknown `tensor_type` value of {tensor_type}.")
+
+    guess_spectrum = exp_spectrum.copy()
+    guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
+
+    for i in range(n_dist):
+        zeta0 = (
+            params[f"ext_czjzek_{i}_zeta0"].value
+            if tensor_type == "shielding"
+            else params[f"ext_czjzek_{i}_Cq0"].value
+        )
+        eta0 = params[f"ext_czjzek_{i}_eta0"].value
+        epsilon = params[f"ext_czjzek_{i}_epsilon"].value
+
+        # Draw the pdf from the set of static random tensors
+        _, _, amp = _extended_czjzek_pdf_from_tensors(
+            pos=pos,
+            tensors=tensors,
+            zeta0=zeta0,
+            eta0=eta0,
+            epsilon=epsilon,
+            polar=polar,
+        )
+
+        # Dot amplitude with kernel, then package as CSDM object
+        spec_tmp = guess_spectrum.copy()
+        spec_tmp.y[0].components[0] = np.dot(amp.flatten(), kernel)
+
+        # Apply isotropic chemical shift to distribution using FFT shift theorem
+        spec_tmp = _apply_iso_shift(
+            csdm_obj=spec_tmp,
+            iso_shift_ppm=params[f"ext_czjzek_{i}_iso_shift"].value,
+            larmor_freq_Hz=larmor_freq_Hz,
+        )
+
+        guess_spectrum += spec_tmp.real * params[f"ext_czjzek_{i}_weight"].value
+
+    if processor is not None:
+        _update_processors_from_LMFIT_params(params, [processor])
+        guess_spectrum = processor.apply_operations(dataset=guess_spectrum).real
+
+    return guess_spectrum
+
+
+def LMFIT_min_function_extended_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    tensors: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+    tensor_type: str = "shielding",
+) -> np.ndarray:
+    """The minimization routine for fitting a set of Czjzek models to an experimental
+    spectrum.
+
+    Arguments:
+        (Parameters) params: The LMfit parameters object holding parameters used during
+            the least-squares minimization.
+        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
+        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
+            sample the distribution.
+        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
+            is defined using the Haberlen components.
+        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
+            on the same grid defined by pos.
+        (np.ndarray) tensors: A set of random Czjzek tensors in 5-dimensional space to
+            calculate the Extended Czjzek tensors from.
+        (int) n_dist: The number of Czjzek distributions to fit for.
+        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
+            theorem to apply an isotropic chemical shift to each distribution.
+        (sp.SignalProcessor) processor: A
+            :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
+            post-simulation signal processing to the resulting spectrum.
+            TODO: expand processor to apply to individual distributions (as a list)
+        (str) tensor_type: A string literal describing if the Extended Czjzek models
+            define a distribution of symmetric shielding or quadrupolar tensors. The
+            allowed values are `shielding` and `quadrupolar`.
+
+        Returns:
+            A residual array as a numpy array.
+    """
+    guess_spectrum = _make_spectrum_from_extended_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        tensors,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+        tensor_type,
+    )
+
+    return (exp_spectrum - guess_spectrum).y[0].components[0]
+
+
+def bestfit_extended_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    tensors: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+    tensor_type: str = "shielding",
+) -> cp.CSDM:
+    """Returns the bestfit spectrum as a CSDM object"""
+    return _make_spectrum_from_extended_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        tensors,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+        tensor_type,
+    )
+
+
+def residuals_extended_Czjzek(
+    params: Parameters,
+    exp_spectrum: cp.CSDM,
+    pos: tuple,
+    polar: bool,
+    kernel: np.ndarray,
+    tensors: np.ndarray,
+    n_dist: int,
+    larmor_freq_Hz: float,
+    processor: sp.SignalProcessor = None,
+    tensor_type: str = "shielding",
+) -> cp.CSDM:
+    """Returns the residuals spectrum as a CSDM object"""
+    bestfit = _make_spectrum_from_extended_Czjzek_distribution_parameters(
+        params,
+        exp_spectrum,
+        pos,
+        polar,
+        kernel,
+        tensors,
+        n_dist,
+        larmor_freq_Hz,
+        processor,
+        tensor_type,
+    )
+
+    return exp_spectrum - bestfit

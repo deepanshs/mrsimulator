@@ -12,6 +12,7 @@ What's new
 - Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use-cases and examples.
 - Shortcuts for frequency contributions, such as ``Shielding``, ``Isotropic``, and ``cross``.
   Sets of contributions can also be excluded by placing an exclamation mark in-front of the string, for example ``"!Shielding"`` excludes shielding interactions.
+- New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra. See (TODO: ADD) in the examples gallery for more information.
 
 **Simulator**
 
