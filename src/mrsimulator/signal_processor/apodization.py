@@ -248,7 +248,7 @@ class SkewedGaussian(Apodization):
         prob_func = [np.exp(-(0.5) * (sigma * j) ** 2) for j in x]
         cum_prob_func = [0.5 + 0.5 * erf(self.skew * j / np.sqrt(2)) for j in x]
         sg = np.asarray([a * b for a, b in zip(prob_func, cum_prob_func)])
-        return 1.0 if self.skew == 0.0 else sg
+        return np.ones_like(x) if self.FWHM == 0.0 else sg
 
 
 class TopHat(Apodization):
