@@ -257,7 +257,8 @@ class CzjzekDistribution(AbstractDistribution):
         amp = amp.reshape((pos[1].size, pos[0].size))  # Reshape into 2D grid array
 
         # Meshgrid called again to handle the polar and cartesian case
-        return *np.meshgrid(pos[0], pos[1]), amp
+        dim0, dim1 = np.meshgrid(pos[0], pos[1])
+        return dim0, dim1, amp
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
