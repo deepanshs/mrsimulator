@@ -49,7 +49,7 @@ def test_TransitionQuery():
     assert obj3.ch3 is None, "TransitionQuery ch3 not equal."
 
 
-def test_RFRotation():
+def test_RotationQuery():
     # parse units
     test = {"angle": "90 deg", "phase": "5 deg"}
     rf_obj = RotationQuery.parse_dict_with_units(test)
@@ -67,6 +67,11 @@ def test_RFRotation():
     rf_obj = RotationQuery(**test)
     assert rf_obj.angle == 3.1415, "RotationQuery angle not equal."
     assert rf_obj.phase == 1.212, "RotationQuery phase not equal."
+
+    # Always serialize angle and phase
+    rf_obj = RotationQuery(angle=0, phase=0)
+    assert rf_obj.json(units=False) == {"angle": 0, "phase": 0}
+    assert rf_obj.json(units=True) == {"angle": "0.0 rad", "phase": "0.0 rad"}
 
 
 def test_MixingQuery():
@@ -87,25 +92,43 @@ def test_MixingQuery():
     assert obj1.channels == [rf1, rf2, None]
 
     # direct initialization
-    test2 = {"ch2": {"angle": 5.101, "phase": 1.61}}
+    test2 = {"ch2": {"angle": 1.101, "phase": 1.61}}
     obj2 = MixingQuery(**test2)
     assert obj2.name is None
     assert obj2.description is None
     assert obj2.label is None
     assert obj2.ch1 is None
-    assert obj2.ch2 == RotationQuery(angle=5.101, phase=1.61)
+    assert obj2.ch2 == RotationQuery(angle=1.101, phase=1.61)
     assert obj2.ch3 is None
+
+    # JSON tests
+    test3 = {"ch1": {"angle": 1.23, "phase": 1.23}}
+    obj3 = MixingQuery(**test3)
+    assert obj3.json(units=False) == test3
+    assert obj3.json(units=True) == {"ch1": {"angle": "1.23 rad", "phase": "1.23 rad"}}
 
 
 def test_MixingEnum():
     total_mix = MixingEnum["TotalMixing"]
     assert total_mix.value == "TotalMixing"
+    assert total_mix.json(units=True) == "TotalMixing"
+    assert total_mix.json(units=False) == "TotalMixing"
 
     no_mix = MixingEnum["NoMixing"]
     assert no_mix.value == MixingQuery(
         ch1={"angle": 0, "phase": 0},
         ch2={"angle": 0, "phase": 0},
         ch3={"angle": 0, "phase": 0},
+    )
+    assert no_mix.json(units=False) == dict(
+        ch1={"angle": 0, "phase": 0},
+        ch2={"angle": 0, "phase": 0},
+        ch3={"angle": 0, "phase": 0},
+    )
+    assert no_mix.json(units=True) == dict(
+        ch1={"angle": "0.0 rad", "phase": "0.0 rad"},
+        ch2={"angle": "0.0 rad", "phase": "0.0 rad"},
+        ch3={"angle": "0.0 rad", "phase": "0.0 rad"},
     )
 
     # NOTE: This test will need to be updated as more enumerations are added

@@ -3,6 +3,7 @@ import pytest
 from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import DelayEvent
 from mrsimulator.method.event import MixingEvent
+from mrsimulator.method.event import parse_dict_to_ev_class
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
@@ -255,9 +256,23 @@ def test_total_and_no_mixing():
 
     no_mix = MixingEvent(query="NoMixing")
     assert_all_zero(no_mix)
+    assert no_mix.json() == {
+        "query": {
+            "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
+        }
+    }
 
     no_mix = MixingEvent.parse_dict_with_units({"query": "NoMixing"})
     assert_all_zero(no_mix)
+    assert no_mix.json() == {
+        "query": {
+            "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
+        }
+    }
 
     total_mix = MixingEvent(query=MixingEnum.TotalMixing)
     assert total_mix.query.value == "TotalMixing"
@@ -302,3 +317,20 @@ def test_BaseEvent_combination():
         ],
     ], [[[1, 0, 0, 0], [0, 0, 1, 0]], [[-1, 0, 0, 0], [0, 0, -1, 0]]]
     check_equal(query, ["A", "B", "A", "B"], ["A", "B"], res)
+
+
+def test_parse_dict_to_ev_class():
+    # SpectralEvent parse
+    json_dict = {"transition_queries": [{"ch1": {"P": [-1], "D": [1]}}]}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), SpectralEvent)
+
+    # DelayEvent parse
+    json_dict = {"duration": "1 µs"}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), DelayEvent)
+
+    # MixingEvent parse
+    json_dict = {"query": {"ch1": {"angle": "0.0 rad", "phase": "0.0 rad"}}}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), MixingEvent)
