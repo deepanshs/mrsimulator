@@ -17,6 +17,10 @@ What's new
 
 - New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
 
+**Bug Fixes**
+
+- Fixed bug where ``MixingEnum`` class had no attribute ``json`` (Issue [#260](https://github.com/deepanshs/mrsimulator/issues/260))
+
 v0.7.0
 ------
 

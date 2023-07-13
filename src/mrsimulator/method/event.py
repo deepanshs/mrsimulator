@@ -23,6 +23,25 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+def parse_dict_to_ev_class(py_dict: dict):
+    """Takes in a JSON representation of some Event class and parses it to an object of
+    the correct Event class
+
+    Arguments:
+        (dict) py_dict: JSON representation of the Event class as a dictionary
+
+    Returns:
+        Either a SpectralEvent, DelayEvent, or MixingEvent object
+    """
+    if "duration" in py_dict:
+        return DelayEvent.parse_dict_with_units(py_dict)
+
+    if "query" in py_dict:
+        return MixingEvent.parse_dict_with_units(py_dict)
+
+    return SpectralEvent.parse_dict_with_units(py_dict)
+
+
 class BaseEvent(Parseable):
     """Base BaseEvent class. If the value of the attribute is None, the value of the
     corresponding global attribute will be used instead.
