@@ -16,7 +16,7 @@ dependencies:
       - monty>=2.0.4
       - csdmpy>=0.6.dev2
       - astropy>=3.0
-      - pydantic>=1.9
+      - pydantic==1.10
       - typing-extensions>=3.7
       - flake8
       - lmfit>=1.0.2
