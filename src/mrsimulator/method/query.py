@@ -276,6 +276,14 @@ class RotationQuery(Parseable):
 
     class Config:
         validate_assignment = True
+        extra = "forbid"
+
+    def json(self, units=True, **kwargs):
+        return (
+            {k: f"{getattr(self, k)} {u}" for k, u in self.property_units.items()}
+            if units
+            else {k: getattr(self, k) for k in self.property_units}
+        )
 
 
 class MixingQuery(Parseable):
@@ -300,9 +308,30 @@ class MixingQuery(Parseable):
 
     """
 
-    ch1: Optional[RotationQuery] = None
-    ch2: Optional[RotationQuery] = None
-    ch3: Optional[RotationQuery] = None
+    ch1: Optional[RotationQuery] = Field(
+        title="ch1",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch2: Optional[RotationQuery] = Field(
+        title="ch2",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch3: Optional[RotationQuery] = Field(
+        title="ch3",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
 
     class Config:
         validate_assignment = True
@@ -368,6 +397,10 @@ class MixingEnum(Enum):
     def allowed_enums(cls):
         """Returns list of str corresponding to all valid enumerations"""
         return [e.name for e in cls]
+
+    def json(self, **kwargs):
+        """Return a JSON-compliant serialization of the enumeration"""
+        return self.value if isinstance(self.value, str) else self.value.json(**kwargs)
 
     TotalMixing: str = "TotalMixing"
     NoMixing: MixingQuery = MixingQuery(

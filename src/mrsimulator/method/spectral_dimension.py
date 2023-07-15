@@ -16,6 +16,7 @@ from pydantic import validator
 from .event import DelayEvent
 from .event import Event
 from .event import MixingEvent
+from .event import parse_dict_to_ev_class
 from .event import SpectralEvent
 from .utils import cartesian_product
 
@@ -139,10 +140,7 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                DelayEvent.parse_dict_with_units(e)
-                if "duration" in e
-                else SpectralEvent.parse_dict_with_units(e)
-                for e in py_dict_copy["events"]
+                parse_dict_to_ev_class(e) for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
