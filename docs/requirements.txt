@@ -2,7 +2,7 @@ numpy>=1.20
 matplotlib>=3.3.3
 csdmpy>=0.6.dev2
 astropy>=3.0
-pydantic==1.10
+pydantic==2.2.0
 monty>=2.0.4
 typing-extensions>=3.7
 lmfit>=1.0.2
