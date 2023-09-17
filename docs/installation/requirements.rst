@@ -21,11 +21,11 @@ following operating systems:
 - `lmfit>=1.0.3 <https://lmfit.github.io/lmfit-py/>`_ for least-squares fitting
 - `pandas>=1.1.3 <https://pandas.pydata.org/docs/>`_
 - `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
-- `pydantic==1.10 <https://pydantic-docs.helpmanual.io>`_
+- `pydantic<2 <https://pydantic-docs.helpmanual.io>`_
 - `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
 - monty>=2.0.4
 - typing-extensions>=3.7
-- numexpr>=2.7.1
+- numexpr==2.8.4
 - psutil>=5.4.8
 - joblib>=1.0.0
 
