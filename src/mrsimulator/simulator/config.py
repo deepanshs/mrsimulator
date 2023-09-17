@@ -9,11 +9,22 @@ __email__ = "srivastava.89@osu.edu"
 
 # decompose spectrum
 __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
+
+# amplitude interpolation
 __isotropic_interpolation_enum__ = {"linear": 0, "gaussian": 1}
 
 # integration volume
 __integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
 __integration_volume_octants__ = [1, 4]
+
+# sample states
+__set_state_enum__ = ["solid", "liquid"]
+LIQUID_DEFAULT_CONFIG = {
+    "integration_density": 1,
+    "integration_volume": "octant",
+    "number_of_sidebands": 1,
+    "number_of_gamma_angles": 1,
+}
 
 
 class ConfigSimulator(Parseable):
@@ -65,6 +76,16 @@ class ConfigSimulator(Parseable):
         - ``linear`` (default): linear interpolation.
         - ``gaussian``:  Gaussian interpolation with `sigma=0.25*bin_width`.
 
+    sample_state: enum (optional).
+        Can enforce optimizations during simulation depending on the assumed sample
+        state. The valid literals are
+
+        - ``solid`` (default): Perform calculations as normal averaging over multiple
+          orientations and sidebands.
+        - ``liquid``: When set, only isotropic contributions are assumed relevant and
+          calculations are performed on one orientation only. Frequency contributions
+          are also set to ``["Shielding1_0", "J1_0"]``.
+
     Example
     -------
 
@@ -82,6 +103,7 @@ class ConfigSimulator(Parseable):
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
+    sample_state: Literal["solid", "liquid"] = "solid"
 
     class Config:
         extra = "forbid"
@@ -89,7 +111,9 @@ class ConfigSimulator(Parseable):
         validate_assignment = True
 
     def get_int_dict(self):
-        py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
+        py_dict = self.dict(
+            exclude={"property_units", "name", "description", "label", "sample_state"}
+        )
         py_dict["integration_volume"] = __integration_volume_enum__[
             self.integration_volume
         ]
@@ -101,17 +125,13 @@ class ConfigSimulator(Parseable):
         ]
         return py_dict
 
-    # averaging scheme. This contains the c pointer used in frequency evaluation
-    # at c-level.
-    # @property
-    # def averaging_scheme(self):
-    #     return self._averaging_scheme
-
-    # @averaging_scheme.setter
-    # def averaging_scheme(self, other):
-    #     if isinstance(other, AveragingScheme):
-    #         self._averaging_scheme = other
-    #     raise ValueError("Expecting an instance of either the AveragingScheme class.")
+    def _set_sample_state_defaults(self):
+        """Assigns the default values for a given sample state stored under the
+        sample_state attribute.
+        """
+        if self.sample_state == "liquid":
+            for k, v in LIQUID_DEFAULT_CONFIG.items():
+                setattr(self, k, v)
 
     def get_orientations_count(self):
         """Return the total number of orientations.

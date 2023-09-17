@@ -399,7 +399,12 @@ class Simulator(Parseable):
             pathways = get_chunks(opt["precomputed_pathways"][index], n_jobs)
             weights = get_chunks(opt["precomputed_weights"][index], n_jobs)
 
+            # Actions related to the configuration object
+            self.config._set_sample_state_defaults()  # Only updates on 'liquid'
             config_dict = self.config.get_int_dict()
+            if self.config.sample_state == "liquid":
+                self._set_only_isotropic_contributions()
+
             jobs = (
                 delayed(core_simulator)(
                     method=method,
@@ -585,6 +590,16 @@ class Simulator(Parseable):
             if pack_as_csdm
             else np.asarray(simulated_dataset)
         )
+
+    def _set_only_isotropic_contributions(self):
+        """Sets all frequency contributions attributes to Isotropic contributions, that
+        is ``["Shielding1_0", "J1_0"]`` for all methods held by the Simulator
+        """
+        for mth in self.methods:
+            for sd in mth.spectral_dimensions:
+                for ev in sd.events:
+                    if hasattr(ev, "freq_contrib"):
+                        setattr(ev, "freq_contrib", ["Shielding1_0", "J1_0"])
 
 
 class Sites(AbstractList):
