@@ -89,7 +89,7 @@ jobs:
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
 
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
-      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36*' }}"
+      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36* cp312*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
