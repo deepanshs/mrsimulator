@@ -5,7 +5,7 @@ channels:
 dependencies:
   - fftw>=3.3.9
   - openblas
-  - numpy>=1.17
+  - numpy>=1.20
   - nomkl
   - setuptools>=27.3
   - cython>=0.29
@@ -14,8 +14,9 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.4.1
-      - pydantic>=1.9
+      - csdmpy>=0.6.dev2
+      - astropy>=3.0
+      - pydantic<2
       - typing-extensions>=3.7
       - flake8
       - lmfit>=1.0.2

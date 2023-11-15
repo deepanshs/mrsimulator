@@ -84,7 +84,7 @@ Method object is organized according to the UML diagram below.
 At the heart of a Method object, assigned to its attribute
 ``spectral_dimensions``, is an ordered list of :ref:`spectral_dim_api` objects
 in the same order as the time evolution dimensions of the experimental NMR
-sequence. In each SpectralDimension object, an ordered list of :ref:`event_api`
+sequence. In each SpectralDimension object is an ordered list of :ref:`event_api`
 objects assigned to the attribute ``events``; Event objects are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.DelayEvent`, and (3)
@@ -102,7 +102,9 @@ contributions they evolve. No coherence transfer among transitions or
 populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
 :ref:`enumeration literals<freq_contrib_api>` and placed in the ``freq_contrib``
-attribute of the event. If ``freq_contrib`` is left unspecified, i.e., the
+attribute of the event. Frequency contributions can be individually excluded by
+placing an exclamation mark in front of the string representing the enumeration
+literal. If ``freq_contrib`` is left unspecified, i.e., the
 value of ``freq_contrib`` is set to ``None``, a default list holding the
 enumeration literals for *all* contributions is generated for the event.
 
@@ -152,9 +154,9 @@ of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This
 review is necessary for understanding (1) how transitions are selected during
 spectral and delay events and (2) how average signal frequencies and amplitudes
 in each spectral dimension are determined. We outline the procedures for
-designing and creating TransitionQuery and MixingQuery for single- and
+designing and creating TransitionQuery and MixingQuery objects for single- and
 multi-spin transitions and how to use them to select the transition pathways
-with the desired frequency and amplitudes in each SpectralDimension of your
+with the desired frequency and amplitudes in each spectral dimension of your
 custom Method object. In multi-dimensional spectra, we illustrate how the
 desired frequency correlation can sometimes be achieved by using an appropriate
 affine transformation. We also examine how changing the frequency contributions
@@ -283,8 +285,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
 
 ----
 
-For a summary on spin transition symmetry functions in NMR, click on the disclosure
-button below.
+.. only:: html
+
+    For a summary on spin transition symmetry functions in NMR, click on the disclosure button below.
+
+.. only::  not html
+
+    **A summary on spin transition symmetry functions in NMR.**
 
 .. raw:: html
 
@@ -1189,7 +1196,7 @@ described earlier, :math:`{\Xi}^{(k)}_L(\Theta)` are the spatial symmetry
 functions, and :math:`\omega_k` gives the size of the kth frequency component.
 The experimentalist indirectly influences a frequency component :math:`\Omega_k`
 by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
-the spatial orientation,  :math:`\Theta` of the sample.
+the spatial orientation,  :math:`\Theta`, of the sample.
 
 The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
 upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
@@ -1204,8 +1211,8 @@ a second-rank dependence on sample orientation, and can be averaged away with
 fast magic-angle spinning, i.e., spinning about an angle, :math:`\theta_R`, that
 is the root of the second-rank Legendre polynomial :math:`P_2(\cos \theta_R)`.
 The other spatial symmetry functions are removed by spinning the sample about
-the corresponding root of the :math:`L`th-rank Legendre polynomial ":math:`P_L(\cos
-\theta_R)`.
+the corresponding root of the :math:`L^\text{th}`-rank Legendre polynomial :math:`P_L(\cos
+\theta_R)`
 
 .. note::
 
@@ -1230,8 +1237,15 @@ individual frequency contributions to the overall transition frequency, given in
 the table below and in
 :py:meth:`~mrsimulator.method.frequency_contrib.FrequencyEnum`. They also aid in
 pulse sequence design by identifying how different frequency contributions
-refocus through the transition pathways.  For a summary on echo symmetry classification in NMR,
-click on the disclosure button below.
+refocus through the transition pathways.
+
+.. only:: html
+
+    For a summary on echo symmetry classification in NMR, click on the disclosure button below.
+
+.. only:: not html
+
+    **A summary on echo symmetry classification in NMR.**
 
 .. raw:: html
 
@@ -1248,19 +1262,16 @@ click on the disclosure button below.
 .. _frequency_contribution_table:
 
 .. list-table:: Frequency Contributions
-    :widths: 25 25 25 25 25
-    :header-rows: 2
+    :widths: 27 24 24 25 25
+    :header-rows: 1
 
     * - Interactions
-      - perturbation
-      - anisotropy
+      - | perturbation
+        | order
+      - | anisotropy
+        | rank
       - ``freq_contrib``
       - Expression
-    * -
-      - order
-      - rank
-      -
-      -
     * - shielding
       - 1st
       - 0th
@@ -1306,6 +1317,81 @@ click on the disclosure button below.
       - 4th
       - ``Quad2_4``
       - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
+    * - quadrupolar-shielding
+      - 2nd
+      - 0th
+      - ``Quad_Shielding_cross_0``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{S}^{\{\sigma q\}} \cdot \mathbb{d}_I`
+    * - quadrupolar-shielding
+      - 2nd
+      - 2nd
+      - ``Quad_Shielding_cross_2``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{D}^{\{\sigma q\}}  \cdot \mathbb{d}_I`
+    * - quadrupolar-shielding
+      - 2nd
+      - 4th
+      - ``Quad_Shielding_cross_4``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{G}^{\{\sigma q\}}  \cdot \mathbb{d}_I`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 0th
+      - ``Quad_Dipolar_cross_0``
+      - :math:`\displaystyle \frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{S}^{\{d q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 2nd
+      - ``Quad_Dipolar_cross_2``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{D}^{\{d q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 4th
+      - ``Quad_Dipolar_cross_4``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{G}^{\{d q_I\}}(\Theta) \cdot  (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 0th
+      - ``Quad_Dipolar_cross_0``
+      - :math:`\displaystyle \frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{S}^{\{d q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 2nd
+      - ``Quad_Dipolar_cross_2``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{D}^{\{d q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 4th
+      - ``Quad_Dipolar_cross_4``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{G}^{\{d q_S\}}(\Theta) \cdot  (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 0th
+      - ``Quad_J_cross_0``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{S}^{\{J q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 2nd
+      - ``Quad_J_cross_2``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{D}^{\{J q_I\}} \cdot  (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 4th
+      - ``Quad_J_cross_4``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{G}^{\{J q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 0th
+      - ``Quad_J_cross_0``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{S}^{\{J q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 2nd
+      - ``Quad_J_cross_2``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{D}^{\{J q_S\}} \cdot  (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 4th
+      - ``Quad_J_cross_4``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{G}^{\{J q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
 
 
 Affine Transformations
@@ -1388,7 +1474,7 @@ In the two-dimensional case, this is given by
     central transition isotropic frequencies given by
 
     .. math::
-        \left \langle\Omega_{iso} \right \rangle_{\text{MQ-MAS}}
+        \left \langle\Omega_\text{iso} \right \rangle_{\text{MQ-MAS}}
         =
         \frac{1}{1 + |\kappa^{(\omega_1)}|}
         \,
@@ -1571,7 +1657,7 @@ without the need for an affine transformation.  Recall that the 3Q-MAS isotropic
 frequency on spin :math:`I=3/2` is given by
 
 .. math::
-    \Omega_\text{iso} =  \frac{9}{16}\Omega_{3Q} + \frac{7}{16}\Omega_{CT}.
+    \Omega_\text{iso} =  \frac{9}{16}\Omega_{3Q} + \frac{7}{16}\Omega_\text{CT}.
 
 As we saw at the beginning of this section, the first spectral dimension
 derives its *average frequency*, :math:`\overline{\Omega}_1`, from a weighted
@@ -1740,7 +1826,7 @@ transfer under a :math:`\pi` rotation, given by
 
     \ketbra{I,m_f}{I, m_i}  \stackrel{\pi_\phi}{\longrightarrow} \ketbra{I, -m_f}{I, -m_i} e^{-i\Delta p\phi}(i)^{\Delta p}.
 
-That is, a :math:`\pi` rotation will make only one connection between
+That is, a :math:`\pi` rotation can make only one connection between
 transitions in adjacent events.  It is also a special connection because the
 :math:`\text{p}_I` transition symmetry value for the two transitions are equal
 but opposite in sign.  Additionally, the :math:`\text{d}_I` transition symmetry
@@ -1797,8 +1883,8 @@ importance of echo classification in understanding how transition-frequency
 contributions can be eliminated or separated based on their dependence on
 different transition symmetry functions.
 
-First, we implement two Method objects that follow the design of the
-experimental pulse sequence. In this effort, we use RotationQuery objects to
+First, we implement two Method objects that follow the design of two
+experimental pulse sequences. In this effort, we use RotationQuery objects to
 select the desired transition pathways and obtain spectra with the desired
 average frequencies. Then, we implement two simpler Method objects that
 produce identical spectra and illustrate how :ref:`frequency
@@ -1868,6 +1954,7 @@ We use the deuterium Site defined earlier in this document.
     hahn_echo = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,  # in rads
         spectral_dimensions=[
             SpectralDimension(
                 count=512,
@@ -1896,6 +1983,7 @@ We use the deuterium Site defined earlier in this document.
     solid_echo = Method(
         channels=["2H"],
         magnetic_flux_density=9.4,  # in T
+        rotor_angle=0,  # in rads
         spectral_dimensions=[
             SpectralDimension(
                 count=512,
@@ -1970,9 +2058,7 @@ each output spectrum, and plot the datasets.
 .. plot::
     :context: close-figs
 
-    sim = Simulator()
-    sim.spin_systems = [deuterium_system]
-    sim.methods = [hahn_echo, solid_echo]
+    sim = Simulator(spin_systems=[deuterium_system], methods=[hahn_echo, solid_echo])
     sim.run()
 
     processor = sp.SignalProcessor(
@@ -2014,7 +2100,7 @@ contributions).
 While these two examples nicely illustrate numerous important concepts for
 building custom methods, it should also be noted that identical spectra could
 have been obtained with a simpler custom method that used the ``freq_contrib``
-to remove the undesired frequency contributions. The code for these two methods
+to only select the desired frequency contributions. The code for these two methods
 is illustrated below.
 
 .. plot::
@@ -2085,6 +2171,12 @@ is illustrated below.
     ax[1].grid()
     plt.tight_layout()
     plt.show()
+
+.. note::
+    mrsimulator also includes shortcuts for addressing groups of frequency contributions together.
+    For example, the ``shielding_only`` method could have selected all shielding contributions by
+    using ``freq_contrib=["Shielding"]`` which expands to zeroth- and second-rank shielding.
+    A complete list of shortcuts are listed in :ref:`freq_contrib_api`.
 
 
 
@@ -2240,8 +2332,10 @@ Attribute Summaries
     - ``List``
     - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
       contributions to include when calculating a transition frequency. For example,
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
-      all frequency contributions are calculated.
+      ``["Shielding1_0", "Shielding1_2"]``. String shortcuts encapsulating multiple contributions
+      can also be passed, for example ``["Shielding"]`` selects all shielding interactions. By
+      default, the list is all frequency enumerations and all frequency contributions are
+      calculated.
 
   * - transition_queries
     - ``list``

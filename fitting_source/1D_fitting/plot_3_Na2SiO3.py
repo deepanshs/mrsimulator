@@ -16,6 +16,7 @@
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
@@ -26,7 +27,7 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -37,9 +38,6 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # `csdmpy <https://csdmpy.readthedocs.io/en/stable/index.html>`_ module.
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/Na2SiO3_O17.csdf"
 experiment = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 1.931335
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -55,6 +53,23 @@ ax.set_xlim(100, -50)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords > 70e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.plot(noise_data, label="noise")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -104,13 +119,6 @@ MAS_CT = BlochDecayCTSpectrum(
     experiment=experiment,  # experimental dataset
 )
 
-# A method object queries every spin system for a list of transition pathways that are
-# relevant for the given method. Since the method and the number of spin systems remain
-# the same during the least-squares fit, a one-time query is sufficient. To avoid
-# querying for the transition pathways at every iteration in a least-squares fitting,
-# evaluate the transition pathways once and store it as follows
-for sys in spin_systems:
-    sys.transition_pathways = MAS_CT.get_transition_pathways(sys)
 
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
@@ -177,9 +185,16 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 # provide a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`, for evaluating the
 # difference vector between the simulation and experiment, based on
-# the parameters update. You may use this function directly as the argument of the
-# LMFIT Minimizer class, as follows,
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+# the parameters update. You may use this function directly to instantiate the
+# LMFIT Minimizer class where `fcn_args` and `fcn_kws` are arguments passed to the
+# function, as follows,
+opt = sim.optimize()
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

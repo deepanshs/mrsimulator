@@ -149,22 +149,36 @@ OS-dependent prerequisites
     Installing OS-dependent prerequisites is a one-time process. If you are
     upgrading to a newer version of mrsimulator, skip to the next section.
 
-.. tabs::
+.. only:: html
 
-  .. tab:: Linux
-    :tabid: linus_source
+  .. tabs::
 
-    .. include:: source_install/linux.rst
+    .. tab:: Linux
 
-  .. tab:: Mac OSX
-    :tabid: macosx_source
+      .. include:: source_install/linux.rst
 
-    .. include:: source_install/macosx.rst
+    .. tab:: Mac OSX
 
-  .. tab:: Windows
-    :tabid: windows_source
+      .. include:: source_install/macosx.rst
 
-    .. include:: source_install/windows.rst
+    .. tab:: Windows
+
+      .. include:: source_install/windows.rst
+
+.. only:: not html
+
+  Linux
+  -----
+  .. include:: source_install/linux.rst
+
+  Mac OSX
+  -------
+  .. include:: source_install/macosx.rst
+
+  Windows
+  -------
+  .. include:: source_install/windows.rst
+
 
 Build and install
 """""""""""""""""

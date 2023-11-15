@@ -34,13 +34,14 @@ class BaseNamedMethod(Method):
 
     @validator("rotor_frequency", pre=True, always=True)
     def check_rotor_frequency(cls, v, *, values, **kwargs):
-        a = (
-            True if "name" not in values else values["name"] == "SSB2D",
+        checkpoints = (
+            values["name"] == "SSB2D",  # SSB2D named method can have non-inf speeds
             v in ["1000000000000.0 Hz", 1.0e12],
-            cls.ndim == 1,
+            cls.ndim == 1,  # 1D Methods allowed to have non-inf speeds
         )
-        if any(a):
+        if any(checkpoints):
             return v
+
         raise ValueError(
             "`rotor_frequency=1e12 Hz` is fixed for all 2D named Methods, except SSB2D,"
             " and cannot be modified."

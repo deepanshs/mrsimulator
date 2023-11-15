@@ -26,7 +26,7 @@ from mrsimulator.method import SpectralDimension
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
-# **Step 1:** Create the spin system.
+# Create the spin system.
 site = Site(
     isotope="17O",
     isotropic_chemical_shift=320,  # in ppm
@@ -42,11 +42,12 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# **Step 2:** Create a central transition selective Bloch decay spectrum method.
+# Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCTSpectrum(
     channels=["17O"],
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             count=1024,
@@ -58,17 +59,12 @@ method = BlochDecayCTSpectrum(
 )
 
 # %%
-# **Step 3:** Create the Simulator object and add method and spin system objects.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
+# Create the Simulator object and add method and spin system objects.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 
 # Since the spin system have non-zero Euler angles, set the integration_volume to
 # hemisphere.
 sim.config.integration_volume = "hemisphere"
-
-# %%
-# **Step 4:** Simulate the spectrum.
 sim.run()
 
 # The plot of the simulation before signal processing.

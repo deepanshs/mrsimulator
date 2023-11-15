@@ -10,8 +10,8 @@ Wollastonite, ²⁹Si (I=1/2), MAF
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et al.` [#f1]_
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processor as sp
@@ -43,15 +43,15 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic method, `Method`, to simulate a 2D Magic-Angle Flipping (MAF)
-# spectrum by customizing the method parameters, as shown below.
+# Use the generic `Method` class to simulate a 2D magic-angle Flipping (MAF) spectrum
+# by customizing the method parameters, as shown below.
 #
-# Here we include the special `MixingEvent` with query ``NoMixing`` to tell the MAF
-# method to not connect any of the transitions between the first and second
-# `SpectralEvent`. A query of ``NoMixing`` is equivalent to a rotational query where
-# each channel has a phase and angle of 0. Since all spin systems in this example have
-# a single site, defining no mixing between the two spectral events is superfluous, but
-# we include it so this method may be used with multi-site spin systems.
+# Here, we include a `MixingEvent` with a ``NoMixing`` query. A no mixing query
+# instructs the MAF method to not mix the transitions from the first and second
+# SpectralEvent. A no mixing query is equivalent to a rotation query where each
+# channel has a zero phase and angle. Since all spin systems in this example have a
+# single site, defining no mixing between the two spectral events is superfluous.
+# We include it such that the method is applicable with multi-site spin systems.
 maf = Method(
     name="Magic Angle Flipping",
     channels=["29Si"],
@@ -64,7 +64,7 @@ maf = Method(
             label="Anisotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,  # in rads
+                    rotor_angle=90 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
                 MixingEvent(query="NoMixing"),
@@ -77,7 +77,7 @@ maf = Method(
             label="Isotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,  # in rads
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -94,9 +94,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the
 # simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [maf]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[maf])
 sim.run()
 
 # %%

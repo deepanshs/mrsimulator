@@ -70,6 +70,9 @@ extensions = [
     "versionwarning.extension",
 ]
 
+# sphinx-tabs
+sphinx_tabs_disable_tab_closing = True
+
 # generate autosummary even if no references
 autosummary_generate = True
 
@@ -209,7 +212,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
     "astropy": ("https://docs.astropy.org/en/stable/", None),
-    "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
+    "lmfit": ("https://lmfit.github.io/lmfit-py/", None),
 }
 
 # ---------------------------------------------------------------------------- #
@@ -495,10 +498,6 @@ preamble = r"""
         \listoftables
         %
         \if@openright\cleardoublepage\else\clearpage\fi
-        \addcontentsline{toc}{chapter}{List of Code Blocks}%
-        \listof{literalblock}{List of Code Blocks}%
-        %
-        \if@openright\cleardoublepage\else\clearpage\fi
         \pagenumbering{arabic}%
         }
     \makeatother
@@ -516,29 +515,12 @@ latex_elements = {
     "pointsize": "10pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "fontpkg": "\\usepackage{amsmath,amsfonts,amssymb,amsthm}",
+    # "releasename":
     # "geometry": "\\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
     # "fncychap": "\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
     # \usepackage[T1]{fontenc}
     "preamble": preamble,
-    # "maketitle": r"""
-    #     \pagenumbering{Roman} %%% to avoid page 1 conflict with actual page 1
-    #     \begin{titlepage}
-    #         \begin{figure}[!h]
-    #             \centering
-    #             \includegraphics[scale=0.3]{mrsimulator.png}
-    #         \end{figure}
-    #         %% \vfill adds at the bottom
-    #         \vfill
-    #     \end{titlepage}
-    #     \clearpage
-    #     \pagenumbering{roman}
-    #     \tableofcontents
-    #     \listoffigures
-    #     \listoftables
-    #     \clearpage
-    #     \pagenumbering{arabic}
-    # """,
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",

@@ -355,14 +355,15 @@ SignalProcessor.
     # Post Simulation Processing
     # --------------------------
     relative_intensity_factor = exp_spectrum.max() / sim.methods[0].simulation.max()
-    processor = sp.SignalProcessor(operations=[
+    processor = sp.SignalProcessor(
+        operations=[
             sp.IFFT(),
             sp.apodization.Gaussian(FWHM="50 Hz"),
             sp.FFT(),
             sp.Scale(factor=relative_intensity_factor)
         ]
     )
-    processed_dataset=processor.apply_operations(dataset=sim.methods[0].simulation).real
+    processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 
 You now have set up and simulated the first guess in modeling the experimental
@@ -378,7 +379,7 @@ spectrum. Plot it and see how it compares to the experimental spectrum.
     plt.figure(figsize=(6, 3.0))
     ax = plt.subplot(projection="csdm")
     ax.plot(exp_spectrum, label="Experiment")
-    ax.plot(processed_dataset, label="guess spectrum")
+    ax.plot(processed_dataset, label="Guess Spectrum")
     ax.set_xlim(-15, 15)
     plt.legend()
     plt.grid()
@@ -519,7 +520,15 @@ minimization, and print the
     :context: close-figs
 
     from lmfit import Minimizer
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+    # Optimize fitting by pre-computing transition pathways
+    opt = sim.optimize()
+
+    minner = Minimizer(
+        sf.LMFIT_min_function,
+        fit_parameters,
+        fcn_args=(sim, processor, sigma),
+        fcn_kws={"opt": opt}
+    )
     result = minner.minimize()
     result
 
@@ -603,10 +612,17 @@ parameter to be a fit parameter, and rerun the analysis.
 .. plot::
     :context: close-figs
 
-    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0
+    fit_parameters["sys_0_site_0_quadrupolar_eta"].value = 0.05
     fit_parameters["sys_0_site_0_quadrupolar_eta"].vary = True
-    minner = Minimizer(sf.LMFIT_min_function, fit_parameters, fcn_args=(sim, processor, sigma))
+
+    minner = Minimizer(
+        sf.LMFIT_min_function,
+        fit_parameters,
+        fcn_args=(sim, processor, sigma),
+        fcn_kws={"opt": opt}
+    )
     result = minner.minimize()
+
     best_fit = sf.bestfit(sim, processor)[0].real
     residuals = sf.residuals(sim, processor)[0].real
 
@@ -632,11 +648,12 @@ from 0 to 0.136, and the Gaussian FWHM decreased from 106 to 63 Hz. The
 MinimizerResult printout also shows a correlation of -0.74 between these two
 parameters.
 
-We close this section by noting that a compelling feature of mrsimulator& LMFit
+We close this section by noting that a compelling feature of mrsimulator and LMFit
 is that you can perform a simultaneous spectra fit from different methods for a
 single set of spin system parameters. Check out all the examples in
 the :ref:`fitting_examples`, notably the
-:ref:`sphx_glr_fitting_1D_fitting_plot_2_13C_glycine_multi_spectra_fit.py` example.
+:ref:`sphx_glr_fitting_1D_fitting_plot_2_13C_glycine_multi_spectra_fit.py` example
+for fitting one set of spin systems to multiple spectra.
 
 
 .. plot::

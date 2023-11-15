@@ -40,11 +40,11 @@ sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Select a satellite-transition variable-angle spinning method. The
+# Select a satellite-transition variable-angle spinning method. The
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
 # transitions to the central transition. Note, STMAS measurements are highly suspectable
-# to rotor angle mismatch. In the following, we show two methods, first set to
-# magic-angle and the second deliberately miss-sets by approximately 0.0059 degrees.
+# to rotor angle mismatch. In the following, we show two methods, the first at the
+# magic angle and second deliberately miss-sets by approximately 0.0059 degrees.
 
 angles = [54.7359, 54.73]
 method = []
@@ -79,9 +79,7 @@ plt.show()
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = method  # add the methods.
+sim = Simulator(spin_systems=spin_systems, methods=method)
 sim.run()
 
 # %%

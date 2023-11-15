@@ -133,8 +133,8 @@ def simulator_process(sim, data_object):
         )
         sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
-    data_mrsimulator = np.asarray(sim_dataset.to_list()[1:])
-    data_mrsimulator = data_mrsimulator.sum(axis=0)
+    data_mrsimulator = np.sum(sim_dataset.split())
+    data_mrsimulator = data_mrsimulator.y[0].components[0]
     data_mrsimulator /= data_mrsimulator.sum()
 
     dv = sim_dataset.y[0]
@@ -158,7 +158,7 @@ def c_setup(
         data_object, integration_volume, integration_density, number_of_sidebands
     )
     data_mrsimulator = simulator_process(sim, data_object)
-    return data_mrsimulator, data_source
+    return data_mrsimulator.real, data_source.real
 
 
 def c_setup_random_euler_angles(filename, group):

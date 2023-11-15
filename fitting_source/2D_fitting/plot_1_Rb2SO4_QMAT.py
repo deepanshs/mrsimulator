@@ -19,16 +19,13 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
 qmat_dataset = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 6.530634
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
 qmat_dataset = qmat_dataset.real
@@ -49,6 +46,22 @@ ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+noise_region = np.where(qmat_dataset.dimensions[0].coordinates < -175e-6)
+noise_data = qmat_dataset[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data.T, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -85,11 +98,6 @@ PASS = SSB2D(
     experiment=qmat_dataset,  # add the measurement to the method.
 )
 
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = PASS.get_transition_pathways(sys)
-
 # %%
 # **Guess Spectrum**
 
@@ -106,7 +114,7 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=0),
         sp.apodization.Gaussian(FWHM="100 Hz"),
         sp.IFFT(dim_index=0),
-        sp.Scale(factor=1e4),
+        sp.Scale(factor=1e7),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
@@ -135,7 +143,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

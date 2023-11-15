@@ -1,14 +1,22 @@
 import os
 
+import pytest
+from monty.serialization import loadfn
 from mrsimulator import __version__
 from mrsimulator import dict
 from mrsimulator import load
+from mrsimulator import parse
 from mrsimulator import save
 from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.utils.error import FileConversionError
+
+
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEST_DATA = loadfn(os.path.join(MODULE_DIR, "test_data.json"))
 
 # mrsimulator save and load test
 
@@ -84,6 +92,14 @@ def test_load():
     load("https://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
 
     os.remove("test.mrsim")
+
+
+def test_parse_old_struct():
+    """Ensures error raised when trying to parse old file struct"""
+    old_root_level = TEST_DATA["old_root_level"]
+
+    with pytest.raises(FileConversionError):
+        parse(old_root_level)
 
 
 # def test_mrsim_to_v0_7():

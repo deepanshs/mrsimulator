@@ -18,6 +18,7 @@ cdef extern from "schemes.h":
     MRS_averaging_scheme * MRS_create_averaging_scheme(
                             unsigned int integration_density,
                             bool_t allow_4th_rank,
+                            unsigned int n_gamma,
                             unsigned int integration_volume)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(

@@ -18,7 +18,7 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -26,9 +26,6 @@ from mrsimulator.utils.collection import single_site_system_generator
 host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "1H13C_CPPASS_LHistidine.csdf"
 mat_dataset = cp.load(host + filename)
-
-# standard deviation of noise from the dataset
-sigma = 0.4192854
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
 mat_dataset = mat_dataset.real
@@ -54,6 +51,23 @@ plt.grid()
 plt.tight_layout()
 plt.show()
 
+# %%
+# Estimate noise statistics from the dataset
+coords = mat_dataset.dimensions[0].coordinates
+# noise_region = np.where(np.logical_and(coords > 65e-6, coords < 110e-6))
+noise_region = np.where(np.logical_and(coords < 110e-6, coords > 65e-6))
+noise_data = mat_dataset[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -64,7 +78,7 @@ plt.show()
 
 shifts = [120, 128, 135, 175, 55, 25]  # in ppm
 zeta = [-70, -65, -60, -60, -10, -10]  # in ppm
-eta = [0.8, 0.4, 0.9, 0.3, 0.0, 0.0]
+eta = [0.8, 0.4, 0.9, 0.3, 0.05, 0.05]
 
 spin_systems = single_site_system_generator(
     isotope="13C",
@@ -89,11 +103,6 @@ PASS = SSB2D(
     experiment=mat_dataset,  # add the measurement to the method.
 )
 
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = PASS.get_transition_pathways(sys)
-
 # %%
 # **Guess Spectrum**
 
@@ -110,7 +119,7 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=0),
         sp.apodization.Exponential(FWHM="50 Hz"),
         sp.IFFT(dim_index=0),
-        sp.Scale(factor=60),
+        sp.Scale(factor=212260),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
@@ -137,7 +146,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

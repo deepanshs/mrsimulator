@@ -24,9 +24,9 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub
-            :target: https://github.com/deepanshs/mrsimulator/actions
-            :alt: GitHub Workflow Status
+        - .. image:: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml
+            :target: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg?branch=master
+            :alt: CI
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
             :target: https://mrsimulator.readthedocs.io/en/stable/
@@ -38,16 +38,8 @@ Welcome to the Mrsimulator documentation
             :alt: License
 
       * - Metrics
-        - .. image:: https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python
-            :alt: Language grade: Python
-
-          .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
+        - .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
             :target: https://codecov.io/gh/deepanshs/mrsimulator
-
-          .. image:: https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/
-            :alt: Total alerts
 
           .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
             :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
@@ -77,7 +69,14 @@ Welcome to the Mrsimulator documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
-**About**
+.. only:: html
+
+  **About**
+
+.. only:: not html
+
+  About
+  '''''
 
 **mrsimulator** is an open-source Python package for fast computation/analysis of nuclear
 magnetic resonance (NMR) spectra in fluid and solid phases.
@@ -282,15 +281,7 @@ Discussions are welcome on the `Github discussion <https://github.com/deepanshs/
 How to cite
 -----------
 
-If you use **mrsimulator** in your publication, please consider citing the following.
-
-- Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
-
-- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific dataset. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
-
-*Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
-
-- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. https://doi.org/10.5281/zenodo.4516651
+Please refer to `mrsimulator Github page <https://github.com/deepanshs/mrsimulator>`_ for details.
 
 .. only:: html
 

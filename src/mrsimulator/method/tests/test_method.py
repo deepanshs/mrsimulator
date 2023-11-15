@@ -7,7 +7,7 @@ import pytest
 from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
-from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.spin_system.isotope import Isotope
 from mrsimulator.utils.error import MissingSpectralDimensionError
 from pydantic import ValidationError
@@ -17,7 +17,7 @@ __email__ = "srivastava.89@osu.edu"
 
 event_dictionary = {
     "fraction": 0.5,
-    "freq_contrib": freq_default,
+    "freq_contrib": FREQ_LIST_ALL,
     "magnetic_flux_density": "9.6 T",
     "rotor_frequency": "0 kHz",
     "rotor_angle": "54.735 deg",
@@ -211,8 +211,9 @@ def test_rotor_frequency():
     )
 
     # Bad method, should throw error for multiple finite speeds
+    error = "Sideband-sideband correlation is not yet supported in mrsimulator."
     for cls in [Method]:
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(NotImplementedError, match=error):
             cls(
                 channels=["1H"],
                 spectral_dimensions=[
@@ -225,7 +226,7 @@ def test_rotor_frequency():
                 ],
             )
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError, match=error):
         Method(
             channels=["1H"],
             spectral_dimensions=[
@@ -244,7 +245,7 @@ def test_rotor_frequency():
             ],
         )
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError, match=error):
         # Both events should take 10000 Hz rotor_frequency
         Method(
             channels=["27Al"],
@@ -255,6 +256,28 @@ def test_rotor_frequency():
                 )
             ],
         )
+
+
+def test_rotor_freq_infinite():
+    """Ensure an infinite rotor frequency is parsed to 1e12 float value"""
+    foo = Method(
+        channels=["1H"],
+        rotor_frequency=np.inf,
+        spectral_dimensions=[SpectralDimension(events=[SpectralEvent()])],
+    )
+
+    # Infinity parsed to 1e12 Hz
+    assert foo.rotor_frequency == 1e12
+
+    # Test serializing to JSON, then parsing back into Method
+    foo_json = foo.json()
+
+    assert foo_json["rotor_frequency"] == "1000000000000.0 Hz"
+
+    foo_parsed = Method.parse_dict_with_units(foo_json)
+
+    assert foo_parsed.rotor_frequency == 1e12
+    assert foo == foo_parsed
 
 
 def test_empty_spectral_dimensions():

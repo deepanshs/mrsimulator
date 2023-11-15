@@ -409,8 +409,32 @@ def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None
 #     return method._metadata["experiment"]
 
 
+def _check_for_experiment_data(methods_list: list):
+    """Ensures all Method object in the passed list contain experimental data, otherwise
+    an ValueError is raised.
+
+    Args:
+        (list) methods_list: A list of Method objects
+
+    Raises:
+        ValueError if a method does not contain experimental data
+    """
+    # Get index of Method only if Method does not hold experimental data
+    no_exp = [i for i, mth in enumerate(methods_list) if mth.experiment is None]
+
+    if no_exp:  # At least one item in the list
+        raise ValueError(
+            f"No experimental data found for method at index {no_exp}. "
+            "Attach an experimental dataset to each method before fitting."
+        )
+
+
 def LMFIT_min_function(
-    params: Parameters, sim: Simulator, processors: list = None, sigma: list = None
+    params: Parameters,
+    sim: Simulator,
+    processors: list = None,
+    sigma: list = None,
+    **sim_kwargs,
 ):
     """The simulation routine to calculate the vector difference between simulation and
     experiment based on the parameters update.
@@ -418,20 +442,24 @@ def LMFIT_min_function(
     Args:
         params: Parameters object containing parameters for OLS minimization.
         sim: Simulator object.
-        processors: A list of PostSimulator objects corresponding to the methods in the
-            Simulator object.
+        processors: A list of :py:class:~`mrsimulator.signal_processor.Processor`
+            objects to apply post-simulation processing to the simulated spectra.
         sigma: A list of standard deviations corresponding to the experiments in the
-            Simulator.methods attribute
+            :py:attr:~`mrsimulator.Simulator.methods` attribute.
+        sim_kwargs: Keyword arguments to pass to the
+            :py:mth:~`mrsimulator.Simulator.run()` method.
     Returns:
         Array of the differences between the simulation and the experimental datasets.
     """
     processors = processors if isinstance(processors, list) else [processors]
     sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
     sigma = sigma if isinstance(sigma, list) else [sigma]
+    sigma = [item.value if hasattr(item, "value") else item for item in sigma]
 
+    _check_for_experiment_data(sim.methods)
     update_mrsim_obj_from_params(params, sim, processors)
 
-    sim.run()
+    sim.run(**sim_kwargs)
 
     processed_dataset = [
         item.apply_operations(dataset=data.simulation)

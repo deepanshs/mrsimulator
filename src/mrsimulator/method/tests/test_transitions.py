@@ -1,4 +1,5 @@
 import numpy as np
+from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
@@ -239,3 +240,57 @@ def assert_transitions(transition_pathways, weights, tr):
     ]
 
     assert tr == expected
+
+
+def test_empty_segments():
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    mth = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [3]}}]),
+                ]
+            )
+        ],
+    )
+
+    # Filter is empty since no p=3 transition for single proton, ensure no error raised
+    assert mth._get_transition_pathways_np(sys).size == 0  # Empty list
+
+
+def test_no_zero_transition_weights():
+    """This method and spin system produces four transition pathways, two with weight
+    1 and two with weight 0. Ensure 0 weight pathways are excluded
+    """
+    sys = SpinSystem(sites=[Site(isotope="2H")])
+    mth = Method(
+        channels=["2H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [1]}}]),
+                    MixingEvent(query={"ch1": {"angle": np.pi}}),
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
+                ]
+            )
+        ],
+    )
+    pathways = mth._get_transition_pathways_np(sys)
+    weights = mth._get_transition_pathway_weights_np(pathways, sys)
+
+    # Make sure zero pathways are present in the underlying calculation
+    underlying_weights_should_be = np.asarray([0, 1, 1, 0])
+    assert np.allclose(underlying_weights_should_be, weights)
+
+    # Now, ensure zero weight pathways excluded with the combined pathway/weight func
+    pathways, weights = mth._get_transition_pathway_and_weights_np(sys)
+
+    transitions_should_be = np.asarray(
+        [[[[-1], [0]], [[1], [0]]], [[[0], [1]], [[0], [-1]]]]
+    )
+
+    weights_should_be = np.ones(2)
+
+    assert np.allclose(pathways, transitions_should_be)
+    assert np.allclose(weights, weights_should_be)

@@ -44,22 +44,35 @@ downloads and Windows installation instructions.
 Installing mrsimulator
 ----------------------
 
-.. tabs::
+.. only:: html
 
-  .. tab:: Google Colab Notebook
-    :tabid: colab_notebook
+  .. tabs::
 
-    .. include:: colab.rst
+    .. tab:: Google Colab Notebook
 
-  .. tab:: Local machine (Using pip)
-    :tabid: local_pip
+      .. include:: colab.rst
 
-    .. include:: pip.rst
+    .. tab:: Local machine (Using pip)
 
-  .. tab:: From source
-    :tabid: building_from_source
+      .. include:: pip.rst
 
-    .. include:: source.rst
+    .. tab:: From source
+
+      .. include:: source.rst
+
+.. only:: not html
+
+  Google Colab Notebook
+  '''''''''''''''''''''
+  .. include:: colab.rst
+
+  Local machine (Using pip)
+  '''''''''''''''''''''''''
+  .. include:: pip.rst
+
+  From source
+  '''''''''''
+  .. include:: source.rst
 
 
 Updating mrsimulator

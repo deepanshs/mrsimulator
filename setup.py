@@ -69,6 +69,7 @@ class Setup:
 
         print(sys.version)
         loc = dirname(sys.executable)
+        print("executable location", loc)
         if "conda" not in loc:
             return
 
@@ -161,6 +162,7 @@ class LinuxSetup(Setup):
         self.extra_compile_args = [
             "-O3",
             "-ffast-math",
+            "-fcommon",
             # "-msse4.2",
             # "-ftree-vectorize",
             # "-fopt-info-vec-all",
@@ -302,8 +304,8 @@ class MacOSSetup(Setup):
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
-if python_version.major != 3 and python_version.minor < 6:
-    print(f"Python>=3.6 is required for the setup. You are using version {py_version}")
+if python_version.major != 3 and python_version.minor < 7:
+    print(f"Python>=3.7 is required for the setup. You are using version {py_version}")
     sys.exit(1)
 
 with open("src/mrsimulator/__init__.py") as f:
@@ -400,7 +402,7 @@ ext_modules += [
 # ]
 
 if USE_CYTHON:
-    ext_modules = cythonize(ext_modules, language_level=3)
+    ext_modules = cythonize(ext_modules, language_level=3, gdb_debug=False)
 
 extras = {}  # {"all": ["matplotlib>=3.3.4"]}
 
@@ -417,11 +419,11 @@ setup(
     url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.17"],
+    setup_requires=["numpy>=1.20"],
     install_requires=[
-        "numpy>=1.17",
+        "numpy>=1.20",
         "csdmpy>=0.4.1",
-        "pydantic>=1.9",
+        "pydantic<2",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
         "psutil>=5.4.8",
@@ -447,11 +449,11 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Programming Language :: C",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Education",
         "Topic :: Scientific/Engineering :: Chemistry",
     ],

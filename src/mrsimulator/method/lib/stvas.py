@@ -39,11 +39,14 @@ class ST_VAS(BaseNamedMethod2D):
     def update(cls, **kwargs):
         name = cls.__name__
         st = ST_p_symmetry[name]["st"]
+
+        spin = Isotope.parse(kwargs["channels"][0]).spin
+        p = -1 if st == spin else 1
+
         description = (
-            f"Simulate a {st} -> {st-1} and {-st+1} -> {-st} satellite-transition "
-            "variable-angle spinning spectrum."
+            f"Simulate a P={p} (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+            "correlation spectrum."
         )
-        spin = Isotope(symbol=kwargs["channels"][0]).spin
 
         # select the coherence for the first event
         d = st**2 - (st - 1) ** 2
@@ -52,8 +55,8 @@ class ST_VAS(BaseNamedMethod2D):
         events_0 = [
             {
                 "transition_queries": [
-                    {"ch1": {"P": [-1], "D": [d]}},
-                    {"ch1": {"P": [-1], "D": [-d]}},
+                    {"ch1": {"P": [p], "D": [d]}},
+                    {"ch1": {"P": [p], "D": [-d]}},
                 ]
             }
         ]
@@ -62,13 +65,12 @@ class ST_VAS(BaseNamedMethod2D):
 
         # method affine matrix shear factor
         k = shear_factor_ST_MAS[int(2 * st)][spin]
-        sign = 1  # if st == spin else -1
 
         return {
             "name": name,
             "description": description,
             "spectral_dimensions": [{"events": events_0}, {"events": events_1}],
-            "affine_matrix": [1 / (1 + k), sign * k / (1 + k), 0, 1],
+            "affine_matrix": [1 / (1 + k), k / (1 + k), 0, 1],
         }
 
 

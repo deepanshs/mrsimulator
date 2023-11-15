@@ -15,7 +15,8 @@ from pydantic import Field
 from pydantic import validator
 
 from .coupling import Coupling
-from .isotope import ISOTOPE_DATA
+from .isotope import get_all_isotope_data
+from .isotope import get_all_isotope_symbols
 from .site import Site
 from .split_spinsystems import build_new_systems
 from .zeemanstate import ZeemanState
@@ -402,6 +403,28 @@ class SpinSystem(Parseable):
 
         return super().parse_dict_with_units(py_dict_copy)
 
+    def rotate(self, euler_angles: list) -> None:
+        """Rotate the spin system coupling tensors and sites by the given list of Euler
+        angle rotations. Euler angles are given as a list of (alpha, beta, gamma)
+        tuples, and rotations happen in the Haeberlen (ZYZ) convention.
+
+        Arguments:
+            (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
+                to rotate through each tensor through.
+
+        Example
+        -------
+
+        >>> sys = SpinSystem(
+        ...     sites=[Site(isotope="1H"), Site(isotope="13C")],
+        ...     couplings=[Coupling(site_index=[0, 1], dipolar={"D": 3})]
+        ... )
+        >>> angles = [(3.1415, 0, -3.1415), (1.5701, 1.5701, 1.5701)]
+        >>> sys.rotate(angles)
+        """
+        _ = [s.rotate(euler_angles) for s in self.sites]
+        _ = [c.rotate(euler_angles) for c in self.couplings]
+
     # Deprecated
     # def to_freq_dict(self, B0: float) -> dict:
     #     """
@@ -460,11 +483,11 @@ def allowed_isotopes(spin_I: float = None) -> list:
         allowed isotopes is returned instead.
     """
     if spin_I is None:
-        return list(ISOTOPE_DATA.keys())
+        return get_all_isotope_symbols()
     return list(
         {
             isotope
-            for isotope, data in ISOTOPE_DATA.items()
-            if data["spin"] == int(2 * spin_I)
+            for isotope, data in get_all_isotope_data().items()
+            if data["spin_multiplicity"] == int(2 * spin_I + 1)  # 2S+1
         }
     )

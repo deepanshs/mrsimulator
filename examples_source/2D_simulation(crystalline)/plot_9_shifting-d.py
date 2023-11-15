@@ -95,11 +95,11 @@ spin_systems = [
 ]
 
 # %%
-# Use the generic method, `Method`, to generate a 2D shifting-d echo method. The
-# reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
+# Use the generic `Method` class to generate a 2D shifting-d echo method. The
+# reported shifting-d 2D sequence correlates the shielding frequencies to the
 # first-order quadrupolar frequencies. Here, we create a correlation method using the
 # :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
-# for including the frequency contributions from interaction during the event.
+# for including the frequency contributions from interactions during an event.
 #
 # In the following method, we assign the ``["Quad1_2"]`` and
 # ``["Shielding1_0", "Shielding1_2"]`` as the value to the ``freq_contrib`` key. The
@@ -111,13 +111,14 @@ spin_systems = [
 # Like the previous example, we stipulate no mixing between the two spectral events
 # using a `MixingEvent` with ``NoMixing`` as the query. Since all spin systems in this
 # example have a single site, defining no mixing between the two spectral events is
-# superfluous, but we include it so this method may be used with multi-site spin
+# superfluous. We include it such that the method is applicable with multi-site spin
 # systems.
 shifting_d = Method(
     name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=512,

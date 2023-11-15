@@ -283,10 +283,8 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
 
 .. note::
 
-    The serialization structure has been updated in **mrsimulator** v0.7. **Mrsimulator** should automatically
-    take care of this update when loading files from v0.6 and below. However, you can use the
-    :py:meth:`~mrsimulator.update_old_file_struct` method
-    to convert older files to the new format.
+    The serialization structure has been updated in **mrsimulator** v0.7. Any `.mrsim` files
+    from v0.6 and earlier will not work. See :ref:`changelog` for breaking changes.
 
 
 .. plot::

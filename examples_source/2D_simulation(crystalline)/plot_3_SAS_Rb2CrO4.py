@@ -11,8 +11,8 @@ Rb₂CrO₄, ⁸⁷Rb (I=3/2) SAS
 # rubidium sites, the site with the smaller quadrupolar interaction was selectively
 # observed and reported by Shore `et al.` [#f1]_. The following is the simulation
 # based on the published tensor parameters.
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent
@@ -38,7 +38,7 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# Use the generic method, `Method`, to simulate a 2D SAS spectrum by customizing the
+# Use the generic `Method` class to simulate a 2D SAS spectrum by customizing the
 # method parameters, as shown below.
 sas = Method(
     channels=["87Rb"],
@@ -52,7 +52,7 @@ sas = Method(
             label="70.12 dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=70.12 * 3.14159 / 180,  # in radians
+                    rotor_angle=70.12 * np.pi / 180,  # in radians
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -64,7 +64,7 @@ sas = Method(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.74 * 3.14159 / 180,  # in radians
+                    rotor_angle=54.74 * np.pi / 180,  # in radians
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
@@ -75,9 +75,7 @@ sas = Method(
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin systems
-sim.methods = [sas]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[sas])
 
 # Configure the simulator object. For non-coincidental tensors, set the value of the
 # `integration_volume` attribute to `hemisphere`.

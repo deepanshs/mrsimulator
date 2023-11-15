@@ -1,3 +1,26 @@
+v0.8.0dev0
+----------
+
+What's new
+''''''''''
+
+**Features**
+
+- Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
+- Support for quadrupolar-shielding cross frequency interactions. `freq_contrib` includes
+  new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
+- Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use-cases and examples.
+- Shortcuts for frequency contributions, such as ``Shielding``, ``Isotropic``, and ``cross``.
+  Sets of contributions can also be excluded by placing an exclamation mark in-front of the string, for example ``"!Shielding"`` excludes shielding interactions.
+
+**Simulator**
+
+- New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
+
+**Bug Fixes**
+
+- Fixed bug where ``MixingEnum`` class had no attribute ``json`` (Issue [#260](https://github.com/deepanshs/mrsimulator/issues/260))
+
 v0.7.0
 ------
 
@@ -7,9 +30,9 @@ What's new
 **Features**
 
 - Support for complex amplitude simulation.
-- New isotropic interpolation schemes. Added `isotropic_interpolation` as a `sim.config` parameter.
-  Allowed values are `linear` and `Gaussian`.
-- New `larmor_freq(B0)` function added to the `Isotope` class which returns the Larmor frequency
+- New isotropic interpolation schemes. Added ``isotropic_interpolation`` as a `sim.config` parameter.
+  Allowed values are ``linear`` and ``Gaussian``.
+- New ``larmor_freq(B0)`` function added to the `Isotope` class which returns the Larmor frequency
   of the isotope, given a magnetic flux density. For example, `H1.larmor_freq(B0=9.40)`
 - New weak J and dipolar coupling enumerations added to `freq_contrib`.
 - New command-line interface (CLI) tools for mrsimulator.

@@ -21,13 +21,10 @@ the following code pre-defines the plot function to use further in this document
     :context: reset
 
     import matplotlib.pyplot as plt
-    import matplotlib as mpl
-
-    mpl.rcParams["figure.figsize"] = (6, 3.5)
-    mpl.rcParams["font.size"] = 11
 
     # function to render figures.
     def plot(csdm_object):
+        plt.figure(figsize=(5, 3))
         ax = plt.subplot(projection="csdm")
         ax.plot(csdm_object.real, linewidth=1.5)
         ax.invert_xaxis()
@@ -43,7 +40,8 @@ ConfigSimulator
 In mrsimulator, the default configuration settings apply to a wide range of simulations,
 including static, magic angle spinning (MAS), and variable angle spinning (VAS) spectra.
 In certain situations, however, the default settings are insufficient to represent the
-spectrum accurately. Consider the following simulator setup.
+spectrum accurately.  In this section, we use the simulator setup code below to illustrate
+some of these issues.
 
 .. plot::
     :context: close-figs
@@ -206,6 +204,63 @@ relative to the size of anisotropy. Increasing the number of sidebands will reso
 Conversely, 64 sidebands might be excessive, in which case reducing the number of sidebands
 may significantly improve simulation performance, especially in iterative algorithms, such as
 the least-squares minimization.
+
+
+Number of gamma angles
+''''''''''''''''''''''
+
+The :py:attr:`~mrsimulator.simulator.ConfigSimulator.number_of_gamma_angles` attribute determines
+the extent of gamma averaging in the simulation. The gamma angles range from :math:`0` to
+:math:`2\pi`. The default value is 1, corresponding to :math:`\gamma=0`.
+
+In most static powder simulations, you can get by with one gamma angle (default) by appropriately
+setting the `rotor_angle=0`. When evaluating a static powder simulation for a non-zero rotor_angle,
+use a large number of gamma angles for the simulation to converge.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Incorrect simulation from insufficient number of gamma angle averaging.
+
+    from mrsimulator.method import Method
+    from mrsimulator.method.event import SpectralEvent, MixingEvent
+
+    site = Site(isotope="29Si", shielding_symmetric={"zeta": 100, "eta": 0.2})
+    spin_system = SpinSystem(sites=[site])
+
+    solid_echo = Method(
+        channels=["29Si"],
+        rotor_frequency=0,  # in Hz
+        rotor_angle=54.734 * np.pi / 180,  # in rads
+        spectral_dimensions=[
+            SpectralDimension(
+                count=1024,
+                spectral_width=25000,
+                events=[
+                    SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query={"ch1": {"angle": np.pi / 2}}),
+                    SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
+                ]
+        )],
+    )
+
+    sim = Simulator(spin_systems=[spin_system], methods=[solid_echo])
+    sim.run()
+    plot(sim.methods[0].simulation)
+
+To resolve this, increase the number of gamma angles.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+    :caption: Accurate simulation from sufficiently large number of gamma angle averaging.
+
+    sim.config.number_of_gamma_angles=1000
+    sim.run()
+    plot(sim.methods[0].simulation)
+
 
 Decompose Spectrum
 ''''''''''''''''''
