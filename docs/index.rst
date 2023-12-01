@@ -24,8 +24,8 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml
-            :target: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg?branch=master
+        - .. image:: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg?branch=master
+            :target: hthttps://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml
             :alt: CI
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
