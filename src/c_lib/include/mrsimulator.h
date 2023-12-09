@@ -160,14 +160,15 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  *      components are the product of the size of interaction, spatial symmetry
  *      functions, and the spin transition functions. The vector @p R4 is a complex128
  *      array of length 9, ordered as m = [-4, -3, -2, -1, 0, 1, 2, 3, 4].
- * @param refresh If true, zero the frequencies before update, else self update.
  * @param dim The pointer to the dimension of type MRS_dimension.
  * @param fraction A float representing the fraction of dimension during an event.
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
                                               MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, bool refresh,
-                                              MRS_dimension *dim, double fraction);
+                                              complex128 *R4, MRS_dimension *dim,
+                                              double fraction,
+                                              unsigned char is_spectral,
+                                              double duration);
 
 void MRS_get_frequencies_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
                                    double R0, complex128 *R2, complex128 *R4,
@@ -219,7 +220,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     complex128 *R2_temp,         // The temporary R2 components.
     complex128 *R4_temp,         // The temporary R3 components.
     double B0_in_T,              // Magnetic flux density in T.
-    bool *freq_contrib           // The pointer to freq contribs boolean.
+    unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 );
 
 extern void get_sideband_phase_components(unsigned int number_of_sidebands,

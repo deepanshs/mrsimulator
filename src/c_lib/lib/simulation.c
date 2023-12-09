@@ -25,7 +25,7 @@
  * list, where the stack is ordered according to the events. The variable
  * `FREQ_CONTRIB_INCREMENT` is the length of the freq contribs.
  */
-int FREQ_CONTRIB_INCREMENT = 9;
+int FREQ_CONTRIB_INCREMENT = 18;
 
 static inline void __zero_components(double *R0, complex128 *R2, complex128 *R4) {
   *R0 = 0.0;
@@ -45,25 +45,26 @@ void __mrsimulator_core(
     // initial energy state followed by the quantum numbers from the final energy state.
     // The energy states are given in Zeeman basis.
     float *transition_pathway,          // Pointer to the transition pathway,
-    double *transition_pathway_weight,  // The comlpex weight of transition pathway.
+    double *transition_pathway_weight,  // The complex weight of transition pathway.
     int n_dimension,                    // The total number of spectroscopic dimensions.
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
     bool interpolation,                 // If true, perform a 1D interpolation.
-    unsigned int iso_intrp,  // Isotropic interpolation scheme (linear | Gaussian)
-    bool *freq_contrib,      // A list of freq_contrib booleans.
-    double *affine_matrix    // Affine transformation matrix.
+    unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
+    unsigned char *freq_contrib,  // A list of freq_contrib booleans.
+    double *affine_matrix         // Affine transformation matrix.
 ) {
   /*
   The sideband computation is based on the method described by Eden and Levitt
   et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
-  bool reset;
+  unsigned char is_spectral;
   unsigned int evt;
-  int dim;
-  double B0_in_T, fraction;
+  int dim, total_pts = scheme->n_gamma * scheme->total_orientations;
+  double B0_in_T, fraction, duration;
+  vm_double_zeros(total_pts, scheme->phase);
 
   // Allocate memory for zeroth, second, and fourth-rank tensor components.
   // variable with _temp allocate temporary memory for tensor components
@@ -81,7 +82,10 @@ void __mrsimulator_core(
 
   // Loop over the dimensionn.
   for (dim = 0; dim < n_dimension; dim++) {
-    reset = 1;  // If 1, reset the freqs to zero, else keep adding the freqs.
+    // Reset the freqs to zero at the start of each spectral dimension.
+    cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
+    dimensions[dim].R0_offset = 0.0;
+
     plan = dimensions[dim].events->plan;
     vm_double_ones(plan->size, dimensions[dim].freq_amplitude);
     // Loop over the events per dimension.
@@ -90,6 +94,8 @@ void __mrsimulator_core(
       plan = event->plan;
       B0_in_T = event->magnetic_flux_density_in_T;
       fraction = event->fraction;
+      duration = event->duration;
+      is_spectral = event->is_spectral;
 
       /* Initialize with zeroing all spatial components */
       __zero_components(&R0, R2, R4);
@@ -115,8 +121,10 @@ void __mrsimulator_core(
 
       /* Get frequencies and amplitudes per octant .................................. */
       /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
-      MRS_get_normalized_frequencies_from_plan(scheme, plan, R0, R2, R4, reset,
-                                               &dimensions[dim], fraction);
+      // NOTE: How to incorporate both "fraction" and "duration" into this function?
+      // Possibly calculate normalized frequencies first, then decide if frac or dur
+      MRS_get_normalized_frequencies_from_plan(
+          scheme, plan, R0, R2, R4, &dimensions[dim], fraction, is_spectral, duration);
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
 
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
@@ -132,9 +140,12 @@ void __mrsimulator_core(
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-      reset = 0;  // reset the freqs to zero for next dimension.
-    }             // end events
-  }               // end dimensions
+    }                                      // end events
+  }                                        // end dimensions
+
+  // calculate phase exponent of delay events
+  vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
+  cblas_zscal(total_pts, transition_pathway_weight, (double *)scheme->exp_I_phase, 1);
 
   /* ---------------------------------------------------------------------
    *              Delta and triangle tenting interpolation
@@ -142,24 +153,11 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    if (transition_pathway_weight[0] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, spec, transition_pathway_weight[0],
-                                iso_intrp);
-    }
-    if (transition_pathway_weight[1] != 0.0) {
-      one_dimensional_averaging(dimensions, scheme, spec + 1,
-                                transition_pathway_weight[1], iso_intrp);
-    }
+    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
     break;
   case 2:
-    if (transition_pathway_weight[0] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, spec, transition_pathway_weight[0],
-                                affine_matrix, iso_intrp);
-    }
-    if (transition_pathway_weight[1] != 0.0) {
-      two_dimensional_averaging(dimensions, scheme, spec + 1,
-                                transition_pathway_weight[1], affine_matrix, iso_intrp);
-    }
+    two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,
+                              scheme->exp_I_phase);
     break;
   }
 }
@@ -186,7 +184,7 @@ void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, unsigned int interpolate_type, bool *freq_contrib,
+    bool interpolation, unsigned int interpolate_type, unsigned char *freq_contrib,
     double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();

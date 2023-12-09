@@ -133,8 +133,8 @@ def simulator_process(sim, data_object):
         )
         sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
-    data_mrsimulator = np.asarray(sim_dataset.to_list()[1:])
-    data_mrsimulator = data_mrsimulator.sum(axis=0)
+    data_mrsimulator = np.sum(sim_dataset.split())
+    data_mrsimulator = data_mrsimulator.y[0].components[0]
     data_mrsimulator /= data_mrsimulator.sum()
 
     dv = sim_dataset.y[0]

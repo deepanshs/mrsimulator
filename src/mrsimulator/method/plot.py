@@ -16,13 +16,13 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 # NOTE: Matplotlib should automatically generate new colors when none specified
-DURATION_WIDTH = 0.5  # Width of one ConstantDurationEvent
+DURATION_WIDTH = 0.5  # Width of one DelayEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
 MIXING_WIDTH = 0.25  # angle of 360 degrees
 DEFAULT_FONT_SIZE = 9
 MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
-    "ConstantDurationEvent": "orange",
+    "DelayEvent": "orange",
     "SpectralEvent": "g",
     "MixingEvent": "b",
     "inf_speed": "y",
@@ -576,7 +576,7 @@ def _make_x_data(df):
         if row["type"] == "SpectralEvent":
             next_x = points[-1] + (row["fraction"] * SPECTRAL_MULTIPLIER)
             points.extend((next_x, next_x))
-        elif row["type"] == "ConstantDurationEvent":
+        elif row["type"] == "DelayEvent":
             next_x = points[-1] + DURATION_WIDTH
             points.extend((next_x, next_x))
 
@@ -643,7 +643,7 @@ def _make_normal_and_offset_x_data(df):
     if len(x_data) == 0:
         raise ValueError(
             "The DataFrame does not contain any SpectralEvents or "
-            "ConstantDurationEvents. At least one must be present to construct a plot"
+            "DelayEvents. At least one must be present to construct a plot"
         )
 
     return x_data, _offset_x_data(df, x_data)
@@ -656,9 +656,9 @@ def _add_legend(fig):
             Patch(facecolor=COLORS["MixingEvent"], alpha=0.2, label="MixingEvent"),
             Patch(facecolor=COLORS["SpectralEvent"], alpha=0.2, label="SpectralEvent"),
             Patch(
-                facecolor=COLORS["ConstantDurationEvent"],
+                facecolor=COLORS["DelayEvent"],
                 alpha=0.2,
-                label="ConstantDurationEvent",
+                label="DelayEvent",
             ),
         ],
         loc="upper left",

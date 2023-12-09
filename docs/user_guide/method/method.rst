@@ -42,9 +42,8 @@ pathway, :math:`{\hat{A} \rightarrow \hat{B} \rightarrow \hat{C} \rightarrow
     :alt: figure
     :align: center
 
-    A illustration of an two-dimensional NMR pulse sequence leading up to the
-    acqusition of the signal from a transition pathway.
-
+    An illustration of a two-dimensional NMR pulse sequence leading up to 
+    the acquisition of the signal from a transition pathway
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
 transition pathway signal as a function of :math:`t_1`, derives its *average
@@ -102,7 +101,9 @@ contributions they evolve. No coherence transfer among transitions or
 populations occurs in a spectral or delay event. The transition-dependent
 frequency contributions during an Event are selected from a list of
 :ref:`enumeration literals<freq_contrib_api>` and placed in the ``freq_contrib``
-attribute of the event. If ``freq_contrib`` is left unspecified, i.e., the
+attribute of the event. Frequency contributions can be individually excluded by
+placing an exclamation mark in front of the string representing the enumeration
+literal. If ``freq_contrib`` is left unspecified, i.e., the
 value of ``freq_contrib`` is set to ``None``, a default list holding the
 enumeration literals for *all* contributions is generated for the event.
 
@@ -1260,19 +1261,16 @@ refocus through the transition pathways.
 .. _frequency_contribution_table:
 
 .. list-table:: Frequency Contributions
-    :widths: 25 25 25 25 25
-    :header-rows: 2
+    :widths: 27 24 24 25 25
+    :header-rows: 1
 
     * - Interactions
-      - perturbation
-      - anisotropy
+      - | perturbation
+        | order
+      - | anisotropy
+        | rank
       - ``freq_contrib``
       - Expression
-    * -
-      - order
-      - rank
-      -
-      -
     * - shielding
       - 1st
       - 0th
@@ -1318,6 +1316,81 @@ refocus through the transition pathways.
       - 4th
       - ``Quad2_4``
       - :math:`\displaystyle\frac{\omega_q^2}{\omega_0}  \cdot \mathbb{G}^{\{qq\}} \cdot \mathbb{c}_4`
+    * - quadrupolar-shielding
+      - 2nd
+      - 0th
+      - ``Quad_Shielding_cross_0``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{S}^{\{\sigma q\}} \cdot \mathbb{d}_I`
+    * - quadrupolar-shielding
+      - 2nd
+      - 2nd
+      - ``Quad_Shielding_cross_2``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{D}^{\{\sigma q\}}  \cdot \mathbb{d}_I`
+    * - quadrupolar-shielding
+      - 2nd
+      - 4th
+      - ``Quad_Shielding_cross_4``
+      - :math:`-\zeta_\sigma \omega_q \cdot \mathbb{G}^{\{\sigma q\}}  \cdot \mathbb{d}_I`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 0th
+      - ``Quad_Dipolar_cross_0``
+      - :math:`\displaystyle \frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{S}^{\{d q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 2nd
+      - ``Quad_Dipolar_cross_2``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{D}^{\{d q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 4th
+      - ``Quad_Dipolar_cross_4``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{G}^{\{d q_I\}}(\Theta) \cdot  (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 0th
+      - ``Quad_Dipolar_cross_0``
+      - :math:`\displaystyle \frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{S}^{\{d q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 2nd
+      - ``Quad_Dipolar_cross_2``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{D}^{\{d q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak dipole
+      - 2nd
+      - 4th
+      - ``Quad_Dipolar_cross_4``
+      - :math:`\displaystyle\frac{\omega_d \, \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{G}^{\{d q_S\}}(\Theta) \cdot  (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 0th
+      - ``Quad_J_cross_0``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{S}^{\{J q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 2nd
+      - ``Quad_J_cross_2``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{D}^{\{J q_I\}} \cdot  (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 4th
+      - ``Quad_J_cross_4``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{I\}}}{\omega_0^{\{I\}}} \cdot \mathbb{G}^{\{J q_I\}} \cdot (\mathbb{d}\mathbb{p})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 0th
+      - ``Quad_J_cross_0``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{S}^{\{J q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 2nd
+      - ``Quad_J_cross_2``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{D}^{\{J q_S\}} \cdot  (\mathbb{p}\mathbb{d})_{IS}`
+    * - quadrupolar-weak J
+      - 2nd
+      - 4th
+      - ``Quad_J_cross_4``
+      - :math:`\displaystyle\frac{2\pi \zeta_J \omega_q^{\{S\}}}{\omega_0^{\{S\}}} \cdot \mathbb{G}^{\{J q_S\}} \cdot (\mathbb{p}\mathbb{d})_{IS}`
 
 
 Affine Transformations
@@ -2026,7 +2099,7 @@ contributions).
 While these two examples nicely illustrate numerous important concepts for
 building custom methods, it should also be noted that identical spectra could
 have been obtained with a simpler custom method that used the ``freq_contrib``
-to remove the undesired frequency contributions. The code for these two methods
+to only select the desired frequency contributions. The code for these two methods
 is illustrated below.
 
 .. plot::
@@ -2097,6 +2170,12 @@ is illustrated below.
     ax[1].grid()
     plt.tight_layout()
     plt.show()
+
+.. note::
+    mrsimulator also includes shortcuts for addressing groups of frequency contributions together.
+    For example, the ``shielding_only`` method could have selected all shielding contributions by
+    using ``freq_contrib=["Shielding"]`` which expands to zeroth- and second-rank shielding.
+    A complete list of shortcuts are listed in :ref:`freq_contrib_api`.
 
 
 
@@ -2252,8 +2331,10 @@ Attribute Summaries
     - ``List``
     - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
       contributions to include when calculating a transition frequency. For example,
-      ``["Shielding1_0", "Shielding1_2"]``. By default, the list is all frequency enumerations and
-      all frequency contributions are calculated.
+      ``["Shielding1_0", "Shielding1_2"]``. String shortcuts encapsulating multiple contributions
+      can also be passed, for example ``["Shielding"]`` selects all shielding interactions. By
+      default, the list is all frequency enumerations and all frequency contributions are
+      calculated.
 
   * - transition_queries
     - ``list``

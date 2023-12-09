@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from mrsimulator.method import SpectralEvent
-from mrsimulator.method.frequency_contrib import freq_default
+from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.method.spectral_dimension import SpectralDimension
 from pydantic import ValidationError
 
@@ -60,7 +60,7 @@ def basic_spectral_dimension_tests(the_dimension):
     the_dimension.reference_offset = -4
     the_dimension.origin_offset = 5e6
     assert np.allclose(the_dimension.coordinates_Hz(), coordinates - 4)
-    assert np.allclose(the_dimension.coordinates_ppm(), (coordinates - 4) / (5 - 4e-6))
+    assert np.allclose(the_dimension.coordinates_ppm(), (coordinates - 4) / 5)
 
     the_dimension.count = 31
     the_dimension.reference_offset = 0
@@ -119,7 +119,7 @@ def test_spectral_dimension():
     # parse dict with units
     event_dictionary = {
         "fraction": 1,
-        "freq_contrib": freq_default,
+        "freq_contrib": FREQ_LIST_ALL,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -145,7 +145,7 @@ def test_spectral_dimension():
     # parse dict with units
     event_dictionary = {
         "fraction": 0.5,
-        "freq_contrib": freq_default,
+        "freq_contrib": FREQ_LIST_ALL,
         "magnetic_flux_density": "9.6 T",
         "rotor_frequency": "1 kHz",
         "rotor_angle": "54.735 deg",
@@ -198,7 +198,7 @@ def test_spectral_dimension():
         events=[
             {
                 "fraction": 0.5,
-                # "freq_contrib": freq_default,
+                # "freq_contrib": FREQ_LIST_ALL,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,
@@ -206,7 +206,7 @@ def test_spectral_dimension():
             },
             {
                 "fraction": 0.5,
-                # "freq_contrib": freq_default,
+                # "freq_contrib": FREQ_LIST_ALL,
                 "magnetic_flux_density": 9.6,
                 "rotor_angle": 0.9553059660790962,
                 "rotor_frequency": 1000.0,

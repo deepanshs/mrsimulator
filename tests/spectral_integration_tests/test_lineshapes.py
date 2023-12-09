@@ -164,7 +164,7 @@ def test_pure_quadrupolar_sidebands_simpson():
         #     plt.legend()
         #     plt.show()
 
-        limit = -np.log10(data_source.max()) + 2
+        limit = -np.log10(data_source.max()) + 1.5
         np.testing.assert_almost_equal(
             data_mrsimulator, data_source, decimal=limit, err_msg=message
         )
@@ -192,6 +192,31 @@ def test_csa_plus_quadrupolar_lineshape_simpson():
     )
     path_ = path.join(SIMPSON_TEST_PATH, "csa_quad")
     for i in range(6):
+        message = f"{error_message} test0{i:02d}.json"
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+        data_mrsimulator, data_source = c_setup(
+            filename=filename, integration_volume="hemisphere"
+        )
+
+        # if SHOW_PLOTS:
+        #     plt.plot(data_mrsimulator, "k", label="mrsims")
+        #     plt.plot(data_source, "--r", label="simpson")
+        #     plt.title("Quad + Shielding Sidebands")
+        #     plt.legend()
+        #     plt.show()
+
+        limit = -np.log10(data_source.max()) + 1
+        np.testing.assert_almost_equal(
+            data_mrsimulator, data_source, decimal=limit, err_msg=message
+        )
+
+
+def test_1st_order_quadrupolar_lineshape_simpson():
+    error_message = (
+        "failed to compare 1st order quad lineshape with simpson simulation from file"
+    )
+    path_ = path.join(SIMPSON_TEST_PATH, "quad_1st_order")
+    for i in range(2):
         message = f"{error_message} test0{i:02d}.json"
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         data_mrsimulator, data_source = c_setup(

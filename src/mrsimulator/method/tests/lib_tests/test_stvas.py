@@ -3,6 +3,7 @@ import pytest
 from mrsimulator.method.lib import ST1_VAS
 from mrsimulator.method.lib import ST2_VAS
 from mrsimulator.method.query import TransitionQuery
+from mrsimulator.spin_system.isotope import Isotope
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -76,8 +77,8 @@ def test_ST1_VAS_general():
     assert mth.name == "ST1_VAS"
 
     des = (
-        "Simulate a 1.5 -> 0.5 and -0.5 -> -1.5 satellite-transition variable-angle "
-        "spinning spectrum."
+        "Simulate a P=-1 (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+        "correlation spectrum."
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_queries == [
@@ -135,8 +136,8 @@ def test_ST2_VAS_general():
     assert mth.name == "ST2_VAS"
 
     des = (
-        "Simulate a 2.5 -> 1.5 and -1.5 -> -2.5 satellite-transition variable-angle "
-        "spinning spectrum."
+        "Simulate a P=-1 (ST) to P=-1 (CT) ST-CT variable-angle spinning "
+        "correlation spectrum."
     )
     assert mth.description == des
     assert mth.spectral_dimensions[0].events[0].transition_queries == [
@@ -159,3 +160,16 @@ def test_ST2_VAS_general():
         "name": "ST2_VAS",
         **sample_test_output(4),
     }
+
+
+def test_stvas_custom_isotopes():
+    Isotope.register(symbol="custom", spin_multiplicity=4)  # spin of 3/2
+    st1_vas = ST1_VAS(channels=["custom"])
+
+    assert st1_vas.channels[0].spin == 1.5
+
+    st1_vas_json = st1_vas.json()
+    Isotope.custom_isotope_data = {}
+
+    st1_vas_new = ST1_VAS.parse_dict_with_units(st1_vas_json)
+    assert st1_vas == st1_vas_new

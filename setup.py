@@ -69,6 +69,7 @@ class Setup:
 
         print(sys.version)
         loc = dirname(sys.executable)
+        print("executable location", loc)
         if "conda" not in loc:
             return
 
@@ -421,8 +422,8 @@ setup(
     setup_requires=["numpy>=1.20"],
     install_requires=[
         "numpy>=1.20",
-        "csdmpy>=0.4.1",
-        "pydantic>=1.9",
+        "csdmpy>=0.6",
+        "pydantic<2",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
         "psutil>=5.4.8",

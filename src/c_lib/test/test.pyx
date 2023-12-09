@@ -259,181 +259,133 @@ def __batch_wigner_rotation(unsigned int octant_orientations,
                             &R4[0], &exp_Im_alpha[0], &w2[0], &w4[0])
     return w2, w4
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def rank_2_tensor_products(np.ndarray[double complex] tensor_a, np.ndarray[double complex] tensor_b):
 
-# @cython.boundscheck(False)
-# @cython.wraparound(False)
-# def _one_d_simulator(
-#         # spectrum information
-#         double reference_offset,
-#         double increment,
-#         int number_of_points,
+    cdef np.ndarray[double] R_a = tensor_a.view(dtype=float)
+    cdef np.ndarray[double] R_b = tensor_b.view(dtype=float)
+    cdef np.ndarray[double] R_0 = np.zeros(2, dtype=float)
+    cdef np.ndarray[double] R_2 = np.zeros(10, dtype=float)
+    cdef np.ndarray[double] R_4 = np.zeros(18, dtype=float)
+    clib.rank_2_tensor_products(&R_a[0], &R_b[0], &R_0[0], &R_2[0], &R_4[0])
 
-#         float spin_quantum_number = 0.5,
-#         float larmor_frequency = 0.0,
-
-#         # CSA tensor information
-#         isotropic_chemical_shift = None,
-#         shielding_anisotropy = None,
-#         shielding_asymmetry = None,
-#         shielding_orientations = None,
-
-#         # quad tensor information
-#         quadrupolar_coupling_constant = None,
-#         quadrupolar_eta = None,
-#         quadrupole_orientations = None,
-
-#         second_order_quad = 1,
-#         remove_2nd_order_quad_isotropic = 0,
-
-#         # dipolar coupling
-#         D = None,
-
-#         # spin rate, spin angle and number spinning sidebands
-#         int number_of_sidebands = 128,
-#         double rotor_frequency_in_Hz = 0.0,
-#         rotor_angle_in_rad = None,
-
-#         m_final = 0.5,
-#         m_initial = -0.5,
-
-#         # Euler angle -> principal to molecular frame
-#         # omega_PM=None,
-
-#         # Euler angles for powder averaging scheme
-#         int integration_density=90,
-#         int integration_volume=0):
+    return R_0.view(dtype=complex), R_2.view(dtype=complex), R_4.view(dtype=complex)
 
 
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_add(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_add(A.size, &A[0], &B[0], &res[0])
+    return res
 
-#     nt = integration_density
-#     if isotropic_chemical_shift is None:
-#         isotropic_chemical_shift = 0
-#     isotropic_chemical_shift = np.asarray([isotropic_chemical_shift], dtype=np.float64).ravel()
-#     cdef number_of_sites = isotropic_chemical_shift.size
-#     cdef np.ndarray[double, ndim=1] isotropic_chemical_shift_c = isotropic_chemical_shift
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_add_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_add_inplace(A.size, &A[0], &B[0])
 
-#     cdef np.ndarray[float] spin = np.ones(number_of_sites, dtype=np.float32)*spin_quantum_number
-#     cdef np.ndarray[double] gyromagnetic_ratio = np.ones(number_of_sites, dtype=np.float64)*larmor_frequency
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sub(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_subtract(A.size, &A[0], &B[0], &res[0])
+    return res
 
-#     if spin_quantum_number > 0.5 and larmor_frequency == 0.0:
-#         raise Exception("'larmor_frequency' is required for quadrupole spins.")
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sub_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_subtract_inplace(A.size, &A[0], &B[0])
 
-#     # Shielding anisotropic values
-#     if shielding_anisotropy is None:
-#         shielding_anisotropy = np.ones(number_of_sites, dtype=np.float64).ravel() #*1e-4*increment
-#     else:
-#         shielding_anisotropy = np.asarray([shielding_anisotropy], dtype=np.float64).ravel()
-#     if shielding_anisotropy.size != number_of_sites:
-#         raise Exception("Number of shielding anisotropies are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] shielding_anisotropy_c = shielding_anisotropy
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_mult(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_multiply(A.size, &A[0], 1, &B[0], &res[0])
+    return res
 
-#     # Shielding asymmetry values
-#     if shielding_asymmetry is None:
-#         shielding_asymmetry = np.zeros(number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         shielding_asymmetry = np.asarray([shielding_asymmetry], dtype=np.float64).ravel()
-#     if shielding_asymmetry.size != number_of_sites:
-#         raise Exception("Number of shielding asymmetry are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] shielding_asymmetry_c = shielding_asymmetry
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_mult_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_multiply_inplace(A.size, &A[0], 1, &B[0], 1)
 
-#     # Shielding orientations
-#     if shielding_orientations is None:
-#         shielding_orientations = np.zeros(3*number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         shielding_orientations = np.asarray([shielding_orientations], dtype=np.float64).ravel()
-#     if shielding_orientations.size != 3*number_of_sites:
-#         raise Exception("Number of euler angles are not consistent with the number of shielding tensors.")
-#     cdef np.ndarray[double, ndim=1] shielding_orientations_c = shielding_orientations*np.pi/180.0
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_div(np.ndarray[double] A, np.ndarray[double] B):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_divide(A.size, &A[0], &B[0], &res[0])
+    return res
 
-#     # Quad coupling constant
-#     if quadrupolar_coupling_constant is None:
-#         quadrupolar_coupling_constant = np.zeros(number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         quadrupolar_coupling_constant = np.asarray([quadrupolar_coupling_constant], dtype=np.float64).ravel()
-#     if quadrupolar_coupling_constant.size != number_of_sites:
-#         raise Exception("Number of quad coupling constants are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] quadrupolar_coupling_constant_c = quadrupolar_coupling_constant
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_div_inplace(np.ndarray[double] A, np.ndarray[double] B):
+    clib.test_vm_double_divide_inplace(A.size, &A[0], &B[0])
 
-#     # Quad asymmetry value
-#     if quadrupolar_eta is None:
-#         quadrupolar_eta = np.zeros(number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         quadrupolar_eta = np.asarray([quadrupolar_eta], dtype=np.float64).ravel()
-#     if quadrupolar_eta.size != number_of_sites:
-#         raise Exception("Number of quad asymmetry are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] quadrupole_asymmetry_c = quadrupolar_eta
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cmult(np.ndarray[complex] A, np.ndarray[complex] B):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_double_complex_multiply(A.size, &A[0], &B[0], &res[0])
+    return res
 
-#     # Quadrupolar orientations
-#     if quadrupole_orientations is None:
-#         quadrupole_orientations = np.zeros(3*number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         quadrupole_orientations = np.asarray([quadrupole_orientations], dtype=np.float64).ravel()
-#     if quadrupole_orientations.size != 3*number_of_sites:
-#         raise Exception("Number of euler angles are not consistent with the number of quad tensors.")
-#     cdef np.ndarray[double, ndim=1] quadrupole_orientations_c = quadrupole_orientations*np.pi/180.0
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sq(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square(A.size, &A[0], &res[0])
+    return res
 
-#     # Dipolar coupling constant
-#     if D is None:
-#         D = np.zeros(number_of_sites, dtype=np.float64).ravel()
-#     else:
-#         D = np.asarray([D], dtype=np.float64).ravel()
-#     if D.size != number_of_sites:
-#         raise Exception("Number of dipolar coupling are not consistent with the number of spins.")
-#     cdef np.ndarray[double, ndim=1] D_c = D
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sq_inplace(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_inplace(A.size, &A[0])
 
-#     # if rotor_angle is None:
-#     #     rotor_angle = 54.735
-#     cdef double rotor_angle_in_rad_c = rotor_angle_in_rad
-#     cdef second_order_quad_c = second_order_quad
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sqrt(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_root(A.size, &A[0], &res[0])
+    return res
 
-#     cdef np.ndarray[double, ndim=1] transition_c = np.asarray([m_initial, m_final], dtype=np.float64)
-
-#     cdef np.ndarray[double, ndim=1] amp = np.zeros(number_of_points * number_of_sites)
-
-#     cdef clib.site_struct sites_c
-
-#     sites_c.number_of_sites = number_of_sites
-#     sites_c.spin = &spin[0]
-#     sites_c.gyromagnetic_ratio = &gyromagnetic_ratio[0]
-
-#     sites_c.isotropic_chemical_shift_in_ppm = &isotropic_chemical_shift_c[0]
-#     sites_c.shielding_symmetric_zeta_in_ppm = &shielding_anisotropy_c[0]
-#     sites_c.shielding_asymmetry = &shielding_asymmetry_c[0]
-#     sites_c.shielding_orientation = &shielding_orientations_c[0]
-
-#     sites_c.quadrupolar_Cq_in_Hz = &quadrupolar_coupling_constant_c[0]
-#     sites_c.quadrupolar_eta = &quadrupole_asymmetry_c[0]
-#     sites_c.quadrupolar_orientation = &quadrupole_orientations_c[0]
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sqrt_inplace(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_square_root_inplace(A.size, &A[0])
 
 
-#     cdef bool_t remove_second_order_quad_isotropic_c = remove_2nd_order_quad_isotropic
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cos(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_cosine(A.size, &A[0], &res[0])
+    return res
 
-#     cdef clib.MRS_dimension *dimension[1]
-#     clib.mrsimulator_core(
-#             # spectrum information and related amplitude
-#             &amp[0],
-#             reference_offset,
-#             increment,
-#             number_of_points,
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_sin(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_sine(A.size, &A[0], &res[0])
+    return res
 
-#             &sites_c,
-#             dimension,
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_cos_I_sin(np.ndarray[double] A):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_cosine_I_sine(A.size, &A[0], &res[0])
+    return res
 
-#             second_order_quad_c,
-#             remove_second_order_quad_isotropic_c,
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_exp(np.ndarray[double] A):
+    cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
+    clib.test_vm_double_exp(A.size, &A[0], &res[0], 1)
+    return res
 
-#             # spin rate, spin angle and number spinning sidebands
-#             number_of_sidebands,
-#             rotor_frequency_in_Hz,
-#             rotor_angle_in_rad_c,
-
-#             &transition_c[0],
-#             integration_density,
-#             integration_volume,           # 0-octant, 1-hemisphere, 2-sphere.
-#             1
-#             )
-
-
-#     freq = np.arange(number_of_points)*increment + reference_offset
-
-#     return freq, amp
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def vm_I_exp(np.ndarray[complex] A):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_double_complex_exp(A.size, &A[0], &res[0])
+    return res

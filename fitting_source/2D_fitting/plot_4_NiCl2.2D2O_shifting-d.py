@@ -21,16 +21,13 @@ from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
 filename = "https://ssnmr.org/sites/default/files/mrsimulator/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 7.500
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -51,6 +48,23 @@ ax.set_ylim(1500, -1500)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords > 700e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -123,11 +137,6 @@ shifting_d = Method(
     experiment=experiment,  # also add the measurement to the method.
 )
 
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = shifting_d.get_transition_pathways(sys)
-
 # %%
 # **Guess Spectrum**
 
@@ -173,7 +182,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 
@@ -203,7 +218,14 @@ fig, ax = plt.subplots(
 )
 vmax, vmin = experiment.max(), experiment.min()
 for i, dat in enumerate([experiment, best_fit, residuals]):
-    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].imshow(
+        dat,
+        aspect="auto",
+        cmap="gist_ncar_r",
+        vmax=vmax,
+        vmin=vmin,
+        interpolation="none",
+    )
     ax[i].set_xlim(1000, -1000)
 ax[0].set_ylim(1500, -1500)
 plt.tight_layout()
