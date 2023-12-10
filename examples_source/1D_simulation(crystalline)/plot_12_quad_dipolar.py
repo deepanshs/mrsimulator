@@ -73,7 +73,8 @@ plt.show()
 
 
 # %%
-#  .. [#f1] Hexem, J. G., Frey, M. H., and Opella, S. J., Influence of :math:`^{14}\text{N}`
-#           on :math:`^{13}\text{C}` NMR Spectra of Solids, J. Am. Chem. Soc., 1981, **103**,
-#           224-226. [DOI: 10.1021/ja00391a057](https://doi.org/10.1021/ja00391a057)
+#  .. [#f1] Hexem, J. G., Frey, M. H., and Opella, S. J., Influence of
+#       :math:`^{14}\text{N}` on :math:`^{13}\text{C}` NMR Spectra of Solids, J. Am.
+#       Chem. Soc., 1981, **103**, 224-226.
+#       `DOI: 10.1021/ja00391a057 <https://doi.org/10.1021/ja00391a057>`_
 #
