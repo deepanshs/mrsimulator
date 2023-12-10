@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Coupled spin-1/2 (MAS Quadrupolar-dipolar spectrum)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ¹³C-14N static dipolar coupling simulation.
 """
@@ -22,16 +22,18 @@ from mrsimulator.method import SpectralDimension
 spin_system = SpinSystem(
     sites=[
         Site(isotope="13C", isotropic_chemical_shift=0.0),
-        Site(isotope="14N",isotropic_chemical_shift=0,  # in ppm
+        Site(
+            isotope="14N",
+            isotropic_chemical_shift=0,  # in ppm
             quadrupolar=SymmetricTensor(
                 Cq=1.18e6,  # in Hz
                 eta=0.54,
                 alpha=0,
-                beta= 5*np.pi/180,
+                beta=5 * np.pi / 180,
                 gamma=0,
-                ),
-        )
-            ],
+            ),
+        ),
+    ],
     couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-370))],
 )
 # %%
