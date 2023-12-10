@@ -49,6 +49,7 @@ method = BlochDecaySpectrum(
 # %%
 # Create the Simulator object and add the method and the spin system object.
 sim = Simulator(spin_systems=[spin_system], methods=[method])
+sim.config.integration_volume = "hemisphere"
 sim.run()
 
 # %%
