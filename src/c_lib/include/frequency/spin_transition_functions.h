@@ -173,5 +173,6 @@ static inline double STF_dIS(const double mIf, const double mIi, const double mS
  */
 static inline double STF_pdIS(const double mIf, const double mIi, const double mSf,
                               const double mSi, const double spinS) {
-  return 1.2247448714 * (mIf * mSf * mSf - mIi * mSi * mSi) - 0.4082482904638631*spinS*(spinS+1) * (mIf - mIi);
+  return 1.2247448714 * (mIf * mSf * mSf - mIi * mSi * mSi) -
+         0.4082482904638631 * spinS * (spinS + 1) * (mIf - mIi);
 }
