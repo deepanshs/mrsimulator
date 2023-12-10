@@ -35,15 +35,15 @@ spin_system = SpinSystem(
             ),
         ),
     ],
-    couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-370))],
+    couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-660.2))],
 )
 # %%
 # Create a BlochDecaySpectrum method.
 method = BlochDecaySpectrum(
     channels=["13C"],
-    magnetic_flux_density=3.5,  # in T
+    magnetic_flux_density=3.5338,  # in T
     rotor_frequency=12000,  # in Hz
-    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=400)],
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=200)],
 )
 
 # %%
