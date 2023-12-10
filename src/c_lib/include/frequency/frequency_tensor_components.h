@@ -419,11 +419,11 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
   transition_fn_scalar /= larmor_freq_in_Hz;
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *Lambda_0 *= -1.095445115010332 * transition_fn_scalar;
+  *Lambda_0 *= 1.095445115010332 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.6546536707079771 * transition_fn_scalar, (double *)Lambda_2, 1);
+  cblas_dscal(10, -0.6546536707079771 * transition_fn_scalar, (double *)Lambda_2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, 1.17108008753824 * transition_fn_scalar, (double *)Lambda_4, 1);
+  cblas_dscal(18, -1.17108008753824 * transition_fn_scalar, (double *)Lambda_4, 1);
 }
