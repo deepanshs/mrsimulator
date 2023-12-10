@@ -61,6 +61,7 @@ processor = sp.SignalProcessor(
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+processed_dataset.dimensions[0].to("Hz")
 
 # %%
 plt.figure(figsize=(4.25, 3.0))
