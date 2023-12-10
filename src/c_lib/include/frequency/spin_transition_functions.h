@@ -168,9 +168,10 @@ static inline double STF_dIS(const double mIf, const double mIi, const double mS
  *      corresponding to spin I.
  * @param mSi The quantum number associated with the quantized initial energy state
  *      corresponding to spin S.
+ * @param spinS The quantum number associated with the spin S.
  * @return The spin transition symmetry function @f$\mathbb{d}_{IS}@f$.
  */
 static inline double STF_pdIS(const double mIf, const double mIi, const double mSf,
-                              const double mSi) {
-  return 1.2247448714 * (mIf * mSf * mSf - mIi * mSi * mSi);
+                              const double mSi, const double spinS) {
+  return 1.2247448714 * (mIf * mSf * mSf - mIi * mSi * mSi) - 0.4082482904638631*spinS*(spinS+1) * (mIf - mIi);
 }
