@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 """
-Coupled spin-1/2 (MAS Quadrupolar-dipolar spectrum)
+Influence of 14N on 13C NMR MAS spectra of glycine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-¹³C-14N static dipolar coupling simulation.
+The alpha-carbon resonance of glycine, 13C (I=1/2), attached to 14N (I=1).
+The 14N quadrupolar tensor parameters were obtained from Hexem `et al.` [#f1]_
 """
 # %%
 import matplotlib.pyplot as plt
@@ -68,3 +69,8 @@ ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()
+
+
+# %%
+#  .. [#f1] Hexem, J. G., Frey, M. H., and Opella, S. J., Influence of $^{14}\text{N}$ on $^{13}\text{C}$ NMR Spectra of Solids, J. Am. Chem. Soc., 1981, **103**, 224-226. [DOI: 10.1021/ja00391a057](https://doi.org/10.1021/ja00391a057)
+#
