@@ -741,7 +741,8 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, wigner_2j_inc, wigner_4j_inc = 0, w2_increment, w4_increment = 0;
+  unsigned int j, max_iter, wigner_2j_inc, wigner_4j_inc = 0, w2_increment,
+                                           w4_increment = 0;
 
   w2_increment = 3 * octant_orientations;
   wigner_2j_inc = 5 * w2_increment;  // equal to 5 x 3 x octant_orientations;
@@ -750,7 +751,8 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
     wigner_4j_inc = 9 * w4_increment;  // equal to 9 x 5 x octant_orientations;
   }
 
-  for (j = 0; j < n_octants; j++) {
+  max_iter = (n_octants <= 4) ? n_octants : 4;
+  for (j = 0; j < max_iter; j++) {
     /* Second-rank Wigner rotation from crystal/common frame to rotor frame. */
     __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices, exp_Im_alpha, R2,
                         w2);
