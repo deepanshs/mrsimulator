@@ -73,7 +73,7 @@ some of these issues.
     # Create the Simulator object
     sim = Simulator(spin_systems=[system], methods=[method])
 
-Here, ``sim`` is a :ref:`simulator_api` object which holds one spin system and one method.
+Here, ``sim`` is a :ref:`simulator_api` object that holds one spin system and one method.
 See :ref:`spin_system_documentation` and :ref:`method_documentation` documentation for more
 information on the respective classes.
 
@@ -83,9 +83,9 @@ Integration Volume
 ''''''''''''''''''
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.integration_volume` is an
-enumeration with two string literals, ``octant`` and ``hemisphere``. The integration volume
+enumeration of string literals, ``octant``, ``hemisphere``, and ``sphere``. The integration volume
 refers to the volume of a unit sphere over which the integrated NMR frequencies are evaluated.
-The default value is ``octant``, i.e., the spectrum comprises of integrated frequencies
+The default value is ``octant``, i.e., the spectrum comprises integrated frequencies
 from the positive octant of a unit sphere. **mrsimulator** can exploit the problem's
 orientational symmetry, thus optimizing the simulation by performing a partial integration.
 
@@ -133,7 +133,7 @@ The total number of orientations, :math:`\Theta_\text{count}`, is
 
     \Theta_\text{count} = M (n + 1)(n + 2)/2
 
-where :math:`M` is the number of octants and :math:`n` is value of this attribute. The
+where :math:`M` is the number of octants and :math:`n` is the value of this attribute. The
 number of octants is the value from the ``integration_volume`` attribute.
 The default value of this attribute, 70, produces 2556 orientations at which the NMR
 frequency contributions are evaluated.
@@ -142,7 +142,7 @@ frequency contributions are evaluated.
 
 .. plot::
     :context: close-figs
-    :caption: Low quality simulation from reduced integration density (=10).
+    :caption: Low-quality simulation from reduced integration density (=10).
 
     sim.config.integration_density = 10
     sim.run()
@@ -152,7 +152,7 @@ frequency contributions are evaluated.
 
 .. plot::
     :context: close-figs
-    :caption: High quality simulation from increased integration density (=100).
+    :caption: High-quality simulation from increased integration density (=100).
 
     sim.config.integration_density = 100
     sim.run()
@@ -167,7 +167,7 @@ Number of Sidebands
 '''''''''''''''''''
 
 The :py:attr:`~mrsimulator.simulator.ConfigSimulator.number_of_sidebands` attribute determines
-the number of sidebands evaluated in the simulation. The default value is 64 and is sufficient
+the number of sidebands evaluated in the simulation. The default value is 64 which is sufficient
 for most cases.
 
 In certain circumstances, especially when the anisotropy is large or the rotor spin frequency
@@ -177,7 +177,7 @@ is low, 64 sidebands might not be sufficient.
 
 .. plot::
     :context: close-figs
-    :caption: Inaccurate sideband simulation resulting from computing low number of sidebands.
+    :caption: Inaccurate sideband simulation resulting from computing a low number of sidebands.
 
     sim.methods[0] = BlochDecaySpectrum(
         channels=["29Si"],
@@ -221,7 +221,7 @@ use a large number of gamma angles for the simulation to converge.
 
 .. plot::
     :context: close-figs
-    :caption: Incorrect simulation from insufficient number of gamma angle averaging.
+    :caption: Incorrect simulation from an insufficient number of gamma angle averaging.
 
     from mrsimulator.method import Method
     from mrsimulator.method.event import SpectralEvent, MixingEvent
@@ -255,7 +255,7 @@ To resolve this, increase the number of gamma angles.
 
 .. plot::
     :context: close-figs
-    :caption: Accurate simulation from sufficiently large number of gamma angle averaging.
+    :caption: Accurate simulation from a sufficiently large number of gamma angle averaging.
 
     sim.config.number_of_gamma_angles=1000
     sim.run()
@@ -276,7 +276,7 @@ following example.
 
 .. plot::
     :context: close-figs
-    :caption: The frequency contributions from each individual spin systems are
+    :caption: The frequency contributions from individual spin systems are
         combined into one spectrum.
 
     # Create two distinct sites
@@ -371,8 +371,8 @@ Attribute Summaries
   * - integration_volume
     - ``str``
     - An *optional* string representing the fraction of a unit sphere used in the integrated NMR
-      frequency spectra. The allowed strings are ``octant`` and ``hemisphere``. The default
-      is ``octant``.
+      frequency spectra. The allowed strings are ``octant``, ``hemisphere``, and ``sphere``. The
+      default is ``octant``.
 
   * - integration_density
     - ``int``

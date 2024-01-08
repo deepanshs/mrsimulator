@@ -14,7 +14,7 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.6.dev2
+      - csdmpy>=0.6
       - astropy>=3.0
       - pydantic<2
       - typing-extensions>=3.7
