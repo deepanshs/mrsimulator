@@ -11,7 +11,6 @@ from setuptools import find_packages
 from setuptools import setup
 
 import numpy as np
-import numpy.distutils.system_info as sysinfo
 
 from settings import use_accelerate
 from settings import use_openblas
@@ -180,25 +179,25 @@ class LinuxSetup(Setup):
 
         self.library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
         self.libraries += ["openblas", "fftw3"]
-        openblas_info = sysinfo.get_info("openblas")
-        fftw3_info = sysinfo.get_info("fftw3")
+        # openblas_info = sysinfo.get_info("openblas")
+        # fftw3_info = sysinfo.get_info("fftw3")
 
-        if openblas_info == {} and fftw3_info == {}:
-            self.message("openblas-devel fftw-devel", "libopenblas-dev libfftw3-dev")
+        # if openblas_info == {} and fftw3_info == {}:
+        #     self.message("openblas-devel fftw-devel", "libopenblas-dev libfftw3-dev")
 
-        if openblas_info == {}:
-            self.message("openblas-devel", "libopenblas-dev")
+        # if openblas_info == {}:
+        #     self.message("openblas-devel", "libopenblas-dev")
 
-        if fftw3_info == {}:
-            self.message("fftw-devel", "libfftw3-dev")
+        # if fftw3_info == {}:
+        #     self.message("fftw-devel", "libfftw3-dev")
 
-        self.get_location(openblas_info)
-        self.get_location(fftw3_info)
+        # self.get_location(openblas_info)
+        # self.get_location(fftw3_info)
 
-    def get_location(self, dict_info):
-        for item in self.__slots__:
-            if item in dict_info.keys():
-                getattr(self, item).extend(dict_info[item])
+    # def get_location(self, dict_info):
+    #     for item in self.__slots__:
+    #         if item in dict_info.keys():
+    #             getattr(self, item).extend(dict_info[item])
 
     def message(self, lib_centos, lib_ubuntu):
         print(f"Warning: {lib_ubuntu} might not be installed. See below.\n")
@@ -237,10 +236,15 @@ class MacOSSetup(Setup):
 
     def accelerate_info(self):
         """Apple's Accelerate framework for BLAS"""
-        acc_info = sysinfo.get_info("accelerate")
-        for item in ["extra_compile_args", "extra_link_args"]:
-            if item in acc_info:
-                self.extra_compile_args += acc_info[item]
+        # acc_info = sysinfo.get_info("accelerate")
+        self.extra_compile_args += [
+            "-I/System/Library/Frameworks/vecLib.framework/Headers",
+            "-Wl,-framework",
+            "-Wl,Accelerate",
+        ]
+        # for item in ["extra_compile_args", "extra_link_args"]:
+        #     if item in acc_info:
+        #         self.extra_compile_args += acc_info[item]
         print("Attempting to link mrsimulator with the Apple accelerate library.")
         self.extra_compile_args += ["-DUSE_ACCELERATE"]
 
@@ -422,7 +426,7 @@ setup(
     setup_requires=["numpy>=1.20"],
     install_requires=[
         "numpy>=1.20",
-        "csdmpy>=0.4.1",
+        "csdmpy>=0.6",
         "pydantic<2",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
