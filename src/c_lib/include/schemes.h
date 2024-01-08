@@ -43,6 +43,7 @@ typedef struct MRS_averaging_scheme {
   unsigned int integration_volume;   //  0-octant, 1-hemisphere, 2-sphere.
   unsigned int octant_orientations;  //  # unique orientations on the face of an octant.
   unsigned int n_gamma;              //  number of gamma angles
+  unsigned int n_gamma_interp;       //  gamma angle interpolation steps
   double *amplitudes;                //  array of amplitude scaling per orientation.
   complex128 *exp_Im_alpha;          //  array of e^in\alpha n=[0,4] per orientation.
   complex128 *exp_Im_gamma;          //  array of e^im\gamma m=[0,4] per orientation.
@@ -79,6 +80,7 @@ typedef struct MRS_averaging_scheme {
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
                                                   bool allow_4th_rank,
                                                   unsigned int n_gamma,
+                                                  unsigned int n_gamma_interp,
                                                   unsigned int integration_volume);
 
 /**
@@ -95,11 +97,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
  */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(double *alpha,
-                                                                  double *beta,
-                                                                  double *weight,
-                                                                  unsigned int n_angles,
-                                                                  bool allow_4th_rank);
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+    double *alpha, double *beta, double *gamma, double *weight, unsigned int n_angles,
+    bool allow_4th_rank);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

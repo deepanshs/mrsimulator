@@ -16,7 +16,7 @@ Introduction sections :ref:`getting_started`,
 
 .. note::
 
-    Before writing your own custom Method, check if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
+    Before writing your custom Method, check if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
 
 
 Overview
@@ -42,8 +42,7 @@ pathway, :math:`{\hat{A} \rightarrow \hat{B} \rightarrow \hat{C} \rightarrow
     :alt: figure
     :align: center
 
-    An illustration of a two-dimensional NMR pulse sequence leading up to 
-    the acquisition of the signal from a transition pathway
+    An illustration of a two-dimensional NMR pulse sequence leading up to the acquisition of the signal from a transition pathway
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
 transition pathway signal as a function of :math:`t_1`, derives its *average

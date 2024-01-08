@@ -207,7 +207,7 @@ void mrsimulator_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_4th_rank, 9, integration_volume);
+      integration_density, allow_4th_rank, 9, 1, integration_volume);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);

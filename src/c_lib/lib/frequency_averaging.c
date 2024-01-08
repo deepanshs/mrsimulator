@@ -117,14 +117,18 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                double *spec, double *affine_matrix,
                                unsigned int iso_intrp, complex128 *exp_I_phase) {
   unsigned int i, k, j, index, step_vector_i, step_vector_k, address, gamma_idx;
-  unsigned int npts = scheme->octant_orientations, ptr;
+  unsigned int npts = scheme->octant_orientations, ptr, ptrp1, g_interp, next_idx;
+  unsigned int all_orientations = scheme->n_gamma * scheme->total_orientations;
 
   MRS_plan *planA, *planB, *avg_plan;
-  double *freq_ampA, *freq_ampB, *freq_amp = scheme->scrach, *avg_freq;
+  double *freq_ampA, *freq_ampB, *avg_freq;
+  double *freq_amp_real = scheme->scrach, *freq_amp_imag = &scheme->scrach[npts];
   double *ampsA_real = scheme->amps_real, *ampsA_imag = scheme->amps_imag;
   double offset0, offset1, offsetA, offsetB;
-  double *freq0, *freq1, *phase_ptr;
-  double norm0, norm1;
+  double *freq0, *freq1, *phase_ptr, *freq0p, *freq1p;
+  double norm0, norm1, n_step_inc = 1.0 / (double)scheme->n_gamma_interp;
+  double *delta_freq0 = malloc_double(scheme->total_orientations);
+  double *delta_freq1 = malloc_double(scheme->total_orientations);
 
   offset0 = dimensions[0].R0_offset;
   freq_ampA = dimensions[0].freq_amplitude;
@@ -144,30 +148,40 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                 avg_plan->norm_amplitudes[j], &avg_freq[j], npts);
   }
 
+  freq0 = &dimensions[0].local_frequency[0];
+  freq1 = &dimensions[1].local_frequency[0];
+  // scale and shear the first dimension.
+  if (affine_matrix[0] != 1) {
+    cblas_dscal(all_orientations, affine_matrix[0], freq0, 1);
+  }
+  if (affine_matrix[1] != 0) {
+    cblas_daxpy(all_orientations, affine_matrix[1], freq1, 1, freq0, 1);
+  }
+
+  // scale and shear the second dimension.
+  if (affine_matrix[3] != 1) {
+    cblas_dscal(all_orientations, affine_matrix[3], freq1, 1);
+  }
+  if (affine_matrix[2] != 0) {
+    cblas_daxpy(all_orientations, affine_matrix[2], freq0, 1, freq1, 1);
+  }
+
   // gamma averaging
   for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
     ptr = scheme->total_orientations * gamma_idx;
+    next_idx = (gamma_idx == scheme->n_gamma - 1) ? 0 : gamma_idx + 1;
+    ptrp1 = scheme->total_orientations * next_idx;
     // printf("gma_idx %d ", gamma_idx);
     freq0 = &dimensions[0].local_frequency[ptr];
     freq1 = &dimensions[1].local_frequency[ptr];
+    freq0p = &dimensions[0].local_frequency[ptrp1];
+    freq1p = &dimensions[1].local_frequency[ptrp1];
+    vm_double_subtract(scheme->total_orientations, freq0p, freq0, delta_freq0);
+    vm_double_subtract(scheme->total_orientations, freq1p, freq1, delta_freq1);
+    cblas_dscal(scheme->total_orientations, n_step_inc, delta_freq0, 1);
+    cblas_dscal(scheme->total_orientations, n_step_inc, delta_freq1, 1);
+
     phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
-
-    // scale and shear the first dimension.
-    if (affine_matrix[0] != 1) {
-      cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
-    }
-    if (affine_matrix[1] != 0) {
-      cblas_daxpy(scheme->total_orientations, affine_matrix[1], freq1, 1, freq0, 1);
-    }
-
-    // scale and shear the second dimension.
-    if (affine_matrix[3] != 1) {
-      cblas_dscal(scheme->total_orientations, affine_matrix[3], freq1, 1);
-    }
-    if (affine_matrix[2] != 0) {
-      cblas_daxpy(scheme->total_orientations, affine_matrix[2], freq0, 1, freq1, 1);
-    }
-
     for (i = 0; i < planA->number_of_sidebands; i++) {
       offsetA = offset0 + planA->vr_freq[i];
       for (k = 0; k < planB->number_of_sidebands; k++) {
@@ -210,24 +224,30 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                    dimensions[1].freq_offset);
 
               vm_double_multiply(npts, &ampsA_real[address], 1,
-                                 &freq_ampB[step_vector_k + address], freq_amp);
-              // Perform tenting on every sideband order over all orientations
-              octahedronInterpolation2D(
-                  spec, dimensions[0].freq_offset, dimensions[1].freq_offset,
-                  scheme->integration_density, freq_amp, 1, dimensions[0].count,
-                  dimensions[1].count, iso_intrp);
-
+                                 &freq_ampB[step_vector_k + address], freq_amp_real);
               vm_double_multiply(npts, &ampsA_imag[address], 1,
-                                 &freq_ampB[step_vector_k + address], freq_amp);
+                                 &freq_ampB[step_vector_k + address], freq_amp_imag);
               // Perform tenting on every sideband order over all orientations
-              octahedronInterpolation2D(
-                  spec + 1, dimensions[0].freq_offset, dimensions[1].freq_offset,
-                  scheme->integration_density, freq_amp, 1, dimensions[0].count,
-                  dimensions[1].count, iso_intrp);
-            }
-          }
-        }
+              for (g_interp = 0; g_interp < scheme->n_gamma_interp; g_interp++) {
+                vm_double_add_inplace(npts, &delta_freq0[address],
+                                      dimensions[0].freq_offset);
+                vm_double_add_inplace(npts, &delta_freq1[address],
+                                      dimensions[1].freq_offset);
+                octahedronInterpolation2D(
+                    spec, dimensions[0].freq_offset, dimensions[1].freq_offset,
+                    scheme->integration_density, freq_amp_real, 1, dimensions[0].count,
+                    dimensions[1].count, iso_intrp);
+
+                // Perform tenting on every sideband order over all orientations
+                octahedronInterpolation2D(
+                    spec + 1, dimensions[0].freq_offset, dimensions[1].freq_offset,
+                    scheme->integration_density, freq_amp_imag, 1, dimensions[0].count,
+                    dimensions[1].count, iso_intrp);
+              }  // gamma interp loop
+            }    // octant loop
+          }      // freq boundary dim 1
+        }        // freq boundary dim 0
       }
     }
-  }
+  }  // gamma loop
 }

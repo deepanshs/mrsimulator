@@ -24,6 +24,7 @@ def core_simulator(method,
        unsigned int integration_volume=1,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
+       unsigned int n_gamma_interp=1,
        bool_t interpolation=True,
        bool_t auto_switch=True):
     """core simulator init"""
@@ -53,7 +54,9 @@ def core_simulator(method,
     cdef clib.MRS_averaging_scheme *averaging_scheme
     averaging_scheme = clib.MRS_create_averaging_scheme(
         integration_density=integration_density, allow_4th_rank=allow_4th_rank,
-        n_gamma=number_of_gamma_angles, integration_volume=integration_volume
+        n_gamma=number_of_gamma_angles,
+        n_gamma_interp=n_gamma_interp,
+        integration_volume=integration_volume
     )
 
 # create C spectral dimensions ________________________________________________

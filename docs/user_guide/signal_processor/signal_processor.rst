@@ -47,10 +47,10 @@ Each signal processor object holds a list of operations under the *operations* a
     ]
 
 First, an inverse Fourier transform is applied to the dataset, converting
-it to the time domain. Then, a Gaussian apodizatio, parameterized using a 
-full-width-at-half-maximum  (FWHM) of 50 Hz, is applied. Note, the 
-dimensionality  of the ``FWHM`` attribute has the inverse dimensionality 
-of the dataset domain. Finally, a forward Fourier transform is applied to 
+it to the time domain. Then, a Gaussian apodizatio, parameterized using a
+full-width-at-half-maximum  (FWHM) of 50 Hz, is applied. Note, the
+dimensionality  of the ``FWHM`` attribute has the inverse dimensionality
+of the dataset domain. Finally, a forward Fourier transform is applied to
 the apodized dataset, and all points are scaled up by 120 times.
 
 .. note::
