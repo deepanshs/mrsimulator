@@ -42,9 +42,8 @@ pathway, :math:`{\hat{A} \rightarrow \hat{B} \rightarrow \hat{C} \rightarrow
     :alt: figure
     :align: center
 
-    A illustration of an two-dimensional NMR pulse sequence leading up to the
-    acqusition of the signal from a transition pathway.
-
+    An illustration of a two-dimensional NMR pulse sequence leading up to 
+    the acquisition of the signal from a transition pathway
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
 transition pathway signal as a function of :math:`t_1`, derives its *average
