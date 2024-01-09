@@ -108,22 +108,6 @@ class Setup:
         if not found_fftw:
             message("fftw", *cmd_list)
 
-    # def numpy_default_blas(self):
-    #     opt_info = np.__config__.blas_opt_info
-    #     if opt_info == {}:
-    #         return
-
-    #     if "pthread" in opt_info["libraries"]:
-    #         opt_info["libraries"].remove("pthread")
-
-    #     libs = opt_info["libraries"]
-    #     print(f"Linking mrsimulator with the default numpy blas: {libs}")
-
-    #     self.include_dirs += opt_info["include_dirs"]
-    #     self.library_dirs += opt_info["library_dirs"]
-    #     self.libraries += libs
-    #     self.BLAS_FOUND = True
-
     def mkl_blas_info(self):
         mkl_info = np.__config__.blas_mkl_info
         if mkl_info == {}:
@@ -179,25 +163,6 @@ class LinuxSetup(Setup):
 
         self.library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
         self.libraries += ["openblas", "fftw3"]
-        # openblas_info = sysinfo.get_info("openblas")
-        # fftw3_info = sysinfo.get_info("fftw3")
-
-        # if openblas_info == {} and fftw3_info == {}:
-        #     self.message("openblas-devel fftw-devel", "libopenblas-dev libfftw3-dev")
-
-        # if openblas_info == {}:
-        #     self.message("openblas-devel", "libopenblas-dev")
-
-        # if fftw3_info == {}:
-        #     self.message("fftw-devel", "libfftw3-dev")
-
-        # self.get_location(openblas_info)
-        # self.get_location(fftw3_info)
-
-    # def get_location(self, dict_info):
-    #     for item in self.__slots__:
-    #         if item in dict_info.keys():
-    #             getattr(self, item).extend(dict_info[item])
 
     def message(self, lib_centos, lib_ubuntu):
         print(f"Warning: {lib_ubuntu} might not be installed. See below.\n")
@@ -228,23 +193,16 @@ class MacOSSetup(Setup):
         if use_openblas:
             self.openblas_info()
 
-        # if use_mkl:
-        #     self.mkl_blas_info()
-
         # FFTW
         self.fftw_info()
 
     def accelerate_info(self):
         """Apple's Accelerate framework for BLAS"""
-        # acc_info = sysinfo.get_info("accelerate")
         self.extra_compile_args += [
             "-I/System/Library/Frameworks/vecLib.framework/Headers",
             "-Wl,-framework",
             "-Wl,Accelerate",
         ]
-        # for item in ["extra_compile_args", "extra_link_args"]:
-        #     if item in acc_info:
-        #         self.extra_compile_args += acc_info[item]
         print("Attempting to link mrsimulator with the Apple accelerate library.")
         self.extra_compile_args += ["-DUSE_ACCELERATE"]
 
@@ -269,21 +227,6 @@ class MacOSSetup(Setup):
         self.library_dirs += blas_library_dir
         self.libraries += [blas_library]
         self.extra_compile_args += ["-DUSE_OPENBLAS"]
-
-    # def mkl_blas_info(self):
-    #     mkl_info = np.__config__.blas_mkl_info
-    #     if mkl_info == {}:
-    #         print("Please enable mkl for numpy before proceeding.")
-    #         message("mkl mkl-include", "pip", "pip", "")
-
-    #     if not self.check_if_file_exists("mkl.h"):
-    #         print("mkl header file not found.")
-    #         message("mkl-include", "pip", "pip", "")
-
-    #     self.include_dirs += mkl_info["include_dirs"]
-    #     self.library_dirs += mkl_info["library_dirs"]
-    #     self.libraries += mkl_info["libraries"]
-    #     self.extra_compile_args += ["-DUSE_MKL"]
 
     def fftw_info(self):
         """fftw includes and lib are for brew installation"""
