@@ -6,6 +6,8 @@ Welcome to the Mrsimulator documentation
 .. .. image:: _static/mrsimulator_cover_light.png
 ..     :align: center
 
+.. |PY_VERSION| replace:: 3.8
+
 .. only:: html
 
     .. cssclass:: table-bordered table-striped centered
