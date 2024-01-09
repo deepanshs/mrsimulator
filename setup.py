@@ -309,7 +309,7 @@ python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
 if python_version.major != 3 and python_version.minor < 7:
-    print(f"Python>=3.7 is required for the setup. You are using version {py_version}")
+    print(f"Python>=3.8 is required for the setup. You are using version {py_version}")
     sys.exit(1)
 
 with open("src/mrsimulator/__init__.py") as f:
