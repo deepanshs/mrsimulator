@@ -4,6 +4,8 @@ v0.8.0
 What's new
 ''''''''''
 
+- Dropped support for python 3.7
+
 **Features**
 
 - Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
