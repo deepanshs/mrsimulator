@@ -19,7 +19,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -50,7 +50,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -89,7 +89,7 @@ jobs:
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
 
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
-      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36* cp312*' }}"
+      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36* cp37*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
@@ -174,7 +174,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
           architecture: ${{ matrix.architecture }}
 
       - name: customize mac-arm-64
