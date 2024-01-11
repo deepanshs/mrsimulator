@@ -1,8 +1,10 @@
-v0.8.0
+v0.8.0rc
 ----------
 
 What's new
 ''''''''''
+
+- Dropped support for python 3.7
 
 **Features**
 

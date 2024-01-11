@@ -12,8 +12,8 @@ __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
 __isotropic_interpolation_enum__ = {"linear": 0, "gaussian": 1}
 
 # integration volume
-__integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
-__integration_volume_octants__ = [1, 4]
+__integration_volume_enum__ = {"octant": 0, "hemisphere": 1, "sphere": 2}
+__integration_volume_octants__ = [1, 4, 8]
 
 
 class ConfigSimulator(Parseable):
@@ -34,8 +34,9 @@ class ConfigSimulator(Parseable):
         The spatial volume over which the spectral frequency integration/averaging
         is performed. The valid literals of this enumeration are
 
-        - ``octant`` (default), and
-        - ``hemisphere``
+        - ``octant`` (default),
+        - ``hemisphere``, and
+        - ``sphere``
 
     integration_density: int (optional).
         The integration/sampling density or equivalently the number of (alpha, beta)
@@ -78,7 +79,7 @@ class ConfigSimulator(Parseable):
 
     number_of_sidebands: int = Field(default=64, gt=0)
     number_of_gamma_angles: int = Field(default=1, gt=0)
-    integration_volume: Literal["octant", "hemisphere"] = "octant"
+    integration_volume: Literal["octant", "hemisphere", "sphere"] = "octant"
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
