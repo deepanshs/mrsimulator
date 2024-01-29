@@ -210,5 +210,5 @@ cdef extern from "simulation.h":
         )
 
 cdef extern from "frequency/spatial_orientation_tensor_components.h":
-    void rank_2_tensor_products(const double *R_2a, const double *R_2b, double *R_0,
-                                 double *R_2, double *R_4)
+    void rank_2_tensor_products(const double *R_2a, const double *R_2b, double *Delta_0,
+                                 double *Delta_2, double *Delta_4)

@@ -265,12 +265,12 @@ def rank_2_tensor_products(np.ndarray[double complex] tensor_a, np.ndarray[doubl
 
     cdef np.ndarray[double] R_a = tensor_a.view(dtype=float)
     cdef np.ndarray[double] R_b = tensor_b.view(dtype=float)
-    cdef np.ndarray[double] R_0 = np.zeros(2, dtype=float)
-    cdef np.ndarray[double] R_2 = np.zeros(10, dtype=float)
-    cdef np.ndarray[double] R_4 = np.zeros(18, dtype=float)
-    clib.rank_2_tensor_products(&R_a[0], &R_b[0], &R_0[0], &R_2[0], &R_4[0])
+    cdef np.ndarray[double] Delta_0 = np.zeros(2, dtype=float)
+    cdef np.ndarray[double] Delta_2 = np.zeros(10, dtype=float)
+    cdef np.ndarray[double] Delta_4 = np.zeros(18, dtype=float)
+    clib.rank_2_tensor_products(&R_a[0], &R_b[0], &Delta_0[0], &Delta_2[0], &Delta_4[0])
 
-    return R_0.view(dtype=complex), R_2.view(dtype=complex), R_4.view(dtype=complex)
+    return Delta_0.view(dtype=complex), Delta_2.view(dtype=complex), Delta_4.view(dtype=complex)
 
 
 @cython.boundscheck(False)

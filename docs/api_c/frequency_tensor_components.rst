@@ -1,7 +1,7 @@
 
 .. _frequency_component_function:
 
-Frequency Tensors (FT), :math:`\Lambda_{L, n}^{(k)}(i,j)`
+Frequency Tensors (FT), :math:`F_{L, n}^{(k)}(i,j)`
 ---------------------------------------------------------
 
 .. seealso:: :ref:`Frequency component functions in PAS <frequency_tensor_theory>`,

@@ -1,4 +1,4 @@
-Frequency Tensors, :math:`\Lambda_{L, n}^{(k)}(i,j)`
+Frequency Tensors, :math:`F_{L, n}^{(k)}(i,j)`
 ----------------------------------------------------
 
 .. raw:: html
