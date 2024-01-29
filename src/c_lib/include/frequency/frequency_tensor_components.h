@@ -32,9 +32,9 @@
  * frame @f$\mathcal{F}@f$, and @f$\mathbb{p}(i, j)@f$ is the spin transition function
  * for @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
- * @param F_0 A pointer to an array of length 1, where the frequency component from
+ * @param F0 A pointer to an array of length 1, where the frequency component from
  *      @f${\Delta'}_{0,0}^{(\sigma)}@f$ is stored.
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f${\Delta'}_{2,n}^{(\sigma)}@f$ is stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(\sigma)}\right]_{n=-2}^2@f$.
  * @param omega_0_delta_iso_in_Hz The isotropic chemical shift in Hz
@@ -48,8 +48,8 @@
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
-static inline void FCF_1st_order_nuclear_shielding_tensor_components(
-    double *restrict F_0, void *restrict F_2, const double omega_0_delta_iso_in_Hz,
+static inline void FT_1st_order_nuclear_shielding_tensor_components(
+    double *restrict F0, void *restrict F2, const double omega_0_delta_iso_in_Hz,
     const double omega_0_zeta_sigma_in_Hz, const double eta, const double *Theta,
     const float mf, const float mi) {
   // Spin transition function
@@ -57,21 +57,21 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {
-    // zero the F_0 and F_2 components before populating with shielding components
-    *F_0 = 0.0;
-    vm_double_zeros(10, (double *)F_2);
+    // zero the F0 and F2 components before populating with shielding components
+    *F0 = 0.0;
+    vm_double_zeros(10, (double *)F2);
     return;
   }
 
   // frequency scaled spatial spherical tensor function
   fsSST_1st_order_nuclear_shielding_tensor_components(
-      F_0, F_2, omega_0_delta_iso_in_Hz, omega_0_zeta_sigma_in_Hz, eta, Theta);
+      F0, F2, omega_0_delta_iso_in_Hz, omega_0_zeta_sigma_in_Hz, eta, Theta);
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F_0 *= transition_fn;
+  *F0 *= transition_fn;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, transition_fn, (double *)F_2, 1);
+  cblas_dscal(10, transition_fn, (double *)F2, 1);
 }
 
 // =====================================================================================
@@ -89,7 +89,7 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
  * frame @f$\mathcal{F}@f$, and @f$\mathbb{d}(i, j)@f$ is the spin transition function
  * for @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f${\Delta'}_{2,n}^{(q)}@f$ is stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(q)}\right]_{n=-2}^2@f$.
  * @param spin The spin quantum number, @f$I@f$.
@@ -100,25 +100,24 @@ static inline void FCF_1st_order_nuclear_shielding_tensor_components(
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
-static inline void FCF_1st_order_electric_quadrupole_tensor_components(
-    void *restrict F_2, const double spin, const double Cq_in_Hz, const double eta,
+static inline void FT_1st_order_electric_quadrupole_tensor_components(
+    void *restrict F2, const double spin, const double Cq_in_Hz, const double eta,
     const double *Theta, const float mf, const float mi) {
   // Spin transition function
   double transition_fn = STF_d(mf, mi);
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {
-    // zero the F_2 components before populating with quad components
-    vm_double_zeros(10, (double *)F_2);
+    // zero the F2 components before populating with quad components
+    vm_double_zeros(10, (double *)F2);
     return;
   }
 
   // frequency scaled spatial spherical tensor function
-  fsSST_1st_order_electric_quadrupole_tensor_components(F_2, spin, Cq_in_Hz, eta,
-                                                        Theta);
+  fsSST_1st_order_electric_quadrupole_tensor_components(F2, spin, Cq_in_Hz, eta, Theta);
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, transition_fn, (double *)F_2, 1);
+  cblas_dscal(10, transition_fn, (double *)F2, 1);
 }
 
 // =====================================================================================
@@ -143,12 +142,12 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
  * @f$\mathbb{c}_k(i, j)@f$ are the composite spin transition functions for
  * @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
- * @param F_0 A pointer to an array of length 1, where the frequency
+ * @param F0 A pointer to an array of length 1, where the frequency
  *      component from @f${\Delta'}_{0,0}^{(qq)}@f$ is stored.
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f$\Delta_{2,n}^{(qq)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(qq)}\right]_{n=-2}^2@f$.
- * @param F_4 A pointer to a complex array of length 9, where the frequency
+ * @param F4 A pointer to a complex array of length 9, where the frequency
  *      components from @f${\Delta'}_{4,n}^{(qq)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{4,n}^{(qq)}\right]_{n=-4}^4@f$.
  * @param spin The spin quantum number, @f$I@f$.
@@ -160,8 +159,8 @@ static inline void FCF_1st_order_electric_quadrupole_tensor_components(
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
-static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
-    double *restrict F_0, void *restrict F_2, void *restrict F_4, const double spin,
+static inline void FT_2nd_order_electric_quadrupole_tensor_components(
+    double *restrict F0, void *restrict F2, void *restrict F4, const double spin,
     const double larmor_freq_in_Hz, const double Cq_in_Hz, const double eta,
     const double *Theta, const float mf, const float mi) {
   // Composite spin transition functions
@@ -170,16 +169,16 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
 
   // frequency scaled spatial spherical tensor function
   fsSST_2nd_order_electric_quadrupole_tensor_components(
-      F_0, F_2, F_4, spin, larmor_freq_in_Hz, Cq_in_Hz, eta, Theta);
+      F0, F2, F4, spin, larmor_freq_in_Hz, Cq_in_Hz, eta, Theta);
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F_0 *= cl_value[0];
+  *F0 *= cl_value[0];
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, cl_value[1], (double *)F_2, 1);
+  cblas_dscal(10, cl_value[1], (double *)F2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, cl_value[2], (double *)F_4, 1);
+  cblas_dscal(18, cl_value[2], (double *)F4, 1);
 }
 
 // =====================================================================================
@@ -204,12 +203,12 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
  * @f$\mathbb{d}(i, j)@f$ is spin transition functions for
  * @f$\left|i\right> \rightarrow \left|j\right>@f$ transition.
  *
- * @param F_0 A pointer to an array of length 1, where the frequency
+ * @param F0 A pointer to an array of length 1, where the frequency
  *      component from @f${\Delta'}_{0,0}^{(\sigma q)}@f$ is stored.
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f$\Delta_{2,n}^{(\sigma q)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(\sigma  q)}\right]_{n=-2}^2@f$.
- * @param F_4 A pointer to a complex array of length 9, where the frequency
+ * @param F4 A pointer to a complex array of length 9, where the frequency
  *      components from @f${\Delta'}_{4,n}^{(\sigma q)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
  * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
@@ -219,8 +218,8 @@ static inline void FCF_2nd_order_electric_quadrupole_tensor_components(
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
-static inline void FCF_NS_EQ_cross_tensor_components(
-    double *restrict F_0, void *restrict F_2, void *restrict F_4, const double *R_2q,
+static inline void FT_NS_EQ_cross_tensor_components(
+    double *restrict F0, void *restrict F2, void *restrict F4, const double *R_2q,
     const double *R_2s, const double larmor_freq_in_Hz, const float mf,
     const float mi) {
   // Spin transition function scalar
@@ -235,18 +234,18 @@ static inline void FCF_NS_EQ_cross_tensor_components(
   double transition_fn_scalar = 1.2247448714 / (STF_p(mf, mi) * larmor_freq_in_Hz);
 
   // frequency scaled spatial spherical tensor function
-  fsSST_cross_tensor_components(F_0, F_2, F_4, R_2q, R_2s);
+  fsSST_cross_tensor_components(F0, F2, F4, R_2q, R_2s);
 
   // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
   // sqrt(2/3) factor from R_2s
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F_0 *= -1.095445115010332 * transition_fn_scalar;
+  *F0 *= -1.095445115010332 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.6546536707079771 * transition_fn_scalar, (double *)F_2, 1);
+  cblas_dscal(10, 0.6546536707079771 * transition_fn_scalar, (double *)F2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, 1.17108008753824 * transition_fn_scalar, (double *)F_4, 1);
+  cblas_dscal(18, 1.17108008753824 * transition_fn_scalar, (double *)F4, 1);
 }
 
 // =====================================================================================
@@ -271,9 +270,9 @@ static inline void FCF_NS_EQ_cross_tensor_components(
  * the spin transition function for @f$\left|m_{i_I}, m_{i_S}\right> \rightarrow
  * \left|m_{f_I}, m_{f_S}\right>@f$ transition.
  *
- * @param F_0 A pointer to an array of length 1, where the frequency
+ * @param F0 A pointer to an array of length 1, where the frequency
  *      component from @f${\Delta'}_{0,0}^{(J)}@f$ is stored.
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f${\Delta'}_{2,n}^{(J)}@f$ is stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(J)}\right]_{n=-2}^2@f$.
  * @param J_iso_in_Hz The isotropic J-coupling, @f$J_\text{iso}@f$, in Hz.
@@ -290,8 +289,8 @@ static inline void FCF_NS_EQ_cross_tensor_components(
  * @param mSi The spin quantum number of the initial energy state of site
  *      @f$S@f$.
  */
-static inline void FCF_1st_order_weak_J_coupling_tensor_components(
-    double *restrict F_0, void *restrict F_2, const double J_iso_in_Hz,
+static inline void FT_1st_order_weak_J_coupling_tensor_components(
+    double *restrict F0, void *restrict F2, const double J_iso_in_Hz,
     const double J_aniso_in_Hz, const double J_eta, const double *Theta,
     const float mIf, const float mIi, const float mSf, const float mSi) {
   // Spin transition function
@@ -299,21 +298,21 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {
-    // zero the F_0 and F_2 components before populating with shielding components
-    *F_0 = 0.0;
-    vm_double_zeros(10, (double *)F_2);
+    // zero the F0 and F2 components before populating with shielding components
+    *F0 = 0.0;
+    vm_double_zeros(10, (double *)F2);
     return;
   }
 
   // frequency scaled spatial spherical tensor function
-  fsSST_1st_order_weakly_coupled_J_tensor_components(F_0, F_2, J_iso_in_Hz,
-                                                     J_aniso_in_Hz, J_eta, Theta);
+  fsSST_1st_order_weakly_coupled_J_tensor_components(F0, F2, J_iso_in_Hz, J_aniso_in_Hz,
+                                                     J_eta, Theta);
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F_0 *= transition_fn;
+  *F0 *= transition_fn;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, transition_fn, (double *)F_2, 1);
+  cblas_dscal(10, transition_fn, (double *)F2, 1);
 }
 
 // =====================================================================================
@@ -334,7 +333,7 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
  * m_{f_S})@f$ is the spin transition function for @f$\left|m_{i_I}, m_{i_S}\right>
  * \rightarrow \left|m_{f_I}, m_{f_S}\right>@f$ transition.
  *
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f${\Delta'}_{2,n}^{(d)}@f$ is stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(d)}\right]_{n=-2}^2@f$.
  * @param D_in_Hz The dipolar coupling, @f$D@f$, in Hz.
@@ -345,23 +344,23 @@ static inline void FCF_1st_order_weak_J_coupling_tensor_components(
  * @param mSf The spin quantum number of the final energy state of site @f$S@f$.
  * @param mSi The spin quantum number of the initial energy state of site @f$S@f$.
  */
-static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
-    void *restrict F_2, const double D_in_Hz, const double *Theta, const float mIf,
+static inline void FT_1st_order_weak_dipolar_coupling_tensor_components(
+    void *restrict F2, const double D_in_Hz, const double *Theta, const float mIf,
     const float mIi, const float mSf, const float mSi) {
   // Spin transition function
   double transition_fn = STF_dIS(mIf, mIi, mSf, mSi);
 
   // Return if the transition is zero
   if (transition_fn == 0.0) {
-    // zero the F_0 and F_2 components before populating with shielding components
-    vm_double_zeros(10, (double *)F_2);
+    // zero the F0 and F2 components before populating with shielding components
+    vm_double_zeros(10, (double *)F2);
     return;
   }
 
   // frequency scaled spatial spherical tensor function
-  fsSST_1st_order_weakly_coupled_dipolar_tensor_components(F_2, D_in_Hz, Theta);
+  fsSST_1st_order_weakly_coupled_dipolar_tensor_components(F2, D_in_Hz, Theta);
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, transition_fn, (double *)F_2, 1);
+  cblas_dscal(10, transition_fn, (double *)F2, 1);
 }
 
 // =====================================================================================
@@ -370,12 +369,12 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
 
 /**
  *
- * @param F_0 A pointer to an array of length 1, where the frequency
+ * @param F0 A pointer to an array of length 1, where the frequency
  *      component from @f${\Delta'}_{0,0}^{(\sigma q)}@f$ is stored.
- * @param F_2 A pointer to a complex array of length 5, where the frequency
+ * @param F2 A pointer to a complex array of length 5, where the frequency
  *      components from @f$\Delta_{2,n}^{(\sigma q)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{2,n}^{(\sigma  q)}\right]_{n=-2}^2@f$.
- * @param F_4 A pointer to a complex array of length 9, where the frequency
+ * @param F4 A pointer to a complex array of length 9, where the frequency
  *      components from @f${\Delta'}_{4,n}^{(\sigma q)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
  * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
@@ -389,9 +388,9 @@ static inline void FCF_1st_order_weak_dipolar_coupling_tensor_components(
  * @param mSi The spin quantum number of the initial energy state of site @f$S@f$.
  * @param spinS The quantum number of the spin of site @f$S@f$.
  */
-static inline void FCF_Quad_coupling_cross_tensor_components(
-    double *restrict F_0, void *restrict F_2, void *restrict F_4, const double spinS,
-    const double *R_2q, const double symm_aniso_in_Hz, const double symm_eta,
+static inline void FT_Quad_coupling_cross_tensor_components(
+    double *restrict F0, void *restrict F2, void *restrict F4, const double spinS,
+    const double *Delta_2q, const double symm_aniso_in_Hz, const double symm_eta,
     const double *symm_theta, const double larmor_freq_in_Hz, const float mIf,
     const float mIi, const float mSf, const float mSi) {
   // Spin transition function scalar
@@ -401,10 +400,10 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
 
   // Return if the transition is zero
   if (transition_fn_scalar == 0.0 || symm_aniso_in_Hz == 0.0) {
-    // zero the F_0 and F_2 components before populating with shielding components
-    *F_0 = 0.0;
-    vm_double_zeros(10, (double *)F_2);
-    vm_double_zeros(18, (double *)F_4);
+    // zero the F0 and F2 components before populating with shielding components
+    *F0 = 0.0;
+    vm_double_zeros(10, (double *)F2);
+    vm_double_zeros(18, (double *)F4);
     return;
   }
 
@@ -417,16 +416,16 @@ static inline void FCF_Quad_coupling_cross_tensor_components(
   single_wigner_rotation(2, symm_theta, R_2tensor, R_2tensor);
 
   // frequency scaled spatial spherical tensor function
-  fsSST_cross_tensor_components(F_0, F_2, F_4, R_2q, R_2tensor);
+  fsSST_cross_tensor_components(F0, F2, F4, Delta_2q, R_2tensor);
 
   transition_fn_scalar /= larmor_freq_in_Hz;
 
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F_0 *= 1.095445115010332 * transition_fn_scalar;
+  *F0 *= 1.095445115010332 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, -0.6546536707079771 * transition_fn_scalar, (double *)F_2, 1);
+  cblas_dscal(10, -0.6546536707079771 * transition_fn_scalar, (double *)F2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, -1.17108008753824 * transition_fn_scalar, (double *)F_4, 1);
+  cblas_dscal(18, -1.17108008753824 * transition_fn_scalar, (double *)F4, 1);
 }

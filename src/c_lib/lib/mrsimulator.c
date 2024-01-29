@@ -508,7 +508,7 @@ static inline void MRS_rotate_single_site_interaction_components(
 
     /* Nuclear shielding components ================================================= */
     /*  Upto the first order */
-    FCF_1st_order_nuclear_shielding_tensor_components(
+    FT_1st_order_nuclear_shielding_tensor_components(
         F0_temp, R2_shield,
         sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_zeta_in_ppm[i] * larmor_freq_in_MHz,
@@ -529,7 +529,7 @@ static inline void MRS_rotate_single_site_interaction_components(
     }
     /* Electric quadrupolar components ============================================== */
     /*  Upto the first order */
-    FCF_1st_order_electric_quadrupole_tensor_components(
+    FT_1st_order_electric_quadrupole_tensor_components(
         R2_quad, sites->spin[i], sites->quadrupolar_Cq_in_Hz[i],
         sites->quadrupolar_eta[i], &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
@@ -541,7 +541,7 @@ static inline void MRS_rotate_single_site_interaction_components(
 
     /*  Upto the second order */
     if (allow_4th_rank) {
-      FCF_2nd_order_electric_quadrupole_tensor_components(
+      FT_2nd_order_electric_quadrupole_tensor_components(
           F0_temp, F2_temp, F4_temp, sites->spin[i], larmor_freq_in_Hz,
           sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
           &sites->quadrupolar_orientation[3 * i], *mf, *mi);
@@ -554,8 +554,8 @@ static inline void MRS_rotate_single_site_interaction_components(
     /* ============================================================================== */
 
     /* Shielding Quad cross term components ========================================= */
-    FCF_NS_EQ_cross_tensor_components(F0_temp, F2_temp, F4_temp, R2_shield, R2_quad,
-                                      larmor_freq_in_Hz, *mf, *mi);
+    FT_NS_EQ_cross_tensor_components(F0_temp, F2_temp, F4_temp, R2_shield, R2_quad,
+                                     larmor_freq_in_Hz, *mf, *mi);
     if (freq_contrib[9]) *F0 += *F0_temp;
     if (freq_contrib[10]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
     if (freq_contrib[11]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
@@ -583,21 +583,21 @@ static inline void quad_coupling_cross_terms(
     float mIf,   // final transition state of site coupled to the quad site (p)
     float mSqf   // final transition state of the quad site (d)
 ) {
-  double larmor_freq_in_Hz, spin, R_2q[10];
+  double larmor_freq_in_Hz, spin, Delta_2q[10];
 
   spin = sites->spin[site_index];
   if (spin == 0.5) return;
 
   fsSST_1st_order_electric_quadrupole_tensor_components(
-      R_2q, spin, sites->quadrupolar_Cq_in_Hz[site_index],
+      Delta_2q, spin, sites->quadrupolar_Cq_in_Hz[site_index],
       sites->quadrupolar_eta[site_index],
       &sites->quadrupolar_orientation[3 * site_index]);
 
   larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index] * 1.0e6;
 
   // Site S cross J-coupling
-  FCF_Quad_coupling_cross_tensor_components(
-      F0_temp, F2_temp, F4_temp, spin, R_2q,
+  FT_Quad_coupling_cross_tensor_components(
+      F0_temp, F2_temp, F4_temp, spin, Delta_2q,
       couplings->j_symmetric_zeta_in_Hz[coupling_index],
       couplings->j_symmetric_eta[coupling_index],
       &couplings->j_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi, mSqf,
@@ -608,8 +608,8 @@ static inline void quad_coupling_cross_terms(
   if (freq_contrib[14]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
 
   // Site S cross dipolar-coupling
-  FCF_Quad_coupling_cross_tensor_components(
-      F0_temp, F2_temp, F4_temp, spin, R_2q,
+  FT_Quad_coupling_cross_tensor_components(
+      F0_temp, F2_temp, F4_temp, spin, Delta_2q,
       2.0 * couplings->dipolar_coupling_in_Hz[coupling_index], 0,
       &couplings->dipolar_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi,
       mSqf, mSqi);  // transition function is pd (p for spin I, and d for spin S)
@@ -648,7 +648,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
     mSf = transition[site_index_S + n_sites];
 
     // Weakly coupled J-couplings
-    FCF_1st_order_weak_J_coupling_tensor_components(
+    FT_1st_order_weak_J_coupling_tensor_components(
         F0_temp, F2_temp, couplings->isotropic_j_in_Hz[i],
         couplings->j_symmetric_zeta_in_Hz[i], couplings->j_symmetric_eta[i],
         &couplings->j_orientation[3 * i], mIf, mIi, mSf, mSi);
@@ -658,7 +658,7 @@ static inline void MRS_rotate_coupled_site_interaction_components(
     if (freq_contrib[7]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
 
     // Weakly coupled dipolar-couplings
-    FCF_1st_order_weak_dipolar_coupling_tensor_components(
+    FT_1st_order_weak_dipolar_coupling_tensor_components(
         F2_temp, couplings->dipolar_coupling_in_Hz[i],
         &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
 
