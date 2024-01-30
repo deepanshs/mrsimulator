@@ -62,8 +62,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest cython setuptools pytest-cov sympy
-          pip install -r requirements.txt
+          pip install setuptools
+          pip install -r requirements-dev.txt
 
       - name: Build and install package from source
         run: python setup.py develop
@@ -96,8 +96,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest cython setuptools pytest-cov sympy
-          pip install -r requirements.txt
+          pip install setuptools
+          pip install -r requirements-dev.txt
 
       - name: Build and install package from source
         run: python setup.py develop
