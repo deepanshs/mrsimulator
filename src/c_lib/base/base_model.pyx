@@ -25,7 +25,8 @@ def core_simulator(method,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
        bool_t interpolation=True,
-       bool_t auto_switch=True):
+       bool_t auto_switch=True,
+       debug=False):
     """core simulator init"""
 
 # initialization and config
@@ -40,9 +41,7 @@ def core_simulator(method,
         factor = -1.0
 
     # config for spin I=0.5
-    cdef bool_t allow_4th_rank = 0
-    if spin_quantum_number > 0.5:
-        allow_4th_rank = 1
+    cdef bool_t allow_4th_rank = 1
 
     # transitions of the observed spin
     cdef int transition_increment, number_of_transitions, i
@@ -283,38 +282,30 @@ def core_simulator(method,
                 if shielding.gamma is not None:
                     ori_n[i3+2] = shielding.gamma
 
-            # if verbose in [1, 11]:
-            #     text = ((
-            #         f"\n{isotope} site {i} from spin system {index} "
-            #         f"@ {abundance}% abundance"
-            #     ))
-            #     len_ = len(text)
-            #     print(text)
-            #     print(f"{'-'*(len_-1)}")
-            #     print(f'Isotropic chemical shift (δ) = {str(1e6*iso/larmor_frequency)} ppm')
-            #     print(f'Shielding anisotropy (ζ) = {str(1e6*zeta/larmor_frequency)} ppm')
-            #     print(f'Shielding asymmetry (η) = {eta}')
-            #     print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
+            if debug:
+                print(f'Isotropic chemical shift (δ) = {str(iso_n)} ppm')
+                print(f'Shielding anisotropy (ζ) = {str(zeta_n)} ppm')
+                print(f'Shielding asymmetry (η) = {eta_n}')
+                print(f'Shielding orientation = [alpha/beta/gamma = {ori_n}]')
 
             # quad tensor
-            if spin_quantum_number > 0.5:
-                quad = site.quadrupolar
-                if quad is not None:
-                    if quad.Cq is not None:
-                        Cq_e[i] = quad.Cq
-                    if quad.eta is not None:
-                        eta_e[i] = quad.eta
-                    if quad.alpha is not None:
-                        ori_e[i3] = quad.alpha
-                    if quad.beta is not None:
-                        ori_e[i3+1] = quad.beta
-                    if quad.gamma is not None:
-                        ori_e[i3+2] = quad.gamma
+            quad = site.quadrupolar
+            if quad is not None:
+                if quad.Cq is not None:
+                    Cq_e[i] = quad.Cq
+                if quad.eta is not None:
+                    eta_e[i] = quad.eta
+                if quad.alpha is not None:
+                    ori_e[i3] = quad.alpha
+                if quad.beta is not None:
+                    ori_e[i3+1] = quad.beta
+                if quad.gamma is not None:
+                    ori_e[i3+2] = quad.gamma
 
-                # if verbose in [1, 11]:
-                #     print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
-                #     print(f'Quadrupolar asymmetry (η) = {eta}')
-                #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
+            if debug:
+                print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
+                print(f'Quadrupolar asymmetry (η) = {eta_e}')
+                print(f'Quadrupolar orientation = [alpha = {ori_e}]')
 
         # sites packed as c struct
         sites_c.number_of_sites = number_of_sites
@@ -385,7 +376,7 @@ def core_simulator(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            # if verbose in [1, 11]:
+            # if debug:
             #     print(f'N couplings = {number_of_couplings}')
             #     print(f'site index J = {spin_index_ij}')
             #     print(f'Isotropic J = {iso_j} Hz')
