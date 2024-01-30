@@ -46,7 +46,7 @@ For ``mrsimualtor`` developers, the following packages are required:
 - sympy
 - pytest>=5.3
 - pytest-cov
-- sybil>=3.0.0
+- sybil==6.0.0
 
 *For formatting*
 
