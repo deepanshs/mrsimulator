@@ -493,8 +493,8 @@ static inline void MRS_rotate_single_site_interaction_components(
   unsigned int i, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz, larmor_freq_in_Hz;
   float *mf = &transition[n_sites], *mi = transition;
-  double R2_shield[10];
-  double R2_quad[10];
+  double F2_shield[10];
+  double F2_quad[10];
 
   /* Frequency computation for sites */
   for (i = 0; i < n_sites; i++) {
@@ -509,18 +509,18 @@ static inline void MRS_rotate_single_site_interaction_components(
     /* Nuclear shielding components ================================================= */
     /*  Upto the first order */
     FT_1st_order_nuclear_shielding_tensor_components(
-        F0_temp, R2_shield,
+        F0_temp, F2_shield,
         sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_zeta_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_eta[i], &sites->shielding_orientation[3 * i], *mf,
         *mi);
 
     // Note:
-    // In PAS, R2_shield = [1/√6 v_0ζη, 0, -v_0ζ, 0 , 1/√6 v_0ζη] * p(mf, mi)
+    // In PAS, F2_shield = [1/√6 v_0ζη, 0, -v_0ζ, 0 , 1/√6 v_0ζη] * p(mf, mi)
 
     // in-place update the F0 and F2 components.
     if (freq_contrib[0]) *F0 += *F0_temp;
-    if (freq_contrib[1]) vm_double_add_inplace(10, (double *)R2_shield, (double *)F2);
+    if (freq_contrib[1]) vm_double_add_inplace(10, (double *)F2_shield, (double *)F2);
     /* ============================================================================== */
     if (sites->spin[i] == 0.5) {
       mi++;
@@ -530,14 +530,14 @@ static inline void MRS_rotate_single_site_interaction_components(
     /* Electric quadrupolar components ============================================== */
     /*  Upto the first order */
     FT_1st_order_electric_quadrupole_tensor_components(
-        R2_quad, sites->spin[i], sites->quadrupolar_Cq_in_Hz[i],
+        F2_quad, sites->spin[i], sites->quadrupolar_Cq_in_Hz[i],
         sites->quadrupolar_eta[i], &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
     // Note:
-    // In PAS, R2_quad = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
+    // In PAS, F2_quad = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
 
     // in-place update the F2 components.
-    if (freq_contrib[2]) vm_double_add_inplace(10, (double *)R2_quad, (double *)F2);
+    if (freq_contrib[2]) vm_double_add_inplace(10, (double *)F2_quad, (double *)F2);
 
     /*  Upto the second order */
     if (allow_4th_rank) {
@@ -554,7 +554,7 @@ static inline void MRS_rotate_single_site_interaction_components(
     /* ============================================================================== */
 
     /* Shielding Quad cross term components ========================================= */
-    FT_NS_EQ_cross_tensor_components(F0_temp, F2_temp, F4_temp, R2_shield, R2_quad,
+    FT_NS_EQ_cross_tensor_components(F0_temp, F2_temp, F4_temp, F2_shield, F2_quad,
                                      larmor_freq_in_Hz, *mf, *mi);
     if (freq_contrib[9]) *F0 += *F0_temp;
     if (freq_contrib[10]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);

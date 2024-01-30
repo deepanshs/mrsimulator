@@ -211,41 +211,41 @@ static inline void FT_2nd_order_electric_quadrupole_tensor_components(
  * @param F4 A pointer to a complex array of length 9, where the frequency
  *      components from @f${\Delta'}_{4,n}^{(\sigma q)}@f$ are stored ordered as
  *      @f$\left[{\Delta'}_{4,n}^{(\sigma q)}\right]_{n=-4}^4@f$.
- * @param R_2q A pointer to a complex array of length 5 holding the quadupolar
- *      tensor components.
- * @param R_2s A pointer to a complex array of length 5 holding the nuclear shileding
- *      tensor components.
+ * @param F2_quad A pointer to a complex array of length 5 holding the quadupolar
+ *      frequency tensor components.
+ * @param F2_shield A pointer to a complex array of length 5 holding the nuclear
+ *      shileding frequency tensor components.
  * @param mf The spin quantum number of the final energy state.
  * @param mi The spin quantum number of the initial energy state.
  */
 static inline void FT_NS_EQ_cross_tensor_components(
-    double *restrict F0, void *restrict F2, void *restrict F4, const double *R_2q,
-    const double *R_2s, const double larmor_freq_in_Hz, const float mf,
+    double *restrict F0, void *restrict F2, void *restrict F4, const double *F2_quad,
+    const double *F2_shield, const double larmor_freq_in_Hz, const float mf,
     const float mi) {
   // Spin transition function scalar
+  // Total freq = [Δ{σq}_0 d(mf, mi), Δ{σq}_2 d(mf, mi), Δ{σq}_4 d(mf, mi)]
 
-  // R_2q = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
-  //      = [-1/2 ζ_q η, 0, √3/2 ζ_q, 0 , -1/2 ζ_q η] * (v_q/3ζ_q) * d(mf, mi)
+  // F2_quad = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
+  //         = Delta_2q * d(mf, mi)
   //
-  // R_2s = [1/√6 v_0ζη, 0, -v_0ζ,  0 , 1/√6 v_0ζη] * p(mf, mi)
-  //      = [-1/2 ζη,    0, √3/2 ζ, 0 ,  -1/2 ζη  ] * -√2/3 * v_0 * p(mf, mi)
+  // F2_shield = [1/√6 v_0ζη, 0, -v_0ζ,  0 , 1/√6 v_0ζη] * p(mf, mi)
+  //           = Delta_2s * p(mf, mi)
 
-  // Divide R_2s by (-√2/3 v_0 p(mf, mi))
-  double transition_fn_scalar = 1.2247448714 / (STF_p(mf, mi) * larmor_freq_in_Hz);
+  // F2_quad already contains the d(mf, mi) transition function.
+  // F2_shield contains a p(mf, mi) term. Removing it with transition_fn_scalar
+  double transition_fn_scalar = 1.0 / (STF_p(mf, mi) * larmor_freq_in_Hz);
 
   // frequency scaled spatial spherical tensor function
-  fsSST_cross_tensor_components(F0, F2, F4, R_2q, R_2s);
+  fsSST_cross_tensor_components(F0, F2, F4, F2_quad, F2_shield);
 
-  // The following multiplicative factor are scaled by sqrt(3/2) to compensate the
-  // sqrt(2/3) factor from R_2s
   // frequency component function from the zeroth-rank irreducible tensor.
-  *F0 *= -1.095445115010332 * transition_fn_scalar;
+  *F0 *= 1.3416407865 * transition_fn_scalar;
 
   // frequency component function from the second-rank irreducible tensor.
-  cblas_dscal(10, 0.6546536707079771 * transition_fn_scalar, (double *)F2, 1);
+  cblas_dscal(10, -0.8017837257 * transition_fn_scalar, (double *)F2, 1);
 
   // frequency component function from the fourth-rank irreducible tensor.
-  cblas_dscal(18, 1.17108008753824 * transition_fn_scalar, (double *)F4, 1);
+  cblas_dscal(18, -1.4342743312 * transition_fn_scalar, (double *)F4, 1);
 }
 
 // =====================================================================================
