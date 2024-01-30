@@ -44,9 +44,9 @@ For ``mrsimualtor`` developers, the following packages are required:
 
 *For unit tests*
 - sympy
-- pytest>=5.3
+- pytest<8.0
 - pytest-cov
-- sybil==6.0.0
+- sybil>=3.0.0
 
 *For formatting*
 

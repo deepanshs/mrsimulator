@@ -23,10 +23,10 @@ dependencies:
       - psutil>=5.4.8
       - joblib>=1.0.0
       # for testing
-      - pytest
+      - pytest<8.0
       - pytest-cov
       - sympy
-      - sybil==6.0.0
+      - sybil>=3.0.0
       # building docs
       - sphinx>=2.0
       - sphinxjp.themes.basicstrap
