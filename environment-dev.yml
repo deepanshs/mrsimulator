@@ -28,7 +28,7 @@ dependencies:
       - sympy
       - sybil>=3.0.0
       # building docs
-      - sphinx>=2.0
+      - sphinx<=6.0
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10
