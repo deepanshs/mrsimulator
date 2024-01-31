@@ -44,7 +44,7 @@ For ``mrsimualtor`` developers, the following packages are required:
 
 *For unit tests*
 - sympy
-- pytest>=5.3
+- pytest<8.0
 - pytest-cov
 - sybil>=3.0.0
 
@@ -56,7 +56,7 @@ For ``mrsimualtor`` developers, the following packages are required:
 *For building documentation*
 
 - sphinxjp.themes.basicstrap
-- sphinx>=2.0
+- sphinx<=6.0
 - sphinx-gallery>=0.10
 - pillow>=7.1.2
 - breathe==4.34.0
