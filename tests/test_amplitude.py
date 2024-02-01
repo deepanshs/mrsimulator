@@ -49,6 +49,10 @@ def test_with_configuration_setting():
     sim.run()
     y_static_1 = sim.methods[0].simulation.y[0].components[0].sum()
 
+    sim.config.integration_volume = "sphere"
+    sim.run()
+    y_static_3 = sim.methods[0].simulation.y[0].components[0].sum()
+
     sim.config.integration_volume = "hemisphere"
     sim.run()
     y_static_2 = sim.methods[0].simulation.y[0].components[0].sum()
@@ -64,8 +68,11 @@ def test_with_configuration_setting():
     e = "Integral error from changing integration density."
     np.testing.assert_almost_equal(y_static, y_static_1, decimal=1, err_msg=e)
 
-    e = "Integral error from changing integration volume."
+    e = "Integral error from changing integration volume octant to hemisphere."
     np.testing.assert_almost_equal(y_static, y_static_2, decimal=1, err_msg=e)
+
+    e = "Integral error from changing integration volume from octant to sphere."
+    np.testing.assert_almost_equal(y_static, y_static_3, decimal=1, err_msg=e)
 
     e = "Integral error from νr, integration density, integration volume."
     np.testing.assert_almost_equal(y_static, y_MAS, decimal=1, err_msg=e)

@@ -597,7 +597,7 @@ static inline void quad_coupling_cross_terms(
 
   // Site S cross J-coupling
   FCF_Quad_coupling_cross_tensor_components(
-      R0_temp, R2_temp, R4_temp, R_2q,
+      R0_temp, R2_temp, R4_temp, spin, R_2q,
       couplings->j_symmetric_zeta_in_Hz[coupling_index],
       couplings->j_symmetric_eta[coupling_index],
       &couplings->j_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi, mSqf,
@@ -609,7 +609,7 @@ static inline void quad_coupling_cross_terms(
 
   // Site S cross dipolar-coupling
   FCF_Quad_coupling_cross_tensor_components(
-      R0_temp, R2_temp, R4_temp, R_2q,
+      R0_temp, R2_temp, R4_temp, spin, R_2q,
       2.0 * couplings->dipolar_coupling_in_Hz[coupling_index], 0,
       &couplings->dipolar_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi,
       mSqf, mSqi);  // transition function is pd (p for spin I, and d for spin S)
