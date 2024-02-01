@@ -20,7 +20,7 @@ pre-commit>=2.11.1
 
 # Test requirements
 sympy
-pytest<8.0
+pytest<9.0
 pytest-cov
 sybil>=3.0.0
 
