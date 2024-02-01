@@ -1,14 +1,68 @@
 """Test for c functions."""
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import mrsimulator.tests.tests as clib
 import numpy as np
+import pytest
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from .python_test_for_c_code.orientation import cosine_of_polar_angles_and_amplitudes
 from .python_test_for_c_code.orientation import triangle_interpolation1D
 
-# from mpl_toolkits.axes_grid1 import make_axes_locatable
-
 SCALE = [1, 10]
+__GENERATE_REPORT__ = False
+
+
+from matplotlib.backends.backend_pdf import PdfPages
+
+
+@pytest.fixture(scope="module")
+def report():
+    if __GENERATE_REPORT__:
+        pdf = PdfPages("reports/interpolation_report.pdf")
+    else:
+        pdf = None
+    return pdf
+
+
+@pytest.fixture(autouse=True, scope="module")
+def report_pdf(report):
+    yield
+    if __GENERATE_REPORT__:
+        report.close()
+
+
+def plot_2d_raster(
+    data2d, pts1, pts2, proj_x=None, proj_y=None, title=None, report=None
+):
+    _, ax = plt.subplots()
+
+    ax.imshow(data2d, origin="lower", cmap="gray", aspect="auto")
+    x_t, y_t = np.append(pts2, pts2[0]) - 0.5, np.append(pts1, pts1[0]) - 0.5
+    ax.plot(x_t, y_t, "r", label="vertex")
+    ax.scatter(pts2 - 0.5, pts1 - 0.5, s=40, c="r", edgecolors="k", label="vertex")
+
+    divider = make_axes_locatable(ax)
+    axh = divider.append_axes("top", 1.1, pad=0.1, sharex=ax)
+    axv = divider.append_axes("right", 1.1, pad=0.1, sharey=ax)
+
+    plt.setp(axh.get_xticklabels() + axv.get_yticklabels(), visible=False)
+
+    kwargs = dict(linewidth=1)
+    size = data2d.shape[1]
+    if proj_x is not None:
+        axh.plot(np.arange(size), proj_x, "k--", label="1D")
+    axh.plot(np.arange(size), data2d.sum(axis=0), "r", label="sum", **kwargs)
+
+    size = data2d.shape[0]
+    if proj_y is not None:
+        axv.plot(proj_y, np.arange(size), "k--", label="1D")
+    axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
+    plt.legend()
+    plt.tight_layout()
+    plt.title(title)
+    if report is not None:
+        report.savefig(dpi=150)
+    plt.close()
 
 
 def test_octahedron_averaging_setup():
@@ -185,7 +239,7 @@ def test_gaussian_interpolation():
         np.testing.assert_almost_equal(gauss, amp_c, decimal=3)
 
 
-def test_triangle_rasterization1():
+def test_triangle_rasterization1(report):
     # triangles within the 2D grids
     f_list = [
         [[6.0, 2.3, 19.0], [15.0, 2.0, 17.9]],
@@ -205,12 +259,21 @@ def test_triangle_rasterization1():
         for i, list_ in enumerate(f_list):
             amp1, amp2, amp3, lst1, lst2 = get_amps_from_interpolation(list_, scl)
 
-            # plot_2d_raster(amp1, lst1, lst2, amp3, amp2, save=f"ras1_{i}", scale=scl)
+            if __GENERATE_REPORT__:
+                plot_2d_raster(
+                    amp1,
+                    lst1,
+                    lst2,
+                    amp3,
+                    amp2,
+                    title=f"ras1_{i}",
+                    report=report,
+                )
             assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
             assert np.allclose(amp3, amp1.sum(axis=0), atol=1e-15)
 
 
-def test_triangle_rasterization2():
+def test_triangle_rasterization2(report):
     # triangles with one or more vertices outside the 2D grids (top - down)
     f_list = [
         [[5.5, -8.0, 17.4], [4.5, 12.0, 17.3]],  # 1 down
@@ -235,11 +298,20 @@ def test_triangle_rasterization2():
             amp1 = amp1[:, ::2]  # + 1j * amp1[:, 1::2]
             amp2 = amp2[::2]  # + 1j * amp2[1::2]
 
-            # plot_2d_raster(amp1, lst1, lst2, None, amp2, save=f"ras2_{i}", scale=scl)
+            if __GENERATE_REPORT__:
+                plot_2d_raster(
+                    amp1,
+                    lst1,
+                    lst2,
+                    None,
+                    amp2,
+                    title=f"ras2_{i}",
+                    report=report,
+                )
             assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
 
-def test_triangle_rasterization3():
+def test_triangle_rasterization3(report):
     # triangles with one or more vertices outside the 2D grids (left - right)
     f_list = [
         [[5.5, 8.0, 17.4], [21.5, 12.0, 17.3]],  # 1 right
@@ -253,11 +325,20 @@ def test_triangle_rasterization3():
         for i, list_ in enumerate(f_list):
             amp1, amp_y, amp_x, lst1, lst2 = get_amps_from_interpolation(list_, scl)
 
-            # plot_2d_raster(amp1, lst1, lst2, amp_x, None, save=f"ras3_{i}", scale=scl)
+            if __GENERATE_REPORT__:
+                plot_2d_raster(
+                    amp1,
+                    lst1,
+                    lst2,
+                    amp_x,
+                    None,
+                    title=f"ras3_{i}",
+                    report=report,
+                )
             assert np.allclose(amp_x, amp1.sum(axis=0), atol=1e-2)
 
 
-def test_triangle_rasterization4():
+def test_triangle_rasterization4(report):
     # all points outside but intersecting the view
     f_list = [
         [[-12.5, 18.0, 32.4], [-4.5, 22.0, 27.3]],  # all out
@@ -268,11 +349,20 @@ def test_triangle_rasterization4():
         for i, list_ in enumerate(f_list):
             amp1, amp_y, amp_x, lst1, lst2 = get_amps_from_interpolation(list_, scl)
 
-            # plot_2d_raster(amp1, lst1, lst2, amp_x, None, save=f"ras4_{i}", scale=scl)
+            if __GENERATE_REPORT__:
+                plot_2d_raster(
+                    amp1,
+                    lst1,
+                    lst2,
+                    amp_x,
+                    None,
+                    title=f"ras4_{i}",
+                    report=report,
+                )
             # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
 
 
-def test_triangle_rasterization5():
+def test_triangle_rasterization5(report):
     # triangles with one or more vertices outside a grid voxel
     f_list = [
         [[15.0, 15.5, 15.9], [12.0, 12.5, 12.9]],  # all in
@@ -285,7 +375,16 @@ def test_triangle_rasterization5():
         for i, list_ in enumerate(f_list):
             amp1, amp2, amp3, lst1, lst2 = get_amps_from_interpolation(list_, scl)
 
-            # plot_2d_raster(amp1, lst1, lst2, amp3, amp2, save=f"ras5_{i}", scale=scl)
+            if __GENERATE_REPORT__:
+                plot_2d_raster(
+                    amp1,
+                    lst1,
+                    lst2,
+                    amp3,
+                    amp2,
+                    title=f"ras5_{i}",
+                    report=report,
+                )
             assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
 
@@ -303,36 +402,3 @@ def get_amps_from_interpolation(list_, scl):
     amp2 = amp2[::2]  # + 1j * amp2[1::2]
     amp3 = amp3[::2]  # + 1j * amp3[1::2]
     return amp1, amp2, amp3, lst1, lst2
-
-
-# def plot_2d_raster(data2d, pts1, pts2, proj_x=None, proj_y=None, save=None, scale=1):
-#     _, ax = plt.subplots()
-
-#     ax.imshow(data2d, origin="lower", cmap="gray", aspect="auto")
-#     x_t, y_t = np.append(pts2, pts2[0]) - 0.5, np.append(pts1, pts1[0]) - 0.5
-#     ax.plot(x_t, y_t, "r", label="vertex")
-#     ax.scatter(pts2 - 0.5, pts1 - 0.5, s=40, c="r", edgecolors="k", label="vertex")
-
-#     divider = make_axes_locatable(ax)
-#     axh = divider.append_axes("top", 1.1, pad=0.1, sharex=ax)
-#     axv = divider.append_axes("right", 1.1, pad=0.1, sharey=ax)
-
-#     plt.setp(axh.get_xticklabels() + axv.get_yticklabels(), visible=False)
-
-#     kwargs = dict(linewidth=1)
-#     if proj_x is not None:
-#         size = proj_x.size
-#         axh.plot(np.arange(size), proj_x, "k--", label="1D")
-#         axh.plot(np.arange(size), data2d.sum(axis=0), "r", label="sum", **kwargs)
-
-#     if proj_y is not None:
-#         size = proj_y.size
-#         axv.plot(proj_y, np.arange(size), "k--", label="1D")
-#         axv.plot(data2d.sum(axis=1), np.arange(size), "r", label="sum", **kwargs)
-#     plt.legend()
-#     plt.tight_layout()
-#     # plt.show()
-#     if save is not None:
-#         plt.savefig(f"figs/fig_{save}_scale={scale}.pdf", dpi=150)
-
-#     plt.figure().clear()

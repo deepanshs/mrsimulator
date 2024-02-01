@@ -12,6 +12,7 @@ figs/*
 # Distribution / packaging
 .Python
 build/
+reports/
 .vscode/*
 .idea/*
 develop-eggs/

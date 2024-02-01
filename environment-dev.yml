@@ -23,12 +23,12 @@ dependencies:
       - psutil>=5.4.8
       - joblib>=1.0.0
       # for testing
-      - pytest
+      - pytest<8.0
       - pytest-cov
       - sympy
       - sybil>=3.0.0
       # building docs
-      - sphinx>=2.0
+      - sphinx<=6.0
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10
