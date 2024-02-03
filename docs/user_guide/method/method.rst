@@ -42,7 +42,7 @@ pathway, :math:`{\hat{A} \rightarrow \hat{B} \rightarrow \hat{C} \rightarrow
     :alt: figure
     :align: center
 
-    An illustration of a two-dimensional NMR pulse sequence leading up to 
+    An illustration of a two-dimensional NMR pulse sequence leading up to
     the acquisition of the signal from a transition pathway
 
 Here, the first spectral dimension, i.e., the Fourier transform of the
