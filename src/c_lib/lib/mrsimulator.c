@@ -431,6 +431,9 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
+        // [w2] (a + ib) * [gamma] (c + id) = (ac - bd) + i(ad + bc) -- (1)
+        // [w2*] (a - ib) * [gamma*] (c - id) = (ac - bd) - i(ad + bc) -- (2)
+        // (1) + (2) = 2 * (ac - bd)
         f_complex =
             (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + g_idx]);
         plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];

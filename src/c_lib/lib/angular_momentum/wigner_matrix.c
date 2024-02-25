@@ -511,17 +511,17 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   // Y_{l, m} = (-1)^m Y_{l,-m}(conj)           (1)
   //
   // The following uses the above symmetry to reduce the number of calcuation steps in
-  // Y_{l,-m} * exp(-m I alpha) pair product for m=-l to l.
+  // Y_{l,m} * exp(-m I alpha) pair product for m=-l to l.
   //
   // Consider the product pairs involving +/-m, as shown below.
   //
-  //    Y_{l,-m} * exp(-m I alpha) = (a + ib) * (c + id)
-  //                               = (ac - bd) + i(ad + bc)
+  //    Y_{l,-m} * exp(m I alpha) = (a + ib) * (c + id)
+  //                              = (ac - bd) + i(ad + bc)
   //
   // The symmetrically opposite product is then,
-  //    Y_{l, m} * exp(m I alpha) = (-1)^m (a - ib) * (c - id)
+  //    Y_{l,m} * exp(-m I alpha) = (-1)^m (a - ib) * (c - id)
   //                              = (-1)^m (ac - bd) - i(ad + bc)
-  //                              = (-1)^m Y_{l,-m} (conj)
+  //                              = (-1)^m (Y_{l,-m} * exp(m I alpha)) (conj)
   for (orientation = 0; orientation < n; orientation++) {
     temp_initial_vector[two_l] = R_in_[two_l];
     temp_initial_vector[two_l + 1] = R_in_[two_l + 1];
@@ -603,6 +603,8 @@ void wigner_dm0_vector(const int l, const double beta, double *R_out) {
 /** ✅ Performs a rank l wigner rotation of the coefficients from the l rank
  * spherical tensors.
  *
+ * R_out =  exp(-I m0 gamma) sum_m d^l_{m0, m} * exp(-I m alpha)
+ *
  * @param l The rank of the tensor.
  * @param euler_angles A pointer to the array of three euler angles.
  * @param R_in A pointer to the array of coefficients from the l rank tensors of
@@ -638,7 +640,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
 
   // scale the temp initial vector with exp[-I m alpha]
   for (m = 2; m <= two_l; m += 2) {
-    // temp_initial_vector[l - m] *= temp;
+    // temp_initial_vector[l - m] *= exp(I m alpha); negative m
     a = R_in_[two_l - m] * real;
     b = R_in_[two_l - m + 1] * imag;
     c = R_in_[two_l - m] * imag;
@@ -646,7 +648,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
     temp_initial_vector[two_l - m] = a - b;
     temp_initial_vector[two_l - m + 1] = c + d;
 
-    // temp_initial_vector[l + m] *= conj(temp);
+    // temp_initial_vector[l + m] *= exp(I m alpha); positive m
     a = R_in_[two_l + m] * real;
     b = R_in_[two_l + m + 1] * imag;
     c = R_in_[two_l + m] * imag;
@@ -684,6 +686,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
   copy_real = real;
   copy_imag = imag;
   for (m = 2; m <= two_l; m += 2) {
+    // R_out_[l - m] *= exp(I m gamma); negative m
     a = R_out_[two_l - m] * real;
     b = R_out_[two_l - m + 1] * imag;
     c = R_out_[two_l - m] * imag;
@@ -691,6 +694,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
     R_out_[two_l - m] = a - b;
     R_out_[two_l - m + 1] = c + d;
 
+    // R_out_[l + m] *= exp(-I m gamma); positive m
     a = R_out_[two_l + m] * real;
     b = R_out_[two_l + m + 1] * imag;
     c = R_out_[two_l + m] * imag;
@@ -812,28 +816,29 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
 }
 
 /**
- * ✅ Calculates exp(-Im alpha), where alpha is an array of size n.
- * The function accepts cos_alpha = cos(alpha)
- * The result is stored in exp_Im_alpha as m x n matrix, where m = [-4,-3,-2,-1]
+ * ✅ Calculates exp(-Im angle), where angle is an array of size n.
+ * The function accepts cos_angle = cos(angle)
+ * The result is stored in exp_Im_angle as m x n matrix, where m = [-4,-3,-2,-1]
+ * Since only negative m's are computed, the following computes exp(Im angle)
  */
-void get_exp_Im_alpha(const unsigned int n, const bool allow_4th_rank,
-                      void *exp_Im_alpha) {
-  double *exp_Im_alpha_ = (double *)exp_Im_alpha;
+void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
+                      void *exp_Im_angle) {
+  double *exp_Im_angle_ = (double *)exp_Im_angle;
 
   // The complex array is interpreted as alternating real and imag double array.
   // The index s_i = i*n of complex array is now at index 2*i*n.
   unsigned int s_1 = 2 * n, s_2 = 4 * n, s_3 = 6 * n;
 
-  // exp(-2 I alpha)
-  vm_double_complex_multiply(n, &exp_Im_alpha_[s_3], &exp_Im_alpha_[s_3],
-                             &exp_Im_alpha_[s_2]);
+  // exp(-2 I angle)
+  vm_double_complex_multiply(n, &exp_Im_angle_[s_3], &exp_Im_angle_[s_3],
+                             &exp_Im_angle_[s_2]);
 
   if (allow_4th_rank) {
-    // exp(-3 I alpha)
-    vm_double_complex_multiply(n, &exp_Im_alpha_[s_2], &exp_Im_alpha_[s_3],
-                               &exp_Im_alpha_[s_1]);
-    // exp(-4 I alpha)
-    vm_double_complex_multiply(n, &exp_Im_alpha_[s_1], &exp_Im_alpha_[s_3],
-                               exp_Im_alpha_);
+    // exp(-3 I angle)
+    vm_double_complex_multiply(n, &exp_Im_angle_[s_2], &exp_Im_angle_[s_3],
+                               &exp_Im_angle_[s_1]);
+    // exp(-4 I angle)
+    vm_double_complex_multiply(n, &exp_Im_angle_[s_1], &exp_Im_angle_[s_3],
+                               exp_Im_angle_);
   }
 }
