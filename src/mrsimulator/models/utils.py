@@ -70,10 +70,10 @@ def x_y_to_zeta_eta(x, y):
     zeta = np.sqrt(x**2 + y**2)  # + offset
     eta = np.ones(zeta.shape)
     index = np.where(x > y)
-    zeta[index] = -zeta[index]
+    zeta[index] *= -1
     eta[index] = (4.0 / np.pi) * np.arctan(y[index] / x[index])
 
     index = np.where(x < y)
     eta[index] = (4.0 / np.pi) * np.arctan(x[index] / y[index])
 
-    return zeta.ravel(), eta.ravel()
+    return zeta, eta
