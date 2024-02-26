@@ -6,7 +6,7 @@ import numpy as np
 def test_exp_Im_alpha_second_rank():
     n = 100
     cos_alpha = (np.random.rand(n) - 0.5) * 2.0
-    exp_im_alpha = clib.get_exp_Im_alpha(n, cos_alpha, False)
+    exp_im_alpha = clib.get_exp_Im_angle(n, cos_alpha, False)
 
     arr = np.zeros((4, n), dtype=np.complex128)
     alpha = np.arccos(cos_alpha)
@@ -20,7 +20,7 @@ def test_exp_Im_alpha_second_rank():
 def test_exp_Im_alpha_fourth_rank():
     n = 100
     cos_alpha = (np.random.rand(n) - 0.5) * 2.0
-    exp_im_alpha = clib.get_exp_Im_alpha(n, cos_alpha, True)
+    exp_im_alpha = clib.get_exp_Im_angle(n, cos_alpha, True)
 
     arr = np.zeros((4, n), dtype=np.complex128)
     alpha = np.arccos(cos_alpha)
