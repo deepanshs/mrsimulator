@@ -1,3 +1,9 @@
+"""
+Analytical czjzek ditribution on polar and non-polar grid
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "dsrivastava@hyperfine.io"
+"""
 import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -91,54 +97,8 @@ class AbstractDistribution:
             >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
         """
         if analytical and self.model_name in ANALYTICAL_AVAILABLE:
-            polar = self.polar
             analytical_model = ANALYTICAL_AVAILABLE[self.model_name]
-            if polar:
-                # x, y = np.meshgrid(pos[0], pos[1])
-
-                bins = [pos[0].size, pos[1].size]
-
-                max_val = np.sqrt(pos[0][-1] ** 2 + pos[1][-1] ** 2)
-                max_size = int(np.max(bins) * np.sqrt(2)) * 10
-                zeta_1d = 2 * max_val * (np.arange(max_size) / max_size)
-                eta_1d = np.arange(max_size) / (max_size - 1)
-                zeta, eta = np.meshgrid(zeta_1d, eta_1d)
-
-                pdf_model = analytical_model(self.sigma, zeta, eta)
-                x, y = x_y_from_zeta_eta(zeta.ravel(), eta.ravel())
-
-                delta_z = (pos[0][1] - pos[0][0]) / 2
-                delta_e = (pos[1][1] - pos[1][0]) / 2
-                range_x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
-                range_y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
-
-                hist_x_y, _, _ = np.histogram2d(
-                    x, y, weights=pdf_model.ravel(), bins=bins, range=[range_x, range_y]
-                )
-
-                hist_x_y += hist_x_y.T
-                # for i in range(np.min(bins)):
-                #     hist_x_y[i, i] /= 2.0
-                hist_x_y /= hist_x_y.sum()
-
-                # avg_row_model = 0.0
-                # for i in range(avg_step):
-                #     avg_row_model += pdf_model[i::avg_step]
-
-                # avg_model = 0.0
-                # for i in range(avg_step):
-                #     avg_model += avg_row_model[:, i::avg_step]
-                return x, y, hist_x_y
-            else:
-                sub_zero = np.where(pos[1] < 0)[0]
-                super_one = np.where(pos[1] > 1)[0]
-                zeta, eta = np.meshgrid(pos[0], pos[1])
-                pdf_model = analytical_model(self.sigma, zeta, eta)
-                pdf_model[sub_zero] = 0
-                pdf_model[super_one] = 0
-                if eta.max() == 1:
-                    pdf_model[-1] /= 2
-            return zeta, eta, pdf_model
+            return analytical_model(self.sigma, pos, self.polar)
         else:
             return self.pdf_numerical(pos, size)
 

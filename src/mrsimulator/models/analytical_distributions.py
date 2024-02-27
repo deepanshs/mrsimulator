@@ -1,11 +1,25 @@
 import numpy as np
+from mrsimulator.models.utils import x_y_from_zeta_eta
 
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "dsrivastava@hyperfine.io"
 
 
-def czjzek(sigma, zeta, eta):
+def czjzek(sigma: float, pos: list, polar: bool):
+    """Analytical czjzek distribution on polar or non-polar gird
+
+    Args:
+        sigma: czjzek standard distribution
+        pos: zeta-eta or x-y array based on polar=False ot True, respectively
+        polar: grid type
+    """
+    if polar:
+        return czjzek_polar(sigma, pos)
+    return czjzek_zeta_eta(sigma, pos)
+
+
+def czjzek_distribution(sigma: float, zeta: np.ndarray, eta: np.ndarray):
     """Analytical czjzek distribution
 
     Args:
@@ -19,3 +33,60 @@ def czjzek(sigma, zeta, eta):
     res *= np.exp(-(zeta**2 * (1 + (eta**2 / 3))) / (2 * sigma_**2))
     res /= res.sum()
     return res
+
+
+def czjzek_zeta_eta(sigma: float, pos: list):
+    """Haeberlen czjzek distribution
+
+    Args:
+        sigma: standard deviation
+        pos: x and y numpy arrays
+    """
+    sub_zero = np.where(pos[1] < 0)[0]
+    super_one = np.where(pos[1] > 1)[0]
+    zeta, eta = np.meshgrid(pos[0], pos[1])
+    pdf_model = czjzek_distribution(sigma, zeta, eta)
+    pdf_model[sub_zero] = 0
+    pdf_model[super_one] = 0
+    eta_idx = np.where(eta.ravel() == 1)
+    pdf_model = pdf_model.ravel()
+    pdf_model[eta_idx] /= 2.0
+    pdf_model.shape = zeta.shape
+    return zeta, eta, pdf_model
+
+
+def czjzek_polar(sigma: float, pos: list):
+    """Polar czjzek distribution
+
+    Args:
+        sigma: standard deviation
+        pos: x and y numpy arrays
+    """
+    bins = [pos[0].size, pos[1].size]
+
+    max_val = np.sqrt(pos[0][-1] ** 2 + pos[1][-1] ** 2)
+    max_size = int(np.max(bins) * np.sqrt(2)) * 8
+    zeta_1d = 2 * max_val * (np.arange(max_size) / max_size)
+    eta_1d = np.arange(max_size) / (max_size - 1)
+    zeta, eta = np.meshgrid(zeta_1d, eta_1d)
+
+    pdf_model = czjzek_distribution(sigma, zeta, eta)
+    eta = eta.ravel()
+    zeta = zeta.ravel()
+    x, y = x_y_from_zeta_eta(zeta, eta)
+
+    eta_idx = np.where(eta == 1)
+    pdf_model = pdf_model.ravel()
+    pdf_model[eta_idx] /= 2.0
+
+    delta_z = (pos[0][1] - pos[0][0]) / 2
+    delta_e = (pos[1][1] - pos[1][0]) / 2
+    range_x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
+    range_y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
+
+    hist_x_y, _, _ = np.histogram2d(
+        x, y, weights=pdf_model, bins=bins, range=[range_x, range_y]
+    )
+    hist_x_y += hist_x_y.T
+    hist_x_y /= hist_x_y.sum()
+    return x, y, hist_x_y
