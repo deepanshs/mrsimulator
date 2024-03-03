@@ -268,7 +268,7 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
 /**
  * The function evaluates the amplitudes at every orientation and at every sideband per
  * orientation. This is done in two steps.
- * 1) Rotate R2 and R4, given in the crystal or common frame to w2 and w4 in the lab
+ * 1) Rotate F2 and F4, given in the crystal or common frame to w2 and w4 in the lab
  *    frame using wigner 2j and 4j rotation matrices, respectively, at all orientations.
  * 2) Evalute the sideband amplitudes using equation [39] of the reference
  *    https://doi.org/10.1006/jmre.1998.1427.
@@ -386,8 +386,8 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
  * increments.
  */
 void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
-                                              MRS_plan *plan, double R0, complex128 *R2,
-                                              complex128 *R4, MRS_dimension *dim,
+                                              MRS_plan *plan, double F0, complex128 *F2,
+                                              complex128 *F4, MRS_dimension *dim,
                                               double fraction,
                                               unsigned char is_spectral,
                                               double duration) {
@@ -406,16 +406,16 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 
   /**
-   * Rotate the R2 and R4 components from the common frame to the rotor frame over all
+   * Rotate the F2 and F4 components from the common frame to the rotor frame over all
    * the orientations (alpha, beta). The componets are stored in w2 and w4 of the
    * averaging scheme, respectively.
    */
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
-                          scheme->wigner_2j_matrices, R2, scheme->wigner_4j_matrices,
-                          R4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
+                          scheme->wigner_2j_matrices, F2, scheme->wigner_4j_matrices,
+                          F4, scheme->exp_Im_alpha, scheme->w2, scheme->w4);
 
   /* Normalized the isotropic frequency contribution from the zeroth-rank tensor. */
-  if (is_spectral) dim->R0_offset += R0 * fraction_duration;
+  if (is_spectral) dim->R0_offset += F0 * fraction_duration;
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
@@ -431,6 +431,9 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
     if (plan->is_static) {
       for (i = 0; i < 2; i++) {
+        // [w2] (a + ib) * [gamma] (c + id) = (ac - bd) + i(ad + bc) -- (1)
+        // [w2*] (a - ib) * [gamma*] (c - id) = (ac - bd) - i(ad + bc) -- (2)
+        // (1) + (2) = 2 * (ac - bd)
         f_complex =
             (double *)&(scheme->exp_Im_gamma[(2 + i) * scheme->n_gamma + g_idx]);
         plan->buffer = temp * plan->wigner_d2m0_vector[i] * f_complex[0];
@@ -471,7 +474,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
   }
 
   if (!is_spectral) {  // compute phase.
-    plan->buffer = R0 * fraction_duration;
+    plan->buffer = F0 * fraction_duration;
     vm_double_add_vector_offset_inplace(freq_size, local_frequency, plan->buffer,
                                         scheme->phase);
   }
@@ -481,20 +484,20 @@ static inline void MRS_rotate_single_site_interaction_components(
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     float *transition,           // The spin transition.
     bool allow_4th_rank,         // if true, prep for 4th rank computation.
-    double *R0,                  // The R0 components.
-    complex128 *R2,              // The R2 components.
-    complex128 *R4,              // The R4 components.
-    double *R0_temp,             // The temporary R0 components.
-    complex128 *R2_temp,         // The temporary R2 components.
-    complex128 *R4_temp,         // The temporary R3 components.
+    double *F0,                  // The F0 components.
+    complex128 *F2,              // The F2 components.
+    complex128 *F4,              // The F4 components.
+    double *F0_temp,             // The temporary F0 components.
+    complex128 *F2_temp,         // The temporary F2 components.
+    complex128 *F4_temp,         // The temporary R3 components.
     double B0_in_T,              // Magnetic flux density in T.
     unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 ) {
   unsigned int i, n_sites = sites->number_of_sites;
   double larmor_freq_in_MHz, larmor_freq_in_Hz;
   float *mf = &transition[n_sites], *mi = transition;
-  double R2_shield[10];
-  double R2_quad[10];
+  double F2_shield[10];
+  double F2_quad[10];
 
   /* Frequency computation for sites */
   for (i = 0; i < n_sites; i++) {
@@ -508,19 +511,19 @@ static inline void MRS_rotate_single_site_interaction_components(
 
     /* Nuclear shielding components ================================================= */
     /*  Upto the first order */
-    FCF_1st_order_nuclear_shielding_tensor_components(
-        R0_temp, R2_shield,
+    FT_1st_order_nuclear_shielding_tensor_components(
+        F0_temp, F2_shield,
         sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_zeta_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_eta[i], &sites->shielding_orientation[3 * i], *mf,
         *mi);
 
     // Note:
-    // In PAS, R2_shield = [1/√6 v_0ζη, 0, -v_0ζ, 0 , 1/√6 v_0ζη] * p(mf, mi)
+    // In PAS, F2_shield = [1/√6 v_0ζη, 0, -v_0ζ, 0 , 1/√6 v_0ζη] * p(mf, mi)
 
-    // in-place update the R0 and R2 components.
-    if (freq_contrib[0]) *R0 += *R0_temp;
-    if (freq_contrib[1]) vm_double_add_inplace(10, (double *)R2_shield, (double *)R2);
+    // in-place update the F0 and F2 components.
+    if (freq_contrib[0]) *F0 += *F0_temp;
+    if (freq_contrib[1]) vm_double_add_inplace(10, (double *)F2_shield, (double *)F2);
     /* ============================================================================== */
     if (sites->spin[i] == 0.5) {
       mi++;
@@ -529,36 +532,36 @@ static inline void MRS_rotate_single_site_interaction_components(
     }
     /* Electric quadrupolar components ============================================== */
     /*  Upto the first order */
-    FCF_1st_order_electric_quadrupole_tensor_components(
-        R2_quad, sites->spin[i], sites->quadrupolar_Cq_in_Hz[i],
+    FT_1st_order_electric_quadrupole_tensor_components(
+        F2_quad, sites->spin[i], sites->quadrupolar_Cq_in_Hz[i],
         sites->quadrupolar_eta[i], &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
     // Note:
-    // In PAS, R2_quad = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
+    // In PAS, F2_quad = [-1/6 v_q η, 0, 1/√6 v_q, 0 , -1/6 v_q η] * d(mf, mi)
 
-    // in-place update the R2 components.
-    if (freq_contrib[2]) vm_double_add_inplace(10, (double *)R2_quad, (double *)R2);
+    // in-place update the F2 components.
+    if (freq_contrib[2]) vm_double_add_inplace(10, (double *)F2_quad, (double *)F2);
 
     /*  Upto the second order */
     if (allow_4th_rank) {
-      FCF_2nd_order_electric_quadrupole_tensor_components(
-          R0_temp, R2_temp, R4_temp, sites->spin[i], larmor_freq_in_Hz,
+      FT_2nd_order_electric_quadrupole_tensor_components(
+          F0_temp, F2_temp, F4_temp, sites->spin[i], larmor_freq_in_Hz,
           sites->quadrupolar_Cq_in_Hz[i], sites->quadrupolar_eta[i],
           &sites->quadrupolar_orientation[3 * i], *mf, *mi);
 
-      // in-place update the R0, R2, and R4 components.
-      if (freq_contrib[3]) *R0 += *R0_temp;
-      if (freq_contrib[4]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-      if (freq_contrib[5]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+      // in-place update the F0, F2, and F4 components.
+      if (freq_contrib[3]) *F0 += *F0_temp;
+      if (freq_contrib[4]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
+      if (freq_contrib[5]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
     }
     /* ============================================================================== */
 
     /* Shielding Quad cross term components ========================================= */
-    FCF_NS_EQ_cross_tensor_components(R0_temp, R2_temp, R4_temp, R2_shield, R2_quad,
-                                      larmor_freq_in_Hz, *mf, *mi);
-    if (freq_contrib[9]) *R0 += *R0_temp;
-    if (freq_contrib[10]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-    if (freq_contrib[11]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+    FT_NS_EQ_cross_tensor_components(F0_temp, F2_temp, F4_temp, F2_shield, F2_quad,
+                                     larmor_freq_in_Hz, *mf, *mi);
+    if (freq_contrib[9]) *F0 += *F0_temp;
+    if (freq_contrib[10]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
+    if (freq_contrib[11]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
 
     mi++;
     mf++;
@@ -570,12 +573,12 @@ static inline void quad_coupling_cross_terms(
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     int site_index,              // site index
     unsigned int coupling_index,  // coupled index
-    double *R0,                   // The R0 components.
-    complex128 *R2,               // The R2 components.
-    complex128 *R4,               // The R4 components.
-    double *R0_temp,              // The temporary R0 components.
-    complex128 *R2_temp,          // The temporary R2 components.
-    complex128 *R4_temp,          // The temporary R4 components.
+    double *F0,                   // The F0 components.
+    complex128 *F2,               // The F2 components.
+    complex128 *F4,               // The F4 components.
+    double *F0_temp,              // The temporary F0 components.
+    complex128 *F2_temp,          // The temporary F2 components.
+    complex128 *F4_temp,          // The temporary F4 components.
     double B0_in_T,               // Magnetic flux density in T.
     unsigned char *freq_contrib,  // The pointer to freq contribs boolean.
     float mIi,   // inital transition state of site coupled to the quad site (p)
@@ -583,40 +586,40 @@ static inline void quad_coupling_cross_terms(
     float mIf,   // final transition state of site coupled to the quad site (p)
     float mSqf   // final transition state of the quad site (d)
 ) {
-  double larmor_freq_in_Hz, spin, R_2q[10];
+  double larmor_freq_in_Hz, spin, Delta_2q[10];
 
   spin = sites->spin[site_index];
   if (spin == 0.5) return;
 
-  sSOT_1st_order_electric_quadrupole_tensor_components(
-      R_2q, spin, sites->quadrupolar_Cq_in_Hz[site_index],
+  fsSST_1st_order_electric_quadrupole_tensor_components(
+      Delta_2q, spin, sites->quadrupolar_Cq_in_Hz[site_index],
       sites->quadrupolar_eta[site_index],
       &sites->quadrupolar_orientation[3 * site_index]);
 
   larmor_freq_in_Hz = -B0_in_T * sites->gyromagnetic_ratio[site_index] * 1.0e6;
 
   // Site S cross J-coupling
-  FCF_Quad_coupling_cross_tensor_components(
-      R0_temp, R2_temp, R4_temp, spin, R_2q,
+  FT_Quad_coupling_cross_tensor_components(
+      F0_temp, F2_temp, F4_temp, spin, Delta_2q,
       couplings->j_symmetric_zeta_in_Hz[coupling_index],
       couplings->j_symmetric_eta[coupling_index],
       &couplings->j_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi, mSqf,
       mSqi);  // transition function is pd (p for spin I, and d for spin S)
 
-  if (freq_contrib[12]) *R0 += *R0_temp;
-  if (freq_contrib[13]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  if (freq_contrib[14]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+  if (freq_contrib[12]) *F0 += *F0_temp;
+  if (freq_contrib[13]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
+  if (freq_contrib[14]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
 
   // Site S cross dipolar-coupling
-  FCF_Quad_coupling_cross_tensor_components(
-      R0_temp, R2_temp, R4_temp, spin, R_2q,
+  FT_Quad_coupling_cross_tensor_components(
+      F0_temp, F2_temp, F4_temp, spin, Delta_2q,
       2.0 * couplings->dipolar_coupling_in_Hz[coupling_index], 0,
       &couplings->dipolar_orientation[3 * coupling_index], larmor_freq_in_Hz, mIf, mIi,
       mSqf, mSqi);  // transition function is pd (p for spin I, and d for spin S)
 
-  if (freq_contrib[15]) *R0 += *R0_temp;
-  if (freq_contrib[16]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
-  if (freq_contrib[17]) vm_double_add_inplace(18, (double *)R4_temp, (double *)R4);
+  if (freq_contrib[15]) *F0 += *F0_temp;
+  if (freq_contrib[16]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
+  if (freq_contrib[17]) vm_double_add_inplace(18, (double *)F4_temp, (double *)F4);
 }
 
 static inline void MRS_rotate_coupled_site_interaction_components(
@@ -624,12 +627,12 @@ static inline void MRS_rotate_coupled_site_interaction_components(
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     float *transition,           // The spin transition.
     unsigned int n_sites,        // The number of sites.
-    double *R0,                  // The R0 components.
-    complex128 *R2,              // The R2 components.
-    complex128 *R4,              // The R4 components.
-    double *R0_temp,             // The temporary R0 components.
-    complex128 *R2_temp,         // The temporary R2 components.
-    complex128 *R4_temp,         // The temporary R4 components.
+    double *F0,                  // The F0 components.
+    complex128 *F2,              // The F2 components.
+    complex128 *F4,              // The F4 components.
+    double *F0_temp,             // The temporary F0 components.
+    complex128 *F2_temp,         // The temporary F2 components.
+    complex128 *F4_temp,         // The temporary F4 components.
     double B0_in_T,              // Magnetic flux density in T.
     unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 ) {
@@ -648,31 +651,31 @@ static inline void MRS_rotate_coupled_site_interaction_components(
     mSf = transition[site_index_S + n_sites];
 
     // Weakly coupled J-couplings
-    FCF_1st_order_weak_J_coupling_tensor_components(
-        R0_temp, R2_temp, couplings->isotropic_j_in_Hz[i],
+    FT_1st_order_weak_J_coupling_tensor_components(
+        F0_temp, F2_temp, couplings->isotropic_j_in_Hz[i],
         couplings->j_symmetric_zeta_in_Hz[i], couplings->j_symmetric_eta[i],
         &couplings->j_orientation[3 * i], mIf, mIi, mSf, mSi);
 
-    // in-place update the R0 and R2 components.
-    if (freq_contrib[6]) *R0 += *R0_temp;
-    if (freq_contrib[7]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    // in-place update the F0 and F2 components.
+    if (freq_contrib[6]) *F0 += *F0_temp;
+    if (freq_contrib[7]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
 
     // Weakly coupled dipolar-couplings
-    FCF_1st_order_weak_dipolar_coupling_tensor_components(
-        R2_temp, couplings->dipolar_coupling_in_Hz[i],
+    FT_1st_order_weak_dipolar_coupling_tensor_components(
+        F2_temp, couplings->dipolar_coupling_in_Hz[i],
         &couplings->dipolar_orientation[3 * i], mIf, mIi, mSf, mSi);
 
-    // in-place update the R2 components.
-    if (freq_contrib[8]) vm_double_add_inplace(10, (double *)R2_temp, (double *)R2);
+    // in-place update the F2 components.
+    if (freq_contrib[8]) vm_double_add_inplace(10, (double *)F2_temp, (double *)F2);
 
     // Quad J-couplings cross components
     // Site S
-    quad_coupling_cross_terms(couplings, sites, site_index_S, i, R0, R2, R4, R0_temp,
-                              R2_temp, R4_temp, B0_in_T, freq_contrib, mIi, mSi, mIf,
+    quad_coupling_cross_terms(couplings, sites, site_index_S, i, F0, F2, F4, F0_temp,
+                              F2_temp, F4_temp, B0_in_T, freq_contrib, mIi, mSi, mIf,
                               mSf);
     // Site I
-    quad_coupling_cross_terms(couplings, sites, site_index_I, i, R0, R2, R4, R0_temp,
-                              R2_temp, R4_temp, B0_in_T, freq_contrib, mSi, mIi, mSf,
+    quad_coupling_cross_terms(couplings, sites, site_index_I, i, F0, F2, F4, F0_temp,
+                              F2_temp, F4_temp, B0_in_T, freq_contrib, mSi, mIi, mSf,
                               mIf);
   }
 }
@@ -686,20 +689,20 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
     float *transition,           // The spin transition.
     bool allow_4th_rank,         // If true, prep for 4th rank computation.
-    double *R0,                  // The R0 components.
-    complex128 *R2,              // The R2 components.
-    complex128 *R4,              // The R4 components.
-    double *R0_temp,             // The temporary R0 components.
-    complex128 *R2_temp,         // The temporary R2 components.
-    complex128 *R4_temp,         // The temporary R3 components.
+    double *F0,                  // The F0 components.
+    complex128 *F2,              // The F2 components.
+    complex128 *F4,              // The F4 components.
+    double *F0_temp,             // The temporary F0 components.
+    complex128 *F2_temp,         // The temporary F2 components.
+    complex128 *F4_temp,         // The temporary R3 components.
     double B0_in_T,              // Magnetic flux density in T.
     unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 ) {
   /* The following codeblock populates the product of spatial part, Rlm, of the tensor
    * and the spin transition function, T(mf, mi) for
-   *      zeroth rank, R0 = [ R00 ] * T(mf, mi)
-   *      second rank, R2 = [ R2m ] * T(mf, mi) where m ∈ [-2, 2].
-   *      fourth rank, R4 = [ R4m ] * T(mf, mi) where m ∈ [-4, 4].
+   *      zeroth rank, F0 = [ R00 ] * T(mf, mi)
+   *      second rank, F2 = [ R2m ] * T(mf, mi) where m ∈ [-2, 2].
+   *      fourth rank, F4 = [ R4m ] * T(mf, mi) where m ∈ [-4, 4].
    * Here, mf, mi are the spin quantum numbers of the final and initial energy state of
    * the spin transition. The term `Rlm` is the coefficient of the irreducible spherical
    * tensor of rank `l` and order `m`. For more information, see reference
@@ -708,14 +711,14 @@ void MRS_rotate_components_from_PAS_to_common_frame(
    *   https://doi.org/10.1016/j.pnmrs.2010.11.003
    *
    */
-  MRS_rotate_single_site_interaction_components(sites, transition, allow_4th_rank, R0,
-                                                R2, R4, R0_temp, R2_temp, R4_temp,
+  MRS_rotate_single_site_interaction_components(sites, transition, allow_4th_rank, F0,
+                                                F2, F4, F0_temp, F2_temp, F4_temp,
                                                 B0_in_T, freq_contrib);
 
   if (couplings->number_of_couplings == 0) return;
   MRS_rotate_coupled_site_interaction_components(
-      couplings, sites, transition, sites->number_of_sites, R0, R2, R4, R0_temp,
-      R2_temp, R4_temp, B0_in_T, freq_contrib);
+      couplings, sites, transition, sites->number_of_sites, F0, F2, F4, F0_temp,
+      F2_temp, F4_temp, B0_in_T, freq_contrib);
 }
 
 /**

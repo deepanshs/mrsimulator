@@ -30,7 +30,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    * Calculating exp(-Imα) at every orientation angle α form m=-4 to -1, where α is the
    * azimuthal angle over the positive octant. The input α is in the form of phase
    * exp(Iα). */
-  get_exp_Im_alpha(scheme->octant_orientations, allow_4th_rank, scheme->exp_Im_alpha);
+  get_exp_Im_angle(scheme->octant_orientations, allow_4th_rank, scheme->exp_Im_alpha);
   /* -------------------------------------------------------------------------------- */
 
   /**
@@ -150,7 +150,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   /* ................................................................................ */
   // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
   scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
-  scheme->exp_Im_gamma = malloc_complex128(4 * scheme->n_gamma);
+  scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
 
@@ -161,20 +161,13 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
   // exp(-im gamma) for m=[-4,-1], and gamma=[0..8]*2pi/9
-  double *gamma = malloc_double(scheme->n_gamma);
-  double *temp = malloc_double(scheme->n_gamma);
-  double factor = CONST_2PI / (double)scheme->n_gamma;
-  vm_double_arange(scheme->n_gamma, gamma);
-  for (i = 4; i > 0; i--) {
-    cblas_dcopy(scheme->n_gamma, gamma, 1, temp, 1);
-    cblas_dscal(scheme->n_gamma, -(double)i * factor, temp, 1);
-    // for (unsigned int j=0; j<scheme->n_gamma; j++){
-    //   printf("%f ", temp[j]);
-    // }
-    // printf("\n");
-    vm_cosine_I_sine(scheme->n_gamma, temp,
-                     &scheme->exp_Im_gamma[(4 - i) * scheme->n_gamma]);
-  }
+  double *gamma = malloc_double(n_gamma);
+  double *temp = malloc_double(n_gamma);
+  double factor = CONST_2PI / (double)n_gamma;
+  vm_double_arange(n_gamma, gamma);
+  cblas_dscal(n_gamma, factor, gamma, 1);
+  vm_cosine_I_sine(n_gamma, gamma, &scheme->exp_Im_gamma[3 * n_gamma]);
+  get_exp_Im_angle(n_gamma, allow_4th_rank, scheme->exp_Im_gamma);  // call for gamma
 
   // reallocate exp_I_beta memory as scrach.
   scheme->scrach = (double *)exp_I_beta;

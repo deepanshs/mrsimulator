@@ -84,8 +84,8 @@ cross-terms, **mrsimulator** further defines the product of the size of the
 :math:`k^\text{th}` frequency component, :math:`\omega_k`, and the
 :math:`L^\text{th}`-rank irreducible tensor components, :math:`\varrho_{L,n}^{(k)}`, in
 the principal axis system of the interaction tensor,
-:math:`\boldsymbol{\rho}^{(\lambda)}`, as the scaled spatial orientation
-tensor (sSOT) component,
+:math:`\boldsymbol{\rho}^{(\lambda)}`, as the frequency scaled spatial spherical
+tensor (fsSST) component,
 
 .. math::
     :label: eq_5
@@ -155,8 +155,8 @@ axis system of the interaction tensor and corresponds to the
 
 .. _spatial_orientation_table:
 
-Scaled spatial orientation tensor (sSOT) components in PAS, |SOF|
-=================================================================
+Frequency-scaled spatial spherical tensor (fsSST) components in PAS, |SOF|
+==========================================================================
 
 Single nucleus scaled spatial orientation tensor components
 -----------------------------------------------------------
