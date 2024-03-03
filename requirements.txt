@@ -8,7 +8,7 @@ monty>=2.0.4
 typing-extensions>=3.7
 lmfit>=1.0.3
 pandas>=1.1.3
-numexpr==2.8.4
+numexpr==2.9.0
 psutil>=5.4.8
 joblib>=1.0.0
 nmrglue>=0.9
