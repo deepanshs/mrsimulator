@@ -1,3 +1,10 @@
+"""
+Analytical czjzek ditribution on polar and non-polar grid
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "dsrivastava@hyperfine.io"
+"""
+import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
@@ -5,8 +12,11 @@ from .utils import get_Haeberlen_components
 from .utils import get_principal_components
 from .utils import x_y_from_zeta_eta
 
+
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+ANALYTICAL_AVAILABLE = {"czjzek": analytical_dist.czjzek}
 
 
 def _czjzek_random_distribution_tensors(sigma, n):
@@ -68,7 +78,7 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
-    def pdf(self, pos, size: int = 400000):
+    def pdf(self, pos, size: int = 400000, analytical: bool = True):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
 
@@ -86,6 +96,14 @@ class AbstractDistribution:
             >>> eta = np.arange(21)/20
             >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
         """
+        if analytical and self.model_name in ANALYTICAL_AVAILABLE:
+            analytical_model = ANALYTICAL_AVAILABLE[self.model_name]
+            return analytical_model(self.sigma, pos, self.polar)
+        else:
+            return self.pdf_numerical(pos, size)
+
+    def pdf_numerical(self, pos, size: int = 400000):
+        """Generate distribution numerically"""
         delta_z = (pos[0][1] - pos[0][0]) / 2
         delta_e = (pos[1][1] - pos[1][0]) / 2
         x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
@@ -136,6 +154,7 @@ class CzjzekDistribution(AbstractDistribution):
         >>> from mrsimulator.models import CzjzekDistribution
         >>> cz_model = CzjzekDistribution(0.5)
     """
+    model_name = "czjzek"
 
     def __init__(self, sigma: float, polar=False):
         self.sigma = sigma
@@ -201,6 +220,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
+    model_name = "extended czjzek"
 
     def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
         self.symmetric_tensor = symmetric_tensor

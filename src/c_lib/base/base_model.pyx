@@ -36,9 +36,9 @@ def core_simulator(method,
 
     # gyromagnetic ratio and reverse axis factor
     cdef gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
-    cdef double factor = 1.0
+    cdef double gyro_factor = 1.0
     if gyromagnetic_ratio > 0.0:
-        factor = -1.0
+        gyro_factor = -1.0
 
     # config for spin I=0.5
     cdef bool_t allow_4th_rank = 1
@@ -122,7 +122,7 @@ def core_simulator(method,
 
         count.append(dim.count)
         offset = dim.spectral_width / 2.0
-        coordinates_offset.append(-dim.reference_offset * factor - offset)
+        coordinates_offset.append(-dim.reference_offset * gyro_factor - offset)
         increment.append(dim.spectral_width / dim.count)
         event_i.append(n_ev)
 
