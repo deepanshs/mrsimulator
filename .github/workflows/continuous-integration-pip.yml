@@ -9,6 +9,7 @@ on:
   pull_request:
     branches: [master, 'v?.?*']
   merge_group:
+    branches: [master]
     types: [checks_requested]
 
 concurrency:
