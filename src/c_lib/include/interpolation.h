@@ -28,6 +28,12 @@ extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double 
 extern void triangle_interpolation1D_linear(double *f1, double *f2, double *f3,
                                             double *amp, double *spec, int *m0);
 
+extern void hist1dASG(double *spec, double *freq, const unsigned int nt, double *amp,
+                      int stride, int m);
+
+extern void hist2dASG(double *spec, double *freq_1, double *freq_2,
+                      const unsigned int nt, double *amp, int stride, int m0, int m1);
+
 extern void triangle_interpolation1D_gaussian(double *f1, double *f2, double *f3,
                                               double *amp, double *spec, int *m0);
 /**

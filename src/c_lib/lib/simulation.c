@@ -50,7 +50,7 @@ void __mrsimulator_core(
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
-    bool interpolation,                 // If true, perform a 1D interpolation.
+    bool interpolation,                 // If true, perform triangle interpolation.
     unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
     unsigned char *freq_contrib,  // A list of freq_contrib booleans.
     double *affine_matrix         // Affine transformation matrix.
@@ -153,11 +153,12 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
+    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase,
+                              interpolation);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,
-                              scheme->exp_I_phase);
+                              scheme->exp_I_phase, interpolation);
     break;
   }
 }
