@@ -35,6 +35,15 @@ cdef extern from "schemes.h":
                             bool_t allow_4th_rank,
                             unsigned int n_gamma,
                             unsigned int integration_volume)
+
+    MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+                            double *alpha,
+                            double *beta,
+                            double *weight,
+                            unsigned int n_angles,
+                            bool_t allow_4th_rank,
+                            unsigned int n_gamma)
+
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
                                     unsigned int number_of_sidebands)

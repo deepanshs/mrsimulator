@@ -200,7 +200,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
   scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
-  scheme->amplitudes = weight;
+  scheme->amplitudes = malloc_double(scheme->octant_orientations);
+  cblas_dcopy(scheme->octant_orientations, weight, 1, scheme->amplitudes, 1);
 
   /* Calculate cos(α) + isin(α) from α. ............................................. */
   vm_cosine_I_sine(n_angles, alpha,

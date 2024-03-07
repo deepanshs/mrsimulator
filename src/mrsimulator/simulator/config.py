@@ -1,8 +1,12 @@
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
+from typing import Optional
+
+import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 from typing_extensions import Literal
+
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -83,11 +87,15 @@ class ConfigSimulator(Parseable):
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
+    alpha: Optional[np.ndarray] = None
+    beta: Optional[np.ndarray] = None
+    weight: Optional[np.ndarray] = None
 
     class Config:
         extra = "forbid"
         allow_population_by_field_name = True
         validate_assignment = True
+        arbitrary_types_allowed = True
 
     def get_int_dict(self):
         py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
@@ -100,6 +108,10 @@ class ConfigSimulator(Parseable):
         py_dict["isotropic_interpolation"] = __isotropic_interpolation_enum__[
             self.isotropic_interpolation
         ]
+        if self.alpha is not None:
+            py_dict["alpha"] = self.alpha
+            py_dict["beta"] = self.beta
+            py_dict["weight"] = self.weight
         return py_dict
 
     # averaging scheme. This contains the c pointer used in frequency evaluation
@@ -126,6 +138,8 @@ class ConfigSimulator(Parseable):
         >>> a.config.get_orientations_count() # (4 * 21 * 22 / 2) = 924
         924
         """
+        if self.alpha is not None:
+            return self.number_of_gamma_angles * self.alpha.size
         n = self.integration_density
         vol = __integration_volume_octants__[
             __integration_volume_enum__[self.integration_volume]

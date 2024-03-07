@@ -26,7 +26,11 @@ def core_simulator(method,
        unsigned int number_of_gamma_angles=1,
        bool_t interpolation=True,
        bool_t auto_switch=True,
-       debug=False):
+       debug=False,
+       bool_t user_defined=False,
+       ndarray[double, ndim=1] alpha=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] beta=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] weight=np.zeros(1, dtype=float)):
     """core simulator init"""
 
 # initialization and config
@@ -50,10 +54,17 @@ def core_simulator(method,
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
-    averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_4th_rank=allow_4th_rank,
-        n_gamma=number_of_gamma_angles, integration_volume=integration_volume
-    )
+    if user_defined:
+        averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
+            allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
+        )
+        interpolation = False
+    else:
+        averaging_scheme = clib.MRS_create_averaging_scheme(
+            integration_density=integration_density, allow_4th_rank=allow_4th_rank,
+            n_gamma=number_of_gamma_angles, integration_volume=integration_volume
+        )
 
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
