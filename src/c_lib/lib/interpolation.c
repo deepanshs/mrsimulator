@@ -875,15 +875,18 @@ void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
   }
 }
 
-void hist1dASG(double *spec, double *freq, const unsigned int nt, double *amp,
-               int stride, int m) {
-  int i = 0, npts = (nt + 1) * (nt + 2) / 2, ix, reps = 0, tt = nt;
+void hist1d(double *spec, const unsigned int freq_size, const double *freq,
+            const double *amp, int stride, int m, const unsigned int nt) {
+  unsigned int i = 0, ix, reps = 0, tt = nt;
   bool one_up = 0;
   double temp_freq;
-  for (i = 0; i < npts; i += stride) {
+
+  if (nt == 0) reps = freq_size + 1;
+
+  for (i = 0; i < freq_size; i += stride) {
     temp_freq = freq[i];
     if (temp_freq >= 0 && temp_freq < m) {
-      ix = (int)temp_freq;
+      ix = (unsigned int)temp_freq;
       if (i < reps) {
         spec[2 * ix] += amp[i];
       } else {
@@ -901,18 +904,21 @@ void hist1dASG(double *spec, double *freq, const unsigned int nt, double *amp,
   }
 }
 
-void hist2dASG(double *spec, double *freq_1, double *freq_2, const unsigned int nt,
-               double *amp, int stride, int m0, int m1) {
-  int i = 0, npts = (nt + 1) * (nt + 2) / 2, ix, iy, hist_index, reps = 0, tt = nt;
+void hist2d(double *spec, const unsigned int freq_size, const double *freq_1,
+            const double *freq_2, const double *amp, int stride, int m0, int m1,
+            const unsigned int nt) {
+  unsigned int i = 0, ix, iy, hist_index, reps = 0, tt = nt;
   bool one_up = 0;
   double temp_freq_1, temp_freq_2;
 
-  for (i = 0; i < npts; i += stride) {
+  if (nt == 0) reps = freq_size + 1;
+
+  for (i = 0; i < freq_size; i += stride) {
     temp_freq_1 = freq_1[i];
     temp_freq_2 = freq_2[i];
     if (temp_freq_1 >= 0 && temp_freq_1 < m0 && temp_freq_2 >= 0 && temp_freq_2 < m1) {
-      ix = (int)temp_freq_1;
-      iy = (int)temp_freq_2;
+      ix = (unsigned int)temp_freq_1;
+      iy = (unsigned int)temp_freq_2;
       hist_index = iy + m1 * ix;
       if (i < reps) {
         spec[2 * hist_index] += amp[i];

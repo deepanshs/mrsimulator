@@ -60,7 +60,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
 
     if (fabs(*freq - freq[nt]) < TOL && fabs(*freq - freq[npts - 1]) < TOL)
-      delta_interpolation = true;
+      if (interpolation) delta_interpolation = true;
 
     if (delta_interpolation) {
       offset_0 += *freq;
@@ -107,10 +107,10 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
               octahedronInterpolation(spec + 1, dimensions->freq_offset, nt,
                                       &amps_imag[address], 1, dimensions->count);
             } else {
-              hist1dASG(spec, dimensions->freq_offset, nt, &amps_real[address], 1,
-                        dimensions->count);
-              hist1dASG(spec + 1, dimensions->freq_offset, nt, &amps_imag[address], 1,
-                        dimensions->count);
+              hist1d(spec, npts, dimensions->freq_offset, &amps_real[address], 1,
+                     dimensions->count, nt);
+              hist1d(spec + 1, npts, dimensions->freq_offset, &amps_imag[address], 1,
+                     dimensions->count, nt);
             }
             address += npts;
           }
@@ -226,9 +226,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                     scheme->integration_density, freq_amp, 1, dimensions[0].count,
                     dimensions[1].count, iso_intrp);
               } else {
-                hist2dASG(spec, dimensions[0].freq_offset, dimensions[1].freq_offset,
-                          scheme->integration_density, freq_amp, 1, dimensions[0].count,
-                          dimensions[1].count);
+                hist2d(spec, npts, dimensions[0].freq_offset, dimensions[1].freq_offset,
+                       freq_amp, 1, dimensions[0].count, dimensions[1].count,
+                       scheme->integration_density);
               }
               vm_double_multiply(npts, &ampsA_imag[address], 1,
                                  &freq_ampB[step_vector_k + address], freq_amp);
@@ -239,9 +239,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                     scheme->integration_density, freq_amp, 1, dimensions[0].count,
                     dimensions[1].count, iso_intrp);
               } else {
-                hist2dASG(spec + 1, dimensions[0].freq_offset,
-                          dimensions[1].freq_offset, scheme->integration_density,
-                          freq_amp, 1, dimensions[0].count, dimensions[1].count);
+                hist2d(spec + 1, npts, dimensions[0].freq_offset,
+                       dimensions[1].freq_offset, freq_amp, 1, dimensions[0].count,
+                       dimensions[1].count, scheme->integration_density);
               }
             }
           }

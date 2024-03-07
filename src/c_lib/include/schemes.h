@@ -95,11 +95,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
  */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(double *alpha,
-                                                                  double *beta,
-                                                                  double *weight,
-                                                                  unsigned int n_angles,
-                                                                  bool allow_4th_rank);
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+    double *alpha, double *beta, double *weight, unsigned int n_angles,
+    bool allow_4th_rank, unsigned int n_gamma);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.
