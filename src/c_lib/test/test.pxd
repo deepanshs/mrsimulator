@@ -77,7 +77,8 @@ cdef extern from "octahedron.h":
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
-        double *amp)
+        double *amp,
+        bool_t interpolation)
 
 cdef extern from "interpolation.h":
     void triangle_interpolation1D(
@@ -206,7 +207,6 @@ cdef extern from "simulation.h":
         double *transition,
         int integration_density,
         unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
-        bool_t interpolation
         )
 
 cdef extern from "frequency/spatial_orientation_tensor_components.h":

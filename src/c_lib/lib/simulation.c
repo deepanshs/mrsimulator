@@ -50,7 +50,6 @@ void __mrsimulator_core(
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
-    bool interpolation,                 // If true, perform triangle interpolation.
     unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
     unsigned char *freq_contrib,  // A list of freq_contrib booleans.
     double *affine_matrix         // Affine transformation matrix.
@@ -140,8 +139,8 @@ void __mrsimulator_core(
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-    }                                      // end events
-  }                                        // end dimensions
+    }  // end events
+  }  // end dimensions
 
   // calculate phase exponent of delay events
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
@@ -153,12 +152,11 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase,
-                              interpolation);
+    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,
-                              scheme->exp_I_phase, interpolation);
+                              scheme->exp_I_phase);
     break;
   }
 }
@@ -169,7 +167,7 @@ void mrsimulator_core(
     double coordinates_offset,   // The start of the frequency spectrum.
     double increment,            // The increment of the frequency spectrum.
     int count,                   // Number of points on the frequency spectrum.
-    site_struct *sites,          // Pointer to a list of sites wiithin a spin system.
+    site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
     MRS_dimension *dimensions,   // the dimensions in the method.
     int n_dimension,             // The number of dimension.
@@ -185,8 +183,7 @@ void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, unsigned int interpolate_type, unsigned char *freq_contrib,
-    double *affine_matrix) {
+    unsigned int interpolate_type, unsigned char *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // openblas_set_num_threads(1);
@@ -196,6 +193,8 @@ void mrsimulator_core(
   // printf("%d parallel", parallel);
 
   bool allow_4th_rank = false;
+  bool interpolation = true;
+
   if (sites[0].spin[0] > 0.5 && quad_second_order == 1) {
     allow_4th_rank = true;
   }
@@ -208,7 +207,7 @@ void mrsimulator_core(
   }
 
   MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_4th_rank, 9, integration_volume);
+      integration_density, allow_4th_rank, 9, integration_volume, interpolation);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);
@@ -221,7 +220,7 @@ void mrsimulator_core(
       couplings,           // Pointer to a list of couplings within a spin system.
       transition_pathway,  // Pointer to a list of transition.
       transition_pathway_weight, n_dimension, dimensions, fftw_scheme, scheme,
-      interpolation, interpolate_type, freq_contrib, affine_matrix);
+      interpolate_type, freq_contrib, affine_matrix);
 
   // gettimeofday(&end, NULL);
   // clock_time = (double)(end.tv_usec - begin.tv_usec) / 1000000. +

@@ -28,12 +28,23 @@ extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double 
 extern void triangle_interpolation1D_linear(double *f1, double *f2, double *f3,
                                             double *amp, double *spec, int *m0);
 
-extern void hist1d(double *spec, const unsigned int freq_size, const double *freq,
-                   const double *amp, int stride, int m, const unsigned int nt);
+extern void hist1d(double *spec, const unsigned int freq_size, double *freq,
+                   double *amp, int m, const unsigned int nt);
 
-extern void hist2d(double *spec, const unsigned int freq_size, const double *freq_1,
-                   const double *freq_2, const double *amp, int stride, int m0, int m1,
-                   const unsigned int nt);
+extern void hist2d(double *spec, const unsigned int freq_size, double *freq_1,
+                   double *freq_2, double *amp, int m0, int m1, const unsigned int nt);
+
+extern void generic_2d_triangle_average(double *spec, const unsigned int freq_size,
+                                        double *freq1, double *freq2, double *amp,
+                                        int m0, int m1,
+                                        const unsigned int position_size,
+                                        int32_t *positions, const unsigned int nt,
+                                        unsigned int iso_intrp);
+
+extern void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
+                                        double *freq, double *amp, int m,
+                                        const unsigned int position_size,
+                                        int32_t *positions, const unsigned int nt);
 
 extern void triangle_interpolation1D_gaussian(double *f1, double *f2, double *f3,
                                               double *amp, double *spec, int *m0);

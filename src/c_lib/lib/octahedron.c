@@ -181,8 +181,33 @@ void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum) {
   }
 }
 
-void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta,
-                     double *amp) {
+// fix amplitude for binning case:
+// octant face edge points are divided by 2
+// octant vertexes are divided by 4
+void fix_amplitude_for_binning(unsigned int nt, double *amp) {
+  unsigned int i = 0, i_max = (nt + 1) * (nt + 2) / 2, tt = nt - 1;
+  bool inc_one = false;
+  while (i <= nt) amp[i++] /= 2;
+  while (i < i_max) {
+    amp[i] /= 2;
+    if (inc_one) {
+      i++;
+      inc_one = false;
+    } else {
+      i += tt--;
+      inc_one = true;
+    }
+  }
+  amp[0] /= 2.0;
+  amp[nt] /= 2.0;
+  amp[i_max - 1] /= 2.0;
+}
+
+void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta, double *amp,
+                     bool interpolation) {
   // octahedronGetPolarAngleTrigOverOctant(nt, cos_alpha, cos_beta, amp);
   octahedronGetComplexExpOfPolarAngleOverOctant(nt, exp_I_alpha, exp_I_beta, amp);
+  if (!interpolation) {
+    fix_amplitude_for_binning(nt, amp);
+  }
 }
