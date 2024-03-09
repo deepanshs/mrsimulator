@@ -190,6 +190,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
     double *alpha, double *beta, double *weight, unsigned int n_angles,
     bool allow_4th_rank, unsigned int n_gamma, const unsigned int position_size,
     int32_t *positions, bool interpolation) {
+  double scale;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
   scheme->interpolation = interpolation;
@@ -210,7 +211,10 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
-  cblas_dcopy(scheme->octant_orientations, weight, 1, scheme->amplitudes, 1);
+
+  // scale = (1 / 6) factor for 1 point to 6 triangle ratio.
+  scale = (interpolation) ? 0.1666666667 : 1.0;
+  vm_double_ramp(scheme->octant_orientations, weight, scale, 0.0, scheme->amplitudes);
 
   /* Calculate cos(α) + isin(α) from α. ............................................. */
   vm_cosine_I_sine(n_angles, alpha,

@@ -838,7 +838,6 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
     int_i_stride += stride;
     int_j_stride += stride;
   }
-  amp1 /= 3.0;
   if (iso_intrp == 0) return delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
   if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq, &n_spec, &amp1, spec);
 }
@@ -854,15 +853,16 @@ void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
   amp_address = &amp[(nt + 1) * stride];
   freq_address = &freq[nt + 1];
 
+  // Note, amp is the sum of amplitude at three vertexes because the factor 3 is already
+  // applied to the amplitude vector.
   while (i < n_pts - 1) {
     temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = (temp + amp[int_i_stride]) / 3.0;
+    amp1 = temp + amp[int_i_stride];
 
     __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, spec, &m);
 
     if (i < local_index) {
       temp += amp_address[int_j_stride + stride];
-      temp /= 3.0;
       __triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
                                &temp, spec, &m);
     } else {
@@ -883,14 +883,15 @@ void generic_1d_triangle_interpolation(double *spec, const unsigned int freq_siz
                                        int32_t *positions) {
   unsigned int pos_size = position_size;
   int32_t p1, p2, p3;
-  double mean_amp;
+  double amp_sum;
 
   while (pos_size-- > 0) {
     p1 = *positions++;
     p2 = *positions++;
     p3 = *positions++;
-    mean_amp = (amp[p1] + amp[p2] + amp[p3]) / 3.0;
-    __triangle_interpolation(&freq[p1], &freq[p2], &freq[p3], &mean_amp, spec, &m);
+    // we do amp_sum because amps are already scaled to account for the factor 3
+    amp_sum = amp[p1] + amp[p2] + amp[p3];
+    __triangle_interpolation(&freq[p1], &freq[p2], &freq[p3], &amp_sum, spec, &m);
   }
 }
 
@@ -908,26 +909,25 @@ void hist1d(double *spec, const unsigned int freq_size, double *freq, double *am
   }
 }
 
-// if (asg_sampling) {
-//   if (interpolation) {
-//     octahedronInterpolation(spec, dimensions->freq_offset, nt,
-//                             &amps_real[address], 1, dimensions->count);
-//     octahedronInterpolation(spec + 1, dimensions->freq_offset, nt,
-//                             &amps_imag[address], 1, dimensions->count);
-//   } else {
-//     hist1d(spec, npts, dimensions->freq_offset, &amps_real[address],
-//             dimensions->count, nt);
-//     hist1d(spec + 1, npts, dimensions->freq_offset, &amps_imag[address],
-//             dimensions->count, nt);
-//   }
-// } else {
-//   generic_1d_triangle_average(spec, npts, dimensions->freq_offset,
-//                               &amps_real[address], dimensions->count,
-//                               scheme->position_size, scheme->positions, nt);
-//   generic_1d_triangle_average(spec + 1, npts, dimensions->freq_offset,
-//                               &amps_imag[address], dimensions->count,
-//                               scheme->position_size, scheme->positions, nt);
-// }
+void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
+                     double *amp_real, double *amp_imag, int dimension_count,
+                     const unsigned int position_size, int32_t *positions,
+                     const unsigned int nt, bool user_defined, bool interpolation) {
+  if (!user_defined) {
+    if (interpolation) {
+      octahedronInterpolation(spec, freq, nt, amp_real, 1, dimension_count);
+      octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
+    } else {
+      hist1d(spec, freq_size, freq, amp_real, dimension_count, nt);
+      hist1d(spec + 1, freq_size, freq, amp_imag, dimension_count, nt);
+    }
+  } else {
+    generic_1d_triangle_average(spec, freq_size, freq, amp_real, dimension_count,
+                                position_size, positions, nt);
+    generic_1d_triangle_average(spec + 1, freq_size, freq, amp_imag, dimension_count,
+                                position_size, positions, nt);
+  }
+}
 
 void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
                                  double *freq, double *amp, int m,
@@ -941,22 +941,44 @@ void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
   }
 }
 
+void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
+                     double *freq2, double *amp, const unsigned int position_size,
+                     int32_t *positions, int dimension0_count, int dimension1_count,
+                     unsigned int iso_intrp, const unsigned int nt, bool user_defined,
+                     bool interpolation) {
+  if (!user_defined) {
+    if (interpolation) {
+      // Perform tenting on every sideband order over all orientations
+      octahedronInterpolation2D(spec, freq1, freq2, nt, amp, 1, dimension0_count,
+                                dimension1_count, iso_intrp);
+    } else {
+      hist2d(spec, freq_size, freq1, freq2, amp, dimension0_count, dimension1_count,
+             nt);
+    }
+  } else {
+    generic_2d_triangle_average(spec, freq_size, freq1, freq2, amp, dimension0_count,
+                                dimension1_count, position_size, positions, nt,
+                                iso_intrp);
+  }
+}
+
 void generic_2d_triangle_interpolation(double *spec, const unsigned int freq_size,
                                        double *freq1, double *freq2, double *amp,
                                        const unsigned int position_size,
-                                       int32_t *position, int m0, int m1,
+                                       int32_t *positions, int m0, int m1,
                                        unsigned int iso_intrp) {
   unsigned int pos_size = position_size;
   int32_t p1, p2, p3;
-  double mean_amp;
+  double amp_sum;
 
   while (pos_size-- > 0) {
-    p1 = *position++;
-    p2 = *position++;
-    p3 = *position++;
-    mean_amp = (amp[p1] + amp[p2] + amp[p3]) / 3.0;
+    p1 = *positions++;
+    p2 = *positions++;
+    p3 = *positions++;
+    // we do amp_sum because amps are already scaled to account for the factor 3
+    amp_sum = amp[p1] + amp[p2] + amp[p3];
     triangle_interpolation2D(&freq1[p1], &freq1[p2], &freq1[p3], &freq2[p1], &freq2[p2],
-                             &freq2[p3], &mean_amp, spec, m0, m1, iso_intrp);
+                             &freq2[p3], &amp_sum, spec, m0, m1, iso_intrp);
   }
 }
 
@@ -1004,9 +1026,11 @@ void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int n
   freq1_address = &freq1[nt + 1];
   freq2_address = &freq2[nt + 1];
 
+  // Note, amp is the sum of amplitude at three vertexes because the factor 3 is already
+  // applied to the amplitude vector.
   while (i < n_pts - 1) {
     temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = (temp + amp[int_i_stride]) / 3.0;
+    amp1 = temp + amp[int_i_stride];
 
     triangle_interpolation2D(&freq1[i], &freq1[i + 1], &freq1_address[j], &freq2[i],
                              &freq2[i + 1], &freq2_address[j], &amp1, spec, m0, m1,
@@ -1014,7 +1038,6 @@ void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int n
 
     if (i < local_index) {
       temp += amp_address[int_j_stride + stride];
-      temp /= 3.0;
       triangle_interpolation2D(&freq1[i + 1], &freq1_address[j], &freq1_address[j + 1],
                                &freq2[i + 1], &freq2_address[j], &freq2_address[j + 1],
                                &temp, spec, m0, m1, iso_intrp);

@@ -15,7 +15,12 @@ void octahedronGetDirectionCosineSquareAndWeightsOverOctant(const unsigned int n
                                                             double *restrict zr,
                                                             double *restrict amp) {
   unsigned int i, j;
-  double x2, y2, z2, r2, scale = (double)nt;
+  // scale is divided by pi to remove angular dependence.
+  // The factor 6 is because each point in the triangle interpolation is shared by
+  // 6 neighboring triangles.
+  // Additional fudge factor of 2 (overall factor is now 3) to match zcw, step surface
+  // area.
+  double x2, y2, z2, r2, factor = 3.0 * CONST_PI, scale = (double)nt / factor;
 
   /* Do the (x + y + z = nt) face of the octahedron
   !z -> 0 to nt-1
@@ -40,7 +45,7 @@ void octahedronGetDirectionCosineSquareAndWeightsOverOctant(const unsigned int n
   *yr = 0.0;
   *zr = 1.0;
   r2 = (double)nt;
-  *amp = 1.0 / (r2 * r2);
+  *amp = 1.0 / (r2 * r2 * factor);
 }
 
 void octahedronGetPolarAngleTrigOverOctant(const unsigned int nt,
@@ -187,9 +192,9 @@ void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum) {
 void fix_amplitude_for_binning(unsigned int nt, double *amp) {
   unsigned int i = 0, i_max = (nt + 1) * (nt + 2) / 2, tt = nt - 1;
   bool inc_one = false;
-  while (i <= nt) amp[i++] /= 2;
+  while (i <= nt) amp[i++] /= 2.0;
   while (i < i_max) {
-    amp[i] /= 2;
+    amp[i] /= 2.0;
     if (inc_one) {
       i++;
       inc_one = false;
@@ -201,6 +206,9 @@ void fix_amplitude_for_binning(unsigned int nt, double *amp) {
   amp[0] /= 2.0;
   amp[nt] /= 2.0;
   amp[i_max - 1] /= 2.0;
+
+  // rescale all amps by 6 to remove the 1point shared by 6 triangle factor
+  cblas_dscal(i_max, 6.0, amp, 1);
 }
 
 void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta, double *amp,

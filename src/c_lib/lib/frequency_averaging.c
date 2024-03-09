@@ -103,26 +103,10 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
             // Add offset(isotropic + sideband_order) to the local frequencies.
             vm_double_add_offset(npts, &freq[address], offset, dimensions->freq_offset);
             // Perform tenting on every sideband order over all orientations.
-            if (!user_defined) {
-              if (interpolation) {
-                octahedronInterpolation(spec, dimensions->freq_offset, nt,
-                                        &amps_real[address], 1, dimensions->count);
-                octahedronInterpolation(spec + 1, dimensions->freq_offset, nt,
-                                        &amps_imag[address], 1, dimensions->count);
-              } else {
-                hist1d(spec, npts, dimensions->freq_offset, &amps_real[address],
-                       dimensions->count, nt);
-                hist1d(spec + 1, npts, dimensions->freq_offset, &amps_imag[address],
-                       dimensions->count, nt);
-              }
-            } else {
-              generic_1d_triangle_average(spec, npts, dimensions->freq_offset,
-                                          &amps_real[address], dimensions->count,
-                                          scheme->position_size, scheme->positions, nt);
-              generic_1d_triangle_average(spec + 1, npts, dimensions->freq_offset,
-                                          &amps_imag[address], dimensions->count,
-                                          scheme->position_size, scheme->positions, nt);
-            }
+            one_d_averaging(spec, npts, dimensions->freq_offset, &amps_real[address],
+                            &amps_imag[address], dimensions->count,
+                            scheme->position_size, scheme->positions, nt, user_defined,
+                            interpolation);
             address += npts;
           }
         }
@@ -228,48 +212,23 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
               vm_double_add_offset(npts, &freq1[address], norm1,
                                    dimensions[1].freq_offset);
 
+              // real part
               vm_double_multiply(npts, &ampsA_real[address], 1,
                                  &freq_ampB[step_vector_k + address], freq_amp);
-              if (!user_defined) {
-                if (interpolation) {
-                  // Perform tenting on every sideband order over all orientations
-                  octahedronInterpolation2D(
-                      spec, dimensions[0].freq_offset, dimensions[1].freq_offset,
-                      scheme->integration_density, freq_amp, 1, dimensions[0].count,
-                      dimensions[1].count, iso_intrp);
-                } else {
-                  hist2d(spec, npts, dimensions[0].freq_offset,
-                         dimensions[1].freq_offset, freq_amp, dimensions[0].count,
-                         dimensions[1].count, scheme->integration_density);
-                }
-              } else {
-                generic_2d_triangle_average(spec, npts, dimensions[0].freq_offset,
-                                            dimensions[1].freq_offset, freq_amp,
-                                            dimensions[0].count, dimensions[1].count,
-                                            scheme->position_size, scheme->positions,
-                                            scheme->integration_density, iso_intrp);
-              }
+              two_d_averaging(spec, npts, dimensions[0].freq_offset,
+                              dimensions[1].freq_offset, freq_amp,
+                              scheme->position_size, scheme->positions,
+                              dimensions[0].count, dimensions[1].count, iso_intrp,
+                              scheme->integration_density, user_defined, interpolation);
+
+              // imaginary part
               vm_double_multiply(npts, &ampsA_imag[address], 1,
                                  &freq_ampB[step_vector_k + address], freq_amp);
-              if (!user_defined) {
-                if (interpolation) {
-                  // Perform tenting on every sideband order over all orientations
-                  octahedronInterpolation2D(
-                      spec + 1, dimensions[0].freq_offset, dimensions[1].freq_offset,
-                      scheme->integration_density, freq_amp, 1, dimensions[0].count,
-                      dimensions[1].count, iso_intrp);
-                } else {
-                  hist2d(spec + 1, npts, dimensions[0].freq_offset,
-                         dimensions[1].freq_offset, freq_amp, dimensions[0].count,
-                         dimensions[1].count, scheme->integration_density);
-                }
-              } else {
-                generic_2d_triangle_average(spec + 1, npts, dimensions[0].freq_offset,
-                                            dimensions[1].freq_offset, freq_amp,
-                                            dimensions[0].count, dimensions[1].count,
-                                            scheme->position_size, scheme->positions,
-                                            scheme->integration_density, iso_intrp);
-              }
+              two_d_averaging(spec + 1, npts, dimensions[0].freq_offset,
+                              dimensions[1].freq_offset, freq_amp,
+                              scheme->position_size, scheme->positions,
+                              dimensions[0].count, dimensions[1].count, iso_intrp,
+                              scheme->integration_density, user_defined, interpolation);
             }
           }
         }
