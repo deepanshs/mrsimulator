@@ -24,9 +24,8 @@ __integration_volume_octants__ = [1, 4, 8]
 class CustomSampling(BaseModel):
     alpha: Optional[np.ndarray] = None
     beta: Optional[np.ndarray] = None
-    gamma: Optional[np.ndarray] = None
     weight: Optional[np.ndarray] = None
-    pos_indexes: Optional[np.ndarray] = None
+    vertex_indexes: Optional[np.ndarray] = None
 
     class Config:
         extra = "forbid"
@@ -132,10 +131,9 @@ class ConfigSimulator(Parseable):
         if self.custom_sampling is not None:
             py_dict["alpha"] = self.custom_sampling.alpha
             py_dict["beta"] = self.custom_sampling.beta
-            # py_dict["gamma"] = self.custom_sampling.gamma
             py_dict["weight"] = self.custom_sampling.weight
-            if self.custom_sampling.pos_indexes is not None:
-                py_dict["positions"] = self.custom_sampling.pos_indexes.ravel()
+            if self.custom_sampling.vertex_indexes is not None:
+                py_dict["positions"] = self.custom_sampling.vertex_indexes.ravel()
             py_dict["user_defined"] = True
         return py_dict
 
