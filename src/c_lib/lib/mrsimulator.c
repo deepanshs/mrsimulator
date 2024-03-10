@@ -198,7 +198,7 @@ void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_
    * multiplier, pre_phase2. This multiplication accounts for the rotation of the
    * second-rank tensors from the rotor-frame to the lab-frame, thereby, reducing the
    * number of calculations involved per site. This step assumes that the Euler angles
-   * invloved in the rotation of the 2nd-rank tensors to the lab frame is (0,
+   * involved in the rotation of the 2nd-rank tensors to the lab frame is (0,
    * rotor_angle_in_rad, 0).
    */
 
@@ -407,7 +407,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /**
    * Rotate the F2 and F4 components from the common frame to the rotor frame over all
-   * the orientations (alpha, beta). The componets are stored in w2 and w4 of the
+   * the orientations (alpha, beta). The components are stored in w2 and w4 of the
    * averaging scheme, respectively.
    */
   __batch_wigner_rotation(scheme->octant_orientations, plan->n_octants,
@@ -419,7 +419,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
 
   /**
    * Rotate the w2 and w4 components from the rotor-frame to the lab-frame. Since only
-   * the zeroth-order is relevent in the lab-frame, only evalute the R20 and R40
+   * the zeroth-order is relevant in the lab-frame, only evaluate the R20 and R40
    * components. This is equivalent to scaling the w2(0) term by
    * `wigner_d2m0_vector[2]`, that is, d^2(0,0)(rotor_angle).
    */

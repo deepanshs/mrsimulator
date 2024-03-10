@@ -64,7 +64,7 @@ cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_angle(const unsigned int octant_orientations,
-                            const bool_t allow_4th_rank, void *exp_Im_angle)
+                          const bool_t allow_4th_rank, void *exp_Im_angle, double delta_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                             const unsigned int n_octants, double *wigner_2j_matrices, void *R2,

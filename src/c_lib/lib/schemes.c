@@ -12,7 +12,7 @@
 static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                           complex128 *exp_I_beta, bool allow_4th_rank) {
   unsigned int allocate_size_2, allocate_size_4;
-
+  double delta_alpha = 0.0;
   scheme->total_orientations = scheme->octant_orientations;
 
   switch (scheme->integration_volume) {
@@ -30,7 +30,11 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
    * Calculating exp(-Imα) at every orientation angle α form m=-4 to -1, where α is the
    * azimuthal angle over the positive octant. The input α is in the form of phase
    * exp(Iα). */
-  get_exp_Im_angle(scheme->octant_orientations, allow_4th_rank, scheme->exp_Im_alpha);
+  if (scheme->integration_volume == 2) {
+    delta_alpha = CONST_PI / (4.0 * scheme->integration_density);
+  }
+  get_exp_Im_angle(scheme->octant_orientations, allow_4th_rank, scheme->exp_Im_alpha,
+                   delta_alpha);
   /* -------------------------------------------------------------------------------- */
 
   /**
@@ -136,6 +140,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
                                                   unsigned int n_gamma,
                                                   unsigned int integration_volume,
                                                   bool interpolation) {
+  int alpha_size;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
   scheme->interpolation = interpolation;
@@ -153,7 +158,9 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   /* Calculate α, β, and weights over the positive octant. .......................... */
   /* ................................................................................ */
   // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
-  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
+  alpha_size = 4 * scheme->octant_orientations;
+  alpha_size *= (integration_volume == 2) ? 2 : 1;
+  scheme->exp_Im_alpha = malloc_complex128(alpha_size);
   scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
@@ -171,7 +178,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   vm_double_arange(n_gamma, gamma);
   cblas_dscal(n_gamma, factor, gamma, 1);
   vm_cosine_I_sine(n_gamma, gamma, &scheme->exp_Im_gamma[3 * n_gamma]);
-  get_exp_Im_angle(n_gamma, allow_4th_rank, scheme->exp_Im_gamma);  // call for gamma
+  get_exp_Im_angle(n_gamma, allow_4th_rank, scheme->exp_Im_gamma, 0.0);  // for gamma
 
   // reallocate exp_I_beta memory as scratch.
   scheme->scratch = (double *)exp_I_beta;
@@ -232,7 +239,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   vm_double_arange(n_gamma, gamma);
   cblas_dscal(n_gamma, factor, gamma, 1);
   vm_cosine_I_sine(n_gamma, gamma, &scheme->exp_Im_gamma[3 * n_gamma]);
-  get_exp_Im_angle(n_gamma, allow_4th_rank, scheme->exp_Im_gamma);  // call for gamma
+  get_exp_Im_angle(n_gamma, allow_4th_rank, scheme->exp_Im_gamma, 0.0);  // for gamma
 
   // reallocate exp_I_beta memory as scratch.
   scheme->scratch = (double *)exp_I_beta;
