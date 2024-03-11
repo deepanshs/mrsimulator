@@ -57,7 +57,7 @@ def STEP_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
     alpha = inc_alpha * (a[1] + alx * a[0])
     beta = inc_beta * (2.0 * btx + 1.0)
     weight = norm_step * np.sin(inc_beta * (2.0 * btx + 1.0))
-
+    alpha[beta > np.pi/2] += (np.pi / 2) / (2 * N_alpha) # shift alpha by pi/2 for beta > pi/2
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
 
 
