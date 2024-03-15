@@ -99,7 +99,7 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
     cdef np.ndarray[double complex] exp_im_alpha
     exp_im_alpha = np.empty(4 * n, dtype=np.complex128)
     exp_im_alpha[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
-    clib.get_exp_Im_angle(n, 1, &exp_im_alpha[0])
+    clib.get_exp_Im_angle(n, 1, &exp_im_alpha[0], 0.0)
 
     cdef np.ndarray[complex] R_out = np.zeros((l + 1)*n, dtype=np.complex128)
 
@@ -114,7 +114,7 @@ def get_exp_Im_angle(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank)
     cdef unsigned int n_ = n
     cdef np.ndarray[double complex] exp_Im_angle = np.empty(4*n, dtype=np.complex128)
     exp_Im_angle[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
-    clib.get_exp_Im_angle(n_, allow_4th_rank, &exp_Im_angle[0])
+    clib.get_exp_Im_angle(n_, allow_4th_rank, &exp_Im_angle[0], 0.0)
     return exp_Im_angle
 
 
@@ -158,12 +158,13 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     """
     nt = integration_density
     cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
+    cdef bool_t interploation = True
 
     cdef np.ndarray[double complex] exp_I_alpha = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double complex] exp_I_beta = np.empty(octant_orientations, dtype=np.complex128)
     cdef np.ndarray[double] amp = np.empty(octant_orientations, dtype=np.float64)
 
-    clib.averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0])
+    clib.averaging_setup(nt, &exp_I_alpha[0], &exp_I_beta[0], &amp[0], interploation)
 
     return exp_I_alpha, exp_I_beta, amp
 
