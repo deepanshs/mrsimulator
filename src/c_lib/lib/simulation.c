@@ -139,8 +139,8 @@ void __mrsimulator_core(
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-    }  // end events
-  }  // end dimensions
+    }                                      // end events
+  }                                        // end dimensions
 
   // calculate phase exponent of delay events
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);

@@ -24,7 +24,7 @@ def generate_custom_sampling(alpha, beta, weight, triangle_mesh=False):
     return sampling
 
 
-def STEP_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
+def step_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
     """Generate STEP averaging samples.
 
     Args:
@@ -57,11 +57,13 @@ def STEP_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
     alpha = inc_alpha * (a[1] + alx * a[0])
     beta = inc_beta * (2.0 * btx + 1.0)
     weight = norm_step * np.sin(inc_beta * (2.0 * btx + 1.0))
-    alpha[beta > np.pi/2] += (np.pi / 2) / (2 * N_alpha) # shift alpha by pi/2 for beta > pi/2
+    # shift alpha by pi/2 for beta > pi/2
+    alpha[beta > np.pi / 2] += (np.pi / 2) / (2 * N_alpha)
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
 
 
-def getNumberZCW(M):
+def get_zcw_number(M):
+    """ZCW number"""
     # returns the number of ZCW angles for the given integer M=2,3,4,...
     gM = 5
     gMminus1 = 3
@@ -73,7 +75,7 @@ def getNumberZCW(M):
     return sum
 
 
-def ZCW_averaging(M: int, triangle_mesh=True):
+def zcw_averaging(M: int, triangle_mesh=True):
     """Generate ZCW averaging samples.
 
     Args:
@@ -88,8 +90,8 @@ def ZCW_averaging(M: int, triangle_mesh=True):
     if sphereType == "octant":
         c = [-1.0, 1.0, 4.0]
 
-    N = getNumberZCW(M)
-    g2 = getNumberZCW(M - 2)
+    N = get_zcw_number(M)
+    g2 = get_zcw_number(M - 2)
 
     m = np.arange(N)
     beta = np.arccos(c[0] * (c[1] * np.fmod(m / float(N), 1.0) - 1.0))
