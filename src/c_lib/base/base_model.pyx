@@ -1,6 +1,7 @@
 cimport base_model as clib
 cimport numpy as cnp
 from libcpp cimport bool as bool_t
+from libc.stdint cimport int32_t
 from numpy cimport ndarray
 import numpy as np
 import cython
@@ -26,7 +27,12 @@ def core_simulator(method,
        unsigned int number_of_gamma_angles=1,
        bool_t interpolation=True,
        bool_t auto_switch=True,
-       debug=False):
+       debug=False,
+       bool_t user_defined=False,
+       ndarray[double, ndim=1] alpha=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] beta=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] weight=np.zeros(1, dtype=float),
+       ndarray[int32_t, ndim=1] positions=np.ones(1, dtype=np.intc)):
     """core simulator init"""
 
 # initialization and config
@@ -50,10 +56,24 @@ def core_simulator(method,
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
-    averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_4th_rank=allow_4th_rank,
-        n_gamma=number_of_gamma_angles, integration_volume=integration_volume
-    )
+    cdef unsigned int position_size = 0
+
+    if user_defined:
+        if interpolation:
+            position_size = np.uint32(positions.size / 3) if positions is not None else 0
+        else:
+            positions = None
+        averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
+            allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
+            position_size=position_size, positions=&positions[0], interpolation=interpolation
+        )
+    else:
+        averaging_scheme = clib.MRS_create_averaging_scheme(
+            integration_density=integration_density, allow_4th_rank=allow_4th_rank,
+            n_gamma=number_of_gamma_angles, integration_volume=integration_volume,
+            interpolation=interpolation
+        )
 
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
@@ -219,8 +239,6 @@ def core_simulator(method,
 
     cdef clib.site_struct sites_c
     cdef clib.coupling_struct couplings_c
-
-    # index_ = []
 
     # -------------------------------------------------------------------------
     # sample __________________________________________________________________
@@ -439,7 +457,6 @@ def core_simulator(method,
                 dimensions,       # Pointer to MRS_dimension structure
                 fftw_scheme,      # Pointer to the fftw scheme.
                 averaging_scheme, # Pointer to the powder averaging scheme.
-                interpolation,
                 isotropic_interpolation,
                 &f_contrib[0],
                 &affine_matrix_c[0],

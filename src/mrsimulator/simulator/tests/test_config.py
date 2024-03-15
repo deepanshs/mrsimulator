@@ -83,6 +83,7 @@ def test_config():
 
     # overall hemisphere
     assert a.config.dict(exclude={"property_units"}) == {
+        "custom_sampling": None,
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
         "number_of_gamma_angles": 14,
@@ -112,6 +113,7 @@ def test_config():
     a.config.integration_volume = "sphere"
     assert a.config.integration_volume == "sphere"
     assert a.config.dict(exclude={"property_units"}) == {
+        "custom_sampling": None,
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
         "number_of_gamma_angles": 14,
