@@ -3,11 +3,7 @@
 Extended Czjzek distribution
 ----------------------------
 
-The Extended Czjzek distribution models random variations of a second-rank traceless
-symmetric tensors about a non-zero tensor. Unlike the Czjzek distribution, the Extended
-Czjzek model has no known analytical function for the probability distribution. Therefore,
-mrsimulator relies on random sampling to approximate the probability distribution function.
-See :ref:`ext_czjzek_model` and references within for a further description of the model.
+The Extended Czjzek distribution models random variations of second-rank traceless symmetric tensors about a non-zero tensor. Unlike the Czjzek distribution, the Extended Czjzek model has no known analytical function for the probability distribution. Therefore, mrsimulator relies on random sampling to approximate the probability distribution function. See :ref:`ext_czjzek_model` and references within for a further description of the model.
 
 Extended Czjzek distribution of symmetric shielding tensors
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -85,7 +81,7 @@ function using the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` meth
     model_quad = ExtCzjzekDistribution(quad_tensor, eps=0.2)
     Cq_grid, eta_grid, amp = model_quad.pdf(pos=[Cq_range, eta_range], size=400000)
 
-As with the case with Czjzek distribution, to generate a probability distribution of the
+As with the case of the Czjzek distribution, to generate a probability distribution of the
 extended Czjzek distribution, we need to define a grid system over which the distribution
 probabilities will be evaluated. We do so by defining the range of coordinates along the
 two dimensions. In the above example, ``Cq_range`` and ``eta_range`` are the

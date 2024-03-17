@@ -1,5 +1,5 @@
 import numpy as np
-from mrsimulator.models.utils import x_y_from_zeta_eta
+from mrsimulator.models.utils import zeta_eta_to_x_y
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -73,7 +73,7 @@ def czjzek_polar(sigma: float, pos: list):
     pdf_model = czjzek_distribution(sigma, zeta, eta)
     eta = eta.ravel()
     zeta = zeta.ravel()
-    x, y = x_y_from_zeta_eta(zeta, eta)
+    x, y = zeta_eta_to_x_y(zeta, eta)
 
     eta_idx = np.where(eta == 1)
     pdf_model = pdf_model.ravel()

@@ -3,19 +3,17 @@
 Czjzek distribution
 -------------------
 
-The Czjzek distribution models random variations of a second-rank traceless
+The Czjzek distribution models random variations of second-rank traceless
 symmetric tensors about zero, i.e., a tensor with zeta of zero. An analytical expression
 for the Czjzek distribution exists (cite) which follows
 
 .. math::
-    f(\zeta, \eta, \sigma) = \eta \left(1-\frac{\eta^2}{9}\right)\frac{\zeta^4}{32\sigma^5 \sqrt{2 \pi}} \times \exp\left(-\frac{\zeta^2}{8\sigma^2}\left(1+\frac{\eta^2}{3}\right)\right)
+    f(\zeta, \eta, \sigma) = \eta \left(1-\frac{\eta^2}{9}\right)\frac{\zeta^4}{32\sigma^5 \sqrt{2 \pi}} \times \exp\left(-\frac{\zeta^2}{8\sigma^2}\left(1+\frac{\eta^2}{3}\right)\right),
 
-where :math:`\zeta` and :math:`\eta` are the Haberlen components of the tensor and :math:`\sigma` is the
-noise parameter.
-See :ref:`czjzek_model` for a further mathematical description of the model.
+where :math:`\zeta` and :math:`\eta` are the Haberlen components of the tensor and :math:`\sigma` is the Czjzek width parameter. See :ref:`czjzek_model` for a further mathematical description of the model.
 
 The remainder of this page quickly describes how to generate Czjzek distributions and generate
-:py:class:`~mrsimulator.spin_system.SpinSystem` objects from these distributions. Also look at the
+:py:class:`~mrsimulator.spin_system.SpinSystem` objects from these distributions. Also, look at the
 gallery examples using the Czjzek distribution listed at the bottom of this page.
 
 Creating and sampling a Czjzek distribution
@@ -46,12 +44,7 @@ function. Let's first draw points from this distribution, using the
 
     zeta_dist, eta_dist = cz_model.rvs(size=50000)
 
-In the above example, we draw *50000* random points of the distribution. The output
-``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
-in the Haeberlen convention.
-It is further assumed that the points in ``zeta_dist`` are in units of ``ppm`` while ``eta_dist``
-has values since :math:`\eta` is dimensionless.
-The scatter plot of these coordinates is shown below.
+In the above example, we draw *50000* random points of the distribution. The output ``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined in the Haeberlen convention. It is further assumed that the points in ``zeta_dist`` are in units of ``ppm`` while ``eta_dist`` has values since :math:`\eta` is dimensionless. The scatter plot of these coordinates is shown below.
 
 .. skip: next
 
@@ -72,9 +65,7 @@ The scatter plot of these coordinates is shown below.
 Creating and sampling a Czjzek distribution in polar coordinates
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-The :py:class:`~mrsimulator.models.czjzek.CzjzekDistribution` class also supports sampling
-tensors in polar coordinates. The logic behind transforming from a :math:`\zeta`-:math:`\eta`
-Cartesian grid is further described in mrinversion (cite), and the following definitions are used
+The :py:class:`~mrsimulator.models.czjzek.CzjzekDistribution` class also supports sampling tensors in polar coordinates. The logic behind transforming from a :math:`\zeta`-:math:`\eta` Cartesian grid is further described in mrinversion (cite), and the following definitions are used
 
 .. math::
 
@@ -85,8 +76,7 @@ Cartesian grid is further described in mrinversion (cite), and the following def
             \end{array}
             \right.\end{split}
 
-Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is
-re-express as the x-y Cartesian grid following,
+Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is re-express as the x-y Cartesian grid following,
 
 .. math::
 
@@ -164,7 +154,7 @@ on the grid. Below, the distribution is plotted
 ---
 
 The probability distribution function can also be generated in polar coordinates. The workflow
-is exactly the same, except we now define an (x, y) grid system using the variables ``x_range``
+is the same, except we now define an (x, y) grid system using the variables ``x_range``
 and ``y_range``. The code to generate and plot the polar Czjzek distribution is shown below.
 
 .. skip: next
@@ -202,6 +192,8 @@ can also be drawn from the Czjzek distribution in the same manner; however, the 
 are assumed to be in units of MHz. The following code draws a distribution of quadrupolar
 tensor parameters.
 
+.. skip: next
+
 .. plot::
     :context: close-figs
 
@@ -212,6 +204,8 @@ tensor parameters.
 
 the units for ``Cq_range`` and ``Cq_grid`` are assumed in MHz. Similarly, x and y are assumed to
 be in units of MHz when sampling quadrupolar tensors in polar coordinates.
+
+.. skip: next
 
 .. plot::
     :context: close-figs
@@ -242,7 +236,7 @@ tensor parameters follow the Czjzek distribution.
     Cq_grid, eta_grid, amp = cz_model.pdf(pos=[Cq_range, eta_range])
 
     sys = single_site_system_generator(
-        isotope="13C",
+        isotope="27Al",
         quadrupolar={"Cq": Cq_grid * 1e6, "eta": eta_grid},  # Cq argument in units of Hz
         abundance=amp,
     )
@@ -270,13 +264,6 @@ below.
 
     # To transformation (x, y) -> (zeta, eta)
     zeta_grid, eta_grid = x_y_to_zeta_eta(x_grid, y_grid)
-
-    sys = single_site_system_generator(
-        isotope="13C",
-        shielding_symmetric={"zeta": zeta_grid, "eta": eta_grid},
-        abundance=amp,
-    )
-
 
 ---
 

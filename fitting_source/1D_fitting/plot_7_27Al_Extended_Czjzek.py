@@ -123,7 +123,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Gaussian(FWHM="420 Hz"),
         sp.FFT(),
-        sp.Scale(factor=2.5),
+        sp.Scale(factor=25),
     ]
 )
 
