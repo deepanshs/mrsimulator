@@ -78,13 +78,13 @@ def x_y_to_zeta_eta(x, y):
     zeta = np.sqrt(x**2 + y**2)  # + offset
     eta = np.ones(zeta.shape)
     index = np.where(x > y)
-    zeta[index] = -zeta[index]
+    zeta[index] *= -1
     eta[index] = (4.0 / np.pi) * np.arctan(y[index] / x[index])
 
     index = np.where(x < y)
     eta[index] = (4.0 / np.pi) * np.arctan(x[index] / y[index])
 
-    return zeta.ravel(), eta.ravel()
+    return zeta, eta
 
 
 def _simulate_spectra_over_zeta_and_eta(ZZ, ee, mth, tensor_type):
@@ -138,6 +138,6 @@ def generate_lineshape_kernel(
 
     # Convert polar coords to cartesian coords
     if polar:
-        ZZ, ee = x_y_to_zeta_eta(ZZ, ee)
+        ZZ, ee = x_y_to_zeta_eta(ZZ.ravel(), ee.ravel())
 
     return _simulate_spectra_over_zeta_and_eta(ZZ, ee, mth, tensor_type)

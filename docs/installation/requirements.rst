@@ -3,7 +3,7 @@
 Package dependencies
 ====================
 
-**Mrsimulator** works with Python versions >3.7 and is compatible with the
+**Mrsimulator** works with Python versions > |PY_VERSION| and is compatible with the
 following operating systems:
 
 - MacOS 10.15 or later
@@ -20,7 +20,7 @@ following operating systems:
 - `matplotlib>=3.3.4 <https://matplotlib.org>`_ for figures and visualization
 - `lmfit>=1.0.3 <https://lmfit.github.io/lmfit-py/>`_ for least-squares fitting
 - `pandas>=1.1.3 <https://pandas.pydata.org/docs/>`_
-- `csdmpy>=0.4.1 <https://csdmpy.readthedocs.io/en/stable/>`_
+- `csdmpy>=0.6 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic<2 <https://pydantic-docs.helpmanual.io>`_
 - `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
 - monty>=2.0.4
@@ -44,7 +44,7 @@ For ``mrsimualtor`` developers, the following packages are required:
 
 *For unit tests*
 - sympy
-- pytest>=5.3
+- pytest<8.0
 - pytest-cov
 - sybil>=3.0.0
 
@@ -56,7 +56,7 @@ For ``mrsimualtor`` developers, the following packages are required:
 *For building documentation*
 
 - sphinxjp.themes.basicstrap
-- sphinx>=2.0
+- sphinx<=6.0
 - sphinx-gallery>=0.10
 - pillow>=7.1.2
 - breathe==4.34.0

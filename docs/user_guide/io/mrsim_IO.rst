@@ -112,9 +112,8 @@ systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
     # Save spin systems to file
     sim.export_spin_systems("example.mrsys")
 
-Now the file ``example.mrsys`` holds a JSON representation of the spin system objects. The
-extension of the file is irrelevant; however, we strongly encourage using ``.mrsys`` to
-adhere to the convention.
+Now the file ``example.mrsys`` holds a JSON representation of the spin system objects.
+We encourage the convention of using .mrsys extension for this JSON file.
 
 Just as spin systems can be saved to a file, spin systems can be loaded from a file. Loading spin
 systems is useful when working with a large number of spin systems over multiple Python scripts. Here
@@ -190,8 +189,8 @@ custom DAS method and serialize it to a file using the method
     sim.export_methods("example.mrmtd")
 
 Now the file ``example.mrmtd`` holds a JSON representation of the method object. If multiple
-methods are present, e.g., at different spinning speeds, they will also be serialized. The file's extension
-is not essential; however, we strongly encourage using ``.mrmtd`` to adhere to the convention.
+methods are present, e.g., at different spinning speeds, they will also be serialized.  We
+encourage the convention of using .mrmtd extension for this JSON file.
 
 Just like spin systems, methods can also be loaded from a file. Here we load the DAS
 method into a new simulator object by calling the method
@@ -267,9 +266,11 @@ method.
         signal_processors=[processor1, processor2],
     )
 
-All attribute values are serialized with units by default, but you may serialize without
-units by passing ``with_units=False`` to the method.
-Additionally, a metadata dictionary can be passed using the ``application`` keyword.
+By default, all attribute values are serialized with units.  You can serialize attributes
+without units, assuming the default unit of the attribute, by passing
+``with_units=False`` to the method.  Recall that all objects in  **mrsimulator**
+have the attribute ``property_units`` which provides the default units for all class
+properties.  Additionally, a metadata dictionary can be passed using the ``application`` keyword.
 
 To load a simulator and signal processors from a file, call the :meth:`~mrsimulator.load`
 method. This method will return an ordered list of a :ref:`simulator_api` object, a list of

@@ -35,6 +35,7 @@ def test_static_spinning_integral_amplitude():
     sim.run()
     y_VAS = sim.methods[0].simulation.y[0].components[0].sum()
 
+    print(y_static, y_MAS, y_VAS)
     assert np.allclose(y_static, y_MAS), "Integral error from static to MAS."
     assert np.allclose(y_static, y_VAS), "Integral error from static to VAS."
 
@@ -49,6 +50,10 @@ def test_with_configuration_setting():
     sim.run()
     y_static_1 = sim.methods[0].simulation.y[0].components[0].sum()
 
+    sim.config.integration_volume = "sphere"
+    sim.run()
+    y_static_3 = sim.methods[0].simulation.y[0].components[0].sum()
+
     sim.config.integration_volume = "hemisphere"
     sim.run()
     y_static_2 = sim.methods[0].simulation.y[0].components[0].sum()
@@ -62,13 +67,16 @@ def test_with_configuration_setting():
     y_MAS_1 = sim.methods[0].simulation.y[0].components[0].sum()
 
     e = "Integral error from changing integration density."
-    np.testing.assert_almost_equal(y_static, y_static_1, decimal=1, err_msg=e)
+    np.testing.assert_almost_equal(y_static, y_static_1, decimal=3, err_msg=e)
 
-    e = "Integral error from changing integration volume."
-    np.testing.assert_almost_equal(y_static, y_static_2, decimal=1, err_msg=e)
+    e = "Integral error from changing integration volume octant to hemisphere."
+    np.testing.assert_almost_equal(y_static, y_static_2, decimal=3, err_msg=e)
+
+    e = "Integral error from changing integration volume from octant to sphere."
+    np.testing.assert_almost_equal(y_static, y_static_3, decimal=3, err_msg=e)
 
     e = "Integral error from νr, integration density, integration volume."
-    np.testing.assert_almost_equal(y_static, y_MAS, decimal=1, err_msg=e)
+    np.testing.assert_almost_equal(y_static, y_MAS, decimal=3, err_msg=e)
 
     e = "Integral error from number of sidebands."
     np.testing.assert_almost_equal(y_MAS, y_MAS_1, decimal=8, err_msg=e)
