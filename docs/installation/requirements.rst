@@ -25,7 +25,7 @@ following operating systems:
 - `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
 - monty>=2.0.4
 - typing-extensions>=3.7
-- numexpr==2.8.4
+- numexpr>=2.8.4
 - psutil>=5.4.8
 - joblib>=1.0.0
 
