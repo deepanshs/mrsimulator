@@ -1,8 +1,8 @@
 import numpy as np
 from mrsimulator.models.utils import get_Haeberlen_components
 from mrsimulator.models.utils import get_principal_components
-from mrsimulator.models.utils import zeta_eta_to_x_y
 from mrsimulator.models.utils import x_y_to_zeta_eta
+from mrsimulator.models.utils import zeta_eta_to_x_y
 
 
 __author__ = "Deepansh J. Srivastava"

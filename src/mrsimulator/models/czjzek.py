@@ -14,7 +14,6 @@ from .utils import x_y_to_zeta_eta
 from .utils import zeta_eta_to_x_y
 
 
-
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
