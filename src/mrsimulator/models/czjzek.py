@@ -19,6 +19,7 @@ __email__ = "srivastava.89@osu.edu"
 ANALYTICAL_AVAILABLE = {"czjzek": analytical_dist.czjzek}
 
 
+# this function does the same as self.pdf() but with cached tensors!
 def _extended_czjzek_pdf_from_tensors(pos, tensors, zeta0, eta0, epsilon, polar):
     """Takes in a list of random noise tensors along with the parameters for
     a given Extended Czjzek distribution, applies the requisite math to
@@ -38,7 +39,7 @@ def _extended_czjzek_pdf_from_tensors(pos, tensors, zeta0, eta0, epsilon, polar)
     Returns:
         (np.ndarray, np.ndarray) of the zeta and eta distributions, respectively
     """
-    T0 = np.asarray([zeta0 * (eta0 - 1) / 2, -zeta0 * (eta0 + 1) / 2, zeta0])
+    T0 = get_principal_components(zeta0, eta0)
 
     norm_T0 = np.linalg.norm(T0)
     rho = epsilon * norm_T0 / np.sqrt(30)
@@ -129,6 +130,10 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
+    def __init__(self, cache_tensors=False):
+        self._cache_tensors = cache_tensors
+        self._tensors = None
+
     def pdf(self, pos, size: int = 400000, analytical: bool = True):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
@@ -207,15 +212,17 @@ class CzjzekDistribution(AbstractDistribution):
     """
     model_name = "czjzek"
 
-    def __init__(self, sigma: float, polar=False):
+    def __init__(self, sigma: float, polar=False, cache=False):
+        super().__init__(cache_tensors=cache)
         self.sigma = sigma
         self.polar = polar
 
-    def rvs(self, size: int):
+    def rvs(self, size: int, tensors: np.ndarray):
         """Draw random variates of length `size` from the distribution.
 
         Args:
             size: The number of random points to draw.
+            tensors: Pre-computed array of tensors.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the
@@ -225,7 +232,13 @@ class CzjzekDistribution(AbstractDistribution):
         Example:
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
-        tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+        if self._cache_tensors:
+            if self._tensors is None:
+                self._tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+            tensors = self._tensors
+        else:
+            tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+
         if not self.polar:
             return get_Haeberlen_components(tensors)
         return zeta_eta_to_x_y(*get_Haeberlen_components(tensors))
@@ -273,16 +286,20 @@ class ExtCzjzekDistribution(AbstractDistribution):
     """
     model_name = "extended czjzek"
 
-    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
+    def __init__(
+        self, symmetric_tensor: SymmetricTensor, eps: float, polar=False, cache=False
+    ):
+        super().__init__(cache_tensors=cache)
         self.symmetric_tensor = symmetric_tensor
         self.eps = eps
         self.polar = polar
 
-    def rvs(self, size: int):
+    def rvs(self, size: int, tensors=None):
         """Draw random variates of length `size` from the distribution.
 
         Args:
             size: The number of random points to draw.
+            tensors: Pre-computed array of tensors.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the
@@ -294,7 +311,12 @@ class ExtCzjzekDistribution(AbstractDistribution):
         """
 
         # czjzek_random_distribution model
-        tensors = _czjzek_random_distribution_tensors(1, size)
+        if self._cache_tensors:
+            if self._tensors is None:
+                self._tensors = _czjzek_random_distribution_tensors(1, size)
+            tensors = self._tensors
+        else:
+            tensors = _czjzek_random_distribution_tensors(1, size)
 
         symmetric_tensor = self.symmetric_tensor
 

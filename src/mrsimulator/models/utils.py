@@ -87,19 +87,21 @@ def x_y_to_zeta_eta(x, y):
     return zeta, eta
 
 
-def _simulate_spectra_over_zeta_and_eta(ZZ, ee, mth, tensor_type):
+def _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type):
     """Helper function to generate the kernel"""
-    isotope = Isotope.parse(mth.channels[0]).symbol  # Grab isotope from Method object
+    isotope = Isotope.parse(
+        method.channels[0]
+    ).symbol  # Grab isotope from Method object
 
     spin_systems = [
-        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=Z * 1e6, eta=e))])
+        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=Z, eta=e))])
         if tensor_type == "quadrupolar"
         else SpinSystem(
             sites=[Site(isotope=isotope, shielding_symmetric=dict(zeta=Z, eta=e))]
         )
-        for Z, e in zip(ZZ.flatten(), ee.flatten())
+        for Z, e in zip(ZZ.ravel(), ee.ravel())
     ]
-    sim = Simulator(spin_systems=spin_systems, methods=[mth])
+    sim = Simulator(spin_systems=spin_systems, methods=[method])
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
@@ -108,7 +110,7 @@ def _simulate_spectra_over_zeta_and_eta(ZZ, ee, mth, tensor_type):
 
 
 def generate_lineshape_kernel(
-    pos: tuple, mth: Method, polar: bool, tensor_type: str = "shielding"
+    pos: tuple, method: Method, polar: bool, tensor_type: str = "shielding"
 ) -> np.ndarray:
     """Pre-compute a lineshape kernel used during least-squares fitting of an
     experimental spectrum. The isotope for the spin system is grabbed from the isotope
@@ -120,7 +122,7 @@ def generate_lineshape_kernel(
 
     Arguments:
         (tuple) pos: A set of numpy arrays defining the grid space
-        (mrsimulator.Method) mth: The :py:class:`~mrsimulator.method.Method` used to
+        (mrsimulator.Method) method: The :py:class:`~mrsimulator.method.Method` used to
             simulate the spectra.
         (bool) polar: Weather the grid is defined in polar coordinates
         (str) tensor_type: A string enumeration literal describing which type of tensor
@@ -140,4 +142,4 @@ def generate_lineshape_kernel(
     if polar:
         ZZ, ee = x_y_to_zeta_eta(ZZ.ravel(), ee.ravel())
 
-    return _simulate_spectra_over_zeta_and_eta(ZZ, ee, mth, tensor_type)
+    return _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type)

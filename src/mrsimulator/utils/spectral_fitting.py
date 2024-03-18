@@ -890,7 +890,7 @@ def _make_spectrum_from_extended_Czjzek_distribution_parameters(
 
         # Dot amplitude with kernel, then package as CSDM object
         spec_tmp = guess_spectrum.copy()
-        spec_tmp.y[0].components[0] = np.dot(amp.flatten(), kernel)
+        spec_tmp.y[0].components[0] = np.dot(amp.ravel(), kernel)
 
         # Apply isotropic chemical shift to distribution using FFT shift theorem
         spec_tmp = _apply_iso_shift(
