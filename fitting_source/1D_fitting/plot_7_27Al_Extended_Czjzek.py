@@ -20,6 +20,7 @@ import numpy as np
 import csdmpy as cp
 import matplotlib.pyplot as plt
 import mrsimulator.signal_processor as sp
+from mrsimulator.simulator import Simulator
 import mrsimulator.utils.spectral_fitting as sf
 from lmfit import Minimizer
 
@@ -78,7 +79,10 @@ plt.show()
 # Create a Method object to simulate the spectrum
 spectral_dimensions = get_spectral_dimensions(exp_data)
 method = BlochDecayCTSpectrum(
-    channels=["27Al"], rotor_frequency=14.2e3, spectral_dimensions=spectral_dimensions
+    channels=["27Al"],
+    rotor_frequency=14.2e3,
+    spectral_dimensions=spectral_dimensions,
+    experiment=exp_data,
 )
 
 # Define a polar grid for the lineshape kernel
@@ -109,14 +113,14 @@ print("Actual Kernel shape:  ", kernel.shape)
 # reflect any changes made in the minimization.
 
 # Create initial guess ExtCzjzekDistribution
-tensor_guess = {"Cq": 1e6, "eta": 0.3}
 ext_cz_model = ExtCzjzekDistribution(
-    mean_isotropic_chemical_shift=60,
-    symmetric_tensor=tensor_guess,
-    eps=6,
+    mean_isotropic_chemical_shift=60.0,  # in ppm
+    symmetric_tensor={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
+    eps=6.0,
     polar=True,
     cache=True,
 )
+all_models = [ext_cz_model]
 
 processor = sp.SignalProcessor(
     operations=[
@@ -127,20 +131,21 @@ processor = sp.SignalProcessor(
     ]
 )
 
+sim = Simulator(spin_system_models=[ext_cz_model], methods=[method])
+sim.config.number_of_sidebands = 8
+
 # Make the Parameters object
 params = sf.make_LMFIT_distribution_params(
-    distribution_models=[ext_cz_model],
+    distribution_models=all_models,
     processor=processor,
 )
 
 
 # Additional keyword arguments passed to best-fit and residual functions.
 addtl_sf_kwargs = dict(
-    exp_spectrum=exp_data,
     pos=pos,
     kernel=kernel,
-    models=[ext_cz_model],
-    larmor_freq_Hz=method.channels[0].larmor_freq(B0=method.magnetic_flux_density),
+    sim=sim,
     processor=processor,
 )
 

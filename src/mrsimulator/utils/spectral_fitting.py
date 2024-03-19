@@ -575,11 +575,9 @@ def make_LMFIT_distribution_params(
 
 def _generate_distribution_spectrum(
     params: Parameters,
-    exp_spectrum: cp.CSDM,
     pos: tuple,
     kernel: np.ndarray,
-    distribution_models: list,
-    larmor_freq_Hz: float,
+    sim: Simulator,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Helper function for generating a spectrum from a set of LMfit Parameters and
@@ -605,6 +603,11 @@ def _generate_distribution_spectrum(
         Guess spectrum as a cp.CSDM object
 
     """
+    distribution_models = sim.spin_system_models
+    method = sim.methods[0]
+    larmor_freq_Hz = method.channels[0].larmor_freq(B0=method.magnetic_flux_density)
+    exp_spectrum = method.experiment
+
     guess_spectrum = exp_spectrum.copy()
     guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
 
@@ -634,11 +637,9 @@ def _generate_distribution_spectrum(
 
 def LMFIT_min_function_dist(
     params: Parameters,
-    exp_spectrum: cp.CSDM,
     pos: tuple,
     kernel: np.ndarray,
-    models: list,
-    larmor_freq_Hz: float,
+    sim: Simulator,
     processor: sp.SignalProcessor = None,
 ) -> np.ndarray:
     """The minimization routine for fitting a set of Czjzek models to an experimental
@@ -666,57 +667,32 @@ def LMFIT_min_function_dist(
             A residual array as a numpy array.
     """
     guess_spectrum = _generate_distribution_spectrum(
-        params,
-        exp_spectrum,
-        pos,
-        kernel,
-        models,
-        larmor_freq_Hz,
-        processor,
+        params, pos, kernel, sim, processor
     )
-
+    exp_spectrum = sim.methods[0].experiment
     return (exp_spectrum - guess_spectrum).y[0].components[0]
 
 
 def bestfit_dist(
     params: Parameters,
-    exp_spectrum: cp.CSDM,
     pos: tuple,
     kernel: np.ndarray,
-    models: list,
-    larmor_freq_Hz: float,
+    sim: Simulator,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Returns the best-fit spectrum as a CSDM object"""
-    return _generate_distribution_spectrum(
-        params,
-        exp_spectrum,
-        pos,
-        kernel,
-        models,
-        larmor_freq_Hz,
-        processor,
-    )
+    return _generate_distribution_spectrum(params, pos, kernel, sim, processor)
 
 
 def residuals_dist(
     params: Parameters,
-    exp_spectrum: cp.CSDM,
     pos: tuple,
     kernel: np.ndarray,
-    models: list,
-    larmor_freq_Hz: float,
+    sim: Simulator,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Returns the residuals spectrum as a CSDM object"""
-    bestfit = _generate_distribution_spectrum(
-        params,
-        exp_spectrum,
-        pos,
-        kernel,
-        models,
-        larmor_freq_Hz,
-        processor,
-    )
+    bestfit = _generate_distribution_spectrum(params, pos, kernel, sim, processor)
 
+    exp_spectrum = sim.methods[0].experiment
     return exp_spectrum - bestfit
