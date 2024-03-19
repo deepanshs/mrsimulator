@@ -19,58 +19,6 @@ __email__ = "srivastava.89@osu.edu"
 ANALYTICAL_AVAILABLE = {"czjzek": analytical_dist.czjzek}
 
 
-# this function does the same as self.pdf() but with cached tensors!
-def _extended_czjzek_pdf_from_tensors(pos, tensors, zeta0, eta0, epsilon, polar):
-    """Takes in a list of random noise tensors along with the parameters for
-    a given Extended Czjzek distribution, applies the requisite math to
-    the tensors, then diagonalizes the tensors to get the (zeta, eta)
-    distribution. This allows the same sampling points to be drawn between different
-    minimization steps
-
-    Arguments:
-        (tuple) pos: Two np.ndarrays defining the grid on which to calculate the pdf
-        (np.ndarray) tensors: A np.ndarray with shape (n, 3, 3) representing
-            the random tensors in the Extended Czjzek model
-        (float) zeta0: The zeta value of the central tensor
-        (float) eta0: The eta value of the central tensor
-        (float) epsilon: The noise parameter for the Extended Czjzek distribution
-        (bool) polar: Weather the distribution should be sampled in polar coordinates.
-
-    Returns:
-        (np.ndarray, np.ndarray) of the zeta and eta distributions, respectively
-    """
-    T0 = get_principal_components(zeta0, eta0)
-
-    norm_T0 = np.linalg.norm(T0)
-    rho = epsilon * norm_T0 / np.sqrt(30)
-
-    if rho != 0:
-        ext_tensors = (rho * tensors) + np.diag(T0)
-    else:
-        ext_tensors = tensors.copy()
-
-    zeta_dist, eta_dist = get_Haeberlen_components(ext_tensors)
-    if polar:
-        zeta_dist, eta_dist = zeta_eta_to_x_y(zeta_dist, eta_dist)
-
-    delta_0 = (pos[0][1] - pos[0][0]) / 2
-    delta_1 = (pos[1][1] - pos[1][0]) / 2
-    pts_0 = [pos[0][0] - delta_0, pos[0][-1] + delta_0]
-    pts_1 = [pos[1][0] - delta_1, pos[1][-1] + delta_1]
-
-    size_0 = pos[0].size
-    size_1 = pos[1].size
-
-    hist, _, _ = np.histogram2d(
-        zeta_dist, eta_dist, bins=[size_0, size_1], range=[pts_0, pts_1]
-    )
-
-    hist /= hist.sum()
-    xx, yy = np.meshgrid(pos[0], pos[1])
-
-    return xx, yy, hist.T
-
-
 def _czjzek_random_distribution_tensors(sigma, n):
     r"""Czjzek random distribution model.
 
@@ -217,12 +165,11 @@ class CzjzekDistribution(AbstractDistribution):
         self.sigma = sigma
         self.polar = polar
 
-    def rvs(self, size: int, tensors: np.ndarray):
+    def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
 
         Args:
             size: The number of random points to draw.
-            tensors: Pre-computed array of tensors.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the
@@ -294,12 +241,11 @@ class ExtCzjzekDistribution(AbstractDistribution):
         self.eps = eps
         self.polar = polar
 
-    def rvs(self, size: int, tensors=None):
+    def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
 
         Args:
             size: The number of random points to draw.
-            tensors: Pre-computed array of tensors.
 
         Returns:
             A list of two NumPy array, where the first and the second array are the

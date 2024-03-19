@@ -3,7 +3,6 @@ import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
-from mrsimulator.models.czjzek import _extended_czjzek_pdf_from_tensors
 from mrsimulator.models.czjzek import CzjzekDistribution
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
@@ -829,10 +828,8 @@ def _make_spectrum_from_extended_Czjzek_distribution_parameters(
     params: Parameters,
     exp_spectrum: cp.CSDM,
     pos: tuple,
-    polar: bool,
     kernel: np.ndarray,
-    tensors: np.ndarray,
-    n_dist: int,
+    models: list,
     larmor_freq_Hz: float,
     processor: sp.SignalProcessor = None,
     tensor_type: str = "shielding",
@@ -847,11 +844,9 @@ def _make_spectrum_from_extended_Czjzek_distribution_parameters(
         (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
         (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
             sample the distribution.
-        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
-            is defined using the Haberlen components.
-        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
-            on the same grid defined by pos.
-        (int) n_dist: The number of Czjzek distributions to fit for.
+        (np.ndarray) kernel: The pre-computed lineshape kernel. The kernel needs to be
+            defined on the same grid defined by pos.
+        (list) models: A list of distribution models.
         (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
             theorem to apply an isotropic chemical shift to each distribution.
         (sp.SignalProcessor) processor: A
@@ -863,6 +858,7 @@ def _make_spectrum_from_extended_Czjzek_distribution_parameters(
         Guess spectrum as a cp.CSDM object
 
     """
+    n_dist = len(models)
     if tensor_type not in {"shielding", "quadrupolar"}:
         raise ValueError(f"Unknown `tensor_type` value of {tensor_type}.")
 
@@ -879,14 +875,10 @@ def _make_spectrum_from_extended_Czjzek_distribution_parameters(
         epsilon = params[f"ext_czjzek_{i}_epsilon"].value
 
         # Draw the pdf from the set of static random tensors
-        _, _, amp = _extended_czjzek_pdf_from_tensors(
-            pos=pos,
-            tensors=tensors,
-            zeta0=zeta0,
-            eta0=eta0,
-            epsilon=epsilon,
-            polar=polar,
-        )
+        tensor = {"Cq": zeta0, "eta": eta0}
+        models[i].symmetric_tensor = tensor
+        models[i].eps = epsilon
+        _, _, amp = models[i].pdf(pos, size=200_000)
 
         # Dot amplitude with kernel, then package as CSDM object
         spec_tmp = guess_spectrum.copy()
@@ -912,10 +904,8 @@ def LMFIT_min_function_extended_Czjzek(
     params: Parameters,
     exp_spectrum: cp.CSDM,
     pos: tuple,
-    polar: bool,
     kernel: np.ndarray,
-    tensors: np.ndarray,
-    n_dist: int,
+    models: list,
     larmor_freq_Hz: float,
     processor: sp.SignalProcessor = None,
     tensor_type: str = "shielding",
@@ -929,13 +919,9 @@ def LMFIT_min_function_extended_Czjzek(
         (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
         (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
             sample the distribution.
-        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
-            is defined using the Haberlen components.
-        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
-            on the same grid defined by pos.
-        (np.ndarray) tensors: A set of random Czjzek tensors in 5-dimensional space to
-            calculate the Extended Czjzek tensors from.
-        (int) n_dist: The number of Czjzek distributions to fit for.
+        (np.ndarray) kernel: The pre-computed lineshape kernel. The kernel needs to be
+            defined on the same grid defined by pos.
+        (list) models: A list of distribution models.
         (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
             theorem to apply an isotropic chemical shift to each distribution.
         (sp.SignalProcessor) processor: A
@@ -953,10 +939,8 @@ def LMFIT_min_function_extended_Czjzek(
         params,
         exp_spectrum,
         pos,
-        polar,
         kernel,
-        tensors,
-        n_dist,
+        models,
         larmor_freq_Hz,
         processor,
         tensor_type,
@@ -969,10 +953,8 @@ def bestfit_extended_Czjzek(
     params: Parameters,
     exp_spectrum: cp.CSDM,
     pos: tuple,
-    polar: bool,
     kernel: np.ndarray,
-    tensors: np.ndarray,
-    n_dist: int,
+    models: list,
     larmor_freq_Hz: float,
     processor: sp.SignalProcessor = None,
     tensor_type: str = "shielding",
@@ -982,10 +964,8 @@ def bestfit_extended_Czjzek(
         params,
         exp_spectrum,
         pos,
-        polar,
         kernel,
-        tensors,
-        n_dist,
+        models,
         larmor_freq_Hz,
         processor,
         tensor_type,
@@ -996,10 +976,8 @@ def residuals_extended_Czjzek(
     params: Parameters,
     exp_spectrum: cp.CSDM,
     pos: tuple,
-    polar: bool,
     kernel: np.ndarray,
-    tensors: np.ndarray,
-    n_dist: int,
+    models: list,
     larmor_freq_Hz: float,
     processor: sp.SignalProcessor = None,
     tensor_type: str = "shielding",
@@ -1009,10 +987,8 @@ def residuals_extended_Czjzek(
         params,
         exp_spectrum,
         pos,
-        polar,
         kernel,
-        tensors,
-        n_dist,
+        models,
         larmor_freq_Hz,
         processor,
         tensor_type,
