@@ -11,7 +11,7 @@ Fitting an Extended Czjzek Model
 # solid. There are 4 major steps involved in the process:
 #
 # 1. Importing the experimental dataset
-# 2. Generating a pre-computed linshape kernel for the experiment
+# 2. Generating a pre-computed line shape kernel for the experiment
 # 3. Creating parameters for the Extended Czjzek model from an initial guess
 # 4. Minimizing and visualizing.
 #
@@ -51,7 +51,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Generating a lineshapke kernel
+# Generating a line shape kernel
 # ------------------------------
 #
 # A spectrum arising from an Extended Czjzek distribution can be modeled by drawing a
@@ -67,7 +67,7 @@ plt.show()
 # probability distribution on that grid during each minimization step.
 #
 # Below, we create a `Method` object for simulating the spectra of the given experiment,
-# define a polar grid for generating the lineshape kernel, and finally call the kernel
+# define a polar grid for generating the line shape kernel, and finally call the kernel
 # generation method -- `generate_lineshape_kernel`.
 # The grid we defined is in polar coordinates, so we pass `polar=True` to the kernel
 # generation method; if the grid were defined for the Haeberlen components of the
@@ -111,9 +111,12 @@ print("Actual Kernel shape:  ", kernel.shape)
 # Create initial guess ExtCzjzekDistribution
 tensor_guess = {"Cq": 1e6, "eta": 0.3}
 ext_cz_model = ExtCzjzekDistribution(
-    symmetric_tensor=tensor_guess, eps=6, polar=True, cache=True
+    mean_isotropic_chemical_shift=60,
+    symmetric_tensor=tensor_guess,
+    eps=6,
+    polar=True,
+    cache=True,
 )
-dist_iso_shift = 60  # in ppm
 
 processor = sp.SignalProcessor(
     operations=[
@@ -125,11 +128,9 @@ processor = sp.SignalProcessor(
 )
 
 # Make the Parameters object
-params = sf.make_LMFIT_params_extended_Czjzek(
-    ext_cz_models=[ext_cz_model],
-    iso_shifts=[dist_iso_shift],
+params = sf.make_LMFIT_distribution_params(
+    distribution_models=[ext_cz_model],
     processor=processor,
-    tensor_type="quadrupolar",
 )
 
 
@@ -141,12 +142,11 @@ addtl_sf_kwargs = dict(
     models=[ext_cz_model],
     larmor_freq_Hz=method.channels[0].larmor_freq(B0=method.magnetic_flux_density),
     processor=processor,
-    tensor_type="quadrupolar",
 )
 
 # Make a guess and residuals spectrum from the initial guess
-guess = sf.bestfit_extended_Czjzek(params=params, **addtl_sf_kwargs)
-residuals = sf.residuals_extended_Czjzek(params=params, **addtl_sf_kwargs)
+guess = sf.bestfit_dist(params=params, **addtl_sf_kwargs)
+residuals = sf.residuals_dist(params=params, **addtl_sf_kwargs)
 
 plt.figure(figsize=(5, 4))
 ax = plt.subplot(projection="csdm")
@@ -178,7 +178,7 @@ scipy_minimization_kwargs = dict(
 
 
 minner = Minimizer(
-    sf.LMFIT_min_function_extended_Czjzek,
+    sf.LMFIT_min_function_dist,
     params,
     fcn_kws=addtl_sf_kwargs,
     **scipy_minimization_kwargs,
@@ -189,8 +189,8 @@ result
 # %%
 # Plot the best-fit spectrum
 # --------------------------
-bestfit = sf.bestfit_extended_Czjzek(params=result.params, **addtl_sf_kwargs)
-residuals = sf.residuals_extended_Czjzek(params=result.params, **addtl_sf_kwargs)
+bestfit = sf.bestfit_dist(params=result.params, **addtl_sf_kwargs)
+residuals = sf.residuals_dist(params=result.params, **addtl_sf_kwargs)
 
 plt.figure(figsize=(5, 4))
 ax = plt.subplot(projection="csdm")
@@ -207,19 +207,10 @@ plt.show()
 # Plot the best-fit distribution
 # ------------------------------
 #
-# Note that this cell is hardcoded for a single distribution.
-epsilon = result.params["ext_czjzek_0_epsilon"].value
-bf_tensor = {"eta": result.params["ext_czjzek_0_eta0"].value}
-if addtl_sf_kwargs["tensor_type"] == "shielding":
-    bf_tensor["zeta"] = result.params["ext_czjzek_0_zeta0"].value
-else:
-    bf_tensor["Cq"] = result.params["ext_czjzek_0_Cq0"].value
+for i, model in enumerate([ext_cz_model]):
+    model.update_lmfit_params(result.params, i)
 
-bestfit_model = ExtCzjzekDistribution(
-    symmetric_tensor=bf_tensor, eps=epsilon, polar=True
-)
-
-xx, yy, amp = bestfit_model.pdf(pos=pos, size=10000000)
+xx, yy, amp = ext_cz_model.pdf(pos=pos, size=10000000)
 
 plt.figure(figsize=(5, 5))
 plt.contourf(xx / 1e6, yy / 1e6, amp)
