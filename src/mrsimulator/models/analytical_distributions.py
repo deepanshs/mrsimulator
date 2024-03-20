@@ -89,4 +89,4 @@ def czjzek_polar(sigma: float, pos: list):
     )
     hist_x_y += hist_x_y.T
     hist_x_y /= hist_x_y.sum()
-    return x, y, hist_x_y
+    return pos[0], pos[1], hist_x_y

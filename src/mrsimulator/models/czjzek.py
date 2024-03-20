@@ -226,7 +226,6 @@ class CzjzekDistribution(AbstractDistribution):
         prefix = self.param_prefix()
 
         self.sigma = params[f"{prefix}_{i}_sigma"].value
-        self.eps = params[f"{prefix}_{i}_epsilon"].value
         self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
         self.abundance = params[f"{prefix}_{i}_weight"].value
 

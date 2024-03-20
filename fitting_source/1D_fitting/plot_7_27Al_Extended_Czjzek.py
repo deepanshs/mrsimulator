@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 """
-Fitting an Extended Czjzek Model
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Fitting a Czjzek Model
+^^^^^^^^^^^^^^^^^^^^^^
 """
 # %%
-# In this example, we display the capability of mrsimulator to fit an Extended Czjzek
-# distribution of quadrupolar tensors to an experimental $^{27}\text{Al}$ MAS spectrum
-# of a phospho-aluminosilicate glass. Setting up a least-squares minimization for an
-# Extended Czjzek distribution is slightly more complicated than that of a crystalline
+# In this example, we display the capability of mrsimulator to fit a lineshape from a
+# Czjzek distribution of quadrupolar tensors to an experimental $^{27}\text{Al}$ MAS
+# spectrum of a phospho-aluminosilicate glass. Setting up a least-squares minimization
+# for a  Czjzek distribution is slightly different than that of a crystalline
 # solid. There are 4 major steps involved in the process:
 #
-# 1. Importing the experimental dataset
-# 2. Generating a pre-computed line shape kernel for the experiment
-# 3. Creating parameters for the Extended Czjzek model from an initial guess
+# 1. Importing the experimental dataset,
+# 2. Generating a pre-computed line shape kernel for the experiment,
+# 3. Creating parameters for the Czjzek model from an initial guess,
 # 4. Minimizing and visualizing.
 #
 # Below, we first import the requisite libraries, functions, and classes.
@@ -27,7 +27,7 @@ from lmfit import Minimizer
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.utils import get_spectral_dimensions
 
-from mrsimulator.models.czjzek import ExtCzjzekDistribution
+from mrsimulator.models.czjzek import CzjzekDistribution
 from mrsimulator.models.utils import generate_lineshape_kernel
 
 # sphinx_gallery_thumbnail_number = 3
@@ -36,8 +36,7 @@ from mrsimulator.models.utils import generate_lineshape_kernel
 # Import the experimental dataset
 # -------------------------------
 #
-# Below we import and visualize the experimental dataset. Line 3 is used to set the
-# maximum intensity of the spectrum to 1, but has no other bering on the minimization.
+# Below we import and visualize the experimental dataset.
 host = "http://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "20K_20Al_10P_50Si_HahnEcho_27Al.csdf"
 exp_data = cp.load(host + filename).real
@@ -55,7 +54,7 @@ plt.show()
 # Generating a line shape kernel
 # ------------------------------
 #
-# A spectrum arising from an Extended Czjzek distribution can be modeled by drawing a
+# A spectrum arising from a Czjzek distribution can be modeled by drawing a
 # random set of tensors, binning those tensors into a distribution on some grid of
 # tensors parameters, then simulating the spectra of spin systems whose abundances
 # correspond to the amplitude of that distribution.
@@ -113,10 +112,9 @@ print("Actual Kernel shape:  ", kernel.shape)
 # reflect any changes made in the minimization.
 
 # Create initial guess ExtCzjzekDistribution
-ext_cz_model = ExtCzjzekDistribution(
+ext_cz_model = CzjzekDistribution(
     mean_isotropic_chemical_shift=60.0,  # in ppm
-    symmetric_tensor={"Cq": 1e6, "eta": 0.3},  # Cq in Hz
-    eps=6.0,
+    sigma=1.4e6,
     polar=True,
     cache=True,
 )
@@ -125,9 +123,9 @@ all_models = [ext_cz_model]
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
-        sp.apodization.Gaussian(FWHM="420 Hz"),
+        sp.apodization.Gaussian(FWHM="600 Hz"),
         sp.FFT(),
-        sp.Scale(factor=25),
+        sp.Scale(factor=30),
     ]
 )
 
@@ -139,7 +137,6 @@ params = sf.make_LMFIT_distribution_params(
     distribution_models=all_models,
     processor=processor,
 )
-
 
 # Additional keyword arguments passed to best-fit and residual functions.
 addtl_sf_kwargs = dict(
@@ -181,7 +178,6 @@ scipy_minimization_kwargs = dict(
     loss="soft_l1",
 )
 
-
 minner = Minimizer(
     sf.LMFIT_min_function_dist,
     params,
@@ -215,7 +211,7 @@ plt.show()
 for i, model in enumerate([ext_cz_model]):
     model.update_lmfit_params(result.params, i)
 
-xx, yy, amp = ext_cz_model.pdf(pos=pos, size=10000000)
+xx, yy, amp = ext_cz_model.pdf(pos=pos)
 
 plt.figure(figsize=(5, 5))
 plt.contourf(xx / 1e6, yy / 1e6, amp)
