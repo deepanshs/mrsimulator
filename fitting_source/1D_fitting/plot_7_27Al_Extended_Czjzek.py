@@ -111,14 +111,14 @@ print("Actual Kernel shape:  ", kernel.shape)
 # many of the spectral fitting function takes in. This dictionary needs to be updated to
 # reflect any changes made in the minimization.
 
-# Create initial guess ExtCzjzekDistribution
-ext_cz_model = CzjzekDistribution(
+# Create initial guess CzjzekDistribution
+cz_model = CzjzekDistribution(
     mean_isotropic_chemical_shift=60.0,  # in ppm
     sigma=1.4e6,
     polar=True,
     cache=True,
 )
-all_models = [ext_cz_model]
+all_models = [cz_model]
 
 processor = sp.SignalProcessor(
     operations=[
@@ -129,7 +129,7 @@ processor = sp.SignalProcessor(
     ]
 )
 
-sim = Simulator(spin_system_models=[ext_cz_model], methods=[method])
+sim = Simulator(spin_system_models=all_models, methods=[method])
 sim.config.number_of_sidebands = 8
 
 # Make the Parameters object
@@ -150,7 +150,7 @@ addtl_sf_kwargs = dict(
 guess = sf.bestfit_dist(params=params, **addtl_sf_kwargs)
 residuals = sf.residuals_dist(params=params, **addtl_sf_kwargs)
 
-plt.figure(figsize=(5, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.plot(exp_data, "k", alpha=0.5, label="Experiment")
 ax.plot(guess, "r", alpha=0.3, label="Guess")
@@ -193,7 +193,7 @@ result
 bestfit = sf.bestfit_dist(params=result.params, **addtl_sf_kwargs)
 residuals = sf.residuals_dist(params=result.params, **addtl_sf_kwargs)
 
-plt.figure(figsize=(5, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.plot(exp_data, "k", alpha=0.5, label="Experiment")
 ax.plot(bestfit, "r", alpha=0.3, label="Guess")
@@ -208,12 +208,12 @@ plt.show()
 # Plot the best-fit distribution
 # ------------------------------
 #
-for i, model in enumerate([ext_cz_model]):
+for i, model in enumerate(all_models):
     model.update_lmfit_params(result.params, i)
 
-xx, yy, amp = ext_cz_model.pdf(pos=pos)
+xx, yy, amp = cz_model.pdf(pos=pos)
 
-plt.figure(figsize=(5, 5))
+plt.figure(figsize=(4, 3))
 plt.contourf(xx / 1e6, yy / 1e6, amp)
 plt.xlabel("x / MHz ")
 plt.ylabel("y / MHz")

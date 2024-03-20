@@ -610,23 +610,24 @@ def _generate_distribution_spectrum(
 
     guess_spectrum = exp_spectrum.copy()
     guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
+    dv = cp.as_dependent_variable(np.empty(guess_spectrum.y[0].components.size))
 
     for i, model in enumerate(distribution_models):
         model.update_lmfit_params(params, i)
         _, _, amp = model.pdf(pos)
 
         # Dot amplitude with kernel, then package as CSDM object
-        spec_tmp = guess_spectrum.copy()
-        spec_tmp.y[0].components[0] = np.dot(amp.flatten(), kernel)
+        spec_tmp = cp.CSDM(dimensions=exp_spectrum.x, dependent_variables=[dv])
+        spec_tmp.y[0].components[0] = np.dot(amp.ravel(), kernel)
 
         # Apply isotropic chemical shift to distribution using FFT shift theorem
         spec_tmp = _apply_iso_shift(
             csdm_obj=spec_tmp,
             iso_shift_ppm=model.mean_isotropic_chemical_shift,
             larmor_freq_Hz=larmor_freq_Hz,
-        )
-
-        guess_spectrum += spec_tmp.real * model.abundance
+        ).real
+        spec_tmp *= model.abundance
+        guess_spectrum.y[0].components[0] += spec_tmp.y[0].components[0]
 
     if processor is not None:
         _update_processors_from_LMFIT_params(params, [processor])
