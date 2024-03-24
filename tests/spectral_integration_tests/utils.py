@@ -111,15 +111,12 @@ def simulator_setup(
     spin_systems = [
         SpinSystem.parse_dict_with_units(item) for item in data_object["spin_systems"]
     ]
-    s1 = Simulator(spin_systems=spin_systems, methods=methods)
-    s1.config.decompose_spectrum = "spin_system"
-    s1.spin_systems[0].name = "test name"
-    s1.spin_systems[0].description = "test description"
-    s1.config.integration_density = integration_density
-    s1.config.number_of_sidebands = number_of_sidebands
-    s1.config.integration_volume = integration_volume
+    sim = Simulator(spin_systems=spin_systems, methods=methods)
+    sim.config.integration_density = integration_density
+    sim.config.number_of_sidebands = number_of_sidebands
+    sim.config.integration_volume = integration_volume
 
-    return s1
+    return sim
 
 
 def simulator_process(sim, data_object):
@@ -133,15 +130,11 @@ def simulator_process(sim, data_object):
         )
         sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
-    data_mrsimulator = np.sum(sim_dataset.split())
-    data_mrsimulator = data_mrsimulator.y[0].components[0]
+    dimension_coords = sim_dataset.x[0].coordinates.to("ppm").value
+    data_mrsimulator = sim_dataset.y[0].components[0]
     data_mrsimulator /= data_mrsimulator.sum()
 
-    dv = sim_dataset.y[0]
-    assert dv.name == "test name"
-    assert dv.description == "test description"
-
-    return data_mrsimulator
+    return data_mrsimulator, dimension_coords
 
 
 def c_setup(
@@ -157,8 +150,9 @@ def c_setup(
     sim = simulator_setup(
         data_object, integration_volume, integration_density, number_of_sidebands
     )
-    data_mrsimulator = simulator_process(sim, data_object)
-    return data_mrsimulator.real, data_source.real
+    info = sim.json()
+    data_mrsimulator, x = simulator_process(sim, data_object)
+    return data_mrsimulator.real, data_source.real, info, x
 
 
 def c_setup_random_euler_angles(filename, group):
@@ -180,5 +174,5 @@ def c_setup_random_euler_angles(filename, group):
             spin_system.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
             spin_system.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
-    data_mrsimulator = simulator_process(sim, data_object)
+    data_mrsimulator, _ = simulator_process(sim, data_object)
     return data_mrsimulator, data_source
