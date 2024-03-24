@@ -60,6 +60,10 @@ def test_freq_contrib():
     assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 15 + [1] * 3)
 
+    for k in FREQ_LIST_ALL:
+        event = BaseEvent(freq_contrib=[f"!{k}"])
+        assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL) - {k}
+
 
 def test_freq_contrib_shortcuts():
     # Just shortcuts, no negations
