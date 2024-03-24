@@ -128,6 +128,7 @@ class-diagram*
 *.mp4
 *.temp
 *.csdf
+!test*.csdf
 *.csdfe
 *.mrsim
 *.mrsys
