@@ -40,16 +40,14 @@ def report_pdf(report):
         report.close()
 
 
-def compile_plots(dim, rep, info, title=None, report=None):
+def compile_plots(dim, rep, info, title=None, report=None, label="simpson"):
     """Test report plot"""
-    _, ax = plt.subplots(
-        1, 2, figsize=(8, 3.75), gridspec_kw={"width_ratios": [1, 1.2]}
-    )
+    _, ax = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]})
 
     for i, res in enumerate(rep[:1]):
         data_mrsimulator, data_source = res
         ax[i].plot(dim, data_mrsimulator, "k", linewidth=0.75, label="mrsimulator")
-        ax[i].plot(dim, data_source, "--r", linewidth=0.75, label="simpson")
+        ax[i].plot(dim, data_source, "--r", linewidth=0.75, label=label)
         ax[i].set_xlabel("Frequency / ppm")
         ax[i].legend()
 
@@ -192,7 +190,7 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
                 dim,
                 res,
                 info,
-                title="1st_order_quadrupolar_lineshape",
+                title="1st Order Quadrupolar Lineshape",
                 report=report,
             )
 
@@ -272,8 +270,9 @@ def test_pure_shielding_static_lineshape_python_brute(report):
                 dim,
                 res,
                 info,
-                title="Shielding Static Lineshape (Brute force)",
+                title="Shielding Static Lineshape (Brute Force)",
                 report=report,
+                label="Brute",
             )
 
         message = f"{error_message} test0{i}.json"
@@ -305,7 +304,12 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
 
         if __GENERATE_REPORT__:
             compile_plots(
-                dim, res, info, title="Quad Lineshape Self-test", report=report
+                dim,
+                res,
+                info,
+                title="Quad Lineshape Self-Test",
+                report=report,
+                label="self",
             )
 
         message = f"{error_message} test0{i:02d}.json"
