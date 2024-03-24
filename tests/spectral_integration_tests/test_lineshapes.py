@@ -10,6 +10,7 @@ from .utils import c_setup_random_euler_angles
 
 COMMON_PATH = path.join("tests", "spectral_integration_tests")
 SIMPSON_TEST_PATH = path.join(COMMON_PATH, "simpson_simulated_lineshapes")
+RNMSIM_TEST_PATH = path.join(COMMON_PATH, "rmnsim_lineshapes")
 PYTHON_BRUTE_TEST_PATH = path.join(COMMON_PATH, "python_brute_force_lineshapes")
 VOLUMES = ["sphere", "hemisphere"]
 
@@ -26,7 +27,7 @@ matplotlib.rc("font", **font)
 @pytest.fixture(scope="module")
 def report():
     if __GENERATE_REPORT__:
-        pdf = PdfPages("reports/lineshapes.pdf")
+        pdf = PdfPages("reports/lineshapes_report.pdf")
     else:
         pdf = None
     return pdf
@@ -238,6 +239,41 @@ def test_dipolar_coupling_lineshape_simpson(report):
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.5)
+
+
+# --------------------------------------------------------------------------- #
+# Test against rmnsim calculations
+# --------------------------------------------------------------------------- #
+
+
+def test_quad_csa_cross_rmnsim(report):
+    error_message = (
+        "failed to compare quad-csa cross-term spectra with rmnsim from file"
+    )
+    for folder in ["quad_csa_cross1", "quad_csa_cross2"]:
+        path_ = path.join(RNMSIM_TEST_PATH, folder)
+        for i in range(7):
+            filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+
+            res = []
+            # euler angle all zero
+            data_mrsimulator, data_source, info, dim = c_setup(
+                filename, number_of_sidebands=1, integration_volume="hemisphere"
+            )
+            res.append([data_mrsimulator, data_source])
+
+            if __GENERATE_REPORT__:
+                compile_plots(
+                    dim,
+                    res,
+                    info,
+                    title="Quad-CSA 2nd Order Cross-Term",
+                    report=report,
+                    label="rmnsim",
+                )
+
+            message = f"{error_message} test0{i}.json"
+            check_all_close(res, message, rel_limit=0.3)
 
 
 # --------------------------------------------------------------------------- #
