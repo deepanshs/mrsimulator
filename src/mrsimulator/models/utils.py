@@ -1,8 +1,11 @@
+from dataclasses import dataclass
+
 import numpy as np
 from mrsimulator import Method
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.simulator import ConfigSimulator
 from mrsimulator.spin_system.isotope import Isotope
 
 __author__ = "Deepansh J. Srivastava"
@@ -87,21 +90,24 @@ def x_y_to_zeta_eta(x, y):
     return zeta, eta
 
 
-def _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type):
+def _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type, config):
     """Helper function to generate the kernel"""
     isotope = Isotope.parse(
         method.channels[0]
     ).symbol  # Grab isotope from Method object
 
     spin_systems = [
-        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=Z, eta=e))])
-        if tensor_type == "quadrupolar"
-        else SpinSystem(
-            sites=[Site(isotope=isotope, shielding_symmetric=dict(zeta=Z, eta=e))]
+        (
+            SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=Z, eta=e))])
+            if tensor_type == "quadrupolar"
+            else SpinSystem(
+                sites=[Site(isotope=isotope, shielding_symmetric=dict(zeta=Z, eta=e))]
+            )
         )
         for Z, e in zip(ZZ.ravel(), ee.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
+    sim.config = config
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
@@ -109,37 +115,52 @@ def _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type):
     return amp
 
 
-def generate_lineshape_kernel(
-    pos: tuple, method: Method, polar: bool, tensor_type: str = "shielding"
-) -> np.ndarray:
-    """Pre-compute a lineshape kernel used during least-squares fitting of an
-    experimental spectrum. The isotope for the spin system is grabbed from the isotope
-    at index zero of the channels method
-
-    Note: The lineshape kernel is currently limited to simulating the spectrum of an
-    uncoupled spin system for a single Method over a range of either chemical shielding
-    or quadrupolar tensors. Functionality may expand in the future
+@dataclass
+class LineShapeKernel:
+    """lineshape kernel object
 
     Arguments:
-        (tuple) pos: A set of numpy arrays defining the grid space
-        (mrsimulator.Method) method: The :py:class:`~mrsimulator.method.Method` used to
-            simulate the spectra.
-        (bool) polar: Weather the grid is defined in polar coordinates
-        (str) tensor_type: A string enumeration literal describing which type of tensor
-            to use in the simulation. The allowed values are `shielding` and
-            `quadrupolar`.
-
-    Returns:
-        (np.ndarray) kernel: The simulated lineshape kernel
+            (tuple) pos: A tuple of numpy arrays defining the 2D grid space.
+            (bool) polar: If true, the grid is defined in polar coordinates.
+            (mrsimulator.Method) method: The :py:class:`~mrsimulator.method.Method`
+                used to simulate the spectra.
+            (ConfigSimulator) config: Simulator config to be used in simulation.
     """
-    if tensor_type not in {"shielding", "quadrupolar"}:
-        raise ValueError(f"Unrecognized value of {tensor_type} for `tensor_type.")
 
-    # If in polar coordinates, then (ZZ, ee) right now is really (xx, yy)
-    ZZ, ee = np.meshgrid(pos[0], pos[1], indexing="xy")
+    pos: list[np.ndarray]
+    method: Method
+    kernel: np.ndarray = None
+    polar: bool = False
+    config: ConfigSimulator = ConfigSimulator()
 
-    # Convert polar coords to cartesian coords
-    if polar:
-        ZZ, ee = x_y_to_zeta_eta(ZZ.ravel(), ee.ravel())
+    def generate_lineshape(self, tensor_type: str = "shielding") -> np.ndarray:
+        """Pre-compute a lineshape kernel to use for the least-squares fitting of an
+        experimental spectrum. The isotope for the spin system is the isotope
+        at index zero of the method's channel.
 
-    return _simulate_spectra_over_zeta_and_eta(ZZ, ee, method, tensor_type)
+        Note: The lineshape kernel is currently limited to simulating the spectrum of
+        an uncoupled spin system for a single Method over a range of nuclear shielding
+        or quadrupolar tensors. Functionality may expand in the future.
+
+        Arguments:
+
+            (str) tensor_type: A string enumeration literal describing the type of
+                tensor to use in the simulation. The allowed values are `shielding` and
+                `quadrupolar`.
+
+        Returns:
+            (np.ndarray) kernel: The simulated lineshape kernel
+        """
+        if tensor_type not in {"shielding", "quadrupolar"}:
+            raise ValueError(f"Unrecognized value of {tensor_type} for `tensor_type.")
+
+        # If in polar coordinates, then (ZZ, ee) right now is really (xx, yy)
+        ZZ, ee = np.meshgrid(self.pos[0], self.pos[1], indexing="xy")
+
+        # Convert polar coords to cartesian coords
+        if self.polar:
+            ZZ, ee = x_y_to_zeta_eta(ZZ.ravel(), ee.ravel())
+
+        self.kernel = _simulate_spectra_over_zeta_and_eta(
+            ZZ, ee, self.method, tensor_type, self.config
+        )

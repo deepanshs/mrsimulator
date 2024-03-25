@@ -176,7 +176,7 @@ class CzjzekDistribution(AbstractDistribution):
         mean_isotropic_chemical_shift: float = 0.0,
         abundance: float = 1.0,
         polar=False,
-        cache=False,
+        cache=True,
     ):
         super().__init__(
             cache_tensors=cache,
@@ -279,7 +279,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
         mean_isotropic_chemical_shift: float = 0.0,
         abundance: float = 1.0,
         polar=False,
-        cache=False,
+        cache=True,
     ):
         super().__init__(
             cache_tensors=cache,

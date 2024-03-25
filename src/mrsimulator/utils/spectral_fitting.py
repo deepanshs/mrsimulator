@@ -3,6 +3,7 @@ import mrsimulator.signal_processor as sp
 import numpy as np
 from lmfit import Parameters
 from mrsimulator import Simulator
+from mrsimulator.models.utils import LineShapeKernel
 
 __author__ = ["Maxwell C Venetos", "Deepansh Srivastava"]
 __email__ = ["maxvenetos@gmail.com", "srivastava.89@osu.edu"]
@@ -219,7 +220,9 @@ def _get_simulator_object_value(sim, string):
     return obj
 
 
-def make_simulator_params(sim: Simulator, include={}):
+def make_simulator_params(
+    sim: Simulator = Simulator(), spin_system_models: list = [], include={}
+):
     """Parse the Simulator object for a list of LMFIT parameters.
 
     Args:
@@ -232,13 +235,24 @@ def make_simulator_params(sim: Simulator, include={}):
     temp_list = _traverse_dictionaries(_list_of_dictionaries(sim.spin_systems))
 
     # get total abundance scaling factor
-    length = len(sim.spin_systems)
-    abundance_scale = 100 / sum(sys.abundance for sys in sim.spin_systems)
+    sys_length = len(sim.spin_systems)
+    sys_model_length = len(spin_system_models)
+    total_abundance = sum(sys.abundance for sys in sim.spin_systems)
+    total_abundance += sum(sys.abundance for sys in spin_system_models)
+    abundance_scale = 100 / total_abundance
 
     # expression for the last abundance.
-    last_abundance = f"{length - 1}_abundance"
-    expression = "-".join([f"{START}{i}_abundance" for i in range(length - 1)])
-    expression = "100" if expression == "" else f"100-{expression}"
+    if sys_length > 0:
+        last_abundance = f"{sys_length - 1}_abundance"
+        expression = "-".join([f"{START}{i}_abundance" for i in range(sys_length - 1)])
+        expression = "100" if expression == "" else f"100-{expression}"
+
+    skip_last = sys_length > 0
+    if sys_model_length > 0:
+        param_dist = make_distribution_params(
+            spin_system_models, norm=abundance_scale, skip_last=skip_last
+        )
+        _ = params.update(param_dist)
 
     for items in temp_list:
         value = _get_simulator_object_value(sim, items)
@@ -297,7 +311,12 @@ def make_LMFIT_parameters(sim: Simulator, processors: list = None, include={}):
     return make_LMFIT_params(sim, processors)
 
 
-def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
+def make_LMFIT_params(
+    sim: Simulator = Simulator(),
+    processors: list = None,
+    spin_system_models: list = [],
+    include={},
+):
     r"""Parse the Simulator and PostSimulator objects for a list of LMFIT parameters.
 
     Args:
@@ -325,7 +344,11 @@ def make_LMFIT_params(sim: Simulator, processors: list = None, include={}):
         LMFIT Parameters object.
     """
     params = Parameters()
-    params.update(make_simulator_params(sim, include))
+    params.update(
+        make_simulator_params(
+            sim=sim, spin_system_models=spin_system_models, include=include
+        )
+    )
 
     proc = make_signal_processor_params(processors) if processors is not None else None
     _ = params.update(proc) if proc is not None else None
@@ -537,28 +560,28 @@ def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq_Hz):
     return csdm_obj
 
 
-def make_LMFIT_distribution_params(
-    distribution_models: list, processor: sp.SignalProcessor = None
+def make_distribution_params(
+    spin_system_models: list, norm: float, skip_last: bool = False
 ) -> Parameters:
     """Generate LMfit Parameters object for spin system distribution model.
     The distribution has the following parameters:
     """
-    n_dist = len(distribution_models)
+    n_dist = len(spin_system_models)
 
-    norm = 0.0
-    for model in distribution_models:
-        norm += model.abundance
+    # norm = 0.0
+    # for model in distribution_models:
+    # norm += model.abundance
 
     expr_terms = []
     params = Parameters()
-    for i, model in enumerate(distribution_models):
+    for i, model in enumerate(spin_system_models):
         # normalize the abundance
         model.abundance /= norm
         params = model.get_lmfit_params(params, i)
 
         # Set last weight parameter as a non-free variable
         model_prefix = model.param_prefix()
-        if i < n_dist - 1:
+        if i < n_dist - 1 or skip_last:
             expr_terms.append(f"{model_prefix}_{i}_weight")
         else:
             expr = "-".join(expr_terms)
@@ -566,18 +589,17 @@ def make_LMFIT_distribution_params(
             params[f"{model_prefix}_{i}_weight"].vary = False
             params[f"{model_prefix}_{i}_weight"].expr = expr
 
-    # Add SignalProcessor parameters, if requested
-    if processor is not None:
-        _make_params_single_processor(params, processor, 0)
+    # # Add SignalProcessor parameters, if requested
+    # if processor is not None:
+    #     _make_params_single_processor(params, processor, 0)
 
     return params
 
 
 def _generate_distribution_spectrum(
     params: Parameters,
-    pos: tuple,
-    kernel: np.ndarray,
-    sim: Simulator,
+    kernel: LineShapeKernel,
+    spin_system_models: list,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Helper function for generating a spectrum from a set of LMfit Parameters and
@@ -603,8 +625,7 @@ def _generate_distribution_spectrum(
         Guess spectrum as a cp.CSDM object
 
     """
-    distribution_models = sim.spin_system_models
-    method = sim.methods[0]
+    method = kernel.method
     larmor_freq_Hz = method.channels[0].larmor_freq(B0=method.magnetic_flux_density)
     exp_spectrum = method.experiment
 
@@ -612,13 +633,13 @@ def _generate_distribution_spectrum(
     guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
     dv = cp.as_dependent_variable(np.empty(guess_spectrum.y[0].components.size))
 
-    for i, model in enumerate(distribution_models):
+    for i, model in enumerate(spin_system_models):
         model.update_lmfit_params(params, i)
-        _, _, amp = model.pdf(pos)
+        _, _, amp = model.pdf(kernel.pos)
 
         # Dot amplitude with kernel, then package as CSDM object
         spec_tmp = cp.CSDM(dimensions=exp_spectrum.x, dependent_variables=[dv])
-        spec_tmp.y[0].components[0] = np.dot(amp.ravel(), kernel)
+        spec_tmp.y[0].components[0] = np.dot(amp.ravel(), kernel.kernel)
 
         # Apply isotropic chemical shift to distribution using FFT shift theorem
         spec_tmp = _apply_iso_shift(
@@ -638,9 +659,8 @@ def _generate_distribution_spectrum(
 
 def LMFIT_min_function_dist(
     params: Parameters,
-    pos: tuple,
-    kernel: np.ndarray,
-    sim: Simulator,
+    kernel: LineShapeKernel,
+    spin_system_models: list,
     processor: sp.SignalProcessor = None,
 ) -> np.ndarray:
     """The minimization routine for fitting a set of Czjzek models to an experimental
@@ -668,32 +688,34 @@ def LMFIT_min_function_dist(
             A residual array as a numpy array.
     """
     guess_spectrum = _generate_distribution_spectrum(
-        params, pos, kernel, sim, processor
+        params, kernel, spin_system_models, processor
     )
-    exp_spectrum = sim.methods[0].experiment
+    exp_spectrum = kernel.method.experiment
     return (exp_spectrum - guess_spectrum).y[0].components[0]
 
 
 def bestfit_dist(
     params: Parameters,
-    pos: tuple,
-    kernel: np.ndarray,
-    sim: Simulator,
+    kernel: LineShapeKernel,
+    spin_system_models: list,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Returns the best-fit spectrum as a CSDM object"""
-    return _generate_distribution_spectrum(params, pos, kernel, sim, processor)
+    return _generate_distribution_spectrum(
+        params, kernel, spin_system_models, processor
+    )
 
 
 def residuals_dist(
     params: Parameters,
-    pos: tuple,
-    kernel: np.ndarray,
-    sim: Simulator,
+    kernel: LineShapeKernel,
+    spin_system_models: list,
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Returns the residuals spectrum as a CSDM object"""
-    bestfit = _generate_distribution_spectrum(params, pos, kernel, sim, processor)
+    bestfit_ = _generate_distribution_spectrum(
+        params, kernel, spin_system_models, processor
+    )
 
-    exp_spectrum = sim.methods[0].experiment
-    return exp_spectrum - bestfit
+    exp_spectrum = kernel.method.experiment
+    return exp_spectrum - bestfit_
