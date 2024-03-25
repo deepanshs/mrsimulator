@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import field
 
 import numpy as np
 from mrsimulator import Method
@@ -127,11 +128,11 @@ class LineShapeKernel:
             (ConfigSimulator) config: Simulator config to be used in simulation.
     """
 
-    pos: list[np.ndarray]
+    pos: list
     method: Method
     kernel: np.ndarray = None
     polar: bool = False
-    config: ConfigSimulator = ConfigSimulator()
+    config: ConfigSimulator = field(default_factory=ConfigSimulator())
 
     def generate_lineshape(self, tensor_type: str = "shielding") -> np.ndarray:
         """Pre-compute a lineshape kernel to use for the least-squares fitting of an
