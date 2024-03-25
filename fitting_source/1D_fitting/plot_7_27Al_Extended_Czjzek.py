@@ -9,7 +9,7 @@ Fitting a Czjzek Model
 # :math:`^{27}\text{Al}` MAS spectrum of a phospho-aluminosilicate glass. Setting up
 # the least-squares minimization for a distribution of spin systems is slightly
 # different than that of a crystalline solid.
-
+#
 # There are 4 steps involved in the processs:
 #  - Importing the experimental dataset,
 #  - Generating a pre-computed line shape kernel of subspectra,
