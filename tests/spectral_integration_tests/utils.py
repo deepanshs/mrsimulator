@@ -48,8 +48,7 @@ def get_data(filename):
     test_data_object = data_object["test_data"]
 
     source_file = test_data_object["filename"]
-    path_ = path.abspath(filename)
-    path_ = path.split(path_)[0]
+    path_ = path.split(filename)[0]
     source_file = path.join(path_, source_file)
 
     if test_data_object["type"] == "npz":
