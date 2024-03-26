@@ -1,0 +1,17 @@
+
+Sample Parameters
+-----------------
+Spin #1
+Spin = 3.5
+gyromag	= 6.33161e+07
+sigmacs	= 0
+deltacs	= -1750
+etacs	= 1
+omega_pascs.alpha= 0
+omega_pascs.beta = 0
+omega_pascs.gamma= 0
+Cq = -3.1e+06
+etaq = 1
+omega_pasq.alpha= 0
+omega_pasq.beta = 0
+omega_pasq.gamma= 0

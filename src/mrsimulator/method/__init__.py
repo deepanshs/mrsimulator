@@ -321,9 +321,6 @@ class Method(Parseable):
         """
         mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [
-            item.json(units=units) for item in self.spectral_dimensions
-        ]
 
         # add global parameters
         global_ = (
@@ -332,6 +329,9 @@ class Method(Parseable):
             else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # remove event objects with global values.
         _ = [
