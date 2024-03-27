@@ -10,7 +10,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
-from .utils import x_y_from_zeta_eta
+from .utils import zeta_eta_to_x_y
 
 
 __author__ = "Deepansh J. Srivastava"
@@ -78,6 +78,20 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
+    def __init__(
+        self,
+        mean_isotropic_chemical_shift=0.0,
+        abundance=1.0,
+        polar=False,
+        cache_tensors=False,
+    ):
+        """Basic class attributes for distributions"""
+        self._cache_tensors = cache_tensors
+        self._tensors = None
+        self.mean_isotropic_chemical_shift = mean_isotropic_chemical_shift
+        self.abundance = abundance
+        self.polar = polar
+
     def pdf(self, pos, size: int = 400000, analytical: bool = True):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
@@ -156,9 +170,21 @@ class CzjzekDistribution(AbstractDistribution):
     """
     model_name = "czjzek"
 
-    def __init__(self, sigma: float, polar=False):
+    def __init__(
+        self,
+        sigma: float,
+        mean_isotropic_chemical_shift: float = 0.0,
+        abundance: float = 1.0,
+        polar=False,
+        cache=True,
+    ):
+        super().__init__(
+            cache_tensors=cache,
+            polar=polar,
+            mean_isotropic_chemical_shift=mean_isotropic_chemical_shift,
+            abundance=abundance,
+        )
         self.sigma = sigma
-        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -174,10 +200,34 @@ class CzjzekDistribution(AbstractDistribution):
         Example:
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
-        tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+        if self._cache_tensors:
+            if self._tensors is None:
+                self._tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+            tensors = self._tensors
+        else:
+            tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+
         if not self.polar:
             return get_Haeberlen_components(tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(tensors))
+        return zeta_eta_to_x_y(*get_Haeberlen_components(tensors))
+
+    def param_prefix(self):
+        return "czjzek"
+
+    def get_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        params.add(f"czjzek_{i}_sigma", value=self.sigma, min=0)
+        params.add(f"czjzek_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
+        params.add(f"czjzek_{i}_weight", value=self.abundance, min=0, max=1)
+        return params
+
+    def update_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.param_prefix()
+
+        self.sigma = params[f"{prefix}_{i}_sigma"].value
+        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
+        self.abundance = params[f"{prefix}_{i}_weight"].value
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
@@ -222,10 +272,26 @@ class ExtCzjzekDistribution(AbstractDistribution):
     """
     model_name = "extended czjzek"
 
-    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
-        self.symmetric_tensor = symmetric_tensor
+    def __init__(
+        self,
+        symmetric_tensor: SymmetricTensor,
+        eps: float,
+        mean_isotropic_chemical_shift: float = 0.0,
+        abundance: float = 1.0,
+        polar=False,
+        cache=True,
+    ):
+        super().__init__(
+            cache_tensors=cache,
+            polar=polar,
+            mean_isotropic_chemical_shift=mean_isotropic_chemical_shift,
+            abundance=abundance,
+        )
+        if isinstance(symmetric_tensor, dict):
+            self.symmetric_tensor = SymmetricTensor(**symmetric_tensor)
+        else:
+            self.symmetric_tensor = symmetric_tensor
         self.eps = eps
-        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -243,12 +309,14 @@ class ExtCzjzekDistribution(AbstractDistribution):
         """
 
         # czjzek_random_distribution model
-        tensors = _czjzek_random_distribution_tensors(1, size)
+        if self._cache_tensors:
+            if self._tensors is None:
+                self._tensors = _czjzek_random_distribution_tensors(1, size)
+            tensors = self._tensors
+        else:
+            tensors = _czjzek_random_distribution_tensors(1, size)
 
         symmetric_tensor = self.symmetric_tensor
-
-        if isinstance(symmetric_tensor, dict):
-            symmetric_tensor = SymmetricTensor(**symmetric_tensor)
 
         zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
         eta = symmetric_tensor.eta
@@ -269,4 +337,36 @@ class ExtCzjzekDistribution(AbstractDistribution):
 
         if not self.polar:
             return get_Haeberlen_components(total_tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(total_tensors))
+        return zeta_eta_to_x_y(*get_Haeberlen_components(total_tensors))
+
+    def param_prefix(self):
+        return "ext_czjzek"
+
+    def get_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.param_prefix()
+        if self.symmetric_tensor.zeta is not None:
+            zeta = self.symmetric_tensor.zeta
+        else:
+            zeta = self.symmetric_tensor.Cq
+        params.add(f"{prefix}_{i}_zeta0", value=zeta)
+        params.add(f"{prefix}_{i}_eta0", value=self.symmetric_tensor.eta, min=0, max=1)
+        params.add(f"{prefix}_{i}_epsilon", value=self.eps, min=0)
+        params.add(f"{prefix}_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
+        params.add(f"{prefix}_{i}_weight", value=self.abundance, min=0, max=1)
+        return params
+
+    def update_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.param_prefix()
+
+        zeta = params[f"{prefix}_{i}_zeta0"].value
+        if self.symmetric_tensor.zeta is not None:
+            self.symmetric_tensor.zeta = zeta
+        else:
+            self.symmetric_tensor.Cq = zeta
+
+        self.symmetric_tensor.eta = params[f"{prefix}_{i}_eta0"].value
+        self.eps = params[f"{prefix}_{i}_epsilon"].value
+        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
+        self.abundance = params[f"{prefix}_{i}_weight"].value

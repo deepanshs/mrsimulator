@@ -1,6 +1,7 @@
 """Base Simulator class."""
 import json
 from copy import deepcopy
+from typing import Any
 from typing import List
 
 import csdmpy as cp
@@ -130,6 +131,7 @@ class Simulator(Parseable):
     """
 
     spin_systems: List[SpinSystem] = []
+    spin_system_models: List[Any] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
 

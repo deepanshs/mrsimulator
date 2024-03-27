@@ -14,12 +14,17 @@ What's new
 - Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use cases and examples.
 - Shortcuts for frequency contributions, such as ``Shielding``, ``Isotropic``, and ``cross``.
   Sets of contributions can also be excluded by placing an exclamation mark in front of the string, for example ``"!Shielding"`` excludes shielding interactions.
+- New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra. See (TODO: ADD) in the examples gallery for more information.
 - Adds ``DelayEvent`` to the events library.
 - Support for python 3.11
 
 **Simulator**
 
 - New instance method for the `Simulator` class -- `.optimize()` -- which pre-computes transition pathways before least-squares minimization. This improves the efficiency of least-squares minimizations.
+
+
+**Czjzek and Extended Czjzek**
+- The Czjzek model now uses an analytical expression for calculating the probability distribution greatly improving quality and calculation speed.
 
 **Bug Fixes**
 
@@ -29,6 +34,7 @@ What's new
 - Fix latex build error in pdf docs.
 - Fixed the bug where the csdm object origin offset was incorrectly set. The origin offset is now `w_ref`.
 - Fix bug when calculating ppm scale for large reference offsets.
+
 
 
 v0.7.0
