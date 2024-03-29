@@ -1,5 +1,6 @@
 """Test for c functions."""
 from copy import deepcopy
+from os import mkdir
 from os import path
 
 import matplotlib.pyplot as plt
@@ -117,7 +118,10 @@ def test_pdf():
     temp_status = deepcopy(__GENERATE_REPORT__)
     __GENERATE_REPORT__ = True
 
-    filename = "reports/interpolation_report_scrap.pdf"
+    is_present = path.isdir("_temp")
+    if not is_present:
+        mkdir("_temp")
+    filename = "_temp/interpolation_report_scrap.pdf"
     report_file = PdfPages(filename)
     amp2d = np.random.rand(100).reshape(10, 10)
     pts1 = np.array([1, 3, 6])

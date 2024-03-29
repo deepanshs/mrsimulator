@@ -1,5 +1,6 @@
 """Lineshape Test."""
 from copy import deepcopy
+from os import mkdir
 from os import path
 from pprint import pformat
 
@@ -88,7 +89,10 @@ def test_pdf():
     temp_status = deepcopy(__GENERATE_REPORT__)
     __GENERATE_REPORT__ = True
 
-    filename = "reports/lineshapes_report_scrap.pdf"
+    is_present = path.isdir("_temp")
+    if not is_present:
+        mkdir("_temp")
+    filename = "_temp/lineshapes_report_scrap.pdf"
     report_file = PdfPages(filename)
     dim = np.arange(10)
     res = [np.arange(10), np.arange(10)]
