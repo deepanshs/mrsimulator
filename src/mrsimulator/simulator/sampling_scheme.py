@@ -23,7 +23,17 @@ def generate_custom_sampling(alpha, beta, weight, triangle_mesh=False):
     return sampling
 
 
-def step_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
+def check_triangulation(triangle_mesh: bool, integration_volume: str):
+    """Check if triangulation can be applied"""
+    if triangle_mesh and integration_volume != "sphere":
+        raise NotImplementedError(
+            "Triangulation of non sphere geometry is not implemented."
+        )
+
+
+def step_averaging(
+    N_alpha: int, N_beta: int, triangle_mesh=True, integration_volume="sphere"
+):
     """Generate STEP averaging samples.
 
     Args:
@@ -31,15 +41,16 @@ def step_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
         beta: number of points along the beta dimension.
         triangle_mesh: generate ConvexHull triangulation of points.
     """
-    sphereType = "sphere"
+    check_triangulation(triangle_mesh, integration_volume)
+
     norm_step = 0.0
-    if sphereType == "sphere":
+    if integration_volume == "sphere":
         a = [1.0, 0.0, 1.0]
         b = 1.0
-    if sphereType == "hemisphere":
+    if integration_volume == "hemisphere":
         a = [1.0, 0.0, 1.0]
         b = 2.0
-    if sphereType == "octant":
+    if integration_volume == "octant":
         a = [2.0, 1.0, 8.0]
         b = 2.0
 
@@ -64,29 +75,30 @@ def step_averaging(N_alpha: int, N_beta: int, triangle_mesh=True):
 def get_zcw_number(M):
     """ZCW number"""
     # returns the number of ZCW angles for the given integer M=2,3,4,...
-    gM = 5
-    gMminus1 = 3
-    sum = 5
+    g_m = 5
+    g_minus1 = 3
+    local_sum = 5
     for _ in range(M + 1):
-        sum = gM + gMminus1
-        gMminus1 = gM
-        gM = sum
-    return sum
+        local_sum = g_m + g_minus1
+        g_minus1 = g_m
+        g_m = local_sum
+    return local_sum
 
 
-def zcw_averaging(M: int, triangle_mesh=True):
+def zcw_averaging(M: int, triangle_mesh=True, integration_volume="sphere"):
     """Generate ZCW averaging samples.
 
     Args:
         M: ZCW point generation factor.
         triangle_mesh: generate ConvexHull triangulation of points.
     """
-    sphereType = "sphere"
-    if sphereType == "sphere":
+    check_triangulation(triangle_mesh, integration_volume)
+
+    if integration_volume == "sphere":
         c = [1.0, 2.0, 1.0]
-    if sphereType == "hemisphere":
+    if integration_volume == "hemisphere":
         c = [-1.0, 1.0, 1.0]
-    if sphereType == "octant":
+    if integration_volume == "octant":
         c = [-1.0, 1.0, 4.0]
 
     N = get_zcw_number(M)
@@ -99,11 +111,11 @@ def zcw_averaging(M: int, triangle_mesh=True):
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
 
 
-if __name__ == "__main__":
-    sampling = zcw_averaging(M=21)
-    rad2deg = 180.0 / np.pi
-    nd_array = np.array(
-        [sampling.alpha * rad2deg, sampling.beta * rad2deg, sampling.weight]
-    ).T
-    size = sampling.alpha.size
-    np.savetxt(f"zcw{size}.cry", nd_array, header=str(size), fmt="%.6e")
+# if __name__ == "__main__":
+#     sampling = zcw_averaging(M=21)
+#     rad2deg = 180.0 / np.pi
+#     nd_array = np.array(
+#         [sampling.alpha * rad2deg, sampling.beta * rad2deg, sampling.weight]
+#     ).T
+#     size = sampling.alpha.size
+#     np.savetxt(f"zcw{size}.cry", nd_array, header=str(size), fmt="%.6e")
