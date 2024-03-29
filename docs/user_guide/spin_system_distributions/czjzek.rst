@@ -233,7 +233,8 @@ tensor parameters follow the Czjzek distribution.
     eta_range = np.linspace(0, 1, num=50)
 
     # Create (Cq, eta) grid points and amplitude
-    Cq_grid, eta_grid, amp = cz_model.pdf(pos=[Cq_range, eta_range])
+    Cq_grid, eta_grid = np.meshgrid(Cq_range, eta_range)
+    _, _, amp = cz_model.pdf(pos=[Cq_range, eta_range])
 
     sys = single_site_system_generator(
         isotope="27Al",

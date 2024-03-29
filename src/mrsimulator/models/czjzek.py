@@ -4,6 +4,7 @@ Analytical czjzek ditribution on polar and non-polar grid
 __author__ = "Deepansh J. Srivastava"
 __email__ = "dsrivastava@hyperfine.io"
 """
+import csdmpy as cp
 import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -11,7 +12,6 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 from .utils import get_Haeberlen_components
 from .utils import get_principal_components
 from .utils import zeta_eta_to_x_y
-
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -60,15 +60,15 @@ def _czjzek_random_distribution_tensors(sigma, n):
     sqrt_3_U5 = np.random.normal(0.0, sqrt_3_sigma, n)
 
     # Create N random tensors
-    tensors = np.zeros((n, 3, 3))  # n x 3 x 3 tensors
+    tensors = np.empty((n, 3, 3))  # n x 3 x 3 tensors
 
     tensors[:, 0, 0] = sqrt_3_U5 - U1  # xx
-    tensors[:, 0, 1] = sqrt_3_U4  # xy
-    tensors[:, 0, 2] = sqrt_3_U2  # xz
+    # tensors[:, 0, 1] = sqrt_3_U4  # xy
+    # tensors[:, 0, 2] = sqrt_3_U2  # xz
 
     tensors[:, 1, 0] = sqrt_3_U4  # yx
     tensors[:, 1, 1] = -sqrt_3_U5 - U1  # yy
-    tensors[:, 1, 2] = sqrt_3_U3  # yz
+    # tensors[:, 1, 2] = sqrt_3_U3  # yz
 
     tensors[:, 2, 0] = sqrt_3_U2  # zx
     tensors[:, 2, 1] = sqrt_3_U3  # zy
@@ -92,7 +92,13 @@ class AbstractDistribution:
         self.abundance = abundance
         self.polar = polar
 
-    def pdf(self, pos, size: int = 400000, analytical: bool = True):
+    def pdf(
+        self,
+        pos,
+        size: int = 400000,
+        analytical: bool = True,
+        pack_as_csdm: bool = False,
+    ):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
 
@@ -100,21 +106,30 @@ class AbstractDistribution:
             pos: A list of coordinates along the two dimensions given as NumPy arrays.
             size: The number of random variates drawn in generating the pdf. The default
                 is 400000.
+            pack_as_csdm: If true, returns as csdm object.
 
         Returns:
-            A list of x and y coordinates and the corresponding amplitudes.
+            A list of x and y coordinates and the corresponding amplitudes if not packed
+            as csdm object, else a csdm object.
 
         Example:
             >>> import numpy as np
             >>> cq = np.arange(50) - 25
             >>> eta = np.arange(21)/20
-            >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
+            >>> amp = cz_model.pdf(pos=[cq, eta])  # returns amp as a CSDM object.
         """
         if analytical and self.model_name in ANALYTICAL_AVAILABLE:
             analytical_model = ANALYTICAL_AVAILABLE[self.model_name]
-            return analytical_model(self.sigma, pos, self.polar)
+            pos_a, pos_b, data_ = analytical_model(self.sigma, pos, self.polar)
         else:
-            return self.pdf_numerical(pos, size)
+            pos_a, pos_b, data_ = self.pdf_numerical(pos, size)
+
+        if pack_as_csdm:
+            if len(pos_a.shape) == 1:
+                return self.pack_csdm_object([pos_a, pos_b], data_)
+            else:
+                return self.pack_csdm_object([pos_a[0, :], pos_b[:, 0]], data_)
+        return pos_a, pos_b, data_
 
     def pdf_numerical(self, pos, size: int = 400000):
         """Generate distribution numerically"""
@@ -129,9 +144,13 @@ class AbstractDistribution:
         hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
 
         hist /= hist.sum()
+        return pos[0], pos[1], hist.T
 
-        x_, y_ = np.meshgrid(pos[0], pos[1])
-        return x_, y_, hist.T
+    def pack_csdm_object(self, pos, data):
+        """Pack data and coordinates as csdm objects"""
+        dims = [cp.as_dimension(item) for item in pos]
+        dvs = cp.as_dependent_variable(data)
+        return cp.CSDM(dimensions=dims, dependent_variables=[dvs])
 
 
 class CzjzekDistribution(AbstractDistribution):
@@ -330,7 +349,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
         norm_T0 = np.linalg.norm(T0)
 
         # the perturbation factor
-        rho = self.eps * norm_T0 / np.sqrt(30)
+        rho = self.eps * norm_T0 / 5.4772255751  # np.sqrt(30) = 5.477225575
 
         # total tensor
         total_tensors = np.diag(T0) + rho * tensors

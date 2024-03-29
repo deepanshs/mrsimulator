@@ -22,7 +22,7 @@ from lmfit import Minimizer
 import matplotlib.pyplot as plt
 
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -91,8 +91,10 @@ def make_kernel(pos, method, isotope):
     Cq, eta = np.meshgrid(pos[0], pos[1], indexing="xy")
 
     spin_systems = [
-        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq * 1e6, eta=e))])
-        for cq, e in zip(Cq.ravel(), eta.ravel())
+        SpinSystem(
+            sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq_ * 1e6, eta=e_))]
+        )
+        for cq_, e_ in zip(Cq.ravel(), eta.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
     sim.config.number_of_sidebands = 4
@@ -104,7 +106,7 @@ def make_kernel(pos, method, isotope):
 
 
 # Create ranges to construct cq and eta grid points
-cq_range = np.linspace(0, 100, num=100) * 0.8 + 25
+cq_range = np.linspace(0, 50, num=50) * 1.6 + 25
 eta_range = np.arange(21) / 20
 pos = [cq_range, eta_range]
 kernel = make_kernel(pos, method, "139La")
@@ -200,7 +202,7 @@ def residuals(exp_spectra, simulated_spectra):
 params = lmfit.Parameters()
 params.add("dist_Cq", value=49.5)
 params.add("dist_eta", value=0.55, min=0, max=1)
-params.add("dist_eps", value=0.24, min=0)
+params.add("dist_eps", value=0.1, min=0)
 params.add("dist_iso_shift", value=350)
 params.add("sp_scale_factor", value=3.8e3, min=0)
 
@@ -209,19 +211,30 @@ distribution = ExtCzjzekDistribution(
     symmetric_tensor={"Cq": params["dist_Cq"], "eta": params["dist_eta"]},
     eps=params["dist_eps"],
 )
-initial_guess = make_spectrum_from_parameters(
+guess_distribution = distribution.pdf(pos, size=100_000, pack_as_csdm=True)
+
+initial_guess_spectrum = make_spectrum_from_parameters(
     params, kernel, processor, pos, distribution
 )
-residual_spectrum = residuals(experiment, initial_guess)
+residual_spectrum = residuals(experiment, initial_guess_spectrum)
 
 plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment.real, "k", alpha=0.5, label="Experiment")
-ax.plot(initial_guess.real, "r", alpha=0.3, label="Guess")
+ax.plot(initial_guess_spectrum.real, "r", alpha=0.3, label="Guess")
 ax.plot(residual_spectrum.real, "b", alpha=0.3, label="Residuals")
 plt.legend()
 plt.grid()
 plt.title("Initial Guess")
+plt.tight_layout()
+plt.show()
+
+
+# %%
+# Guess distribution
+plt.figure(figsize=(4, 3))
+ax = plt.subplot(projection="csdm")
+ax.imshow(guess_distribution, interpolation="none", cmap="gist_ncar_r", aspect="auto")
 plt.tight_layout()
 plt.show()
 
@@ -285,6 +298,15 @@ plt.title("Best Fit")
 plt.tight_layout()
 plt.show()
 
+
+# %%
+# Best fit probability distribution
+prob = distribution.pdf(pos, pack_as_csdm=True)
+plt.figure(figsize=(4, 3))
+ax = plt.subplot(projection="csdm")
+ax.imshow(prob, interpolation="none", cmap="gist_ncar_r", aspect="auto")
+plt.tight_layout()
+plt.show()
 # %%
 #
 # .. [#f1] A. J. Fernández-Carrión, M. Allix, P. Florian, M. R. Suchomel, and A. I.

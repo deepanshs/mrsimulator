@@ -52,7 +52,7 @@ def czjzek_zeta_eta(sigma: float, pos: list):
     pdf_model = pdf_model.ravel()
     pdf_model[eta_idx] /= 2.0
     pdf_model.shape = zeta.shape
-    return zeta, eta, pdf_model
+    return pos[0], pos[1], pdf_model
 
 
 def czjzek_polar(sigma: float, pos: list):

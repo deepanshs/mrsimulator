@@ -78,10 +78,10 @@ def test_czjzek_distribution():
     z_range = (ran_z[1:] + ran_z[:-1]) / 2
 
     # czjzek distribution from analytical formula
-    _, _, res = CzjzekDistribution(sigma).pdf(pos=[z_range, e_range])
+    res = CzjzekDistribution(sigma).pdf(pos=[z_range, e_range], pack_as_csdm=True)
 
-    eta_pro = res.sum(axis=1)
-    zeta_pro = res.sum(axis=0)
+    eta_pro = res.sum(axis=0).y[0].components[0]
+    zeta_pro = res.sum(axis=1).y[0].components[0]
 
     # eta test
     message = "failed to compare eta projection for Czjzek distribution"

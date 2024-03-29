@@ -36,7 +36,8 @@ z_lim = np.arange(100) * 0.4 + 40  # in ppm
 e_lim = np.arange(21) / 20
 
 dominant = {"zeta": 60, "eta": 0.3}
-z_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, e_lim])
+z_dist, e_dist = np.meshgrid(z_lim, e_lim)
+_, _, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, e_lim])
 
 # %%
 # The following is the plot of the extended Czjzek distribution.
@@ -93,9 +94,8 @@ cq_lim = np.arange(100) * 0.1  # assumed in MHz
 e_lim = np.arange(21) / 20
 
 dominant = {"Cq": 6.1, "eta": 0.1}
-cq_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(
-    pos=[cq_lim, e_lim]
-)
+cq_dist, e_dist = np.meshgrid(cq_lim, e_lim)
+_, _, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(pos=[cq_lim, e_lim])
 
 # %%
 # The following is the plot of the extended Czjzek distribution.

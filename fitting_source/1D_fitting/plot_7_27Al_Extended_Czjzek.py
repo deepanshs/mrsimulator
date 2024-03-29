@@ -201,11 +201,12 @@ plt.show()
 for i, model in enumerate(all_models):
     model.update_lmfit_params(result.params, i)
 
-xx, yy, amp = cz_model.pdf(pos=pos)
+amp = cz_model.pdf(pos=pos, pack_as_csdm=True)
 
 plt.figure(figsize=(4, 3))
-plt.contourf(xx / 1e6, yy / 1e6, amp)
-plt.xlabel("x / MHz ")
-plt.ylabel("y / MHz")
+ax = plt.subplot(projection="csdm")
+ax.imshow(amp, cmap="gist_ncar_r", interpolation="none", aspect="auto")
+ax.set_xlabel("x / Hz ")
+ax.set_ylabel("y / Hz")
 plt.tight_layout()
 plt.show()
