@@ -27,7 +27,6 @@ matplotlib.rc("font", **font)
 
 @pytest.fixture(scope="module")
 def report():
-    print(__GENERATE_REPORT__)
     if __GENERATE_REPORT__:
         pdf = PdfPages("reports/lineshapes_report.pdf")
     else:
@@ -171,7 +170,6 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
     )
     path_ = path.join(SIMPSON_TEST_PATH, "csa_quad")
     for i in range(10):
-        print(i)
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         res = []
         for volume in VOLUMES:
