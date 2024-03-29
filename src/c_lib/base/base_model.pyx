@@ -304,7 +304,7 @@ def core_simulator(method,
                 print(f'Isotropic chemical shift (δ) = {str(iso_n)} ppm')
                 print(f'Shielding anisotropy (ζ) = {str(zeta_n)} ppm')
                 print(f'Shielding asymmetry (η) = {eta_n}')
-                print(f'Shielding orientation = [alpha/beta/gamma = {ori_n}]')
+                print(f'Shielding orientation (alpha/beta/gamma) = {ori_n}')
 
             # quad tensor
             quad = site.quadrupolar
@@ -323,7 +323,7 @@ def core_simulator(method,
             if debug:
                 print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
                 print(f'Quadrupolar asymmetry (η) = {eta_e}')
-                print(f'Quadrupolar orientation = [alpha = {ori_e}]')
+                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}]')
 
         # sites packed as c struct
         sites_c.number_of_sites = number_of_sites

@@ -1,7 +1,6 @@
 import numpy as np
+from mrsimulator.simulator.config import CustomSampling
 from scipy.spatial import ConvexHull
-
-from .config import CustomSampling
 
 
 def generate_custom_sampling(alpha, beta, weight, triangle_mesh=False):
@@ -98,3 +97,13 @@ def zcw_averaging(M: int, triangle_mesh=True):
     alpha = 2.0 * np.pi * (np.fmod(m * float(g2) / float(N), 1.0)) / c[2]
     weight = np.ones(N, dtype=float) / N
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
+
+
+if __name__ == "__main__":
+    sampling = zcw_averaging(M=21)
+    rad2deg = 180.0 / np.pi
+    nd_array = np.array(
+        [sampling.alpha * rad2deg, sampling.beta * rad2deg, sampling.weight]
+    ).T
+    size = sampling.alpha.size
+    np.savetxt(f"zcw{size}.cry", nd_array, header=str(size), fmt="%.6e")
