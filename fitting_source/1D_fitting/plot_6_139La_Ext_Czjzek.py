@@ -33,7 +33,7 @@ experiment = cp.load(host + filename).real
 experiment.x[0].to("ppm", "nmr_frequency_ratio")
 experiment /= experiment.max()
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 plt.grid()
@@ -95,6 +95,7 @@ def make_kernel(pos, method, isotope):
         for cq, e in zip(Cq.ravel(), eta.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
+    sim.config.number_of_sidebands = 4
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)  # Will return spectrum as numpy array, not CSDM object
 
@@ -148,13 +149,13 @@ def make_spectrum_from_parameters(params, kernel, processor, pos, distribution):
     iso_shift = values["dist_iso_shift"]
 
     # Setup model object and get the amplitude
-    distribution.symmetric_tensor = {"Cq": Cq, "eta": eta}
+    distribution.symmetric_tensor.Cq = Cq
+    distribution.symmetric_tensor.eta = eta
     distribution.eps = eps
-    # model_quad = ExtCzjzekDistribution({"Cq": Cq, "eta": eta}, eps)
     _, _, amp = distribution.pdf(pos=pos)
 
     # Create spectra by dotting the amplitude distribution with the kernel
-    dist = kernel.dot(amp.ravel())
+    dist = np.dot(kernel, amp.ravel())
 
     # Pack numpy array as csdm object and apply signal processing
     guess_dataset = cp.CSDM(
@@ -213,13 +214,14 @@ initial_guess = make_spectrum_from_parameters(
 )
 residual_spectrum = residuals(experiment, initial_guess)
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment.real, "k", alpha=0.5)
-ax.plot(initial_guess.real, "r", alpha=0.75, label="Guess")
-ax.plot(residual_spectrum.real, "b", alpha=0.75, label="Residuals")
+ax.plot(experiment.real, "k", alpha=0.5, label="Experiment")
+ax.plot(initial_guess.real, "r", alpha=0.3, label="Guess")
+ax.plot(residual_spectrum.real, "b", alpha=0.3, label="Residuals")
 plt.legend()
 plt.grid()
+plt.title("Initial Guess")
 plt.tight_layout()
 plt.show()
 
@@ -242,16 +244,24 @@ def minimization_function(
 
 
 # %%
-# Create the Minimization object with all the functions and variables previously
-# created.
+scipy_minimization_kwargs = dict(
+    diff_step=1e-3,  # Increase step size
+    gtol=1e-15,  # Increase global convergence requirement (default 1e-8)
+    xtol=1e-15,  # Increase variable convergence requirement (default 1e-8)
+    verbose=2,  # Print minimization info during each step
+    loss="soft_l1",
+)
+
 minner = Minimizer(
     minimization_function,
     params,
     fcn_args=(experiment, processor, kernel, pos, distribution),
+    **scipy_minimization_kwargs,
 )
-result = minner.minimize(method="powell")
+result = minner.minimize(method="least_squares")
 best_fit_params = result.params  # Grab the Parameters object from the best fit
 result
+
 
 # %%
 # Plot the best-fit solution
@@ -263,14 +273,15 @@ final_fit = make_spectrum_from_parameters(
 )
 residual_spectrum = residuals(experiment, final_fit)
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
-ax.plot(final_fit, "r", alpha=0.75, label="Fit")
-ax.plot(residual_spectrum, "b", alpha=0.75, label="Residuals")
+ax.plot(experiment, "k", alpha=0.5, label="Experiment")
+ax.plot(final_fit, "r", alpha=0.3, label="Fit")
+ax.plot(residual_spectrum, "b", alpha=0.3, label="Residuals")
 plt.legend()
 ax.set_xlim(-11000, 9000)
 plt.grid()
+plt.title("Best Fit")
 plt.tight_layout()
 plt.show()
 
