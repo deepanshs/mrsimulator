@@ -50,12 +50,16 @@ typedef struct MRS_averaging_scheme {
   complex128 *w4;                    //  buffer for 4nd rank frequency calculation.
   double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
   double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
-  double *scrach;                    //  scrach memory for calculations.
+  double *scratch;                   //  scratch memory for calculations.
   bool allow_4th_rank;  //  If true, compute wigner matrices for wigner-d 4j.
-  double *amps_real;
-  double *amps_imag;
+  double *amps_real;    // array of real amplitudes
+  double *amps_imag;    // array of real amplitudes
   double *phase;
   complex128 *exp_I_phase;
+  int32_t *positions;          // array of triangle vertexes (faces) on mesh.
+  unsigned int position_size;  // number of triangle vertexes (faces) on mesh
+  bool user_defined;           // if true, the scheme is user defined
+  bool interpolation;          // if true, use frequency triangle interpolation
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -74,12 +78,15 @@ typedef struct MRS_averaging_scheme {
  *
  * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
- * @param integration_volume An enumeration. 0=octant, 1=hemisphere
+ * @param n_gamma Number of gamma angles.
+ * @param integration_volume An enumeration. 0=octant, 1=hemisphere, 2=sphere
+ * @param interpolation If true, apply frequency triangle interpolation.
  */
 MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
                                                   bool allow_4th_rank,
                                                   unsigned int n_gamma,
-                                                  unsigned int integration_volume);
+                                                  unsigned int integration_volume,
+                                                  bool interpolation);
 
 /**
  * Create a new orientation averaging scheme from given alpha and beta.
@@ -94,12 +101,15 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * values.
  * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
+ * @param n_gamma Number of gamma angles.
+ * @param position_size Number of triangle faces on the grid.
+ * @param positions Vertexes of the triangle faces as (position_size, 3)
+ * @param interpolation If true, apply frequency triangle interpolation.
  */
-MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(double *alpha,
-                                                                  double *beta,
-                                                                  double *weight,
-                                                                  unsigned int n_angles,
-                                                                  bool allow_4th_rank);
+MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+    double *alpha, double *beta, double *weight, unsigned int n_angles,
+    bool allow_4th_rank, unsigned int n_gamma, const unsigned int position_size,
+    int32_t *positions, bool interpolation);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

@@ -1,0 +1,44 @@
+{
+  "methods": [{
+    "channels": ["59Co"],
+    "magnetic_flux_density": "4.684 T",
+    "rotor_frequency": "0 kHz",
+    "rotor_angle": "54.735 deg",
+    "spectral_dimensions": [{
+      "count": 2048,
+      "spectral_width": "80 kHz",
+      "events": [{
+        "transition_queries": [{
+          "ch1": {
+            "P": [-1],
+            "D": [0]
+          }
+        }]
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "59Co",
+      "isotropic_chemical_shift": "0 ppm",
+      "shielding_symmetric": {
+        "zeta": "-50 ppm",
+        "eta": 1.0
+      },
+      "quadrupolar": {
+        "Cq": "-3.1 MHz",
+        "eta": 1.0,
+        "alpha": "90 deg",
+        "beta": "90 deg",
+        "gamma": "90 deg"
+      }
+    }]
+  }],
+  "test_data": {
+    "source": "simpson",
+    "filename": "test09.fid",
+    "quantity": "time",
+    "type": "complex",
+    "periodic": false
+  }
+}

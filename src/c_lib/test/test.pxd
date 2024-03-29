@@ -63,8 +63,8 @@ cdef extern from "angular_momentum/wigner_matrix.h":
 
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
-    void get_exp_Im_alpha(const unsigned int octant_orientations,
-                            const bool_t allow_4th_rank, void *exp_Im_alpha)
+    void get_exp_Im_angle(const unsigned int octant_orientations,
+                          const bool_t allow_4th_rank, void *exp_Im_angle, double delta_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                             const unsigned int n_octants, double *wigner_2j_matrices, void *R2,
@@ -77,7 +77,8 @@ cdef extern from "octahedron.h":
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
-        double *amp)
+        double *amp,
+        bool_t interpolation)
 
 cdef extern from "interpolation.h":
     void triangle_interpolation1D(
@@ -206,9 +207,8 @@ cdef extern from "simulation.h":
         double *transition,
         int integration_density,
         unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
-        bool_t interpolation
         )
 
 cdef extern from "frequency/spatial_orientation_tensor_components.h":
-    void rank_2_tensor_products(const double *R_2a, const double *R_2b, double *R_0,
-                                 double *R_2, double *R_4)
+    void rank_2_tensor_products(const double *R_2a, const double *R_2b, double *Delta_0,
+                                 double *Delta_2, double *Delta_4)

@@ -1,6 +1,7 @@
 cimport base_model as clib
 cimport numpy as cnp
 from libcpp cimport bool as bool_t
+from libc.stdint cimport int32_t
 from numpy cimport ndarray
 import numpy as np
 import cython
@@ -25,7 +26,13 @@ def core_simulator(method,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
        bool_t interpolation=True,
-       bool_t auto_switch=True):
+       bool_t auto_switch=True,
+       debug=False,
+       bool_t user_defined=False,
+       ndarray[double, ndim=1] alpha=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] beta=np.zeros(1, dtype=float),
+       ndarray[double, ndim=1] weight=np.zeros(1, dtype=float),
+       ndarray[int32_t, ndim=1] positions=np.ones(1, dtype=np.intc)):
     """core simulator init"""
 
 # initialization and config
@@ -35,14 +42,12 @@ def core_simulator(method,
 
     # gyromagnetic ratio and reverse axis factor
     cdef gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
-    cdef double factor = 1.0
+    cdef double gyro_factor = 1.0
     if gyromagnetic_ratio > 0.0:
-        factor = -1.0
+        gyro_factor = -1.0
 
     # config for spin I=0.5
-    cdef bool_t allow_4th_rank = 0
-    if spin_quantum_number > 0.5:
-        allow_4th_rank = 1
+    cdef bool_t allow_4th_rank = 1
 
     # transitions of the observed spin
     cdef int transition_increment, number_of_transitions, i
@@ -51,10 +56,24 @@ def core_simulator(method,
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
-    averaging_scheme = clib.MRS_create_averaging_scheme(
-        integration_density=integration_density, allow_4th_rank=allow_4th_rank,
-        n_gamma=number_of_gamma_angles, integration_volume=integration_volume
-    )
+    cdef unsigned int position_size = 0
+
+    if user_defined:
+        if interpolation:
+            position_size = np.uint32(positions.size / 3) if positions is not None else 0
+        else:
+            positions = None
+        averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
+            allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
+            position_size=position_size, positions=&positions[0], interpolation=interpolation
+        )
+    else:
+        averaging_scheme = clib.MRS_create_averaging_scheme(
+            integration_density=integration_density, allow_4th_rank=allow_4th_rank,
+            n_gamma=number_of_gamma_angles, integration_volume=integration_volume,
+            interpolation=interpolation
+        )
 
 # create C spectral dimensions ________________________________________________
     cdef int n_dimension = len(method.spectral_dimensions)
@@ -123,7 +142,7 @@ def core_simulator(method,
 
         count.append(dim.count)
         offset = dim.spectral_width / 2.0
-        coordinates_offset.append(-dim.reference_offset * factor - offset)
+        coordinates_offset.append(-dim.reference_offset * gyro_factor - offset)
         increment.append(dim.spectral_width / dim.count)
         event_i.append(n_ev)
 
@@ -221,8 +240,6 @@ def core_simulator(method,
     cdef clib.site_struct sites_c
     cdef clib.coupling_struct couplings_c
 
-    # index_ = []
-
     # -------------------------------------------------------------------------
     # sample __________________________________________________________________
     for idx in range(len(spin_systems)):
@@ -283,38 +300,30 @@ def core_simulator(method,
                 if shielding.gamma is not None:
                     ori_n[i3+2] = shielding.gamma
 
-            # if verbose in [1, 11]:
-            #     text = ((
-            #         f"\n{isotope} site {i} from spin system {index} "
-            #         f"@ {abundance}% abundance"
-            #     ))
-            #     len_ = len(text)
-            #     print(text)
-            #     print(f"{'-'*(len_-1)}")
-            #     print(f'Isotropic chemical shift (δ) = {str(1e6*iso/larmor_frequency)} ppm')
-            #     print(f'Shielding anisotropy (ζ) = {str(1e6*zeta/larmor_frequency)} ppm')
-            #     print(f'Shielding asymmetry (η) = {eta}')
-            #     print(f'Shielding orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
+            if debug:
+                print(f'Isotropic chemical shift (δ) = {str(iso_n)} ppm')
+                print(f'Shielding anisotropy (ζ) = {str(zeta_n)} ppm')
+                print(f'Shielding asymmetry (η) = {eta_n}')
+                print(f'Shielding orientation (alpha/beta/gamma) = {ori_n}')
 
             # quad tensor
-            if spin_quantum_number > 0.5:
-                quad = site.quadrupolar
-                if quad is not None:
-                    if quad.Cq is not None:
-                        Cq_e[i] = quad.Cq
-                    if quad.eta is not None:
-                        eta_e[i] = quad.eta
-                    if quad.alpha is not None:
-                        ori_e[i3] = quad.alpha
-                    if quad.beta is not None:
-                        ori_e[i3+1] = quad.beta
-                    if quad.gamma is not None:
-                        ori_e[i3+2] = quad.gamma
+            quad = site.quadrupolar
+            if quad is not None:
+                if quad.Cq is not None:
+                    Cq_e[i] = quad.Cq
+                if quad.eta is not None:
+                    eta_e[i] = quad.eta
+                if quad.alpha is not None:
+                    ori_e[i3] = quad.alpha
+                if quad.beta is not None:
+                    ori_e[i3+1] = quad.beta
+                if quad.gamma is not None:
+                    ori_e[i3+2] = quad.gamma
 
-                # if verbose in [1, 11]:
-                #     print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
-                #     print(f'Quadrupolar asymmetry (η) = {eta}')
-                #     print(f'Quadrupolar orientation = [alpha = {alpha}, beta = {beta}, gamma = {gamma}]')
+            if debug:
+                print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
+                print(f'Quadrupolar asymmetry (η) = {eta_e}')
+                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}]')
 
         # sites packed as c struct
         sites_c.number_of_sites = number_of_sites
@@ -385,7 +394,7 @@ def core_simulator(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            # if verbose in [1, 11]:
+            # if debug:
             #     print(f'N couplings = {number_of_couplings}')
             #     print(f'site index J = {spin_index_ij}')
             #     print(f'Isotropic J = {iso_j} Hz')
@@ -448,7 +457,6 @@ def core_simulator(method,
                 dimensions,       # Pointer to MRS_dimension structure
                 fftw_scheme,      # Pointer to the fftw scheme.
                 averaging_scheme, # Pointer to the powder averaging scheme.
-                interpolation,
                 isotropic_interpolation,
                 &f_contrib[0],
                 &affine_matrix_c[0],

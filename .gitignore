@@ -12,6 +12,7 @@ figs/*
 # Distribution / packaging
 .Python
 build/
+reports/
 .vscode/*
 .idea/*
 develop-eggs/
@@ -127,6 +128,7 @@ class-diagram*
 *.mp4
 *.temp
 *.csdf
+!test*.csdf
 *.csdfe
 *.mrsim
 *.mrsys

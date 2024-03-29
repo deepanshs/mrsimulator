@@ -1,8 +1,13 @@
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
+from typing import Optional
+
+import numpy as np
 from mrsimulator.utils.parseable import Parseable
+from pydantic import BaseModel
 from pydantic import Field
 from typing_extensions import Literal
+
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -12,8 +17,21 @@ __decompose_spectrum_enum__ = {"none": 0, "spin_system": 1}
 __isotropic_interpolation_enum__ = {"linear": 0, "gaussian": 1}
 
 # integration volume
-__integration_volume_enum__ = {"octant": 0, "hemisphere": 1}
-__integration_volume_octants__ = [1, 4]
+__integration_volume_enum__ = {"octant": 0, "hemisphere": 1, "sphere": 2}
+__integration_volume_octants__ = [1, 4, 8]
+
+
+class CustomSampling(BaseModel):
+    alpha: Optional[np.ndarray] = None
+    beta: Optional[np.ndarray] = None
+    weight: Optional[np.ndarray] = None
+    vertex_indexes: Optional[np.ndarray] = None
+
+    class Config:
+        extra = "forbid"
+        allow_population_by_field_name = True
+        validate_assignment = True
+        arbitrary_types_allowed = True
 
 
 class ConfigSimulator(Parseable):
@@ -34,8 +52,9 @@ class ConfigSimulator(Parseable):
         The spatial volume over which the spectral frequency integration/averaging
         is performed. The valid literals of this enumeration are
 
-        - ``octant`` (default), and
-        - ``hemisphere``
+        - ``octant`` (default),
+        - ``hemisphere``, and
+        - ``sphere``
 
     integration_density: int (optional).
         The integration/sampling density or equivalently the number of (alpha, beta)
@@ -78,18 +97,28 @@ class ConfigSimulator(Parseable):
 
     number_of_sidebands: int = Field(default=64, gt=0)
     number_of_gamma_angles: int = Field(default=1, gt=0)
-    integration_volume: Literal["octant", "hemisphere"] = "octant"
+    integration_volume: Literal["octant", "hemisphere", "sphere"] = "octant"
     integration_density: int = Field(default=70, gt=0)
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
+    custom_sampling: Optional[CustomSampling] = None
 
     class Config:
         extra = "forbid"
         allow_population_by_field_name = True
         validate_assignment = True
+        arbitrary_types_allowed = True
 
     def get_int_dict(self):
-        py_dict = self.dict(exclude={"property_units", "name", "description", "label"})
+        py_dict = self.dict(
+            exclude={
+                "property_units",
+                "name",
+                "description",
+                "label",
+                "custom_sampling",
+            }
+        )
         py_dict["integration_volume"] = __integration_volume_enum__[
             self.integration_volume
         ]
@@ -99,6 +128,13 @@ class ConfigSimulator(Parseable):
         py_dict["isotropic_interpolation"] = __isotropic_interpolation_enum__[
             self.isotropic_interpolation
         ]
+        if self.custom_sampling is not None:
+            py_dict["alpha"] = self.custom_sampling.alpha
+            py_dict["beta"] = self.custom_sampling.beta
+            py_dict["weight"] = self.custom_sampling.weight
+            if self.custom_sampling.vertex_indexes is not None:
+                py_dict["positions"] = self.custom_sampling.vertex_indexes.ravel()
+            py_dict["user_defined"] = True
         return py_dict
 
     # averaging scheme. This contains the c pointer used in frequency evaluation
@@ -125,6 +161,8 @@ class ConfigSimulator(Parseable):
         >>> a.config.get_orientations_count() # (4 * 21 * 22 / 2) = 924
         924
         """
+        if self.custom_sampling is not None:
+            return self.number_of_gamma_angles * self.custom_sampling.alpha.size
         n = self.integration_density
         vol = __integration_volume_octants__[
             __integration_volume_enum__[self.integration_volume]
