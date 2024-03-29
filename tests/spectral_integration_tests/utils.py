@@ -67,8 +67,6 @@ def get_data(filename):
 def get_csdm_data(source_file, quantity):
     """Get data from csdm object"""
     csdm = cp.load(source_file)
-    if quantity == "time":
-        csdm = csdm.fft()
     data_source = csdm.y[0].components[0]
     return data_source
 

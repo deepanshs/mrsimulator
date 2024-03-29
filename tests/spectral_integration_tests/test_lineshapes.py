@@ -1,4 +1,5 @@
 """Lineshape Test."""
+from copy import deepcopy
 from os import path
 from pprint import pformat
 
@@ -26,6 +27,7 @@ matplotlib.rc("font", **font)
 
 @pytest.fixture(scope="module")
 def report():
+    print(__GENERATE_REPORT__)
     if __GENERATE_REPORT__:
         pdf = PdfPages("reports/lineshapes_report.pdf")
     else:
@@ -43,6 +45,9 @@ def report_pdf(report):
 
 def compile_plots(dim, rep, info, title=None, report=None, label="simpson"):
     """Test report plot"""
+    if not __GENERATE_REPORT__:
+        return
+
     _, ax = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]})
 
     for i, res in enumerate(rep[:1]):
@@ -79,6 +84,24 @@ def compile_plots(dim, rep, info, title=None, report=None, label="simpson"):
     plt.close()
 
 
+def test_pdf():
+    global __GENERATE_REPORT__
+    temp_status = deepcopy(__GENERATE_REPORT__)
+    __GENERATE_REPORT__ = True
+
+    filename = "reports/lineshapes_report_scrap.pdf"
+    report_file = PdfPages(filename)
+    dim = np.arange(10)
+    res = [np.arange(10), np.arange(10)]
+    info = {"config": 1, "spin_systems": 2, "methods": 3}
+    compile_plots(dim, [res], info, title="Shielding Sidebands", report=report_file)
+    report_file.close()
+    is_file = path.isfile(filename)
+    assert is_file
+
+    __GENERATE_REPORT__ = temp_status
+
+
 def check_all_close(res, message, rel_limit):
     """Check if the vectos in res are all close within relative limits"""
     for item in res:
@@ -110,8 +133,7 @@ def test_pure_shielding_sideband_simpson(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(dim, res, info, title="Shielding Sidebands", report=report)
+        compile_plots(dim, res, info, title="Shielding Sidebands", report=report)
 
         message = f"{error_message} test0{i}.json"
         check_all_close(res, message, rel_limit=2.5)
@@ -137,8 +159,7 @@ def test_pure_quadrupolar_sidebands_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(dim, res, info, title="Quad Sidebands", report=report)
+        compile_plots(dim, res, info, title="Quad Sidebands", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.5)
@@ -159,14 +180,13 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(
-                dim,
-                res,
-                info,
-                title="Quad + Shielding Sidebands",
-                report=report,
-            )
+        compile_plots(
+            dim,
+            res,
+            info,
+            title="Quad + Shielding Sidebands",
+            report=report,
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=0.9)
@@ -186,14 +206,13 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(
-                dim,
-                res,
-                info,
-                title="1st Order Quadrupolar Lineshape",
-                report=report,
-            )
+        compile_plots(
+            dim,
+            res,
+            info,
+            title="1st Order Quadrupolar Lineshape",
+            report=report,
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.0)
@@ -211,8 +230,7 @@ def test_j_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(dim, res, info, title="J-coupling Spectra", report=report)
+        compile_plots(dim, res, info, title="J-coupling Spectra", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.1)
@@ -232,10 +250,7 @@ def test_dipolar_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(
-                dim, res, info, title="Dipolar-coupling Spectra", report=report
-            )
+        compile_plots(dim, res, info, title="Dipolar-coupling Spectra", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.5)
@@ -262,15 +277,14 @@ def test_quad_csa_cross_rmnsim(report):
             )
             res.append([data_mrsimulator, data_source])
 
-            if __GENERATE_REPORT__:
-                compile_plots(
-                    dim,
-                    res,
-                    info,
-                    title="Quad-CSA 2nd Order Cross-Term",
-                    report=report,
-                    label="rmnsim",
-                )
+            compile_plots(
+                dim,
+                res,
+                info,
+                title="Quad-CSA 2nd Order Cross-Term",
+                report=report,
+                label="rmnsim",
+            )
 
             message = f"{error_message} test0{i}.json"
             check_all_close(res, message, rel_limit=0.3)
@@ -301,15 +315,14 @@ def test_pure_shielding_static_lineshape_python_brute(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(
-                dim,
-                res,
-                info,
-                title="Shielding Static Lineshape (Brute Force)",
-                report=report,
-                label="Brute",
-            )
+        compile_plots(
+            dim,
+            res,
+            info,
+            title="Shielding Static Lineshape (Brute Force)",
+            report=report,
+            label="Brute",
+        )
 
         message = f"{error_message} test0{i}.json"
         check_all_close(res, message, rel_limit=2)
@@ -338,15 +351,14 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        if __GENERATE_REPORT__:
-            compile_plots(
-                dim,
-                res,
-                info,
-                title="Quad Lineshape Self-Test",
-                report=report,
-                label="self",
-            )
+        compile_plots(
+            dim,
+            res,
+            info,
+            title="Quad Lineshape Self-Test",
+            report=report,
+            label="self",
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.5)
