@@ -102,7 +102,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Exponential(FWHM="60 Hz"),
         sp.FFT(),
-        sp.Scale(factor=140),
+        sp.Scale(factor=1400),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real

@@ -1,4 +1,8 @@
 """Test for c functions."""
+from copy import deepcopy
+from os import mkdir
+from os import path
+
 import matplotlib.pyplot as plt
 import mrsimulator.tests.tests as clib
 import numpy as np
@@ -107,6 +111,30 @@ def plot_2d_raster(rep, title=None, report=None):
     if report is not None:
         report.savefig(dpi=150)
     plt.close()
+
+
+def test_pdf():
+    global __GENERATE_REPORT__
+    temp_status = deepcopy(__GENERATE_REPORT__)
+    __GENERATE_REPORT__ = True
+
+    is_present = path.isdir("_temp")
+    if not is_present:
+        mkdir("_temp")
+    filename = "_temp/interpolation_report_scrap.pdf"
+    report_file = PdfPages(filename)
+    amp2d = np.random.rand(100).reshape(10, 10)
+    pts1 = np.array([1, 3, 6])
+    pts2 = np.array([5, 2, 9])
+    proj_x = amp2d.sum(axis=0)
+    proj_y = amp2d.sum(axis=1)
+    rep = [amp2d, pts1, pts2, proj_x, proj_y]
+    plot_2d_raster([rep], title="All points within FOV", report=report_file)
+    report_file.close()
+    is_file = path.isfile(filename)
+    assert is_file
+
+    __GENERATE_REPORT__ = temp_status
 
 
 def test_octahedron_averaging_setup():
@@ -309,8 +337,7 @@ def test_triangle_rasterization1(report):
 
             rep.append([amp1, lst1, lst2, amp3, amp2])
 
-        if __GENERATE_REPORT__:
-            plot_2d_raster(rep, title="All points within FOV", report=report)
+        plot_2d_raster(rep, title="All points within FOV", report=report)
 
 
 def test_triangle_rasterization2(report):
@@ -339,10 +366,7 @@ def test_triangle_rasterization2(report):
 
             rep.append([amp1, lst1, lst2, None, amp2])
 
-        if __GENERATE_REPORT__:
-            plot_2d_raster(
-                rep, title="One or more points outside of FOV", report=report
-            )
+        plot_2d_raster(rep, title="One or more points outside of FOV", report=report)
 
 
 def test_triangle_rasterization3(report):
@@ -362,10 +386,7 @@ def test_triangle_rasterization3(report):
             assert np.allclose(amp_x, amp1.sum(axis=0), atol=1e-2)
 
             rep.append([amp1, lst1, lst2, amp_x, None])
-        if __GENERATE_REPORT__:
-            plot_2d_raster(
-                rep, title="One or more points outside of FOV", report=report
-            )
+        plot_2d_raster(rep, title="One or more points outside of FOV", report=report)
 
 
 def test_triangle_rasterization4(report):
@@ -385,9 +406,8 @@ def test_triangle_rasterization4(report):
             amp1, amp_y, amp_x, lst1, lst2 = get_amps_from_interpolation(list_, scl)
 
             rep.append([amp1, lst1, lst2, amp_x, None])
-        if __GENERATE_REPORT__:
-            plot_2d_raster(rep, title="All points outside of FOV", report=report)
-            # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
+        plot_2d_raster(rep, title="All points outside of FOV", report=report)
+        # assert np.allclose(amp_x.real, amp1.real.sum(axis=0), atol=1e-15)
 
 
 def test_triangle_rasterization5(report):
@@ -406,8 +426,7 @@ def test_triangle_rasterization5(report):
             assert np.allclose(amp2, amp1.sum(axis=1), atol=1e-15)
 
             rep.append([amp1, lst1, lst2, amp3, amp2])
-        if __GENERATE_REPORT__:
-            plot_2d_raster(rep, title="Small trianges spanning 1-2 bins", report=report)
+        plot_2d_raster(rep, title="Small trianges spanning 1-2 bins", report=report)
 
 
 def get_amps_from_interpolation(list_, scl):
