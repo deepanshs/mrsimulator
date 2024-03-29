@@ -127,7 +127,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Exponential(FWHM="0.3 kHz"),
         sp.FFT(),
-        sp.Scale(factor=300),
+        sp.Scale(factor=3000),
         sp.baseline.ConstantOffset(offset=-2),
     ]
 )

@@ -155,7 +155,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="5 kHz", dim_index=0),  # along dimension 0
         sp.apodization.Gaussian(FWHM="5 kHz", dim_index=1),  # along dimension 1
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=5e8),
+        sp.Scale(factor=5e9),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real

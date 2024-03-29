@@ -114,7 +114,7 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Gaussian(FWHM="300 Hz"),
         sp.FFT(),
-        sp.Scale(factor=50),
+        sp.Scale(factor=500),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real

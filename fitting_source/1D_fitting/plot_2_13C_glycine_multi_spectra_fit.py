@@ -150,7 +150,7 @@ processor1 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="20 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="200 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=10),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=100),  # dataset is scaled independently using scale factor.
     ]
 )
 
@@ -161,7 +161,7 @@ processor2 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="30 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="300 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=100),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=1000),  # dataset is scaled independently using scale factor.
     ]
 )
 
@@ -172,7 +172,7 @@ processor3 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="10 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="150 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=50),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=500),  # dataset is scaled independently using scale factor.
     ]
 )
 processors = [processor1, processor2, processor3]

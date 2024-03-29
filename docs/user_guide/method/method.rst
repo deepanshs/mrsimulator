@@ -426,7 +426,7 @@ below.
     :context: close-figs
 
     # Plot spectra from all three methods
-    fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"}, sharey=True)
     ax[0].plot(
         processor.apply_operations(dataset=sim.methods[0].simulation).real,
         label="$p_I = -1$ transition",
@@ -447,8 +447,6 @@ below.
     ax[1].legend()
     ax[1].grid()
     ax[1].invert_xaxis()  # reverse x-axis
-    ax[0].set_ylim(-0.02, 0.34)  # Set y-limits to be the same
-    ax[1].set_ylim(-0.02, 0.34)  # on both plots
     plt.tight_layout()
     plt.show()
 
@@ -1125,7 +1123,7 @@ the right.
 .. plot::
     :context: close-figs
 
-    fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"})
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.5), subplot_kw={"projection": "csdm"}, sharey=True)
     ax[0].plot(processor.apply_operations(dataset=sim.methods[0].simulation).real)
     ax[0].set_title("Full Single-Quantum Spectrum")
     ax[0].grid()
