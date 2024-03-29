@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Extended Czjzek fitting of ¹³⁹La MAS NMR of La₀.₂Y₁.₈Si₂2O₇
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -78,19 +77,18 @@ processor = sp.SignalProcessor(operations=[sp.Scale(factor=1000)])
 # We therefore define a function which pre-computes a lineshape kernel given a range
 # of :math:`\text{Cq}` and :math:`\eta_q` values, an NMR method, and an isotope which,
 # for this example, is ``"139La"``.
-def make_kernel(cq_range, eta_range, method, isotope):
+def make_kernel(pos, method, isotope):
     """Pre-computes the kernel to use when fitting the experimental spectrum
 
     Arguments:
-        (np.array) cq_range: Numpy array of cq points
-        (np.array) eta_range: Numpy array of eta points
+        (np.array) pos: list of Numpy array of cq and eta points
         (Method) method: mrsimulator Method object used to simulate the spectra
         (str) isotope: Isotope of the site
 
     Returns:
         Lineshape kernel as a numpy array
     """
-    Cq, eta = np.meshgrid(cq_range, eta_range, indexing="xy")
+    Cq, eta = np.meshgrid(pos[0], pos[1], indexing="xy")
 
     spin_systems = [
         SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq * 1e6, eta=e))])
@@ -107,8 +105,8 @@ def make_kernel(cq_range, eta_range, method, isotope):
 # Create ranges to construct cq and eta grid points
 cq_range = np.linspace(0, 100, num=100) * 0.8 + 25
 eta_range = np.arange(21) / 20
-
-kernel = make_kernel(cq_range, eta_range, method, "139La")
+pos = [cq_range, eta_range]
+kernel = make_kernel(pos, method, "139La")
 
 
 # %%
@@ -130,9 +128,7 @@ kernel = make_kernel(cq_range, eta_range, method, "139La")
 # is applied to :math:`{\bf s}` using the `Fourier shift relation
 # <https://en.wikipedia.org/wiki/Fourier_transform#Translation_/_time_shifting>`__.
 # Finally, the spectrum is scaled and returned.
-def make_spectrum_from_parameters(
-    params, kernel, processor, cq_range=cq_range, eta_range=eta_range
-):
+def make_spectrum_from_parameters(params, kernel, processor, pos, distribution):
     """Makes a spectrum with values given in a parameters object and a pre-computed
     kernel.
 
@@ -152,15 +148,17 @@ def make_spectrum_from_parameters(
     iso_shift = values["dist_iso_shift"]
 
     # Setup model object and get the amplitude
-    model_quad = ExtCzjzekDistribution({"Cq": Cq, "eta": eta}, eps)
-    _, _, amp = model_quad.pdf(pos=[cq_range, eta_range])
+    distribution.symmetric_tensor = {"Cq": Cq, "eta": eta}
+    distribution.eps = eps
+    # model_quad = ExtCzjzekDistribution({"Cq": Cq, "eta": eta}, eps)
+    _, _, amp = distribution.pdf(pos=pos)
 
     # Create spectra by dotting the amplitude distribution with the kernel
     dist = kernel.dot(amp.ravel())
 
     # Pack numpy array as csdm object and apply signal processing
     guess_dataset = cp.CSDM(
-        dimensions=[experiment.x[0]],
+        dimensions=experiment.x,
         dependent_variables=[cp.as_dependent_variable(dist)],
     )
 
@@ -203,10 +201,16 @@ params.add("dist_Cq", value=49.5)
 params.add("dist_eta", value=0.55, min=0, max=1)
 params.add("dist_eps", value=0.24, min=0)
 params.add("dist_iso_shift", value=350)
-params.add("sp_scale_factor", value=3.8e2, min=0)
+params.add("sp_scale_factor", value=3.8e3, min=0)
 
 # Plot the initial guess spectrum along with the experimental data
-initial_guess = make_spectrum_from_parameters(params, kernel, processor)
+distribution = ExtCzjzekDistribution(
+    symmetric_tensor={"Cq": params["dist_Cq"], "eta": params["dist_eta"]},
+    eps=params["dist_eps"],
+)
+initial_guess = make_spectrum_from_parameters(
+    params, kernel, processor, pos, distribution
+)
 residual_spectrum = residuals(experiment, initial_guess)
 
 plt.figure(figsize=(6, 4))
@@ -227,8 +231,12 @@ plt.show()
 # Now define minimization function per the LMFIT specifications which will return
 # the difference between the experimental and guess spectrum scaled by the noise
 # standard deviation which was calculated in a previous cell.
-def minimization_function(params, experiment, processor, kernel, sigma=sigma):
-    guess_spectrum = make_spectrum_from_parameters(params, kernel, processor)
+def minimization_function(
+    params, experiment, processor, kernel, pos, distribution, sigma=sigma
+):
+    guess_spectrum = make_spectrum_from_parameters(
+        params, kernel, processor, pos, distribution
+    )
     residual_spectrum = residuals(experiment, guess_spectrum)
     return residual_spectrum.y[0].components[0].real / sigma
 
@@ -237,7 +245,9 @@ def minimization_function(params, experiment, processor, kernel, sigma=sigma):
 # Create the Minimization object with all the functions and variables previously
 # created.
 minner = Minimizer(
-    minimization_function, params, fcn_args=(experiment, processor, kernel)
+    minimization_function,
+    params,
+    fcn_args=(experiment, processor, kernel, pos, distribution),
 )
 result = minner.minimize(method="powell")
 best_fit_params = result.params  # Grab the Parameters object from the best fit
@@ -248,7 +258,9 @@ result
 # --------------------------
 #
 # Finally, plot the best fit spectrum and the residuals.
-final_fit = make_spectrum_from_parameters(best_fit_params, kernel, processor)
+final_fit = make_spectrum_from_parameters(
+    best_fit_params, kernel, processor, pos, distribution
+)
 residual_spectrum = residuals(experiment, final_fit)
 
 plt.figure(figsize=(6, 4))
