@@ -1,6 +1,6 @@
 import numpy as np
+from mrsimulator.clib import histogram2d
 from mrsimulator.models.utils import zeta_eta_to_x_y
-
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "dsrivastava@hyperfine.io"
@@ -84,8 +84,16 @@ def czjzek_polar(sigma: float, pos: list):
     range_x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
     range_y = [pos[1][0] - delta_e, pos[1][-1] + delta_e]
 
-    hist_x_y, _, _ = np.histogram2d(
-        x, y, weights=pdf_model, bins=bins, range=[range_x, range_y]
+    _, _, hist_x_y = histogram2d(
+        sample_x=x,
+        sample_y=y,
+        weights=pdf_model,
+        x_count=bins[0],
+        y_count=bins[1],
+        x_min=range_x[0],
+        x_max=range_x[1],
+        y_min=range_y[0],
+        y_max=range_y[1],
     )
     hist_x_y += hist_x_y.T
     hist_x_y /= hist_x_y.sum()

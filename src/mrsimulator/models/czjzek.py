@@ -7,6 +7,7 @@ __email__ = "dsrivastava@hyperfine.io"
 import csdmpy as cp
 import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
+from mrsimulator.clib import histogram2d
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 from .utils import get_Haeberlen_components
@@ -145,7 +146,18 @@ class AbstractDistribution:
         x_size = pos[0].size
         y_size = pos[1].size
         zeta, eta = self.rvs(size)
-        hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
+
+        _, _, hist = histogram2d(
+            sample_x=zeta,
+            sample_y=eta,
+            weights=np.ones(zeta.size, dtype=float),
+            x_count=x_size,
+            y_count=y_size,
+            x_min=x[0],
+            x_max=x[1],
+            y_min=y[0],
+            y_max=y[1],
+        )
 
         hist /= hist.sum()
         return pos[0], pos[1], hist.T
