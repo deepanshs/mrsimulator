@@ -552,7 +552,7 @@ def residuals(sim: Simulator, processors: list = None):
 def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq_Hz):
     """Apply isotropic chemical shift to a CSDM object using the FFT shift theorem."""
     csdm_obj = csdm_obj.fft()
-    time_coords = csdm_obj.x[0].coordinates.value
+    time_coords = csdm_obj.x[0].coordinates.to("s").value
     iso_shift_Hz = larmor_freq_Hz * iso_shift_ppm
     csdm_obj.y[0].components[0] *= np.exp(-np.pi * 2j * time_coords * iso_shift_Hz)
     csdm_obj = csdm_obj.fft()

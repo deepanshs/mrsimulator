@@ -159,13 +159,15 @@ params
 # -----------------------------
 # Finally, a `Minimizer` object is created and a minimization run using least-squares.
 # The same arguments defined in the `addtl_sf_kwargs` variable are also passed to the
-# minimizer.
+# minimizer. Sinice the probabilty distribution is generated from a sparsely sampled
+# from a 5D second rank tensor parameter space, we increase the `diff_step` size from
+# machine precession to avoid approaching local minima from noise.
 scipy_minimization_kwargs = dict(
-    diff_step=1e-3,  # Increase step size
-    gtol=1e-15,  # Increase global convergence requirement (default 1e-8)
-    xtol=1e-15,  # Increase variable convergence requirement (default 1e-8)
+    diff_step=1e-4,  # Increase step size from machine precesion.
+    gtol=1e-10,  # Decrease global convergence requirement (default 1e-8)
+    xtol=1e-10,  # Decrease variable convergence requirement (default 1e-8)
     verbose=2,  # Print minimization info during each step
-    loss="soft_l1",
+    loss="linear",
 )
 
 minner = Minimizer(
@@ -206,7 +208,7 @@ amp = cz_model.pdf(pos=pos, pack_as_csdm=True)
 plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.imshow(amp, cmap="gist_ncar_r", interpolation="none", aspect="auto")
-ax.set_xlabel("x / Hz ")
+ax.set_xlabel("x / Hz")
 ax.set_ylabel("y / Hz")
 plt.tight_layout()
 plt.show()

@@ -91,9 +91,7 @@ def make_kernel(pos, method, isotope):
     Cq, eta = np.meshgrid(pos[0], pos[1], indexing="xy")
 
     spin_systems = [
-        SpinSystem(
-            sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq_ * 1e6, eta=e_))]
-        )
+        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq_, eta=e_))])
         for cq_, e_ in zip(Cq.ravel(), eta.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
@@ -106,7 +104,7 @@ def make_kernel(pos, method, isotope):
 
 
 # Create ranges to construct cq and eta grid points
-cq_range = np.linspace(0, 50, num=50) * 1.6 + 25
+cq_range = (np.linspace(0, 100, num=100) * 0.8 + 25) * 1e6  # in Hz
 eta_range = np.arange(21) / 20
 pos = [cq_range, eta_range]
 kernel = make_kernel(pos, method, "139La")
@@ -200,10 +198,10 @@ def residuals(exp_spectra, simulated_spectra):
 #     If you adapt this example to your own dataset, make sure the initial guess is
 #     decently good, otherwise LMFIT is likely to fall into a local minima.
 params = lmfit.Parameters()
-params.add("dist_Cq", value=49.5)
+params.add("dist_Cq", value=49.5e6)  # Hz
 params.add("dist_eta", value=0.55, min=0, max=1)
 params.add("dist_eps", value=0.1, min=0)
-params.add("dist_iso_shift", value=350)
+params.add("dist_iso_shift", value=350)  # ppm
 params.add("sp_scale_factor", value=3.8e3, min=0)
 
 # Plot the initial guess spectrum along with the experimental data
@@ -211,7 +209,7 @@ distribution = ExtCzjzekDistribution(
     symmetric_tensor={"Cq": params["dist_Cq"], "eta": params["dist_eta"]},
     eps=params["dist_eps"],
 )
-guess_distribution = distribution.pdf(pos, size=100_000, pack_as_csdm=True)
+guess_distribution = distribution.pdf(pos, size=400_000, pack_as_csdm=True)
 
 initial_guess_spectrum = make_spectrum_from_parameters(
     params, kernel, processor, pos, distribution
@@ -235,6 +233,8 @@ plt.show()
 plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.imshow(guess_distribution, interpolation="none", cmap="gist_ncar_r", aspect="auto")
+ax.set_xlabel("Cq / Hz")
+ax.set_ylabel(r"$\eta$")
 plt.tight_layout()
 plt.show()
 
@@ -257,12 +257,15 @@ def minimization_function(
 
 
 # %%
+# Sinice the probabilty distribution is generated from a sparsely sampled
+# from a 5D second rank tensor parameter space, we increase the `diff_step` size from
+# machine precession to avoid approaching local minima from noise.
 scipy_minimization_kwargs = dict(
-    diff_step=1e-3,  # Increase step size
-    gtol=1e-15,  # Increase global convergence requirement (default 1e-8)
-    xtol=1e-15,  # Increase variable convergence requirement (default 1e-8)
+    diff_step=1e-4,  # Increase step size from machine precession
+    gtol=1e-10,  # Decrease global convergence requirement (default 1e-8)
+    xtol=1e-10,  # Decrease variable convergence requirement (default 1e-8)
     verbose=2,  # Print minimization info during each step
-    loss="soft_l1",
+    loss="linear",
 )
 
 minner = Minimizer(
@@ -305,6 +308,8 @@ prob = distribution.pdf(pos, pack_as_csdm=True)
 plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.imshow(prob, interpolation="none", cmap="gist_ncar_r", aspect="auto")
+ax.set_xlabel("Cq / Hz")
+ax.set_ylabel(r"$\eta$")
 plt.tight_layout()
 plt.show()
 # %%
