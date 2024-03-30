@@ -22,7 +22,7 @@ from lmfit import Minimizer
 import matplotlib.pyplot as plt
 
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -33,7 +33,7 @@ experiment = cp.load(host + filename).real
 experiment.x[0].to("ppm", "nmr_frequency_ratio")
 experiment /= experiment.max()
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, "k", alpha=0.5)
 plt.grid()
@@ -91,10 +91,11 @@ def make_kernel(pos, method, isotope):
     Cq, eta = np.meshgrid(pos[0], pos[1], indexing="xy")
 
     spin_systems = [
-        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq * 1e6, eta=e))])
-        for cq, e in zip(Cq.ravel(), eta.ravel())
+        SpinSystem(sites=[Site(isotope=isotope, quadrupolar=dict(Cq=cq_, eta=e_))])
+        for cq_, e_ in zip(Cq.ravel(), eta.ravel())
     ]
     sim = Simulator(spin_systems=spin_systems, methods=[method])
+    sim.config.number_of_sidebands = 4
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)  # Will return spectrum as numpy array, not CSDM object
 
@@ -103,7 +104,7 @@ def make_kernel(pos, method, isotope):
 
 
 # Create ranges to construct cq and eta grid points
-cq_range = np.linspace(0, 100, num=100) * 0.8 + 25
+cq_range = (np.linspace(0, 100, num=100) * 0.8 + 25) * 1e6  # in Hz
 eta_range = np.arange(21) / 20
 pos = [cq_range, eta_range]
 kernel = make_kernel(pos, method, "139La")
@@ -148,13 +149,13 @@ def make_spectrum_from_parameters(params, kernel, processor, pos, distribution):
     iso_shift = values["dist_iso_shift"]
 
     # Setup model object and get the amplitude
-    distribution.symmetric_tensor = {"Cq": Cq, "eta": eta}
+    distribution.symmetric_tensor.Cq = Cq
+    distribution.symmetric_tensor.eta = eta
     distribution.eps = eps
-    # model_quad = ExtCzjzekDistribution({"Cq": Cq, "eta": eta}, eps)
     _, _, amp = distribution.pdf(pos=pos)
 
     # Create spectra by dotting the amplitude distribution with the kernel
-    dist = kernel.dot(amp.ravel())
+    dist = np.dot(kernel, amp.ravel())
 
     # Pack numpy array as csdm object and apply signal processing
     guess_dataset = cp.CSDM(
@@ -197,10 +198,10 @@ def residuals(exp_spectra, simulated_spectra):
 #     If you adapt this example to your own dataset, make sure the initial guess is
 #     decently good, otherwise LMFIT is likely to fall into a local minima.
 params = lmfit.Parameters()
-params.add("dist_Cq", value=49.5)
+params.add("dist_Cq", value=49.5e6)  # Hz
 params.add("dist_eta", value=0.55, min=0, max=1)
-params.add("dist_eps", value=0.24, min=0)
-params.add("dist_iso_shift", value=350)
+params.add("dist_eps", value=0.1, min=0)
+params.add("dist_iso_shift", value=350)  # ppm
 params.add("sp_scale_factor", value=3.8e3, min=0)
 
 # Plot the initial guess spectrum along with the experimental data
@@ -208,18 +209,32 @@ distribution = ExtCzjzekDistribution(
     symmetric_tensor={"Cq": params["dist_Cq"], "eta": params["dist_eta"]},
     eps=params["dist_eps"],
 )
-initial_guess = make_spectrum_from_parameters(
+guess_distribution = distribution.pdf(pos, size=400_000, pack_as_csdm=True)
+
+initial_guess_spectrum = make_spectrum_from_parameters(
     params, kernel, processor, pos, distribution
 )
-residual_spectrum = residuals(experiment, initial_guess)
+residual_spectrum = residuals(experiment, initial_guess_spectrum)
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment.real, "k", alpha=0.5)
-ax.plot(initial_guess.real, "r", alpha=0.75, label="Guess")
-ax.plot(residual_spectrum.real, "b", alpha=0.75, label="Residuals")
+ax.plot(experiment.real, "k", alpha=0.5, label="Experiment")
+ax.plot(initial_guess_spectrum.real, "r", alpha=0.3, label="Guess")
+ax.plot(residual_spectrum.real, "b", alpha=0.3, label="Residuals")
 plt.legend()
 plt.grid()
+plt.title("Initial Guess")
+plt.tight_layout()
+plt.show()
+
+
+# %%
+# Guess distribution
+plt.figure(figsize=(4, 3))
+ax = plt.subplot(projection="csdm")
+ax.imshow(guess_distribution, interpolation="none", cmap="gist_ncar_r", aspect="auto")
+ax.set_xlabel("Cq / Hz")
+ax.set_ylabel(r"$\eta$")
 plt.tight_layout()
 plt.show()
 
@@ -242,16 +257,27 @@ def minimization_function(
 
 
 # %%
-# Create the Minimization object with all the functions and variables previously
-# created.
+# Sinice the probabilty distribution is generated from a sparsely sampled
+# from a 5D second rank tensor parameter space, we increase the `diff_step` size from
+# machine precession to avoid approaching local minima from noise.
+scipy_minimization_kwargs = dict(
+    diff_step=1e-4,  # Increase step size from machine precession
+    gtol=1e-10,  # Decrease global convergence requirement (default 1e-8)
+    xtol=1e-10,  # Decrease variable convergence requirement (default 1e-8)
+    verbose=2,  # Print minimization info during each step
+    loss="linear",
+)
+
 minner = Minimizer(
     minimization_function,
     params,
     fcn_args=(experiment, processor, kernel, pos, distribution),
+    **scipy_minimization_kwargs,
 )
-result = minner.minimize(method="powell")
+result = minner.minimize(method="least_squares")
 best_fit_params = result.params  # Grab the Parameters object from the best fit
 result
+
 
 # %%
 # Plot the best-fit solution
@@ -263,17 +289,29 @@ final_fit = make_spectrum_from_parameters(
 )
 residual_spectrum = residuals(experiment, final_fit)
 
-plt.figure(figsize=(6, 4))
+plt.figure(figsize=(4, 3))
 ax = plt.subplot(projection="csdm")
-ax.plot(experiment, "k", alpha=0.5)
-ax.plot(final_fit, "r", alpha=0.75, label="Fit")
-ax.plot(residual_spectrum, "b", alpha=0.75, label="Residuals")
+ax.plot(experiment, "k", alpha=0.5, label="Experiment")
+ax.plot(final_fit, "r", alpha=0.3, label="Fit")
+ax.plot(residual_spectrum, "b", alpha=0.3, label="Residuals")
 plt.legend()
 ax.set_xlim(-11000, 9000)
 plt.grid()
+plt.title("Best Fit")
 plt.tight_layout()
 plt.show()
 
+
+# %%
+# Best fit probability distribution
+prob = distribution.pdf(pos, pack_as_csdm=True)
+plt.figure(figsize=(4, 3))
+ax = plt.subplot(projection="csdm")
+ax.imshow(prob, interpolation="none", cmap="gist_ncar_r", aspect="auto")
+ax.set_xlabel("Cq / Hz")
+ax.set_ylabel(r"$\eta$")
+plt.tight_layout()
+plt.show()
 # %%
 #
 # .. [#f1] A. J. Fernández-Carrión, M. Allix, P. Florian, M. R. Suchomel, and A. I.
