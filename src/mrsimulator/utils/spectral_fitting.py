@@ -237,9 +237,10 @@ def make_simulator_params(
     # get total abundance scaling factor
     sys_length = len(sim.spin_systems)
     sys_model_length = len(spin_system_models)
-    total_abundance = sum(sys.abundance for sys in sim.spin_systems)
+    total_abundance = 0.0
+    total_abundance += sum(sys.abundance for sys in sim.spin_systems)
     total_abundance += sum(sys.abundance for sys in spin_system_models)
-    abundance_scale = 100 / total_abundance
+    abundance_scale = 100.0 / total_abundance
 
     # expression for the last abundance.
     if sys_length > 0:
@@ -572,7 +573,7 @@ def make_distribution_params(
     params = Parameters()
     for i, model in enumerate(spin_system_models):
         # normalize the abundance
-        model.abundance /= norm
+        model.abundance *= norm
         params = model.add_lmfit_params(params, i)
 
         # Set last abundance parameter as a non-free variable
@@ -581,7 +582,7 @@ def make_distribution_params(
             expr_terms.append(f"{model_prefix}_{i}_abundance")
         else:
             expr = "-".join(expr_terms)
-            expr = "1" if expr == "" else f"1-{expr}"
+            expr = "100" if expr == "" else f"100 - {expr}"
             params[f"{model_prefix}_{i}_abundance"].vary = False
             params[f"{model_prefix}_{i}_abundance"].expr = expr
     return params

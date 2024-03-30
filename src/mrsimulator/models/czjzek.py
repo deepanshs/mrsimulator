@@ -85,7 +85,7 @@ class AbstractDistribution:
     def __init__(
         self,
         mean_isotropic_chemical_shift=0.0,
-        abundance=1.0,
+        abundance=100.0,
         polar=False,
         cache_tensors=False,
     ):
@@ -159,13 +159,18 @@ class AbstractDistribution:
     def add_lmfit_params(self, params, i):
         """Add lmfit params for base class"""
         prefix = self.model_name
-        params.add(f"{prefix}_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
-        params.add(f"{prefix}_{i}_abundance", value=self.abundance, min=0, max=1)
+        params.add(
+            f"{prefix}_{i}_mean_isotropic_chemical_shift",
+            value=self.mean_isotropic_chemical_shift,
+        )
+        params.add(f"{prefix}_{i}_abundance", value=self.abundance, min=0, max=100)
 
     def update_lmfit_params(self, params, i):
         """Update lmfit params for base class"""
         prefix = self.model_name
-        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
+        self.mean_isotropic_chemical_shift = params[
+            f"{prefix}_{i}_mean_isotropic_chemical_shift"
+        ].value
         self.abundance = params[f"{prefix}_{i}_abundance"].value
 
 
@@ -209,7 +214,7 @@ class CzjzekDistribution(AbstractDistribution):
         self,
         sigma: float,
         mean_isotropic_chemical_shift: float = 0.0,
-        abundance: float = 1.0,
+        abundance: float = 100.0,
         polar=False,
         cache=True,
     ):
@@ -300,14 +305,14 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
-    model_name = "extended_czjzek"
+    model_name = "ext_czjzek"
 
     def __init__(
         self,
         symmetric_tensor: SymmetricTensor,
         eps: float,
         mean_isotropic_chemical_shift: float = 0.0,
-        abundance: float = 1.0,
+        abundance: float = 100.0,
         polar=False,
         cache=True,
     ):
@@ -376,9 +381,14 @@ class ExtCzjzekDistribution(AbstractDistribution):
             zeta = self.symmetric_tensor.zeta
         else:
             zeta = self.symmetric_tensor.Cq
-        params.add(f"{prefix}_{i}_zeta", value=zeta)
-        params.add(f"{prefix}_{i}_eta", value=self.symmetric_tensor.eta, min=0, max=1)
-        params.add(f"{prefix}_{i}_epsilon", value=self.eps, min=1e-6)
+        params.add(f"{prefix}_{i}_symmetric_tensor_zeta", value=zeta)
+        params.add(
+            f"{prefix}_{i}_symmetric_tensor_eta",
+            value=self.symmetric_tensor.eta,
+            min=0,
+            max=1,
+        )
+        params.add(f"{prefix}_{i}_eps", value=self.eps, min=1e-6)
         super().add_lmfit_params(params, i)
         return params
 
@@ -386,12 +396,12 @@ class ExtCzjzekDistribution(AbstractDistribution):
         """Create lmfit params for index i"""
         prefix = self.model_name
 
-        zeta = params[f"{prefix}_{i}_zeta"].value
+        zeta = params[f"{prefix}_{i}_symmetric_tensor_zeta"].value
         if self.symmetric_tensor.zeta is not None:
             self.symmetric_tensor.zeta = zeta
         else:
             self.symmetric_tensor.Cq = zeta
 
-        self.symmetric_tensor.eta = params[f"{prefix}_{i}_eta"].value
-        self.eps = params[f"{prefix}_{i}_epsilon"].value
+        self.symmetric_tensor.eta = params[f"{prefix}_{i}_symmetric_tensor_eta"].value
+        self.eps = params[f"{prefix}_{i}_eps"].value
         super().update_lmfit_params(params, i)
