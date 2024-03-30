@@ -568,31 +568,22 @@ def make_distribution_params(
     """
     n_dist = len(spin_system_models)
 
-    # norm = 0.0
-    # for model in distribution_models:
-    # norm += model.abundance
-
     expr_terms = []
     params = Parameters()
     for i, model in enumerate(spin_system_models):
         # normalize the abundance
         model.abundance /= norm
-        params = model.get_lmfit_params(params, i)
+        params = model.add_lmfit_params(params, i)
 
-        # Set last weight parameter as a non-free variable
-        model_prefix = model.param_prefix()
+        # Set last abundance parameter as a non-free variable
+        model_prefix = model.model_name
         if i < n_dist - 1 or skip_last:
-            expr_terms.append(f"{model_prefix}_{i}_weight")
+            expr_terms.append(f"{model_prefix}_{i}_abundance")
         else:
             expr = "-".join(expr_terms)
             expr = "1" if expr == "" else f"1-{expr}"
-            params[f"{model_prefix}_{i}_weight"].vary = False
-            params[f"{model_prefix}_{i}_weight"].expr = expr
-
-    # # Add SignalProcessor parameters, if requested
-    # if processor is not None:
-    #     _make_params_single_processor(params, processor, 0)
-
+            params[f"{model_prefix}_{i}_abundance"].vary = False
+            params[f"{model_prefix}_{i}_abundance"].expr = expr
     return params
 
 

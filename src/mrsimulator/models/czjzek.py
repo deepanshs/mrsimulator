@@ -78,6 +78,10 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 class AbstractDistribution:
+    """Abstract distribution"""
+
+    model_name = "base"
+
     def __init__(
         self,
         mean_isotropic_chemical_shift=0.0,
@@ -151,6 +155,18 @@ class AbstractDistribution:
         dims = [cp.as_dimension(item) for item in pos]
         dvs = cp.as_dependent_variable(data)
         return cp.CSDM(dimensions=dims, dependent_variables=[dvs])
+
+    def add_lmfit_params(self, params, i):
+        """Add lmfit params for base class"""
+        prefix = self.model_name
+        params.add(f"{prefix}_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
+        params.add(f"{prefix}_{i}_abundance", value=self.abundance, min=0, max=1)
+
+    def update_lmfit_params(self, params, i):
+        """Update lmfit params for base class"""
+        prefix = self.model_name
+        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
+        self.abundance = params[f"{prefix}_{i}_abundance"].value
 
 
 class CzjzekDistribution(AbstractDistribution):
@@ -230,23 +246,18 @@ class CzjzekDistribution(AbstractDistribution):
             return get_Haeberlen_components(tensors)
         return zeta_eta_to_x_y(*get_Haeberlen_components(tensors))
 
-    def param_prefix(self):
-        return "czjzek"
-
-    def get_lmfit_params(self, params, i):
+    def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""
-        params.add(f"czjzek_{i}_sigma", value=self.sigma, min=0)
-        params.add(f"czjzek_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
-        params.add(f"czjzek_{i}_weight", value=self.abundance, min=0, max=1)
+        prefix = self.model_name
+        params.add(f"{prefix}_{i}_sigma", value=self.sigma, min=0)
+        super().add_lmfit_params(params, i)
         return params
 
     def update_lmfit_params(self, params, i):
-        """Create lmfit params for index i"""
-        prefix = self.param_prefix()
-
+        """Update lmfit params for index i"""
+        prefix = self.model_name
         self.sigma = params[f"{prefix}_{i}_sigma"].value
-        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
-        self.abundance = params[f"{prefix}_{i}_weight"].value
+        super().update_lmfit_params(params, i)
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
@@ -289,7 +300,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
-    model_name = "extended czjzek"
+    model_name = "extended_czjzek"
 
     def __init__(
         self,
@@ -348,8 +359,8 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # 2-norm of the tensor
         norm_T0 = np.linalg.norm(T0)
 
-        # the perturbation factor
-        rho = self.eps * norm_T0 / 5.4772255751  # np.sqrt(30) = 5.477225575
+        # the perturbation factor # np.sqrt(30) = 5.477225575
+        rho = self.eps * norm_T0 / 5.4772255751
 
         # total tensor
         total_tensors = np.diag(T0) + rho * tensors
@@ -358,34 +369,29 @@ class ExtCzjzekDistribution(AbstractDistribution):
             return get_Haeberlen_components(total_tensors)
         return zeta_eta_to_x_y(*get_Haeberlen_components(total_tensors))
 
-    def param_prefix(self):
-        return "ext_czjzek"
-
-    def get_lmfit_params(self, params, i):
+    def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""
-        prefix = self.param_prefix()
+        prefix = self.model_name
         if self.symmetric_tensor.zeta is not None:
             zeta = self.symmetric_tensor.zeta
         else:
             zeta = self.symmetric_tensor.Cq
-        params.add(f"{prefix}_{i}_zeta0", value=zeta)
-        params.add(f"{prefix}_{i}_eta0", value=self.symmetric_tensor.eta, min=0, max=1)
-        params.add(f"{prefix}_{i}_epsilon", value=self.eps, min=0)
-        params.add(f"{prefix}_{i}_iso_shift", value=self.mean_isotropic_chemical_shift)
-        params.add(f"{prefix}_{i}_weight", value=self.abundance, min=0, max=1)
+        params.add(f"{prefix}_{i}_zeta", value=zeta)
+        params.add(f"{prefix}_{i}_eta", value=self.symmetric_tensor.eta, min=0, max=1)
+        params.add(f"{prefix}_{i}_epsilon", value=self.eps, min=1e-6)
+        super().add_lmfit_params(params, i)
         return params
 
     def update_lmfit_params(self, params, i):
         """Create lmfit params for index i"""
-        prefix = self.param_prefix()
+        prefix = self.model_name
 
-        zeta = params[f"{prefix}_{i}_zeta0"].value
+        zeta = params[f"{prefix}_{i}_zeta"].value
         if self.symmetric_tensor.zeta is not None:
             self.symmetric_tensor.zeta = zeta
         else:
             self.symmetric_tensor.Cq = zeta
 
-        self.symmetric_tensor.eta = params[f"{prefix}_{i}_eta0"].value
+        self.symmetric_tensor.eta = params[f"{prefix}_{i}_eta"].value
         self.eps = params[f"{prefix}_{i}_epsilon"].value
-        self.mean_isotropic_chemical_shift = params[f"{prefix}_{i}_iso_shift"].value
-        self.abundance = params[f"{prefix}_{i}_weight"].value
+        super().update_lmfit_params(params, i)
