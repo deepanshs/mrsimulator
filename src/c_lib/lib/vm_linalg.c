@@ -21,8 +21,8 @@ static void inline pas_haeberlen(double r1, double r2, double r3, double *param)
 }
 
 // Find the roots of cubic equation
-void haeberlen_components(int n, double *expr_base_p, double *expr_base_q, double zeta,
-                          double eta, double rho, double *param) {
+void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
+                             double zeta, double eta, double rho, double *param) {
   int counter = n;
   double z2, ze, z2e2, z3, z3e2, z2e, r2, r3, p, q;
   double root_1, root_2, root_3, temp, arg, a_cos, angle;

@@ -1,5 +1,5 @@
 """
-Analytical czjzek ditribution on polar and non-polar grid
+Analytical czjzek distribution on polar and non-polar grid
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "dsrivastava@hyperfine.io"
@@ -304,10 +304,10 @@ class CzjzekDistribution(AbstractDistribution):
         else:
             basis_p_q = get_expression_base(*czjzek_random_components(self.sigma, size))
 
-        params = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
+        zeta, eta = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
         if not self.polar:
-            return params[:, 0], params[:, 1]
-        return zeta_eta_to_x_y(params[:, 0], params[:, 1])
+            return zeta, eta
+        return zeta_eta_to_x_y(zeta, eta)
 
     def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""
@@ -427,10 +427,10 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # the perturbation factor # np.sqrt(30) = 5.477225575
         rho = self.eps * norm_T0 / 5.4772255751
 
-        params = get_Haeberlen_components(*basis_p_q, zeta, eta, rho)
+        zeta, eta = get_Haeberlen_components(*basis_p_q, zeta, eta, rho)
         if not self.polar:
-            return params[:, 0], params[:, 1]
-        return zeta_eta_to_x_y(params[:, 0], params[:, 1])
+            return zeta, eta
+        return zeta_eta_to_x_y(zeta, eta)
 
     def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""

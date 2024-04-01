@@ -8,12 +8,12 @@ from mrsimulator.models.utils import get_Haeberlen_components
 def test_roots():
     n = 400_000
 
-    tensors = _czjzek_random_distribution_tensors(sigma=1.4, n=n)
+    tensors = _czjzek_random_distribution_tensors(sigma=1.0, n=n)
     u1 = tensors[:, 2, 2] / 2.0
     u2 = tensors[:, 2, 0]
     u3 = tensors[:, 2, 1]
     u4 = tensors[:, 1, 0]
-    u5 = tensors[:, 0, 0] - tensors[:, 1, 1]
+    u5 = (tensors[:, 0, 0] - tensors[:, 1, 1]) / 2.0
 
     p_q_basis = get_expression_base(u1, u2, u3, u4, u5)
 
@@ -25,7 +25,7 @@ def test_roots():
     norm_T0 = np.linalg.norm(T0)
     rho = eps * norm_T0 / 5.4772255751
 
-    zeta_eig, eta_eig = get_Haeberlen_components(tensors)
+    zeta_eig, eta_eig = get_Haeberlen_components(np.diag(T0) + tensors * rho)
 
     zeta_c, eta_c = haeberlen_c(*p_q_basis, zeta, eta, rho)
 

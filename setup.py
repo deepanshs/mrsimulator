@@ -288,11 +288,11 @@ libraries = list(set(win.libraries))
 include_dirs += ["src/c_lib/include/", numpy_include]
 
 # print info
-print(include_dirs)
-print(library_dirs)
-print(libraries)
-print(extra_compile_args)
-print(extra_link_args)
+print("include_dirs", include_dirs)
+print("library_dirs", library_dirs)
+print("libraries", libraries)
+print("extra_compile_args", extra_compile_args)
+print("extra_link_args", extra_link_args)
 
 source = [
     "src/c_lib/lib/angular_momentum/wigner_element.c",
@@ -307,6 +307,7 @@ source = [
     "src/c_lib/lib/vm_linalg.c",
 ]
 
+print("USE_CYTHON", USE_CYTHON)
 ext = ".pyx" if USE_CYTHON else ".c"
 
 # method

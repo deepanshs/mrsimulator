@@ -176,7 +176,7 @@ cdef extern from "simulation.h":
 
 
 cdef extern from "vm_linalg.h":
-    void haeberlen_components(
+    void vm_haeberlen_components(
         int n,
         double *expr_base_p,
         double *expr_base_q,
