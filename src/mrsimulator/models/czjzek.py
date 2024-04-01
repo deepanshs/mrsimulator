@@ -7,7 +7,7 @@ __email__ = "dsrivastava@hyperfine.io"
 import csdmpy as cp
 import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
-from mrsimulator.base_model import cubic_roots
+from mrsimulator.base_model import get_Haeberlen_components
 from mrsimulator.clib import histogram2d
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
@@ -50,36 +50,43 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
     Syz = Szy = sqrt(3) * U3
     """
-    U1, sqrt_3_U2, sqrt_3_U3, sqrt_3_U4, sqrt_3_U5 = get_random_components(sigma, n)
+    u1, u2, u3, u4, u5 = czjzek_random_components(sigma, n)
 
     # Create N random tensors
     tensors = np.empty((n, 3, 3))  # n x 3 x 3 tensors
 
-    tensors[:, 0, 0] = sqrt_3_U5 - U1  # xx
-    # tensors[:, 0, 1] = sqrt_3_U4  # xy
-    # tensors[:, 0, 2] = sqrt_3_U2  # xz
+    tensors[:, 0, 0] = u5 - u1  # xx
+    # tensors[:, 0, 1] = U4  # xy
+    # tensors[:, 0, 2] = U2  # xz
 
-    tensors[:, 1, 0] = sqrt_3_U4  # yx
-    tensors[:, 1, 1] = -sqrt_3_U5 - U1  # yy
-    # tensors[:, 1, 2] = sqrt_3_U3  # yz
+    tensors[:, 1, 0] = u4  # yx
+    tensors[:, 1, 1] = -u5 - u1  # yy
+    # tensors[:, 1, 2] = U3  # yz
 
-    tensors[:, 2, 0] = sqrt_3_U2  # zx
-    tensors[:, 2, 1] = sqrt_3_U3  # zy
-    tensors[:, 2, 2] = 2 * U1  # zz
+    tensors[:, 2, 0] = u2  # zx
+    tensors[:, 2, 1] = u3  # zy
+    tensors[:, 2, 2] = 2 * u1  # zz
 
     return tensors
 
 
-def get_random_components(sigma, n):
+def czjzek_random_components(sigma: float, n: int):
+    """Five dimensional random components of a 2nd rank symmetri tensor of size n.
+
+    Args:
+        float sigma: The standard deviation of the five-dimensional multi-variate normal
+            distribution.
+        int n: Number of samples drawn from the Czjzek random distribution model.
+    """
     # The random sampling U1, U2, ... U5
     u1 = np.random.normal(0.0, sigma, n)
 
     sqrt_3_sigma = np.sqrt(3) * sigma
-    sqrt_3_u2 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_u3 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_u4 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_u5 = np.random.normal(0.0, sqrt_3_sigma, n)
-    return u1, sqrt_3_u2, sqrt_3_u3, sqrt_3_u4, sqrt_3_u5
+    u2 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u3 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u4 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u5 = np.random.normal(0.0, sqrt_3_sigma, n)
+    return u1, u2, u3, u4, u5
 
 
 def get_expression_base(u1, u2, u3, u4, u5):
@@ -291,13 +298,13 @@ class CzjzekDistribution(AbstractDistribution):
         if self._cache_tensors:
             if self._basis_p_q is None:
                 self._basis_p_q = get_expression_base(
-                    *get_random_components(self.sigma, size)
+                    *czjzek_random_components(self.sigma, size)
                 )
             basis_p_q = self._basis_p_q
         else:
-            basis_p_q = get_expression_base(*get_random_components(self.sigma, size))
+            basis_p_q = get_expression_base(*czjzek_random_components(self.sigma, size))
 
-        params = cubic_roots(*basis_p_q, 0, 0, 1.0)
+        params = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
         if not self.polar:
             return params[:, 0], params[:, 1]
         return zeta_eta_to_x_y(params[:, 0], params[:, 1])
@@ -397,10 +404,12 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # czjzek_random_distribution model
         if self._cache_tensors:
             if self._basis_p_q is None:
-                self._basis_p_q = get_expression_base(*get_random_components(1, size))
+                self._basis_p_q = get_expression_base(
+                    *czjzek_random_components(1, size)
+                )
             basis_p_q = self._basis_p_q
         else:
-            basis_p_q = get_expression_base(*get_random_components(1, size))
+            basis_p_q = get_expression_base(*czjzek_random_components(1, size))
 
         symmetric_tensor = self.symmetric_tensor
 
@@ -418,7 +427,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # the perturbation factor # np.sqrt(30) = 5.477225575
         rho = self.eps * norm_T0 / 5.4772255751
 
-        params = cubic_roots(*basis_p_q, zeta, eta, rho)
+        params = get_Haeberlen_components(*basis_p_q, zeta, eta, rho)
         if not self.polar:
             return params[:, 0], params[:, 1]
         return zeta_eta_to_x_y(params[:, 0], params[:, 1])

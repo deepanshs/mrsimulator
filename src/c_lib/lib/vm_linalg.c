@@ -1,7 +1,7 @@
 
 #include "vm_linalg.h"
 
-static void inline zeta_eta(double r1, double r2, double r3, double *param) {
+static void inline pas_haeberlen(double r1, double r2, double r3, double *param) {
   double ar1, ar2, ar3;
 
   ar1 = absd(r1);
@@ -21,8 +21,8 @@ static void inline zeta_eta(double r1, double r2, double r3, double *param) {
 }
 
 // Find the roots of cubic equation
-void cubic_roots(int n, double *expr_base_p, double *expr_base_q, double zeta,
-                 double eta, double rho, double *param) {
+void haeberlen_components(int n, double *expr_base_p, double *expr_base_q, double zeta,
+                          double eta, double rho, double *param) {
   int counter = n;
   double z2, ze, z2e2, z3, z3e2, z2e, r2, r3, p, q;
   double root_1, root_2, root_3, temp, arg, a_cos, angle;
@@ -73,7 +73,7 @@ void cubic_roots(int n, double *expr_base_p, double *expr_base_q, double zeta,
     root_2 = get_cos_from_table(a_cos - angle) / temp;
     root_3 = get_cos_from_table(a_cos + angle) / temp;
 
-    zeta_eta(root_1, root_2, root_3, param);
+    pas_haeberlen(root_1, root_2, root_3, param);
     param += 2;
     expr_base_p++;
     expr_base_q++;
