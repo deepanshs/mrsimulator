@@ -37,12 +37,10 @@ def get_Haeberlen_components(tensors):
     """
     n = tensors.shape[0]
     eig_val = np.linalg.eigvalsh(tensors)
-    eig_val_sort_ = np.argsort(np.abs(eig_val), axis=1, kind="mergesort")
+    eig_val_sort_ = np.argsort(np.abs(eig_val), axis=1, kind="quicksort")
     eig_val_sort_ = (eig_val_sort_.T + 3 * np.arange(n)).T.ravel()
-    eig_val_sorted = eig_val.ravel()[eig_val_sort_].reshape(n, 3)
-
-    eig_val_sort_ = eig_val = None
-    del eig_val_sort_, eig_val
+    eig_val_sorted = eig_val.ravel()[eig_val_sort_]
+    eig_val_sorted.shape = (n, 3)
 
     zeta = eig_val_sorted[:, -1]
     eta = (eig_val_sorted[:, 0] - eig_val_sorted[:, 1]) / zeta

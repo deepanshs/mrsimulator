@@ -37,3 +37,20 @@ cdef extern from "histogram.h":
         const double *weights,
         const int stride_w,
     )
+
+    void histogram2d_interp_c(
+        int x_count,
+        const double x_min,
+        const double x_max,
+        int y_count,
+        const double y_min,
+        const double y_max,
+        double *hist,
+        int sample_count,
+        const double *sample_x,
+        const int stride_x,
+        const double *sample_y,
+        const int stride_y,
+        const double *weights,
+        const int stride_w,
+    )

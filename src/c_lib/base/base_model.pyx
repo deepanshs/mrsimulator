@@ -606,6 +606,23 @@ def calculate_transition_connect_weight(
     return complex(factor[0], factor[1])
 
 
+@cython.profile(False)
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def cubic_roots(
+        ndarray[double, ndim=2] expr_base_p,
+        ndarray[double, ndim=2] expr_base_q,
+        double zeta,
+        double eta,
+        double rho
+    ):
+    cdef int n = expr_base_p.shape[1]
+    cdef ndarray[double, ndim=2] param = np.empty((n, 2), dtype=float)
+    clib.cubic_roots(
+        n, &expr_base_p[0, 0], &expr_base_q[0, 0], zeta, eta, rho, &param[0, 0]
+    )
+    return param
+
 # @cython.profile(False)
 # @cython.boundscheck(False)
 # @cython.wraparound(False)

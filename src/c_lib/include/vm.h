@@ -16,6 +16,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+// absolute double value
 static inline double absd(double a) {
   *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
   return a;

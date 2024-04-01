@@ -7,10 +7,10 @@ __email__ = "dsrivastava@hyperfine.io"
 import csdmpy as cp
 import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
+from mrsimulator.base_model import cubic_roots
 from mrsimulator.clib import histogram2d
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-from .utils import get_Haeberlen_components
 from .utils import get_principal_components
 from .utils import zeta_eta_to_x_y
 
@@ -50,15 +50,7 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
     Syz = Szy = sqrt(3) * U3
     """
-
-    # The random sampling U1, U2, ... U5
-    U1 = np.random.normal(0.0, sigma, n)
-
-    sqrt_3_sigma = np.sqrt(3) * sigma
-    sqrt_3_U2 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U3 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U4 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U5 = np.random.normal(0.0, sqrt_3_sigma, n)
+    U1, sqrt_3_U2, sqrt_3_U3, sqrt_3_U4, sqrt_3_U5 = get_random_components(sigma, n)
 
     # Create N random tensors
     tensors = np.empty((n, 3, 3))  # n x 3 x 3 tensors
@@ -78,6 +70,50 @@ def _czjzek_random_distribution_tensors(sigma, n):
     return tensors
 
 
+def get_random_components(sigma, n):
+    # The random sampling U1, U2, ... U5
+    u1 = np.random.normal(0.0, sigma, n)
+
+    sqrt_3_sigma = np.sqrt(3) * sigma
+    sqrt_3_u2 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_u3 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_u4 = np.random.normal(0.0, sqrt_3_sigma, n)
+    sqrt_3_u5 = np.random.normal(0.0, sqrt_3_sigma, n)
+    return u1, sqrt_3_u2, sqrt_3_u3, sqrt_3_u4, sqrt_3_u5
+
+
+def get_expression_base(u1, u2, u3, u4, u5):
+    """Evalute the one expression base"""
+    temp_q = u2**2 + u3**2 - 2 * u4**2 - 2 * u5**2
+    temp_q2 = u2**2 - u3**2
+
+    expr_base_q = np.array(
+        [
+            -u1 * (2 * u1**2 + temp_q) - u5 * temp_q2 - 2 * u2 * u3 * u4,  # 1
+            -3 * u1**2 - 0.5 * temp_q,  # z
+            -1.5 * u1,  # z^2
+            -0.25 * np.ones(u1.size),  # z^3
+            -2.0 * u1 * u5 + 0.5 * temp_q2,  # z e
+            0.5 * u1,  # z^2 e^2
+            0.25 * np.ones(u1.size),  # z^3 e^2
+            -u5,  # z^2 e
+        ]
+    )
+    expr_base_p = np.array(
+        [
+            -3 * u1**2 - u2**2 - u3**2 - u4**2 - u5**2,  # 1
+            -3 * u1,  # z
+            -0.75 * np.ones(u1.size),  # z^2
+            np.zeros(u1.size),  # z^3
+            u5,  # z e
+            -0.25 * np.ones(u1.size),  # z^2 e^2
+            np.zeros(u1.size),
+            np.zeros(u1.size),
+        ]
+    )
+    return expr_base_p, expr_base_q
+
+
 class AbstractDistribution:
     """Abstract distribution"""
 
@@ -92,7 +128,7 @@ class AbstractDistribution:
     ):
         """Basic class attributes for distributions"""
         self._cache_tensors = cache_tensors
-        self._tensors = None
+        self._basis_p_q = None
         self.mean_isotropic_chemical_shift = mean_isotropic_chemical_shift
         self.abundance = abundance
         self.polar = polar
@@ -253,15 +289,18 @@ class CzjzekDistribution(AbstractDistribution):
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
         if self._cache_tensors:
-            if self._tensors is None:
-                self._tensors = _czjzek_random_distribution_tensors(self.sigma, size)
-            tensors = self._tensors
+            if self._basis_p_q is None:
+                self._basis_p_q = get_expression_base(
+                    *get_random_components(self.sigma, size)
+                )
+            basis_p_q = self._basis_p_q
         else:
-            tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+            basis_p_q = get_expression_base(*get_random_components(self.sigma, size))
 
+        params = cubic_roots(*basis_p_q, 0, 0, 1.0)
         if not self.polar:
-            return get_Haeberlen_components(tensors)
-        return zeta_eta_to_x_y(*get_Haeberlen_components(tensors))
+            return params[:, 0], params[:, 1]
+        return zeta_eta_to_x_y(params[:, 0], params[:, 1])
 
     def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""
@@ -357,11 +396,11 @@ class ExtCzjzekDistribution(AbstractDistribution):
 
         # czjzek_random_distribution model
         if self._cache_tensors:
-            if self._tensors is None:
-                self._tensors = _czjzek_random_distribution_tensors(1, size)
-            tensors = self._tensors
+            if self._basis_p_q is None:
+                self._basis_p_q = get_expression_base(*get_random_components(1, size))
+            basis_p_q = self._basis_p_q
         else:
-            tensors = _czjzek_random_distribution_tensors(1, size)
+            basis_p_q = get_expression_base(*get_random_components(1, size))
 
         symmetric_tensor = self.symmetric_tensor
 
@@ -379,12 +418,10 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # the perturbation factor # np.sqrt(30) = 5.477225575
         rho = self.eps * norm_T0 / 5.4772255751
 
-        # total tensor
-        total_tensors = np.diag(T0) + rho * tensors
-
+        params = cubic_roots(*basis_p_q, zeta, eta, rho)
         if not self.polar:
-            return get_Haeberlen_components(total_tensors)
-        return zeta_eta_to_x_y(*get_Haeberlen_components(total_tensors))
+            return params[:, 0], params[:, 1]
+        return zeta_eta_to_x_y(params[:, 0], params[:, 1])
 
     def add_lmfit_params(self, params, i):
         """Create lmfit params for index i"""

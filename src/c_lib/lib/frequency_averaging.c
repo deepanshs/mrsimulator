@@ -61,7 +61,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     freq = &dimensions->local_frequency[ptr];
     phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
 
-    if (fabs(*freq - freq[nt]) < TOL && fabs(*freq - freq[npts - 1]) < TOL)
+    if (absd(*freq - freq[nt]) < TOL && absd(*freq - freq[npts - 1]) < TOL)
       if (interpolation) delta_interpolation = true;
 
     if (delta_interpolation) {
