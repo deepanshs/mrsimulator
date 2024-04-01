@@ -1,7 +1,7 @@
 
 #include "vm_linalg.h"
 
-static void inline pas_haeberlen(double r1, double r2, double r3, double *param) {
+static void inline pas_to_haeberlen(double r1, double r2, double r3, double *param) {
   double ar1, ar2, ar3;
 
   ar1 = absd(r1);
@@ -24,46 +24,26 @@ static void inline pas_haeberlen(double r1, double r2, double r3, double *param)
 void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
                              double zeta, double eta, double rho, double *param) {
   int counter = n;
-  double z2, ze, z2e2, z3, z3e2, z2e, r2, r3, p, q;
+  double z2, ze, z2e2, z3, z3e2, z2e, r2, p, q;
   double root_1, root_2, root_3, temp, arg, a_cos, angle;
-  double *basis_rho_q, *basis_rho_p;
-  basis_rho_q = malloc_double(8);
-  basis_rho_p = malloc_double(8);
 
   angle = CONST_PI * 0.6666666666666666;
 
+  z2 = zeta * zeta;
+  ze = zeta * eta;
+  z3 = z2 * zeta;
+  z2e2 = ze * ze;
+  z2e = z2 * eta;
+  z3e2 = zeta * z2e2;
+  r2 = rho * rho;
+
+  double basis_rho_q[8] = {rho * r2, zeta * r2,  z2 * rho, z3,
+                           ze * r2,  z2e2 * rho, z3e2,     z2e * rho};
+  double basis_rho_p[8] = {r2, zeta * rho, z2, z3, ze * rho, z2e2, z3e2, z2e};
+
   while (counter-- > 0) {
-    z2 = zeta * zeta;
-    ze = zeta * eta;
-    z3 = z2 * zeta;
-    z2e2 = ze * ze;
-    z2e = z2 * eta;
-    z3e2 = zeta * z2e2;
-    r2 = rho * rho;
-    r3 = rho * r2;
-
-    // [3, 2, 1, 0, 2, 1, 0, 1]
-    basis_rho_q[0] = r3;
-    basis_rho_q[1] = zeta * r2;
-    basis_rho_q[2] = z2 * rho;
-    basis_rho_q[3] = z3;
-    basis_rho_q[4] = ze * r2;
-    basis_rho_q[5] = z2e2 * rho;
-    basis_rho_q[6] = z3e2;
-    basis_rho_q[7] = z2e * rho;
-
-    // [2, 1, 0, 0, 1, 0, 0, 0]
-    basis_rho_p[0] = r2;
-    basis_rho_p[1] = zeta * rho;
-    basis_rho_p[2] = z2;
-    basis_rho_p[3] = z3;
-    basis_rho_p[4] = ze * rho;
-    basis_rho_p[5] = z2e2;
-    basis_rho_p[6] = z3e2;
-    basis_rho_p[7] = z2e;
-
-    p = cblas_ddot(8, basis_rho_p, 1, expr_base_p, n);
-    q = cblas_ddot(8, basis_rho_q, 1, expr_base_q, n);
+    p = cblas_ddot(8, basis_rho_p, 1, expr_base_p++, n);
+    q = cblas_ddot(8, basis_rho_q, 1, expr_base_q++, n);
 
     temp = sqrt(-1.0 / p) * 0.8660254037844386;  // np.sqrt(3) / 2
     arg = (temp * 3.0 * q) / p;
@@ -73,11 +53,7 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
     root_2 = get_cos_from_table(a_cos - angle) / temp;
     root_3 = get_cos_from_table(a_cos + angle) / temp;
 
-    pas_haeberlen(root_1, root_2, root_3, param);
+    pas_to_haeberlen(root_1, root_2, root_3, param);
     param += 2;
-    expr_base_p++;
-    expr_base_q++;
   }
-  free(basis_rho_q);
-  free(basis_rho_p);
 }
