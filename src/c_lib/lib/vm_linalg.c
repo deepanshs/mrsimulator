@@ -25,9 +25,10 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
                              double zeta, double eta, double rho, double *param) {
   int counter = n;
   double z2, ze, z2e2, z3, z3e2, z2e, r2, p, q;
-  double root_1, root_2, root_3, temp, arg, a_cos, angle;
+  double root_1, root_2, root_3, temp, arg, a_cos, angle, pi_by_6;
 
   angle = CONST_PI * 0.6666666666666666;
+  pi_by_6 = angle / 4.0;
 
   z2 = zeta * zeta;
   ze = zeta * eta;
@@ -49,11 +50,16 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
     arg = (temp * 3.0 * q) / p;
     a_cos = acos(arg) / 3.0;
 
-    root_1 = get_cos_from_table(a_cos) / temp;
-    root_2 = get_cos_from_table(a_cos - angle) / temp;
-    root_3 = get_cos_from_table(a_cos + angle) / temp;
+    root_1 = get_cos_from_table(a_cos);
+    root_2 = get_cos_from_table(a_cos + angle);
+    root_3 = get_cos_from_table(a_cos - angle);
 
-    pas_to_haeberlen(root_1, root_2, root_3, param);
-    param += 2;
+    if (a_cos < pi_by_6) {
+      *param++ = root_1 / temp;
+      *param++ = (root_3 - root_2) / root_1;
+    } else {
+      *param++ = root_2 / temp;
+      *param++ = (root_3 - root_1) / root_2;
+    }
   }
 }
