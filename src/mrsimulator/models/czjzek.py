@@ -89,36 +89,34 @@ def czjzek_random_components(sigma: float, n: int):
     return u1, u2, u3, u4, u5
 
 
-def get_expression_base(u1, u2, u3, u4, u5):
+def get_p_q_basis(u1, u2, u3, u4, u5):
     """Evalute the one expression base"""
     temp_q = u2**2 + u3**2 - 2 * u4**2 - 2 * u5**2
     temp_q2 = u2**2 - u3**2
 
-    expr_base_q = np.array(
+    q_basis = np.array(
         [
-            -u1 * (2 * u1**2 + temp_q) - u5 * temp_q2 - 2 * u2 * u3 * u4,  # 1
-            -3 * u1**2 - 0.5 * temp_q,  # z
-            -1.5 * u1,  # z^2
-            -0.25 * np.ones(u1.size),  # z^3
-            -2.0 * u1 * u5 + 0.5 * temp_q2,  # z e
-            0.5 * u1,  # z^2 e^2
-            0.25 * np.ones(u1.size),  # z^3 e^2
-            -u5,  # z^2 e
+            -u1 * (2 * u1**2 + temp_q) - u5 * temp_q2 - 2 * u2 * u3 * u4,  # rho^3
+            -3 * u1**2 - 0.5 * temp_q,  # zeta rho^2
+            -1.5 * u1,  # zeta^2 rho
+            -0.25 * np.ones(u1.size),  # zeta^3
+            -2.0 * u1 * u5 + 0.5 * temp_q2,  # zeta eta rho^2
+            0.5 * u1,  # zeta^2 eta^2 rho
+            0.25 * np.ones(u1.size),  # zeta^3 etat^2
+            -u5,  # zeta^2 eta rho
         ]
     )
-    expr_base_p = np.array(
+
+    p_basis = np.array(
         [
-            -3 * u1**2 - u2**2 - u3**2 - u4**2 - u5**2,  # 1
-            -3 * u1,  # z
-            -0.75 * np.ones(u1.size),  # z^2
-            np.zeros(u1.size),  # z^3
-            u5,  # z e
-            -0.25 * np.ones(u1.size),  # z^2 e^2
-            np.zeros(u1.size),
-            np.zeros(u1.size),
+            -3 * u1**2 - u2**2 - u3**2 - u4**2 - u5**2,  # rho^2
+            -3 * u1,  # zeta rho
+            -0.75 * np.ones(u1.size),  # zeta^2
+            u5,  # zeta eta rho
+            -0.25 * np.ones(u1.size),  # zeta^2 eta^2
         ]
     )
-    return expr_base_p, expr_base_q
+    return -p_basis / 3.0, -q_basis / 2.0
 
 
 class AbstractDistribution:
@@ -297,12 +295,12 @@ class CzjzekDistribution(AbstractDistribution):
         """
         if self._cache_tensors:
             if self._basis_p_q is None:
-                self._basis_p_q = get_expression_base(
+                self._basis_p_q = get_p_q_basis(
                     *czjzek_random_components(self.sigma, size)
                 )
             basis_p_q = self._basis_p_q
         else:
-            basis_p_q = get_expression_base(*czjzek_random_components(self.sigma, size))
+            basis_p_q = get_p_q_basis(*czjzek_random_components(self.sigma, size))
 
         zeta, eta = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
         if not self.polar:
@@ -404,12 +402,10 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # czjzek_random_distribution model
         if self._cache_tensors:
             if self._basis_p_q is None:
-                self._basis_p_q = get_expression_base(
-                    *czjzek_random_components(1, size)
-                )
+                self._basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
             basis_p_q = self._basis_p_q
         else:
-            basis_p_q = get_expression_base(*czjzek_random_components(1, size))
+            basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
 
         symmetric_tensor = self.symmetric_tensor
 

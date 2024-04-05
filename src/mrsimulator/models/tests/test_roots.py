@@ -1,7 +1,7 @@
 import numpy as np
 from mrsimulator.base_model import get_Haeberlen_components as haeberlen_c
 from mrsimulator.models.czjzek import _czjzek_random_distribution_tensors
-from mrsimulator.models.czjzek import get_expression_base
+from mrsimulator.models.czjzek import get_p_q_basis
 from mrsimulator.models.utils import get_Haeberlen_components
 
 
@@ -15,7 +15,7 @@ def test_roots():
     u4 = tensors[:, 1, 0]
     u5 = (tensors[:, 0, 0] - tensors[:, 1, 1]) / 2.0
 
-    p_q_basis = get_expression_base(u1, u2, u3, u4, u5)
+    p_q_basis = get_p_q_basis(u1, u2, u3, u4, u5)
 
     zeta = 1.4e6
     eta = 0.7
