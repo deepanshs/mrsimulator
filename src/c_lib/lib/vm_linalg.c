@@ -34,11 +34,11 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
     a_cos = acos(arg) / 3.0;
     status = a_cos < 0.5235987756;
 
-    root_0 = get_cos_from_table(a_cos);
+    root_0 = cos(a_cos);
     a_cos -= angle;
-    root_1 = get_cos_from_table(a_cos);
+    root_1 = cos(a_cos);
     a_cos -= angle;
-    root_2 = get_cos_from_table(a_cos);
+    root_2 = cos(a_cos);
 
     temp *= 2.0;
     if (status) {
