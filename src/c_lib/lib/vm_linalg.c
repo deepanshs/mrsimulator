@@ -6,25 +6,28 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
                              double zeta, double eta, double rho, double *param) {
   int counter = n;
   bool status;
-  double z2, ze, z2e2, z3e2, z2e, r2, p_prime, q_prime;
+  double z2, ze, e2, z2e, r2, p_prime, q_prime;
   double root_0, root_2, root_1, temp, arg, a_cos, angle;
 
   angle = 2.09439510239;
 
   z2 = zeta * zeta;
+  e2 = eta * eta;
   ze = zeta * eta;
-  z2e2 = ze * ze;
   z2e = z2 * eta;
-  z3e2 = zeta * z2e2;
   r2 = rho * rho;
 
-  double basis_rho_q[8] = {rho * r2, zeta * r2,  z2 * rho, z2 * zeta,
-                           ze * r2,  z2e2 * rho, z3e2,     z2e * rho};
-  double basis_rho_p[5] = {r2, zeta * rho, z2, ze * rho, z2e2};
+  double basis_rho_q[6] = {
+      rho * r2, zeta * r2, ze * r2, z2 * rho * (-3.0 + e2), z2 * zeta * (1.0 - e2),
+      z2e * rho};
+  double basis_rho_p[4] = {r2, zeta * rho, ze * rho, z2 * (3.0 + e2)};
 
   while (counter-- > 0) {
-    p_prime = cblas_ddot(5, basis_rho_p, 1, expr_base_p++, n);
-    q_prime = cblas_ddot(8, basis_rho_q, 1, expr_base_q++, n);
+    p_prime = cblas_ddot(4, basis_rho_p, 1, expr_base_p, n);
+    q_prime = cblas_ddot(6, basis_rho_q, 1, expr_base_q, n);
+
+    expr_base_p++;
+    expr_base_q++;
 
     temp = sqrt(p_prime);
     arg = q_prime / (p_prime * temp);

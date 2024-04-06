@@ -98,11 +98,9 @@ def get_p_q_basis(u1, u2, u3, u4, u5):
         [
             -u1 * (2 * u1**2 + temp_q) - u5 * temp_q2 - 2 * u2 * u3 * u4,  # rho^3
             -3 * u1**2 - 0.5 * temp_q,  # zeta rho^2
-            -1.5 * u1,  # zeta^2 rho
-            -0.25 * np.ones(u1.size),  # zeta^3
             -2.0 * u1 * u5 + 0.5 * temp_q2,  # zeta eta rho^2
-            0.5 * u1,  # zeta^2 eta^2 rho
-            0.25 * np.ones(u1.size),  # zeta^3 etat^2
+            0.5 * u1,  # zeta^2 rho (-3 + eta^2)
+            -0.25 * np.ones(u1.size),  # zeta^3 (1 - eta^2)
             -u5,  # zeta^2 eta rho
         ]
     )
@@ -111,9 +109,8 @@ def get_p_q_basis(u1, u2, u3, u4, u5):
         [
             -3 * u1**2 - u2**2 - u3**2 - u4**2 - u5**2,  # rho^2
             -3 * u1,  # zeta rho
-            -0.75 * np.ones(u1.size),  # zeta^2
             u5,  # zeta eta rho
-            -0.25 * np.ones(u1.size),  # zeta^2 eta^2
+            -0.25 * np.ones(u1.size),  # zeta^2 (3.0 + eta^2)
         ]
     )
     return -p_basis / 3.0, -q_basis / 2.0
@@ -261,6 +258,7 @@ class CzjzekDistribution(AbstractDistribution):
         >>> from mrsimulator.models import CzjzekDistribution
         >>> cz_model = CzjzekDistribution(0.5)
     """
+
     model_name = "czjzek"
 
     def __init__(
@@ -361,6 +359,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> S0 = {"Cq": 1e6, "eta": 0.3}
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
+
     model_name = "ext_czjzek"
 
     def __init__(
