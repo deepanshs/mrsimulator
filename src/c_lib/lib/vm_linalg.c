@@ -23,22 +23,19 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
   double basis_rho_p[4] = {r2, zeta * rho, ze * rho, z2 * (3.0 + e2)};
 
   while (counter-- > 0) {
-    p_prime = cblas_ddot(4, basis_rho_p, 1, expr_base_p, n);
-    q_prime = cblas_ddot(6, basis_rho_q, 1, expr_base_q, n);
-
-    expr_base_p++;
-    expr_base_q++;
+    p_prime = cblas_ddot(4, basis_rho_p, 1, expr_base_p++, n);
+    q_prime = cblas_ddot(6, basis_rho_q, 1, expr_base_q++, n);
 
     temp = sqrt(p_prime);
     arg = q_prime / (p_prime * temp);
     a_cos = acos(arg) / 3.0;
     status = a_cos < 0.5235987756;
 
-    root_0 = cos(a_cos);
+    root_0 = get_cos_from_table(a_cos);
     a_cos -= angle;
-    root_1 = cos(a_cos);
+    root_1 = get_cos_from_table(a_cos);
     a_cos -= angle;
-    root_2 = cos(a_cos);
+    root_2 = get_cos_from_table(a_cos);
 
     temp *= 2.0;
     if (status) {

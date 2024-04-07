@@ -21,9 +21,9 @@ def histogram1d(
     ):
     cdef ndarray[double] hist = np.zeros(x_count, dtype=np.float64)
     cdef int sample_count = sample_x.size
-    cdef int c_long = ctypes.sizeof(ctypes.c_long)
-    cdef int stride_x = sample_x.ctypes.strides[0] / c_long
-    cdef int stride_w = weights.ctypes.strides[0] / c_long
+    cdef int c_int64 = ctypes.sizeof(ctypes.c_int64)
+    cdef int stride_x = sample_x.ctypes.strides[0] / c_int64
+    cdef int stride_w = weights.ctypes.strides[0] / c_int64
 
     clib.histogram1d_c(x_count, x_min, x_max, &hist[0], sample_count,
                        &sample_x[0], stride_x, &weights[0], stride_w)
@@ -50,10 +50,10 @@ def histogram2d(
     ):
     cdef ndarray[double, ndim=2] hist = np.zeros((x_count, y_count), dtype=np.float64)
     cdef int sample_count = sample_x.size
-    cdef int c_long = ctypes.sizeof(ctypes.c_long)
-    cdef int stride_x = sample_x.ctypes.strides[0] / c_long
-    cdef int stride_y = sample_y.ctypes.strides[0] / c_long
-    cdef int stride_w = weights.ctypes.strides[0] / c_long
+    cdef int c_int64 = ctypes.sizeof(ctypes.c_int64)
+    cdef int stride_x = sample_x.ctypes.strides[0] / c_int64
+    cdef int stride_y = sample_y.ctypes.strides[0] / c_int64
+    cdef int stride_w = weights.ctypes.strides[0] / c_int64
 
     if interp == 1:
         clib.histogram2d_interp_c(x_count, x_min, x_max, y_count, y_min, y_max,
