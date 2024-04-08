@@ -133,6 +133,7 @@ class-diagram*
 *.mrsim
 *.mrsys
 *.mrmtd
+*.f90
 test_os.py
 note.txt
 simulate_lineshape.py
@@ -145,6 +146,7 @@ test_dash.py
 # cython generated files
 test.c
 base_model.c
+clib.c
 sandbox.c
 *.bib
 3iKij9H

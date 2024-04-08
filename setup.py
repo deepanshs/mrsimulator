@@ -288,11 +288,11 @@ libraries = list(set(win.libraries))
 include_dirs += ["src/c_lib/include/", numpy_include]
 
 # print info
-print(include_dirs)
-print(library_dirs)
-print(libraries)
-print(extra_compile_args)
-print(extra_link_args)
+print("include_dirs", include_dirs)
+print("library_dirs", library_dirs)
+print("libraries", libraries)
+print("extra_compile_args", extra_compile_args)
+print("extra_link_args", extra_link_args)
 
 source = [
     "src/c_lib/lib/angular_momentum/wigner_element.c",
@@ -304,8 +304,10 @@ source = [
     "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/simulation.c",
+    "src/c_lib/lib/vm_linalg.c",
 ]
 
+print("USE_CYTHON", USE_CYTHON)
 ext = ".pyx" if USE_CYTHON else ".c"
 
 # method
@@ -336,19 +338,17 @@ ext_modules += [
     )
 ]
 
-# sandbox
-# ext_modules += [
-#     Extension(
-#         name="mrsimulator.sandbox",
-#         sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
-#         include_dirs=include_dirs,
-#         language="c",
-#         libraries=libraries,
-#         library_dirs=library_dirs,
-#         extra_compile_args=extra_compile_args,
-#         extra_link_args=extra_link_args,
-#     )
-# ]
+# c-lib
+ext_modules += [
+    Extension(
+        name="mrsimulator.clib",
+        sources=["src/c_lib/lib/histogram.c", "src/c_lib/clib/clib" + ext],
+        include_dirs=include_dirs,
+        language="c",
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
+    )
+]
 
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3, gdb_debug=False)

@@ -173,3 +173,14 @@ cdef extern from "simulation.h":
         unsigned char *freq_contrib,
         double *affine_matrix,
         )
+
+
+cdef extern from "vm_linalg.h":
+    void vm_haeberlen_components(
+        int n,
+        double *expr_base_p,
+        double *expr_base_q,
+        double zeta,
+        double eta,
+        double rho,
+        double *param)
