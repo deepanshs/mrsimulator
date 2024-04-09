@@ -35,6 +35,7 @@ class CustomSampling(BaseModel):
         validate_assignment = True
         arbitrary_types_allowed = True
 
+
 # sample states
 __set_state_enum__ = ["solid", "liquid"]
 LIQUID_DEFAULT_CONFIG = {
