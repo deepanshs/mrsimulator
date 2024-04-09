@@ -13,9 +13,10 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 from pydantic import validator
 
-from .event import ConstantDurationEvent
+from .event import DelayEvent
 from .event import Event
 from .event import MixingEvent
+from .event import parse_dict_to_ev_class
 from .event import SpectralEvent
 from .utils import cartesian_product
 
@@ -75,18 +76,18 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
+    events: List[Union[MixingEvent, DelayEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
-        "spectral_width": ["frequency", "dimensionless"],
-        "reference_offset": ["frequency", "dimensionless"],
-        "origin_offset": ["frequency", "dimensionless"],
+        "spectral_width": ["frequency"],
+        "reference_offset": ["frequency"],
+        "origin_offset": ["frequency"],
     }
 
     property_default_units: ClassVar[Dict] = {
-        "spectral_width": ["Hz", "ppm"],
-        "reference_offset": ["Hz", "ppm"],
-        "origin_offset": ["Hz", "ppm"],
+        "spectral_width": ["Hz"],
+        "reference_offset": ["Hz"],
+        "origin_offset": ["Hz"],
     }
 
     property_units: Dict = {
@@ -139,10 +140,7 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                ConstantDurationEvent.parse_dict_with_units(e)
-                if "duration" in e
-                else SpectralEvent.parse_dict_with_units(e)
-                for e in py_dict_copy["events"]
+                parse_dict_to_ev_class(e) for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
@@ -177,7 +175,7 @@ class SpectralDimension(Parseable):
             )
             return
 
-        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        denominator = self.origin_offset / 1e6
         return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:

@@ -9,6 +9,7 @@
 # The following experimental dataset is a part of DMFIT [#f1]_ examples.
 # We thank Dr. Dominique Massiot for sharing the dataset.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
@@ -18,7 +19,7 @@ from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -26,9 +27,6 @@ from mrsimulator.utils import get_spectral_dimensions
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
 filename = "13C MAS 960Hz - Glycine.csdf"
 experiment = cp.load(host + filename)
-
-# standard deviation of noise from the dataset
-sigma = 3.982936
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -45,6 +43,22 @@ plt.grid()
 plt.tight_layout()
 plt.show()
 
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords < 10e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.plot(noise_data, label="noise")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -93,7 +107,7 @@ processor = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="20 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="200 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=100),
+        sp.Scale(factor=1000),
     ]
 )
 processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real

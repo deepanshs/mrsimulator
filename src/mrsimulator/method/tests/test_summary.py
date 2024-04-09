@@ -8,7 +8,7 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 ME = "MixingEvent"
-CDE = "ConstantDurationEvent"
+CDE = "DelayEvent"
 SE = "SpectralEvent"
 REQUIRED = [
     "type",

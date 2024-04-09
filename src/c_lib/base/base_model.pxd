@@ -7,6 +7,7 @@
 #  Contact email = srivastava.89@osu.edu
 #
 from libcpp cimport bool as bool_t
+from libc.stdint cimport int32_t
 
 
 cdef extern from "angular_momentum/wigner_element.h":
@@ -34,7 +35,20 @@ cdef extern from "schemes.h":
                             unsigned int integration_density,
                             bool_t allow_4th_rank,
                             unsigned int n_gamma,
-                            unsigned int integration_volume)
+                            unsigned int integration_volume,
+                            bool_t interpolation)
+
+    MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
+                            double *alpha,
+                            double *beta,
+                            double *weight,
+                            unsigned int n_angles,
+                            bool_t allow_4th_rank,
+                            unsigned int n_gamma,
+                            unsigned int position_size,
+                            int32_t *positions,
+                            bool_t interpolation)
+
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
                                     unsigned int number_of_sidebands)
@@ -84,14 +98,16 @@ cdef extern from "object_struct.h":
 cdef extern from "method.h":
     ctypedef struct MRS_event:
         double fraction                    # The weighted frequency contribution from the event.
-        double magnetic_flux_density_in_T  #  he magnetic flux density in T.
+        double duration                    # The duration of a delay event in µs.
+        unsigned char is_spectral                   # True if the event is a SpectralEvent, False if a DelayEvent
+        double magnetic_flux_density_in_T  # The magnetic flux density in T.
         double rotor_angle_in_rad          # The rotor angle in radians.
         double rotor_frequency_in_Hz       # The sample rotation frequency in Hz.
 
     ctypedef struct MRS_dimension:
-        int count                       #  The number of coordinates along the dimension.
+        int count                       # The number of coordinates along the dimension.
         double increment                # Increment of coordinates along the dimension.
-        double coordinates_offset       #  Start coordinate of the dimension.
+        double coordinates_offset       # Start coordinate of the dimension.
         MRS_event *events               # Holds a list of events.
         unsigned int n_events           # The number of events.
 
@@ -101,6 +117,8 @@ cdef extern from "method.h":
         double *coordinates_offset,
         double *increment,
         double *fraction,
+        double *duration,
+        unsigned char *is_spectral,
         double *magnetic_flux_density_in_T,
         double *rotor_frequency_in_Hz,
         double *rotor_angle_in_rad,
@@ -135,7 +153,6 @@ cdef extern from "simulation.h":
         float *transition_pathway, # Pointer to a list of transitions.
         int integration_density,
         unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
-        bool_t interpolation,
         unsigned int interpolate_type,
         unsigned char *freq_contrib,
         double *affine_matrix,
@@ -152,8 +169,18 @@ cdef extern from "simulation.h":
         MRS_dimension *dimensions,    # the dimensions within method.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
-        bool_t interpolation,
         unsigned int interpolate_type,
         unsigned char *freq_contrib,
         double *affine_matrix,
         )
+
+
+cdef extern from "vm_linalg.h":
+    void vm_haeberlen_components(
+        int n,
+        double *expr_base_p,
+        double *expr_base_q,
+        double zeta,
+        double eta,
+        double rho,
+        double *param)

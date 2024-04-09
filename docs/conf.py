@@ -212,8 +212,12 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
     "astropy": ("https://docs.astropy.org/en/stable/", None),
-    "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
+    "lmfit": ("https://lmfit.github.io/lmfit-py/", None),
 }
+
+rst_prolog = """
+.. |PY_VERSION| replace:: 3.8
+"""
 
 # ---------------------------------------------------------------------------- #
 #                              Sphinx copybutton                               #

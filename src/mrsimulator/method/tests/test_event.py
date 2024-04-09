@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
 from mrsimulator.method.event import BaseEvent
-from mrsimulator.method.event import ConstantDurationEvent
+from mrsimulator.method.event import DelayEvent
 from mrsimulator.method.event import MixingEvent
+from mrsimulator.method.event import parse_dict_to_ev_class
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
@@ -58,6 +59,10 @@ def test_freq_contrib():
     event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
     assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 15 + [1] * 3)
+
+    for k in FREQ_LIST_ALL:
+        event = BaseEvent(freq_contrib=[f"!{k}"])
+        assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL) - {k}
 
 
 def test_freq_contrib_shortcuts():
@@ -163,7 +168,7 @@ def basic_spectral_and_constant_time_event_tests(the_event, type_="spectral"):
         }
 
     if type_ == "constant_duration":
-        should_be_units = dict(duration="1.2 µs", **should_be_units)
+        should_be_units = dict(duration="1.2 s", **should_be_units)
         assert the_event.json() == should_be_units
         assert the_event.json(units=False) == {
             "duration": 1.2,
@@ -183,8 +188,8 @@ def test_spectral_and_constant_time_events():
     the_event = SpectralEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
-    evt_dict = {"duration": "0.5 µs", **base_event_dictionary}
-    the_event = ConstantDurationEvent.parse_dict_with_units(evt_dict)
+    evt_dict = {"duration": "0.5 s", **base_event_dictionary}
+    the_event = DelayEvent.parse_dict_with_units(evt_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="constant_duration")
 
     # direct initialization
@@ -195,7 +200,7 @@ def test_spectral_and_constant_time_events():
     the_event = SpectralEvent(fraction=0.5, **base_event_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="spectral")
 
-    the_event = ConstantDurationEvent(duration=0.5, **base_event_dict)
+    the_event = DelayEvent(duration=0.5, **base_event_dict)
     basic_spectral_and_constant_time_event_tests(the_event, type_="constant_time")
 
 
@@ -255,9 +260,23 @@ def test_total_and_no_mixing():
 
     no_mix = MixingEvent(query="NoMixing")
     assert_all_zero(no_mix)
+    assert no_mix.json() == {
+        "query": {
+            "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
+        }
+    }
 
     no_mix = MixingEvent.parse_dict_with_units({"query": "NoMixing"})
     assert_all_zero(no_mix)
+    assert no_mix.json() == {
+        "query": {
+            "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
+            "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
+        }
+    }
 
     total_mix = MixingEvent(query=MixingEnum.TotalMixing)
     assert total_mix.query.value == "TotalMixing"
@@ -302,3 +321,20 @@ def test_BaseEvent_combination():
         ],
     ], [[[1, 0, 0, 0], [0, 0, 1, 0]], [[-1, 0, 0, 0], [0, 0, -1, 0]]]
     check_equal(query, ["A", "B", "A", "B"], ["A", "B"], res)
+
+
+def test_parse_dict_to_ev_class():
+    # SpectralEvent parse
+    json_dict = {"transition_queries": [{"ch1": {"P": [-1], "D": [1]}}]}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), SpectralEvent)
+
+    # DelayEvent parse
+    json_dict = {"duration": "1 µs"}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), DelayEvent)
+
+    # MixingEvent parse
+    json_dict = {"query": {"ch1": {"angle": "0.0 rad", "phase": "0.0 rad"}}}
+
+    assert isinstance(parse_dict_to_ev_class(json_dict), MixingEvent)

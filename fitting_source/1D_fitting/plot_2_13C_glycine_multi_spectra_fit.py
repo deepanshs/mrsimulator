@@ -9,6 +9,7 @@
 # 960 Hz. Before trying multi-dataset fitting, we recommend that you first try
 # individual fits. The experimental datasets are part of DMFIT [#f1]_ examples.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
@@ -19,7 +20,7 @@ from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the datasets
@@ -37,23 +38,41 @@ experiment2 = cp.load(host + filename2).real
 experiment3 = cp.load(host + filename3).real
 experiments = [experiment1, experiment2, experiment3]
 
-# standard deviation of noise from the dataset
-sigma1 = 1.97637
-sigma2 = 3.822249
-sigma3 = 3.982936
-sigmas = [sigma1, sigma2, sigma3]
-
-# Convert the coordinates along each dimension from Hz to ppm for each dataset
 fig, ax = plt.subplots(1, 3, figsize=(12, 3), subplot_kw={"projection": "csdm"})
 for i, experiment in enumerate(experiments):
     _ = [item.to("ppm", "nmr_frequency_ratio") for item in experiment.dimensions]
 
     # plot of the dataset.
     ax[i].plot(experiment, color="black", linewidth=0.5, label="Experiment")
+    ax[i].set_title(f"Experiment {i}")
     ax[i].set_xlim(280, -10)
     ax[i].grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+noise_data = []
+limits = [40e-6, 15e-6, 10e-6]
+for measurement, cutoff in zip(experiments, limits):
+    coords = measurement.dimensions[0].coordinates
+    noise_region = np.where(coords < cutoff)
+    noise_data.append(measurement[noise_region])
+
+fig, ax = plt.subplots(
+    1, 3, figsize=(12, 3), sharey=True, subplot_kw={"projection": "csdm"}
+)
+for i, noise in enumerate(noise_data):
+    ax[i].plot(noise, linewidth=0.5, label="noise")
+    ax[i].set_title(f"Noise section {i}")
+    ax[i].axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean = [item.mean() for item in noise_data]
+sigma = [item.std() for item in noise_data]
+print("mean", noise_mean)
+print("standard deviation", sigma)
 
 # %%
 # Create a fitting model
@@ -131,7 +150,7 @@ processor1 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="20 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="200 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=10),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=100),  # dataset is scaled independently using scale factor.
     ]
 )
 
@@ -142,7 +161,7 @@ processor2 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="30 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="300 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=100),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=1000),  # dataset is scaled independently using scale factor.
     ]
 )
 
@@ -153,7 +172,7 @@ processor3 = sp.SignalProcessor(
         sp.apodization.Exponential(FWHM="10 Hz", dv_index=0),  # spin system 0
         sp.apodization.Exponential(FWHM="150 Hz", dv_index=1),  # spin system 1
         sp.FFT(),
-        sp.Scale(factor=50),  # dataset is scaled independently using scale factor.
+        sp.Scale(factor=500),  # dataset is scaled independently using scale factor.
     ]
 )
 processors = [processor1, processor2, processor3]
@@ -200,7 +219,7 @@ opt = sim.optimize()  # Pre-compute transition pathways
 minner = Minimizer(
     sf.LMFIT_min_function,
     params,
-    fcn_args=(sim, processors, sigmas),
+    fcn_args=(sim, processors, sigma),
     fcn_kws={"opt": opt},
 )
 result = minner.minimize()

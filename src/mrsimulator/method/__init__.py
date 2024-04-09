@@ -18,6 +18,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
@@ -32,11 +33,14 @@ from .utils import to_euler_list
 
 # from .utils import convert_transition_query
 
-# from .event import ConstantDurationEvent  # noqa: F401
+# from .event import DelayEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
+
+
+DEFAULT_EVENT = {}
 
 
 class Method(Parseable):
@@ -134,7 +138,7 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    channels: List[str]
+    channels: List[Union[str, dict, Isotope]]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
@@ -175,7 +179,11 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        return [Isotope(symbol=_) for _ in v]
+        return [Isotope.parse(_v) for _v in v]
+
+    @validator("rotor_frequency", always=True, pre=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        return 1e12 if np.isinf(v) else v
 
     def __init__(self, **kwargs):
         Method.check(kwargs)
@@ -283,18 +291,16 @@ class Method(Parseable):
         ]
         glb_keys = set(glb.keys())
 
-        _ = [
-            (
-                None if "events" in dim else dim.update({"events": [{}]}),
-                [
-                    ev.update({k: glb[k]})
-                    for ev in dim["events"]
-                    for k in glb
-                    if k not in set(ev.keys()).intersection(glb_keys)
-                ],
-            )
-            for dim in py_dict["spectral_dimensions"]
-        ]
+        for dim in py_dict["spectral_dimensions"]:
+            if "events" not in dim:
+                dim.update({"events": [DEFAULT_EVENT.copy()]})  # Set default if empty
+
+            # Iterate over Events and update to global attributes, if necessary
+            for ev in dim["events"]:
+                shared_keys = set(ev.keys()).intersection(glb_keys)
+                for k in glb:
+                    if k not in shared_keys and "query" not in ev:  # Skip MixingEvent
+                        ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
         mth = super().dict(**kwargs)
@@ -315,9 +321,6 @@ class Method(Parseable):
         """
         mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [
-            item.json(units=units) for item in self.spectral_dimensions
-        ]
 
         # add global parameters
         global_ = (
@@ -326,6 +329,9 @@ class Method(Parseable):
             else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # remove event objects with global values.
         _ = [
@@ -623,7 +629,7 @@ class Method(Parseable):
             - (str) type: Event type
             - (int) spec_dim_index: Index of spectral dimension which event belongs to
             - (str) label: Event label
-            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
             - (MixingQuery) query: MixingQuery object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
@@ -652,7 +658,7 @@ class Method(Parseable):
              'p',
              'd']
         """
-        CD = "ConstantDurationEvent"
+        CD = "DelayEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
 

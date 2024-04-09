@@ -23,6 +23,25 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 
+def parse_dict_to_ev_class(py_dict: dict):
+    """Takes in a JSON representation of some Event class and parses it to an object of
+    the correct Event class
+
+    Arguments:
+        (dict) py_dict: JSON representation of the Event class as a dictionary
+
+    Returns:
+        Either a SpectralEvent, DelayEvent, or MixingEvent object
+    """
+    if "duration" in py_dict:
+        return DelayEvent.parse_dict_with_units(py_dict)
+
+    if "query" in py_dict:
+        return MixingEvent.parse_dict_with_units(py_dict)
+
+    return SpectralEvent.parse_dict_with_units(py_dict)
+
+
 class BaseEvent(Parseable):
     """Base BaseEvent class. If the value of the attribute is None, the value of the
     corresponding global attribute will be used instead.
@@ -93,15 +112,16 @@ class BaseEvent(Parseable):
             if isinstance(item, FrequencyEnum):
                 additive.add(item.value)
 
-            # Item is a string of a recognized freq contrib string
-            elif item in FREQ_LIST_ALL:
-                additive.add(item)
+            function = subtractive if item.startswith("!") else additive
+            item_enum = item[1:] if item.startswith("!") else item
 
-            # String is a Frequency Contribution shortcut (set of strings)
-            elif item[0] == "!":
-                subtractive.update(FREQ_ENUM_SHORTCUT[item[1:]])
-            else:
-                additive.update(FREQ_ENUM_SHORTCUT[item])
+            # Item is a string of a recognized freq contrib string
+            if item_enum in FREQ_LIST_ALL:
+                function.add(item_enum)
+
+            # Item is a string of a recognized freq contrib shortcut
+            if item_enum in FREQ_ENUM_SHORTCUT:
+                function.update(FREQ_ENUM_SHORTCUT[item_enum])
 
         # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive
@@ -202,16 +222,16 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
-    r"""Base ConstantDurationEvent class defines the spin environment and the
+class DelayEvent(BaseEvent):
+    r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
-    event contribute to the spectrum as amplitudes.
+    event contribute to the spectrum as complex amplitude modulations.
 
     Attributes
     ----------
 
     duration:
-        The duration of the event in units of µs. The default is 0.
+        The duration of the event in units of s. The default is 0.
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
@@ -241,11 +261,11 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
         **BaseEvent.property_unit_types,
     }
     property_default_units: ClassVar[Dict] = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent.property_default_units,
     }
     property_units: Dict = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent().property_default_units,
     }
 
@@ -311,4 +331,4 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]
+    event: Union[MixingEvent, DelayEvent, SpectralEvent]

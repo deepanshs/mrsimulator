@@ -1,6 +1,7 @@
 """Base Simulator class."""
 import json
 from copy import deepcopy
+from typing import Any
 from typing import List
 
 import csdmpy as cp
@@ -130,6 +131,7 @@ class Simulator(Parseable):
     """
 
     spin_systems: List[SpinSystem] = []
+    spin_system_models: List[Any] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
 
@@ -424,9 +426,9 @@ class Simulator(Parseable):
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
-            larmor_freq = np.abs(B0 * gyromagnetic_ratio * 1e6)
+            w_ref = np.abs(B0 * gyromagnetic_ratio * 1e6)
             for seq in method.spectral_dimensions:
-                seq.origin_offset = larmor_freq + seq.reference_offset
+                seq.origin_offset = w_ref
 
             self._package_amp_after_simulation(
                 method=method, amp=amp, pack_as_csdm=pack_as_csdm
