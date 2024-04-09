@@ -1,12 +1,13 @@
 Bloch Decay Spectrum
 --------------------
 
-The :py:class:`~mrsimulator.methods.BlochDecaySpectrum` class simulates the
+The :py:class:`~mrsimulator.method.lib.BlochDecaySpectrum` class simulates the
 Bloch decay spectrum.
 
 .. code-block:: python
 
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
+    from mrsimulator.method import SpectralDimension
 
     method = BlochDecaySpectrum(
         channels=["1H"],
@@ -14,7 +15,7 @@ Bloch decay spectrum.
         rotor_angle=54.735 * 3.14159 / 180,  # in rad
         magnetic_flux_density=9.4,  # in tesla
         spectral_dimensions=[
-            dict(
+            SpectralDimension(
                 count=1024,
                 spectral_width=25e3,  # in Hz
                 reference_offset=-4e3,  # in Hz
@@ -22,6 +23,6 @@ Bloch decay spectrum.
         ],
     )
 
-.. minigallery:: mrsimulator.methods.BlochDecaySpectrum
-    :add-heading: Examples using ``BlochDecaySpectrum``
-    :heading-level: "
+**Examples**
+
+.. minigallery:: mrsimulator.method.lib.BlochDecaySpectrum

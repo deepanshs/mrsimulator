@@ -5,7 +5,7 @@ channels:
 dependencies:
   - fftw>=3.3.9
   - openblas
-  - numpy>=1.17
+  - numpy>=1.20
   - nomkl
   - setuptools>=27.3
   - cython>=0.29
@@ -14,8 +14,9 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.4.1
-      - pydantic>=1.9
+      - csdmpy>=0.6
+      - astropy>=5.1
+      - pydantic<2
       - typing-extensions>=3.7
       - flake8
       - lmfit>=1.0.2
@@ -23,12 +24,12 @@ dependencies:
       - joblib>=1.0.0
       - emcee>=3.0.2
       # for testing
-      - pytest
+      - pytest<8.0
       - pytest-cov
       - sympy
       - sybil>=3.0.0
       # building docs
-      - sphinx>=2.0
+      - sphinx<=6.0
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10
@@ -37,3 +38,4 @@ dependencies:
       - sphinx-tabs>=1.1.13
       - recommonmark
       - sphinx-version-warning
+      - nmrglue>=0.9

@@ -1,0 +1,54 @@
+{
+  "methods": [{
+    "channels": ["14N"],
+    "magnetic_flux_density": "9.4 T",
+    "rotor_frequency": "0 kHz",
+    "rotor_angle": "0 deg",
+    "spectral_dimensions": [{
+      "count": 1024,
+      "spectral_width": "25 kHz",
+      "events": [{
+        "transition_queries": [{
+          "ch1": {
+            "P": [-1]
+          }
+        }]
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "14N",
+      "isotropic_chemical_shift": "0 ppm",
+      "shielding_symmetric": {
+        "zeta": "50 ppm",
+        "eta": 0.1
+      },
+      "quadrupolar": {
+        "Cq": "10 kHz",
+        "eta": 0.25
+      }
+    }]
+  }],
+  "operations": [{
+    "dim_index": 0,
+    "function": "IFFT"
+  },
+  {
+    "dim_index": 0,
+    "FWHM": "50.0 Hz",
+    "function": "apodization",
+    "type": "Exponential"
+  },
+  {
+    "dim_index": 0,
+    "function": "FFT"
+  }],
+  "test_data": {
+    "source": "simpson",
+    "filename": "test01.fid",
+    "quantity": "time",
+    "type": "complex",
+    "periodic": false
+  }
+}

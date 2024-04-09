@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -10,13 +9,13 @@ Rb₂SO₄, ⁸⁷Rb (I=3/2) SAS
 # The following is an example of Switched-Angle Spinning (SAS) simulation of
 # :math:`\text{Rb}_2\text{SO}_4`, which has two distinct rubidium sites. The NMR
 # tensor parameters for these sites are taken from Shore `et al.` [#f1]_.
+import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method2D
-from mrsimulator import signal_processing as sp
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -37,13 +36,13 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a SAS spectrum by customizing the
-# method parameters, as shown below. Note, the Method2D method simulates an infinite
-# spinning speed spectrum.
-sas = Method2D(
+# Use the generic `Method` class to simulate a 2D SAS spectrum by customizing the
+# method parameters, as shown below.
+sas = Method(
     name="Switched Angle Spinning",
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=256,
@@ -52,10 +51,10 @@ sas = Method2D(
             label="90 dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=90 * np.pi / 180,  # in radians
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
         SpectralDimension(
             count=256,
@@ -64,34 +63,32 @@ sas = Method2D(
             label="MAS dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.74 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=54.74 * np.pi / 180,  # in radians
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
-            ],  # in radians
+            ],
         ),
     ],
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 sas.plot()
 plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [sas]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[sas])
 sim.run()
 
 # %%
 # The plot of the simulation.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()
@@ -108,14 +105,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data)
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=dataset)
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.invert_xaxis()
 plt.tight_layout()

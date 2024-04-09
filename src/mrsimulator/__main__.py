@@ -1,57 +1,92 @@
-# -*- coding: utf-8 -*-
-import getopt
-import sys
+import argparse
 
+import csdmpy as cp
+import matplotlib.pyplot as plt
+
+from . import __version__
+from . import load
 from .benchmark import Benchmark
 
 
-class Main:
-    def __init__(self):
-        self.benchmark_level = None
-        self.n_jobs = 1
-        self.simulation = True
-        self.interpolation = True
+def run_benchmark(args):
+    """Run benchmark tests"""
+    getattr(Benchmark, "prep")()
+    getattr(Benchmark, args.benchmark)(
+        n_jobs=int(args.n_jobs),
+        interpolation=args.interpolation,
+        simulation=args.simulation,
+    )
 
-    def get_args(self, opts):
-        for opt, arg in opts:
-            if opt == "-h":  # help
-                print("--benchmark=<option=l0,l1,l2>")
-                break
-            if opt == "--benchmark":  # benchmark
-                if int(arg[-1]) > 2:
-                    allow = [f"l{i}" for i in range(3)]
-                    print(f"Allowed levels are {', '.join(allow)}")
-                    sys.exit(2)
-                self.benchmark_level = arg
-            if opt == "--n_jobs":  # n_jobs
-                self.n_jobs = arg
-            if opt == "--interpolation":  # n_jobs
-                self.interpolation = True
-                self.simulation = False
-            if opt == "--simulation":  # n_jobs
-                self.interpolation = False
-                self.simulation = True
 
-    def benchmark(self):
-        if self.benchmark_level is not None:
-            getattr(Benchmark, "prep")()
-            getattr(Benchmark, self.benchmark_level)(
-                n_jobs=int(self.n_jobs),
-                interpolation=self.interpolation,
-                simulation=self.simulation,
-            )
+def run_full_simulator(args):
+    """Read, run, and save output of .mrsim file"""
+    sim, signal_processor, _ = load(args.input)
+    sim.run(n_jobs=args.n_jobs)
+    proc_data = []
+    for proc, mth in zip(signal_processor, sim.methods):
+        proc_data.append(proc.apply_operations(mth.simulation))
+
+    outfile = args.output or args.input
+    segments = outfile.split(".")
+    outname, ext = "".join(segments[:-1]), segments[-1]
+    if ext not in ["csdf"]:
+        outname = f"{outname}.{ext}"
+        ext = "csdf"
+
+    for i, f in enumerate(proc_data):
+        f.save(f"{outname}_{i}.{ext}")
+
+        if args.plot:
+            cp.plot(f.real)
+            plt.show()
+
+
+def run():
+    if args.input is not None:
+        run_full_simulator(args)
+
+    if args.version:
+        print(f"mrsimulator {__version__}")
+
+    if args.benchmark is not None:
+        run_benchmark(args)
+
+
+parser = argparse.ArgumentParser(description="Mrsimulator CLI")
+parser.add_argument(
+    "input", metavar="i", type=str, nargs="?", help="path to the .mrsim input file."
+)
+parser.add_argument(
+    "-o",
+    "--output",
+    type=str,
+    nargs="?",
+    help="CSDM output file name. Extension is '.csdf'.",
+)
+parser.add_argument("--plot", action="store_true", help="plot the csdf output.")
+parser.add_argument(
+    "--n_jobs",
+    type=int,
+    nargs="?",
+    default=1,
+    help="number of processors for parallel computation.",
+)
+parser.add_argument("-v", "--version", action="store_true", help="mrsimulator version.")
+parser.add_argument(
+    "--benchmark", choices=["l0", "l1", "l2"], help="set benchmark level."
+)
+parser.add_argument(
+    "--interpolation",
+    action="store_true",
+    help="run interpolation benchmark. Default is False.",
+)
+parser.add_argument(
+    "--simulation",
+    action="store_true",
+    help="run simulation benchmark. Default is False.",
+)
+args = parser.parse_args()
 
 
 if __name__ == "__main__":
-    argv = sys.argv[1:]
-    try:
-        opts, args = getopt.getopt(
-            argv, "h", ["benchmark=", "n_jobs=", "interpolation", "simulation"]
-        )
-    except getopt.GetoptError:
-        print("--benchmark=<option>")
-        sys.exit(2)
-
-    start = Main()
-    start.get_args(opts)
-    start.benchmark()
+    run()

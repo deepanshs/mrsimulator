@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """Base Site class."""
 from typing import ClassVar
 from typing import Dict
+from typing import Union
 
 from mrsimulator.utils.parseable import Parseable
 from pydantic import validator
@@ -150,7 +150,7 @@ class Site(Parseable):
     ... )
     """
 
-    isotope: str = "1H"
+    isotope: Union[str, dict, Isotope] = "1H"
     isotropic_chemical_shift: float = 0.0
     shielding_symmetric: SymmetricTensor = None
     shielding_antisymmetric: AntisymmetricTensor = None
@@ -175,8 +175,7 @@ class Site(Parseable):
         )
         if property_values == {None}:  # All values of symmetric tensor are None
             return None
-        isotope = values["isotope"]
-        isotope = Isotope(**isotope) if isinstance(isotope, dict) else isotope
+        isotope = Isotope.parse(values["isotope"])
         spin_I = isotope.spin
         if spin_I < 1:
             message = (
@@ -201,7 +200,7 @@ class Site(Parseable):
 
     @validator("isotope", always=True)
     def validate_isotope(cls, v, *, values, **kwargs):
-        return Isotope(symbol=v)
+        return Isotope.parse(v)
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
@@ -236,6 +235,28 @@ class Site(Parseable):
                 py_dict[k] = v.parse_dict_with_units(py_dict[k])
 
         return super().parse_dict_with_units(py_dict)
+
+    def rotate(self, euler_angles: list) -> None:
+        """Rotate the site tensors (shielding, quadrupolar) by the given list of Euler
+        angle rotations. Euler angles are given as a list of (alpha, beta, gamma)
+        tuples, and rotations happen in the Haeberlen (ZYZ) convention.
+
+        Arguments:
+            (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
+                to rotate through each tensor through.
+
+        Example
+        -------
+
+        >>> site = Site(isotope="13C", shielding_symmetric={"zeta": 5, "eta": 0.2})
+        >>> angles = [(3.1415, 0, -3.1415), (1.5701, 1.5701, 1.5701)]
+        >>> site.rotate(angles)
+        """
+        if self.shielding_symmetric:  # not None
+            self.shielding_symmetric.rotate(euler_angles)
+
+        if self.quadrupolar:  # not None
+            self.quadrupolar.rotate(euler_angles)
 
     # Deprecated
     # def to_freq_dict(self, B0):

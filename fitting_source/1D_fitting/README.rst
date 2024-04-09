@@ -1,2 +1,2 @@
-1D Data Fitting
-'''''''''''''''
+1D Dataset Fitting
+''''''''''''''''''

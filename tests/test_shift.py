@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 """Test for shift and reference offset."""
 import numpy as np
 from mrsimulator import Method
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method.lib import BlochDecaySpectrum
 
 
 def pre_setup(isotope, shift, reference_offset):
@@ -19,7 +19,12 @@ def pre_setup(isotope, shift, reference_offset):
                     "count": 2048,
                     "spectral_width": "25 kHz",
                     "reference_offset": f"{reference_offset} Hz",
-                    "events": [{"magnetic_flux_density": "9.4 T"}],
+                    "events": [
+                        {
+                            "magnetic_flux_density": "9.4 T",
+                            "transition_queries": [{"ch1": {"P": [-1]}}],
+                        }
+                    ],
                 }
             ],
         )
@@ -56,3 +61,33 @@ def test_reference_offset_for_positive_gamma():
             assert (
                 abs(max_val.value - shift) <= dx.value
             ), f"failed at shift={shift}, offset={offset}"
+
+
+def test_large_shifts():
+    shifts = [-3480.5, -3461.1, -3440.5]  # in ppm
+
+    mth = BlochDecaySpectrum(
+        channels=["207Pb"],
+        magnetic_flux_density=11.744,  # in T
+        rotor_frequency=20000,  # in Hz
+        spectral_dimensions=[
+            {
+                "count": 2048,
+                "spectral_width": 25000.0,
+                "reference_offset": -366357.20126875,
+                "label": "207Pb - Frequency",
+                "origin_offset": 104692954,
+            }
+        ],
+    )
+
+    for shift in shifts:
+        sys = SpinSystem(sites=[Site(isotope="207Pb", isotropic_chemical_shift=shift)])
+        sim = Simulator(spin_systems=[sys], methods=[mth])
+        sim.run()
+
+        simulation = sim.methods[0].simulation
+        simulation.x[0].to("ppm", "nmr_frequency_ratio")
+        max_amp = simulation.x[0].coordinates[int(np.argmax(simulation))]
+
+        np.testing.assert_almost_equal(max_amp.value, shift, decimal=1)

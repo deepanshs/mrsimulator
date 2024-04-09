@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Czjzek distribution (Shielding and Quadrupolar)
 ===============================================
@@ -14,9 +13,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 4
 
@@ -33,7 +33,8 @@ from mrsimulator.utils.collection import single_site_system_generator
 # The range of zeta and eta coordinates over which the distribution is sampled.
 z_range = np.arange(100) - 50  # in ppm
 e_range = np.arange(21) / 20
-z_dist, e_dist, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
+z_dist, e_dist = np.meshgrid(z_range, e_range)
+_, _, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
 
 # %%
 # Here ``z_range`` and ``e_range`` are the coordinates along the :math:`\zeta` and
@@ -60,13 +61,16 @@ plt.show()
 systems = single_site_system_generator(
     isotope="13C", shielding_symmetric={"zeta": z_dist, "eta": e_dist}, abundance=amp
 )
+method = BlochDecaySpectrum(
+    channels=["13C"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+)
 
 # %%
 # Here, the variable ``systems`` hold an array of single-site spin systems.
 # Next, create a simulator object and add the above system and a method.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%
@@ -91,7 +95,8 @@ plt.show()
 # The range of Cq and eta coordinates over which the distribution is sampled.
 cq_range = np.arange(100) * 0.6 - 30  # in MHz
 e_range = np.arange(21) / 20
-cq_dist, e_dist, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
+cq_dist, e_dist = np.meshgrid(cq_range, e_range)
+_, _, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
 
 # The following is the contour plot of the Czjzek distribution.
 plt.figure(figsize=(4.25, 3.0))
@@ -105,22 +110,22 @@ plt.show()
 # Simulate the spectrum
 # '''''''''''''''''''''
 #
-# Create the spin systems.
+# Create the spin systems and method
 systems = single_site_system_generator(
     isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
+method = BlochDecayCTSpectrum(
+    channels=["71Ga"],
+    magnetic_flux_density=4.8,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=1.2e6)],
+)
+
 # %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [
-    BlochDecayCTSpectrum(
-        channels=["71Ga"],
-        magnetic_flux_density=4.8,  # in T
-        spectral_dimensions=[dict(count=2048, spectral_width=1.2e6)],
-    )
-]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%

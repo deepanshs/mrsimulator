@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pytest
 from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList
@@ -74,7 +73,7 @@ def test_transition_list_1():
     assert tran_list != TransitionList([a, b])
     assert tran_list == TransitionList([a, c])
 
-    # appending b for furthur filter tests.
+    # appending b for further filter tests.
     tran_list.insert(1, b)
     assert tran_list == TransitionList([a, b, c])
 

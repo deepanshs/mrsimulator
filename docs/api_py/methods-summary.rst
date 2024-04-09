@@ -3,32 +3,32 @@
 Methods
 =======
 
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
-The following are the list of methods currently supported by ``mrsimulator`` as a part
-of the ``mrsimulator.methods`` module. To import a method, for example the
+The following are the list of methods currently supported by **mrsimulator** as a part
+of the ``mrsimulator.method.lib`` module. To import a method, for example the
 *BlochDecaySpectrum*, used
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecaySpectrum
+    >>> from mrsimulator.method.lib import BlochDecaySpectrum
 
-All methods categorize into two groups, generic and specialized methods. A generic
-method is general and is based on the number of spectral dimensions. At present,
-there are two generic methods, ``Method1D`` and ``Method2D``. All specialized methods
-are derived from their respective generic method objects. The purpose of the specialized
-methods is to facilitate user ease when setting up some commonly used methods, such as
-the MQMAS, STMAS, PASS, MAT, etc.
+.. All methods categorize into two groups, generic and specialized methods. A generic
+.. method is general and is based on the number of spectral dimensions. At present,
+.. there are two generic methods, ``Method1D`` and ``Method2D``. All specialized methods
+.. are derived from their respective generic method objects. The purpose of the specialized
+.. methods is to facilitate user ease when setting up some commonly used methods, such as
+.. the MQMAS, STMAS, PASS, MAT, etc.
 
 
 Summary
 -------
 
-**Generic methods**
-
-.. autosummary::
-    ~Method1D
-    ~Method2D
+.. **Generic methods**
+..
+.. .. autosummary::
+..     ~Method1D
+..     ~Method2D
 
 **Specialized 1D methods**
 
@@ -58,10 +58,8 @@ Table of contents
 -----------------
 
 .. toctree::
-    methods/method1D
     methods/BlochDecaySpectrum
     methods/BlochDecayCTSpectrum
-    methods/method2D
     methods/mqvas_api
     methods/stvas_api
     methods/ssb2d_api

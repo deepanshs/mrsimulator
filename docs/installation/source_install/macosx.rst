@@ -11,7 +11,7 @@ OpenBLAS (if applicable) and FFTW libraries. Read more on installing brew from
 
   $ brew install fftw
 
-*Step-2* By default, the mrsimulator package links to the openblas library for BLAS
+*Step-2* By default, the **mrsimulator** package links to the openblas library for BLAS
 operations. Mac users may opt to choose the in-build Apple's Accelerate library. If you
 opt for Apple's Accelerate library, skip to *Step-3*. If you wish to link the mrsimulator
 package to the OpenBLAS library, type the following in the terminal,
@@ -20,8 +20,8 @@ package to the OpenBLAS library, type the following in the terminal,
 
   $ brew install openblas
 
-*Step-3* If you choose to link the mrsimulator package to the OpenBLAS library, skip
-to the next section, :ref:`building_and_installing`.
+*Step-3* If you choose to link the **mrsimulator** package to the OpenBLAS library, skip
+to the next section.
 
 *(a)* You will need to install the BLAS development header for Apple's Accelerate
 library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
@@ -32,8 +32,8 @@ you may skip this sub-step. Type the following in the terminal,
 
   $ xcode-select --install
 
-*(b)* The next step is to let the mrsimulator setup know your preference.
-Open the ``settings.py`` file, located at the root level of the mrsimulator source
+*(b)* The next step is to let the **mrsimulator** setup know your preference.
+Open the ``settings.py`` file, located at the root level of the **mrsimulator** source
 code folder, in a text editor. You should see
 
 .. code-block:: python
@@ -44,7 +44,7 @@ code folder, in a text editor. You should see
   # mac-os only
   use_accelerate = False
 
-To link the mrsimulator package to the Apple's Accelerate library, change the
+To link the **mrsimulator** package to the Apple's Accelerate library, change the
 fields to
 
 .. code-block:: python

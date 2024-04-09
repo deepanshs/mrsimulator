@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Wollastonite, ²⁹Si (I=1/2), MAF
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -11,13 +10,13 @@ Wollastonite, ²⁹Si (I=1/2), MAF
 # :math:`\beta−\text{Ca}_3\text{Si}_3\text{O}_9`, with three distinct
 # :math:`^{29}\text{Si}` sites. The :math:`^{29}\text{Si}` tensor parameters
 # were obtained from Hansen `et al.` [#f1]_
+import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -44,13 +43,20 @@ sites = [
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# Use the generic 2D method, `Method2D`, to simulate a Magic-Angle Flipping (MAF)
-# spectrum by customizing the method parameters, as shown below. Note, the Method2D
-# method simulates an infinite spinning speed spectrum.
-maf = Method2D(
+# Use the generic `Method` class to simulate a 2D magic-angle Flipping (MAF) spectrum
+# by customizing the method parameters, as shown below.
+#
+# Here, we include a `MixingEvent` with a ``NoMixing`` query. A no mixing query
+# instructs the MAF method to not mix the transitions from the first and second
+# SpectralEvent. A no mixing query is equivalent to a rotation query where each
+# channel has a zero phase and angle. Since all spin systems in this example have a
+# single site, defining no mixing between the two spectral events is superfluous.
+# We include it such that the method is applicable with multi-site spin systems.
+maf = Method(
     name="Magic Angle Flipping",
     channels=["29Si"],
     magnetic_flux_density=14.1,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             count=128,
@@ -58,9 +64,10 @@ maf = Method2D(
             label="Anisotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=90 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
-                )
+                    rotor_angle=90 * np.pi / 180,  # in rads
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
+                ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(
@@ -70,8 +77,8 @@ maf = Method2D(
             label="Isotropic dimension",
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
@@ -80,21 +87,19 @@ maf = Method2D(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 maf.plot()
 plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and run the
 # simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [maf]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[maf])
 sim.run()
 
 # %%
 # Add post-simulation signal processing.
-csdm_data = sim.methods[0].simulation
+csdm_dataset = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(dim_index=(0, 1)),
@@ -103,14 +108,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=csdm_data).real
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=csdm_dataset).real
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.T, aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(processed_dataset.T, aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

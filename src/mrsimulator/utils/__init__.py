@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -12,7 +10,7 @@ def get_spectral_dimensions(csdm_object, units=False):
         csdm_object: A CSDM object holding the measurement dataset.
 
     Returns:
-        A list of dict objects, where each dict containts the count, spectral_width, and
+        A list of dict objects, where each dict contains the count, spectral_width, and
         reference_offset.
     """
     result = []
@@ -27,9 +25,9 @@ def get_spectral_dimensions(csdm_object, units=False):
         complex_co -= 0 if even else increment / 2.0
         co = ref if dim.complex_fft else complex_co
 
-        if sw < 0:
-            sw = -sw
-            co += -increment if even else 0
+        # if sw < 0:
+        #     sw = -sw
+        #     co += -increment if even else 0
 
         dim_i = {}
         dim_i["count"] = dim.count

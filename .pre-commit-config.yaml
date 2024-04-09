@@ -3,7 +3,7 @@ default_language_version:
 default_stages: [commit, push, manual]
 repos:
   - repo: https://github.com/ambv/black
-    rev: 22.1.0
+    rev: 22.12.0
     hooks:
       - id: black
         name: black
@@ -11,6 +11,13 @@ repos:
         require_serial: true
         types: [python]
         files: \.pyi?$
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        args: ["--py37-plus"]
+        # exclude: "docs/.*"
 
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.12.1
@@ -20,21 +27,17 @@ repos:
         language: python
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.4.0
     hooks:
       - id: check-yaml
-        language: python
       - id: check-added-large-files
-        language: python
-      - id: fix-encoding-pragma
-        language: python
+      - id: check-case-conflict
       - id: check-docstring-first
-        language: python
+      - id: mixed-line-ending
+      - id: detect-private-key
       - id: end-of-file-fixer
-        language: python
         exclude: docs/notebooks/
       - id: trailing-whitespace
-        language: python
         types: [text]
       - id: debug-statements
         name: Debug Statements (Python)
@@ -43,16 +46,15 @@ repos:
         language: python
         types: [python]
 
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: "3.9.2"
+  - repo: https://github.com/pycqa/flake8
+    rev: "6.0.0"
     hooks:
       - id: flake8
         language: python
         args:
           [
             "--ignore=E402",
-            "--exclude=.eggs, *.egg,build, src/mrsimulator/__init__.py",
-            "--filename=*.pyx, *py",
+            "--exclude=.eggs/,*.egg,build,src/mrsimulator/__init__.py,examples/*",
             "--max-line-length=88",
             "--max-complexity=8",
             "--select=B,C,E,F,W,T,N8",
@@ -61,7 +63,7 @@ repos:
           ]
 
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.7.1
+    rev: v3.9.0
     hooks:
       - id: reorder-python-imports
         name: Reorder python imports

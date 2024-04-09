@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Extended Czjzek distribution (Shielding and Quadrupolar)
 ========================================================
@@ -15,9 +14,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum, BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum, BlochDecayCTSpectrum
 from mrsimulator.models import ExtCzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 5
 
@@ -36,7 +36,8 @@ z_lim = np.arange(100) * 0.4 + 40  # in ppm
 e_lim = np.arange(21) / 20
 
 dominant = {"zeta": 60, "eta": 0.3}
-z_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, e_lim])
+z_dist, e_dist = np.meshgrid(z_lim, e_lim)
+_, _, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, e_lim])
 
 # %%
 # The following is the plot of the extended Czjzek distribution.
@@ -58,10 +59,15 @@ systems = single_site_system_generator(
 print(len(systems))
 
 # %%
+method = BlochDecaySpectrum(
+    channels=["13C"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+)
+
+# %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [BlochDecaySpectrum(channels=["13C"])]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%
@@ -88,9 +94,8 @@ cq_lim = np.arange(100) * 0.1  # assumed in MHz
 e_lim = np.arange(21) / 20
 
 dominant = {"Cq": 6.1, "eta": 0.1}
-cq_dist, e_dist, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(
-    pos=[cq_lim, e_lim]
-)
+cq_dist, e_dist = np.meshgrid(cq_lim, e_lim)
+_, _, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(pos=[cq_lim, e_lim])
 
 # %%
 # The following is the plot of the extended Czjzek distribution.
@@ -110,17 +115,16 @@ systems = single_site_system_generator(
     isotope="71Ga", quadrupolar={"Cq": cq_dist * 1e6, "eta": e_dist}, abundance=amp
 )
 
+method = BlochDecayCTSpectrum(
+    channels=["71Ga"],
+    magnetic_flux_density=9.4,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=2e5)],
+)
 # %%
 # Create a simulator object and add the above system.
-sim = Simulator()
-sim.spin_systems = systems  # add the systems
-sim.methods = [
-    BlochDecayCTSpectrum(
-        channels=["71Ga"],
-        magnetic_flux_density=9.4,  # in T
-        spectral_dimensions=[dict(count=2048, spectral_width=2e5)],
-    )
-]  # add the method
+sim = Simulator(spin_systems=systems, methods=[method])
 sim.run()
 
 # %%
@@ -135,16 +139,16 @@ plt.show()
 
 # %%
 # **MAS spectrum**
-sim.methods = [
-    BlochDecayCTSpectrum(
-        channels=["71Ga"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_frequency=25000,  # in Hz
-        spectral_dimensions=[
-            dict(count=2048, spectral_width=2e5, reference_offset=-1e4)
-        ],
-    )
-]  # add the method
+mas = BlochDecayCTSpectrum(
+    channels=["71Ga"],
+    magnetic_flux_density=9.4,  # in T
+    rotor_frequency=25000,  # in Hz
+    rotor_angle=54.7356 * np.pi / 180,  # in rads
+    spectral_dimensions=[
+        SpectralDimension(count=2048, spectral_width=2e5, reference_offset=-1e4)
+    ],
+)
+sim.methods[0] = mas  # add the method
 sim.config.number_of_sidebands = 16
 sim.run()
 

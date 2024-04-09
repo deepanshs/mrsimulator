@@ -1,18 +1,22 @@
-# -*- coding: utf-8 -*-
-import json
 import os
 
 import pytest
+from monty.serialization import loadfn
 from mrsimulator import __version__
 from mrsimulator import dict
 from mrsimulator import load
-from mrsimulator import mrsim_to_v0_7
+from mrsimulator import parse
 from mrsimulator import save
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.utils.error import FileConversionError
+
+
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEST_DATA = loadfn(os.path.join(MODULE_DIR, "test_data.json"))
 
 # mrsimulator save and load test
 
@@ -85,51 +89,59 @@ def test_load():
     assert application_r == application
 
     # Load from external URL. May break in the future
-    load("http://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
+    load("https://ssnmr.org/sites/default/files/mrsimulator/test.mrsim")
 
     os.remove("test.mrsim")
 
 
-def test_mrsim_to_v0_7():
-    sim, processors, application = setup()
-    sim.methods[0].simulation = None
+def test_parse_old_struct():
+    """Ensures error raised when trying to parse old file struct"""
+    old_root_level = TEST_DATA["old_root_level"]
 
-    old_struct = sim.json()
-    old_struct["signal_processors"] = [sp.json() for sp in processors]
-    old_struct["application"] = application
-    old_struct["version"] = __version__
-    old_struct["some_extra_key"] = "An erroneous key which will be removed"
+    with pytest.raises(FileConversionError):
+        parse(old_root_level)
 
-    with open("temp_2.mrsim", "w", encoding="utf8") as outfile:
-        json.dump(
-            old_struct,
-            outfile,
-            ensure_ascii=False,
-            sort_keys=False,
-            allow_nan=False,
-            separators=(",", ":"),
-        )
 
-    # Test error handling of loading old structure
-    e = (
-        "An incompatible JSON root-level structure was detected. Use the method"
-        "mrsim_to_v0_7 to convert to a compliant structure."
-    )
-    with pytest.raises(ValueError, match=e):
-        load("temp_2.mrsim")
+# def test_mrsim_to_v0_7():
+#     sim, processors, application = setup()
+#     sim.methods[0].simulation = None
 
-    new_struct = {
-        "simulator": sim.json(),
-        "signal_processors": [sp.json() for sp in processors],
-        "application": application,
-        "version": __version__,
-    }
+#     old_struct = sim.json()
+#     old_struct["signal_processors"] = [sp.json() for sp in processors]
+#     old_struct["application"] = application
+#     old_struct["version"] = __version__
+#     old_struct["some_extra_key"] = "An erroneous key which will be removed"
 
-    py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
+#     with open("temp_2.mrsim", "w", encoding="utf8") as outfile:
+#         json.dump(
+#             old_struct,
+#             outfile,
+#             ensure_ascii=False,
+#             sort_keys=False,
+#             allow_nan=False,
+#             separators=(",", ":"),
+#         )
 
-    py_dict["simulator"]["methods"][0]["simulation"] = None
-    new_struct["simulator"]["methods"][0]["simulation"] = None
+#     # Test error handling of loading old structure
+#     e = (
+#         "An incompatible JSON root-level structure was detected. Use the method "
+#         "mrsim_to_v0_7 to convert to a compliant structure."
+#     )
+#     with pytest.raises(ValueError, match=e):
+#         load("temp_2.mrsim")
 
-    assert py_dict == new_struct
+#     new_struct = {
+#         "simulator": sim.json(),
+#         "signal_processors": [sp.json() for sp in processors],
+#         "application": application,
+#         "version": __version__,
+#     }
 
-    os.remove("temp_2.mrsim")
+#     py_dict = mrsim_to_v0_7("temp_2.mrsim", overwrite=True)
+
+#     py_dict["simulator"]["methods"][0]["simulation"] = None
+#     new_struct["simulator"]["methods"][0]["simulation"] = None
+
+#     assert py_dict == new_struct
+
+#     os.remove("temp_2.mrsim")

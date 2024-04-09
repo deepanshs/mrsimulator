@@ -21,28 +21,25 @@
 //   }
 // }
 
-static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                                MRS_fftw_scheme *fftw_scheme, double *spec,
-                                double transition_pathway_weight) {
-  unsigned int i, j, k1, address;
+void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
+                               double *spec, unsigned int iso_intrp,
+                               complex128 *exp_I_phase) {
+  unsigned int i, j, k1, address, ptr, gamma_idx;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
   double offset_0, offset;
-  double *freq = dimensions->local_frequency, *amps = dimensions->freq_amplitude;
+  double *freq, *phase_ptr, *amps = dimensions->freq_amplitude;
+  double *amps_real = scheme->amps_real, *amps_imag = scheme->amps_imag;
 
   bool delta_interpolation = false;
-  MRS_plan *plan = dimensions->events->plan;
+  bool user_defined = scheme->user_defined, interpolation = scheme->interpolation;
+  MRS_plan *planA = dimensions->events->plan;
 
-  /**
-   * If the number of sidebands is 1, the sideband amplitude at every
-   * sideband order is one. In this case, update the `fftw_scheme->vector` is
-   * the same as the weights from the orientation averaging,
-   */
-  switch (plan->number_of_sidebands) {
+  // get amplitudes for the interpolation
+  switch (planA->number_of_sidebands) {
   case 1:
-    /* Copy the plan->norm_amplitudes to fftw_scheme->vector. */
-    for (j = 0; j < plan->n_octants; j++) {
-      cblas_dcopy(npts, plan->norm_amplitudes, 1, &amps[j * npts], 1);
+    for (j = 0; j < planA->n_octants; j++) {
+      cblas_dcopy(npts, planA->norm_amplitudes, 1, &amps[j * npts], 1);
     }
     break;
   default:
@@ -50,90 +47,87 @@ static inline void averaging_1D(MRS_dimension *dimensions, MRS_averaging_scheme 
      * Scale the absolute value square with the powder scheme weights. Only
      * the real part is scaled and the imaginary part is left as is. */
     for (j = 0; j < npts; j++) {
-      cblas_dscal(plan->n_octants * plan->number_of_sidebands, plan->norm_amplitudes[j],
-                  &amps[j], npts);
+      cblas_dscal(planA->n_octants * planA->number_of_sidebands,
+                  planA->norm_amplitudes[j], &amps[j], npts);
     }
   }
 
-  cblas_dscal(dimensions->events->plan->size, transition_pathway_weight, amps, 1);
-
   offset_0 = dimensions->normalize_offset + dimensions->R0_offset;
-  if (fabs(*freq - freq[nt]) < TOL && fabs(*freq - freq[npts - 1]) < TOL)
-    delta_interpolation = true;
 
-  if (delta_interpolation) {
-    offset_0 += *freq;
-    for (i = 0; i < plan->number_of_sidebands; i++) {
-      offset = offset_0 + plan->vr_freq[i];
-      if ((int)offset >= 0 && (int)offset <= dimensions->count) {
-        k1 = i * scheme->total_orientations;
-        j = 0;
-        while (j++ < plan->n_octants) {
-          octahedronDeltaInterpolation(nt, &offset, &amps[k1], 1, dimensions->count,
-                                       spec);
-          k1 += npts;
+  // gamma averaging
+
+  for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
+    ptr = scheme->total_orientations * gamma_idx;
+    freq = &dimensions->local_frequency[ptr];
+    phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
+
+    if (absd(*freq - freq[nt]) < TOL && absd(*freq - freq[npts - 1]) < TOL)
+      if (interpolation) delta_interpolation = true;
+
+    if (delta_interpolation) {
+      offset_0 += *freq;
+      for (i = 0; i < planA->number_of_sidebands; i++) {
+        offset = offset_0 + planA->vr_freq[i];
+        if ((int)offset >= 0 && (int)offset <= dimensions->count) {
+          k1 = i * scheme->total_orientations;
+          address = 0;
+          j = 0;
+          // multiply phase to the amplitudes.
+          vm_double_multiply(scheme->total_orientations, phase_ptr, 2, &amps[k1],
+                             amps_real);
+          vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
+                             amps_imag);
+          while (j++ < planA->n_octants) {
+            octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
+                                         dimensions->count, spec, iso_intrp);
+            octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
+                                         dimensions->count, spec + 1, iso_intrp);
+            address += npts;
+          }
         }
       }
     }
-    return;
-  }
 
-  for (i = 0; i < plan->number_of_sidebands; i++) {
-    offset = offset_0 + plan->vr_freq[i];
-    if ((int)offset >= 0 && (int)offset <= dimensions->count) {
-      k1 = i * scheme->total_orientations;
-      address = 0;
-      for (j = 0; j < plan->n_octants; j++) {
-        // Add offset(isotropic + sideband_order) to the local frequencies.
-        vm_double_add_offset(npts, &freq[address], offset, dimensions->freq_offset);
-        // Perform tenting on every sideband order over all orientations.
-        octahedronInterpolation(spec, dimensions->freq_offset, nt, &amps[k1], 1,
-                                dimensions->count);
-        k1 += npts;
-        address += npts;
+    else {
+      for (i = 0; i < planA->number_of_sidebands; i++) {
+        offset = offset_0 + planA->vr_freq[i];
+        if ((int)offset >= 0 && (int)offset <= dimensions->count) {
+          k1 = i * scheme->total_orientations;
+          address = 0;
+          // multiply phase to the amplitudes.
+          vm_double_multiply(scheme->total_orientations, phase_ptr, 2, &amps[k1],
+                             amps_real);
+          vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
+                             amps_imag);
+          for (j = 0; j < planA->n_octants; j++) {
+            // Add offset(isotropic + sideband_order) to the local frequencies.
+            vm_double_add_offset(npts, &freq[address], offset, dimensions->freq_offset);
+            // Perform tenting on every sideband order over all orientations.
+            one_d_averaging(spec, npts, dimensions->freq_offset, &amps_real[address],
+                            &amps_imag[address], dimensions->count,
+                            scheme->position_size, scheme->positions, nt, user_defined,
+                            interpolation);
+            address += npts;
+          }
+        }
       }
     }
   }
 }
 
-void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight) {
-  averaging_1D(dimensions, scheme, fftw_scheme, spec, transition_pathway_weight);
-}
-
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               MRS_fftw_scheme *fftw_scheme, double *spec,
-                               double transition_pathway_weight,
-                               unsigned int number_of_sidebands,
-                               double *affine_matrix) {
-  unsigned int i, k, j;
-  unsigned int step_vector_i = 0, step_vector_k = 0, address;
-  MRS_plan *planA, *planB;
-  int size = scheme->total_orientations * number_of_sidebands;
-  double *freq_ampA, *freq_ampB, *freq_amp = scheme->scrach;
+                               double *spec, double *affine_matrix,
+                               unsigned int iso_intrp, complex128 *exp_I_phase) {
+  unsigned int i, k, j, index, step_vector_i, step_vector_k, address, gamma_idx;
+  unsigned int npts = scheme->octant_orientations, ptr;
+
+  MRS_plan *planA, *planB, *avg_plan;
+  double *freq_ampA, *freq_ampB, *freq_amp = scheme->scratch, *avg_freq;
+  double *ampsA_real = scheme->amps_real, *ampsA_imag = scheme->amps_imag;
   double offset0, offset1, offsetA, offsetB;
-  double *freq0, *freq1;
+  double *freq0, *freq1, *phase_ptr;
   double norm0, norm1;
-
-  freq0 = dimensions[0].local_frequency;
-  freq1 = dimensions[1].local_frequency;
-
-  // scale and shear the first dimension.
-  if (affine_matrix[0] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
-  }
-  if (affine_matrix[1] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[1], freq1, 1, freq0, 1);
-  }
-
-  // scale and shear the second dimension.
-  if (affine_matrix[3] != 1) {
-    cblas_dscal(scheme->total_orientations, affine_matrix[3], freq1, 1);
-  }
-  if (affine_matrix[2] != 0) {
-    cblas_daxpy(scheme->total_orientations, affine_matrix[2], freq0, 1, freq1, 1);
-  }
+  bool user_defined = scheme->user_defined, interpolation = scheme->interpolation;
 
   offset0 = dimensions[0].R0_offset;
   freq_ampA = dimensions[0].freq_amplitude;
@@ -143,58 +137,99 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   freq_ampB = dimensions[1].freq_amplitude;
   planB = dimensions[1].events[0].plan;
 
-  for (j = 0; j < scheme->octant_orientations; j++) {
-    cblas_dscal(planA->n_octants * number_of_sidebands, planA->norm_amplitudes[j],
-                &freq_ampB[j], scheme->octant_orientations);
+  // printf("%f %f\n", freq_ampA[0], freq_ampB[0]);
+  index = planA->number_of_sidebands > 1;
+  avg_plan = (index) ? planA : planB;
+  avg_freq = (index) ? freq_ampA : freq_ampB;
+
+  for (j = 0; j < npts; j++) {
+    cblas_dscal(avg_plan->n_octants * avg_plan->number_of_sidebands,
+                avg_plan->norm_amplitudes[j], &avg_freq[j], npts);
   }
-  cblas_dscal(size, transition_pathway_weight, freq_ampA, 1);
 
-  for (i = 0; i < number_of_sidebands; i++) {
-    offsetA = offset0 + planA->vr_freq[i];
-    for (k = 0; k < number_of_sidebands; k++) {
-      offsetB = offset1 + planB->vr_freq[k];
+  // gamma averaging
+  for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
+    ptr = scheme->total_orientations * gamma_idx;
+    // printf("gma_idx %d ", gamma_idx);
+    freq0 = &dimensions[0].local_frequency[ptr];
+    freq1 = &dimensions[1].local_frequency[ptr];
+    phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
 
-      norm0 = offsetA;
-      norm1 = offsetB;
+    // scale and shear the first dimension.
+    if (affine_matrix[0] != 1) {
+      cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
+    }
+    if (affine_matrix[1] != 0) {
+      cblas_daxpy(scheme->total_orientations, affine_matrix[1], freq1, 1, freq0, 1);
+    }
 
-      // scale and shear the offsets
-      norm0 *= affine_matrix[0];
-      norm0 += affine_matrix[1] * offsetB;
+    // scale and shear the second dimension.
+    if (affine_matrix[3] != 1) {
+      cblas_dscal(scheme->total_orientations, affine_matrix[3], freq1, 1);
+    }
+    if (affine_matrix[2] != 0) {
+      cblas_daxpy(scheme->total_orientations, affine_matrix[2], freq0, 1, freq1, 1);
+    }
 
-      norm1 *= affine_matrix[3];
-      norm1 += affine_matrix[2] * norm0;
+    for (i = 0; i < planA->number_of_sidebands; i++) {
+      offsetA = offset0 + planA->vr_freq[i];
+      for (k = 0; k < planB->number_of_sidebands; k++) {
+        offsetB = offset1 + planB->vr_freq[k];
 
-      norm0 += dimensions[0].normalize_offset;
-      norm1 += dimensions[1].normalize_offset;
+        norm0 = offsetA;
+        norm1 = offsetB;
 
-      if ((int)norm0 >= 0 && (int)norm0 <= dimensions[0].count) {
-        step_vector_i = i * scheme->total_orientations;
-        // for (k = 0; k < number_of_sidebands; k++) {
-        //   offsetB =
-        //       offset1 + plan->vr_freq[k];
-        //   norm1 = offsetB + dimensions[1].normalize_offset;
-        if ((int)norm1 >= 0 && (int)norm1 <= dimensions[1].count) {
-          step_vector_k = k * scheme->total_orientations;
+        // scale and shear the offsets
+        norm0 *= affine_matrix[0];
+        norm0 += affine_matrix[1] * offsetB;
 
-          // step_vector = 0;
-          for (j = 0; j < planA->n_octants; j++) {
-            address = j * scheme->octant_orientations;
-            // Add offset(isotropic + sideband_order) to the local frequency
-            // from [n to n+octant_orientation]
-            vm_double_add_offset(scheme->octant_orientations, &freq0[address], norm0,
-                                 dimensions[0].freq_offset);
-            vm_double_add_offset(scheme->octant_orientations, &freq1[address], norm1,
-                                 dimensions[1].freq_offset);
+        norm1 *= affine_matrix[3];
+        norm1 += affine_matrix[2] * norm0;
 
-            vm_double_multiply(scheme->octant_orientations,
-                               &freq_ampA[step_vector_i + address],
-                               &freq_ampB[step_vector_k + address], freq_amp);
-            // Perform tenting on every sideband order over all orientations
-            octahedronInterpolation2D(spec, dimensions[0].freq_offset,
-                                      dimensions[1].freq_offset,
-                                      scheme->integration_density, freq_amp, 1,
-                                      dimensions[0].count, dimensions[1].count);
-            // step_vector += scheme->octant_orientations;
+        norm0 += dimensions[0].normalize_offset;
+        norm1 += dimensions[1].normalize_offset;
+
+        // printf("f0 %f %f, (%f, %f), %f, %f\n", freq0[0] + norm0, freq1[0] + norm1,
+        //  norm0, norm1, freq_ampA[0], freq_ampB[0]);
+        if ((int)norm0 >= 0 && (int)norm0 <= dimensions[0].count) {
+          step_vector_i = i * scheme->total_orientations;
+          if ((int)norm1 >= 0 && (int)norm1 <= dimensions[1].count) {
+            step_vector_k = k * scheme->total_orientations;
+
+            // multiply phase to the amplitudes.
+            vm_double_multiply(scheme->total_orientations, phase_ptr, 2,
+                               &freq_ampA[step_vector_i], ampsA_real);
+            vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2,
+                               &freq_ampA[step_vector_i], ampsA_imag);
+
+            // step_vector = 0;
+            for (j = 0; j < planA->n_octants; j++) {
+              address = j * npts;
+              // Add offset(isotropic + sideband_order) to the local frequency
+              // from [n to n+octant_orientation]
+              vm_double_add_offset(npts, &freq0[address], norm0,
+                                   dimensions[0].freq_offset);
+              vm_double_add_offset(npts, &freq1[address], norm1,
+                                   dimensions[1].freq_offset);
+
+              // real part
+              vm_double_multiply(npts, &ampsA_real[address], 1,
+                                 &freq_ampB[step_vector_k + address], freq_amp);
+              two_d_averaging(spec, npts, dimensions[0].freq_offset,
+                              dimensions[1].freq_offset, freq_amp,
+                              scheme->position_size, scheme->positions,
+                              dimensions[0].count, dimensions[1].count, iso_intrp,
+                              scheme->integration_density, user_defined, interpolation);
+
+              // imaginary part
+              vm_double_multiply(npts, &ampsA_imag[address], 1,
+                                 &freq_ampB[step_vector_k + address], freq_amp);
+              two_d_averaging(spec + 1, npts, dimensions[0].freq_offset,
+                              dimensions[1].freq_offset, freq_amp,
+                              scheme->position_size, scheme->positions,
+                              dimensions[0].count, dimensions[1].count, iso_intrp,
+                              scheme->integration_density, user_defined, interpolation);
+            }
           }
         }
       }

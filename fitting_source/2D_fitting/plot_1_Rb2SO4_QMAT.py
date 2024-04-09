@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ⁸⁷Rb 2D QMAT NMR of Rb₂SO₄
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,42 +13,55 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import SSB2D
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import SSB2D
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/Rb2SO4_QMAT.csdf"
-qmat_data = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 6.530634
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/Rb2SO4_QMAT.csdf"
+qmat_dataset = cp.load(filename)
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
-qmat_data = qmat_data.real
+qmat_dataset = qmat_dataset.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-_ = [item.to("ppm", "nmr_frequency_ratio") for item in qmat_data.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in qmat_dataset.dimensions]
 
 # plot of the dataset.
-max_amp = qmat_data.max()
+max_amp = qmat_dataset.max()
 levels = (np.arange(31) + 0.15) * max_amp / 32  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=1, linewidths=0.5)  # plot options
 
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+noise_region = np.where(qmat_dataset.dimensions[0].coordinates < -175e-6)
+noise_data = qmat_dataset[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data.T, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -76,20 +88,15 @@ spin_systems = [SpinSystem(sites=[s]) for s in [Rb_1, Rb_2]]
 # Create the SSB2D method.
 
 # Get the spectral dimension parameters from the experiment.
-spectral_dims = get_spectral_dimensions(qmat_data)
+spectral_dims = get_spectral_dimensions(qmat_dataset)
 
 PASS = SSB2D(
     channels=["87Rb"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=2604,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=qmat_data,  # add the measurement to the method.
+    experiment=qmat_dataset,  # add the measurement to the method.
 )
-
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = PASS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
@@ -107,17 +114,17 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=0),
         sp.apodization.Gaussian(FWHM="100 Hz"),
         sp.IFFT(dim_index=0),
-        sp.Scale(factor=1e4),
+        sp.Scale(factor=1e8),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
-ax.contour(processed_data.T, colors="r", linestyles="--", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
+ax.contour(processed_dataset.T, colors="r", linestyles="--", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)
 plt.grid()
@@ -136,7 +143,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 
@@ -149,7 +162,7 @@ best_fit = sf.bestfit(sim, processor)[0].real
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(qmat_data.T, colors="k", **options)
+ax.contour(qmat_dataset.T, colors="k", **options)
 ax.contour(best_fit.T, colors="r", linestyles="--", **options)
 ax.set_xlim(200, -200)
 ax.set_ylim(75, -120)

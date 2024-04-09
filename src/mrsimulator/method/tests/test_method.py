@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Dimension class."""
 from copy import deepcopy
 
@@ -8,10 +7,9 @@ import pytest
 from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
-from mrsimulator.method.frequency_contrib import freq_default
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
+from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.utils.error import MissingSpectralDimensionError
 from pydantic import ValidationError
 
 __author__ = "Deepansh J. Srivastava"
@@ -19,9 +17,9 @@ __email__ = "srivastava.89@osu.edu"
 
 event_dictionary = {
     "fraction": 0.5,
-    "freq_contrib": freq_default,
+    "freq_contrib": FREQ_LIST_ALL,
     "magnetic_flux_density": "9.6 T",
-    "rotor_frequency": "1 kHz",
+    "rotor_frequency": "0 kHz",
     "rotor_angle": "54.735 deg",
 }
 dimension_dictionary = {
@@ -59,13 +57,13 @@ def basic_method_tests(the_method):
 
     # json()
 
-    evt = [{"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}] * 2
+    evt = [{"fraction": 0.5, "transition_queries": [{"ch1": {"P": [0]}}]}] * 2
     serialize = {
         "name": "test worked",
         "description": "test worked again",
         "channels": ["1H", "17O"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1000.0 Hz",
+        "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [
             {
@@ -83,7 +81,7 @@ def basic_method_tests(the_method):
         "description": "test worked again",
         "channels": ["1H", "17O"],
         "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
+        "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [
             {
@@ -104,7 +102,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
+        "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary],
     }
@@ -119,7 +117,7 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1 kHz",
+        "rotor_frequency": "0 kHz",
         "rotor_angle": "54.735 deg",
         "spectral_dimensions": [dimension_dictionary, dimension_dictionary],
     }
@@ -128,31 +126,31 @@ def test_method():
     # test experiment assignment
     assert the_method.experiment is None
 
-    with pytest.raises(ValidationError, match="Unable to read the data."):
+    with pytest.raises(ValidationError, match="Unable to read the dataset."):
         the_method.experiment = "test"
 
     data = np.random.rand(100).reshape(10, 10)
-    csdm_data = cp.as_csdm(data)
+    csdm_dataset = cp.as_csdm(data)
 
-    csdm_data.x[0] *= cp.ScalarQuantity("Hz")
-    csdm_data.x[1] *= cp.ScalarQuantity("Hz")
+    csdm_dataset.x[0] *= cp.ScalarQuantity("Hz")
+    csdm_dataset.x[1] *= cp.ScalarQuantity("Hz")
 
-    the_method.experiment = csdm_data
-    the_method.simulation = csdm_data
+    the_method.experiment = csdm_dataset
+    the_method.simulation = csdm_dataset
     assert isinstance(the_method.experiment, cp.CSDM)
     assert isinstance(the_method.simulation, cp.CSDM)
 
-    csdm_dict = csdm_data.to_dict()
+    csdm_dict = csdm_dataset.to_dict()
     the_method.experiment = csdm_dict
     assert isinstance(the_method.experiment, cp.CSDM)
-    assert the_method.experiment == csdm_data
+    assert the_method.experiment == csdm_dataset
 
     the_method.simulation = csdm_dict
     assert isinstance(the_method.simulation, cp.CSDM)
-    assert the_method.simulation == csdm_data
+    assert the_method.simulation == csdm_dataset
 
     # json()
-    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
+    event_dictionary_ = {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [0]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": "100.0 Hz",
@@ -163,18 +161,18 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": "9.6 T",
-        "rotor_frequency": "1000.0 Hz",
+        "rotor_frequency": "0.0 Hz",
         "rotor_angle": "0.9553059660790962 rad",
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
-        "simulation": csdm_data.to_dict(),
-        "experiment": csdm_data.to_dict(),
+        "simulation": csdm_dataset.to_dict(),
+        "experiment": csdm_dataset.to_dict(),
     }
     serialize = the_method.json()
     serialize["simulation"]["csdm"].pop("timestamp")
     assert serialize == method_dictionary_
 
     # json(units=False)
-    event_dictionary_ = {"fraction": 0.5, "transition_query": [{"ch1": {"P": [-1]}}]}
+    event_dictionary_ = {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [0]}}]}
     dimension_dictionary_ = {
         "count": 1024,
         "spectral_width": 100.0,
@@ -185,11 +183,11 @@ def test_method():
         "description": "Test-1",
         "channels": ["29Si"],
         "magnetic_flux_density": 9.6,
-        "rotor_frequency": 1000.0,
+        "rotor_frequency": 0,
         "rotor_angle": 0.9553059660790962,
         "spectral_dimensions": [dimension_dictionary_, dimension_dictionary_],
-        "simulation": csdm_data.to_dict(),
-        "experiment": csdm_data.to_dict(),
+        "simulation": csdm_dataset.to_dict(),
+        "experiment": csdm_dataset.to_dict(),
     }
     serialize = the_method.json(units=False)
     serialize["simulation"]["csdm"].pop("timestamp")
@@ -213,8 +211,9 @@ def test_rotor_frequency():
     )
 
     # Bad method, should throw error for multiple finite speeds
-    for cls in [Method, Method1D]:
-        with pytest.raises(NotImplementedError):
+    error = "Sideband-sideband correlation is not yet supported in mrsimulator."
+    for cls in [Method]:
+        with pytest.raises(NotImplementedError, match=error):
             cls(
                 channels=["1H"],
                 spectral_dimensions=[
@@ -227,8 +226,8 @@ def test_rotor_frequency():
                 ],
             )
 
-    with pytest.raises(NotImplementedError):
-        Method2D(
+    with pytest.raises(NotImplementedError, match=error):
+        Method(
             channels=["1H"],
             spectral_dimensions=[
                 SpectralDimension(
@@ -246,16 +245,46 @@ def test_rotor_frequency():
             ],
         )
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(NotImplementedError, match=error):
+        # Both events should take 10000 Hz rotor_frequency
         Method(
             channels=["27Al"],
-            rotor_frequency=np.inf,
+            rotor_frequency=10000,
             spectral_dimensions=[
                 SpectralDimension(
-                    events=[
-                        SpectralEvent(fraction=0.5, rotor_frequency=0.1),
-                        SpectralEvent(fraction=0.5, rotor_frequency=456),
-                    ]
+                    events=[SpectralEvent(fraction=0.5), SpectralEvent(fraction=0.5)]
                 )
             ],
         )
+
+
+def test_rotor_freq_infinite():
+    """Ensure an infinite rotor frequency is parsed to 1e12 float value"""
+    foo = Method(
+        channels=["1H"],
+        rotor_frequency=np.inf,
+        spectral_dimensions=[SpectralDimension(events=[SpectralEvent()])],
+    )
+
+    # Infinity parsed to 1e12 Hz
+    assert foo.rotor_frequency == 1e12
+
+    # Test serializing to JSON, then parsing back into Method
+    foo_json = foo.json()
+
+    assert foo_json["rotor_frequency"] == "1000000000000.0 Hz"
+
+    foo_parsed = Method.parse_dict_with_units(foo_json)
+
+    assert foo_parsed.rotor_frequency == 1e12
+    assert foo == foo_parsed
+
+
+def test_empty_spectral_dimensions():
+    e = ".*Method requires at least one SpectralDimension, none found.*"
+    with pytest.raises(MissingSpectralDimensionError, match=e):
+        Method(channels=["1H"])
+
+    e = ".*Mrsimulator currently supports a maximum of two spectral dimensions.*"
+    with pytest.raises(NotImplementedError, match=e):
+        Method(channels=["1H"], spectral_dimensions=[dimension_dictionary] * 3)

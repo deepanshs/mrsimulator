@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 
 __author__ = "Deepansh J. Srivastava"
@@ -63,7 +62,7 @@ def octahedral_direction_cosine_squares_and_amplitudes(nt: int):
     x /= r2
     y /= r2
     z /= r2
-    amp = nt / (r2 * np.sqrt(r2))
+    amp = nt / (3.0 * np.pi * r2 * np.sqrt(r2))
 
     return x, y, z, amp
 
@@ -155,7 +154,7 @@ def triangle_interpolation1D(f, spec, amp=1.0):
 
     clips, p, pmid, pmax = get_clip_conditions(f, p, pmid, pmax, points)
     l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt = clips
-    print(clips)
+    # print(clips)
 
     if f[1] >= 0:
         p = left_triangle_process(

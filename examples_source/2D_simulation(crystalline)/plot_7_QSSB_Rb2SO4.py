@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Rb₂SO₄, ⁸⁷Rb (I=3/2) QMAT
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,8 +13,9 @@ simulation.
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import SSB2D
+from mrsimulator.method.lib import SSB2D
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -46,12 +46,12 @@ qmat = SSB2D(
     magnetic_flux_density=9.4,
     rotor_frequency=2604,
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=32 * 4,
             spectral_width=2604 * 32,  # in Hz
             label="Anisotropic dimension",
         ),
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=50000,  # in Hz
             label="Fast MAS dimension",
@@ -60,16 +60,14 @@ qmat = SSB2D(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 qmat.plot()
 plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [qmat]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[qmat])
 
 # For 2D spinning sideband simulation, set the number of spinning sidebands in the
 # Simulator.config object to `spectral_width/rotor_frequency` along the sideband
@@ -80,9 +78,9 @@ sim.run()
 # %%
 # The plot of the simulation.
 plt.figure(figsize=(4.25, 3.0))
-data = sim.methods[0].simulation.real
+dataset = sim.methods[0].simulation.real
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
+cb = ax.imshow(dataset / dataset.max(), aspect="auto", cmap="gist_ncar_r", vmax=0.15)
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.set_ylim(200, -200)

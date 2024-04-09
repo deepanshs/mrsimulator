@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import timeit
 
@@ -6,9 +5,9 @@ import mrsimulator.tests.tests as clib
 import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecayCentralTransitionSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import Method2D
+from mrsimulator.method import Method
+from mrsimulator.method.lib import BlochDecayCentralTransitionSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
 
 # import platform
@@ -109,9 +108,9 @@ def quad_MAS_method():
 
 
 def quad_static_2d_method():
-    tq = [{"P": [-1], "D": [0]}]
+    tq = [{"ch1": {"P": [-1], "D": [0]}}]
     to_rad = 3.14159 / 180
-    return Method2D(
+    return Method(
         channels=["17O"],
         magnetic_flux_density=4.2,  # in T
         spectral_dimensions=[
@@ -119,13 +118,13 @@ def quad_static_2d_method():
                 "count": 256,
                 "spectral_width": 4e4,  # in Hz
                 "reference_offset": -1e4,  # in Hz
-                "events": [{"rotor_angle": 70.12 * to_rad, "transition_query": tq}],
+                "events": [{"rotor_angle": 70.12 * to_rad, "transition_queries": tq}],
             },
             {
                 "count": 512,
                 "spectral_width": 5e4,  # in Hz
                 "reference_offset": -5e3,  # in Hz
-                "events": [{"rotor_angle": 54.74 * to_rad, "transition_query": tq}],
+                "events": [{"rotor_angle": 54.74 * to_rad, "transition_queries": tq}],
             },
         ],
     )
@@ -155,12 +154,12 @@ def time_string(time):
 
 def terminal_start_setup():
     size = os.get_terminal_size().columns
-    delmit = "-"
-    print(f"{delmit:-<{size}}")
+    delimit = "-"
+    print(f"{delimit:-<{size}}")
     left_align = "Computation method"
     right_align = "Average time"
     print(f"{left_align:<{size-15}}{right_align:>15}")
-    print(f"{delmit:-<{size}}")
+    print(f"{delimit:-<{size}}")
 
 
 def terminal_end_setup(t, n, description):

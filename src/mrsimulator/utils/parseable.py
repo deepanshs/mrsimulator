@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base Parseable class."""
 import warnings
 from copy import copy
@@ -34,10 +33,12 @@ INCLUDE_LIST = [
     "number_of_sidebands",
     "name",
     "description",
-    "transition_query",
+    "transition_queries",
     "ch1",
     "P",
     "channels",
+    "angle",
+    "phase",
 ]
 
 CONST = string_to_quantity("1")

@@ -1,30 +1,43 @@
-# -*- coding: utf-8 -*-
+import numpy as np
 import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
+from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
-from mrsimulator.method.query import MixingQuery
+from mrsimulator.method.utils import combine_mixing_queries
 from mrsimulator.method.utils import mixing_query_connect_map
 from mrsimulator.method.utils import nearest_nonmixing_event
-from mrsimulator.method.utils import tip_angle_and_phase_list
-from mrsimulator.methods import Method1D
 from mrsimulator.utils.error import MissingSpectralEventError
 
+# from mrsimulator.method.utils import angle_and_phase_list
 
-__author__ = "Deepansh Srivastava"
-__email__ = "srivastava.89@osu.edu"
+
+__author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
+__email__ = ["srivastava.89@osu.edu", "giammar.7@osu.edu"]
+
+
+def test_combine_mixing_queries():
+    with pytest.raises(ValueError, match=".*List length must be at least 1.*"):
+        combine_mixing_queries([])
+
+    queries = [
+        {"angle": 1, "phase": 0},
+        {"angle": 1, "phase": 0},
+        {"angle": 1, "phase": 0},
+    ]
+    assert np.allclose(combine_mixing_queries(queries), [np.pi / 2, 3, -np.pi / 2])
 
 
 def test_warnings():
     s = SpinSystem(sites=[Site(isotope="23Na")])
-    m = Method1D(channels=["1H"])
+    m = Method(channels=["1H"], spectral_dimensions=[{}])
     assert m.get_transition_pathways(s) == []
 
 
 ME = "MixingEvent"
 SE = "SpectralEvent"
-CE = "ConstantDurationEvent"
+CE = "DelayEvent"
 
 
 def test_nearest_mixing_query():
@@ -34,25 +47,13 @@ def test_nearest_mixing_query():
     assert nearest_nonmixing_event(events, 7) == [6, 9]
 
 
-def test_tip_angle_and_phase_list():
-    symbol = ["29Si", "17O", "29Si", "29Si", "27Al"]
-    channels = ["29Si", "27Al"]
-    mixing_query = MixingQuery(ch1={"tip_angle": 1.55, "phase": 0.5})
-    lst = tip_angle_and_phase_list(symbol, channels, mixing_query)
-    assert lst == ([1.55, 0, 1.55, 1.55, 0], [0.5, 0, 0.5, 0.5, 0])
-
-    mixing_query = MixingQuery(
-        ch1={"tip_angle": 1.55, "phase": 0.5},
-        ch2={"tip_angle": 3.1415, "phase": 1.570},
-    )
-    lst = tip_angle_and_phase_list(symbol, channels, mixing_query)
-    assert lst == ([1.55, 0, 1.55, 1.55, 3.1415], [0.5, 0, 0.5, 0.5, 1.57])
-
-
 def test_mixing_query_connect_map():
-    MX1 = MixingEvent(mixing_query={"ch1": {"tip_angle": 0.12}})
-    MX2 = MixingEvent(mixing_query={"ch2": {"tip_angle": 1.12}})
-    spectral_dimmensions = [
+    MX1 = MixingEvent(query={"ch1": {"angle": 0.12}})
+    MX2 = MixingEvent(query={"ch2": {"angle": 1.12}})
+    TOTAL_MX = MixingEvent(query="TotalMixing")
+
+    # Use MixingEvents with non-enum queries
+    spectral_dimensions = [
         SpectralDimension(
             events=[
                 {"fraction": 0.5},  # 0
@@ -70,17 +71,57 @@ def test_mixing_query_connect_map():
                 {"duration": 0.5},  # 4
                 MX2,
                 {"duration": 0.5},  # 5
-                {"fraction": 1},  # 2
+                {"fraction": 1},  # 6
             ]
         ),
     ]
-    res = mixing_query_connect_map(spectral_dimmensions)
+    res = mixing_query_connect_map(spectral_dimensions)
     assert res == [
-        {"mixing_query": MX1.mixing_query, "near_index": [0, 1]},
-        {"mixing_query": MX2.mixing_query, "near_index": [2, 3]},
-        {"mixing_query": MX1.mixing_query, "near_index": [3, 4]},
-        {"mixing_query": MX2.mixing_query, "near_index": [3, 4]},
-        {"mixing_query": MX2.mixing_query, "near_index": [4, 5]},
+        {"mixing_query_list": [MX1.query], "near_index": [0, 1]},
+        {"mixing_query_list": [MX2.query], "near_index": [2, 3]},
+        {"mixing_query_list": [MX1.query, MX2.query], "near_index": [3, 4]},
+        {"mixing_query_list": [MX2.query], "near_index": [4, 5]},
+    ]
+
+    # Combination of MixingEvents with dict queries and enum queries (total mixing)
+    spectral_dimensions = [
+        SpectralDimension(
+            events=[
+                # Connect all, should return no list
+                {"fraction": 0.5},  # 0
+                TOTAL_MX,
+                {"duration": 0.5},  # 1
+                # Just MX1
+                {"fraction": 0.5},  # 2
+                TOTAL_MX,
+                MX1,
+                {"duration": 0.5},  # 3
+            ]
+        ),
+        SpectralDimension(
+            events=[
+                # MX1 and MX2
+                {"fraction": 0.5},  # 4
+                MX1,
+                TOTAL_MX,
+                MX2,
+                {"duration": 0.5},  # 5
+                # MX1, MX2, MX1
+                {"fraction": 0.5},  # 6
+                MX1,
+                TOTAL_MX,
+                MX2,
+                MX1,
+                TOTAL_MX,
+                {"duration": 0.5},  # 7
+            ]
+        ),
+    ]
+    res = mixing_query_connect_map(spectral_dimensions)
+    assert res == [
+        {"mixing_query_list": [MX1.query], "near_index": [2, 3]},
+        {"mixing_query_list": [MX1.query, MX2.query], "near_index": [4, 5]},
+        {"mixing_query_list": [MX1.query, MX2.query, MX1.query], "near_index": [6, 7]},
     ]
 
     error = "SpectralDimension requires at least one SpectralEvent"

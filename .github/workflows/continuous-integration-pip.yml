@@ -9,18 +9,22 @@ on:
   pull_request:
     branches: [master, 'v?.?*']
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   code_lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: ["3.10"]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -33,36 +37,34 @@ jobs:
           flake8 . --count --select=B,C,E,F,W,T,N8 --ignore=E402 --max-line-length=88 --show-source --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=8 --max-line-length=88 --statistics --exclude="examples/* *.npy docs/* *.pyx *.pxd"
+
   testing_unix:
     needs: [code_lint]
+    runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
-    runs-on: ${{ matrix.os }}
+        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install linux system dependencies
-        if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
-
-      - name: Install macos system dependencies
-        if: startsWith(matrix.os, 'mac')
-        run: brew install openblas fftw
+        run: |
+          sudo apt-get install --yes libopenblas-dev libfftw3-dev
+          gcc -v
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest cython setuptools pytest-cov sympy sybil
-          pip install -r requirements.txt
+          pip install setuptools
+          pip install -r requirements-dev.txt
+
       - name: Build and install package from source
         run: python setup.py develop
 
@@ -70,60 +72,54 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v4.1.1
 
-  # build_windows_test:
-  #   needs: [code_lint]
-  #   strategy:
-  #     matrix:
-  #       os: ["windows-latest"]
-  #       python-version: [3.6, 3.7]
-  #   runs-on: ${{ matrix.os }}
-
-  #   env:
-  #     LIB: "C:\\Miniconda\\Library\\lib"
-  #     INCLUDE: "C:\\Miniconda\\Library\\include;C:\\Miniconda\\Library\\include\\openblas"
-  #     MRSIM_LIB: "C:\\Miniconda\\Library\\lib"
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-
-  #     - name: Set up Python ${{ matrix.python-version }}
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
-
-  #     - name: Install windows dependencies
-  #       run: |
-  #         C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
-
-  #     - name: Install package dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install pytest cython setuptools pytest-cov sympy
-  #         pip install -r requirements.txt
-
-  #     - name: Build and install package from source
-  #       run: python setup.py develop
-
-  #     - name: Test with pytest
-  #       run: pytest --cov=./ --cov-report=xml
-
-  #     - name: Upload coverage
-  #       uses: codecov/codecov-action@v2.1.0
-
-  testing_windows:
+  testing_mac:
     needs: [code_lint]
+    runs-on: "macos-latest"
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
-    runs-on: "windows-latest"
+        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install macos system dependencies
+        run: brew install openblas fftw
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools
+          pip install -r requirements-dev.txt
+
+      - name: Build and install package from source
+        run: python setup.py develop
+
+      - name: Test with pytest
+        run: pytest --cov=./ --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4.1.1
+
+  testing_windows:
+    needs: [code_lint]
+    runs-on: "windows-latest"
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
         with:
@@ -146,4 +142,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v4.1.1

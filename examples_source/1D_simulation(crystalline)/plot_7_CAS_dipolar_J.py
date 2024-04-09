@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coupled spin-1/2 (CSA + heteronuclear dipolar + J-couplings)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,15 +15,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
-# **Spin Systems**
-#
 # Here, we create three 13C-1H spin systems with different relative orientations
 # between the shielding and dipolar tensors. The Euler angle orientations
 # :math:`\alpha=\gamma=0` and :math:`\beta` values are listed below.
@@ -58,8 +56,6 @@ spin_systems = [
     for beta in beta_orientation
 ]
 # %%
-# **Methods**
-#
 # Next, we create methods to simulate the sideband manifolds for the above spin
 # systems at four spinning rates: 3 kHz, 5 kHz, 8 kHz, 12 kHz.
 
@@ -71,20 +67,16 @@ methods = [
         channels=["13C"],
         magnetic_flux_density=9.4,  # in T
         rotor_frequency=vr,  # in Hz
-        spectral_dimensions=[dict(count=2048, spectral_width=8.0e4)],
+        spectral_dimensions=[SpectralDimension(count=2048, spectral_width=8.0e4)],
     )
     for vr in spin_rates
 ]
 
 # %%
-# **Simulator**
-#
 # Create the Simulator object and add the method and the spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the three spin systems
-sim.methods = methods  # add the four methods
+sim = Simulator(spin_systems=spin_systems, methods=methods)
 sim.config.integration_volume = "hemisphere"  # set averaging to hemisphere
-# decompose spectrum to individual spin systems.
+# config to decompose spectrum to individual spin systems.
 sim.config.decompose_spectrum = "spin_system"
 
 # %%
@@ -93,8 +85,6 @@ sim.config.decompose_spectrum = "spin_system"
 sim.run()
 
 # %%
-# **Post-Simulation Processing**
-#
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
@@ -104,20 +94,18 @@ processor = sp.SignalProcessor(
     ]
 )
 # apply the same post-simulation processing to all the twelve simulations.
-processed_data = [
-    processor.apply_operations(data=method.simulation) for method in sim.methods
+processed_dataset = [
+    processor.apply_operations(dataset=method.simulation) for method in sim.methods
 ]
 
 # %%
-# **Plot**
-#
 # Let's first plot a single simulation, the one corresponding to a relative orientation
 # of :math:`\beta=30^\circ` between the shielding and dipolar tensors and a spinning
 # speed of 3 kHz.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(
-    processed_data[0].split()[0].real,
+    processed_dataset[0].split()[0].real,
     color="black",
     linewidth=1,
     label="$\\nu_r=$3 kHz, \n $\\beta=30^\\circ$",
@@ -139,7 +127,7 @@ fig, ax = plt.subplots(
     sharey=True,
     figsize=(8, 10.0),
 )
-for i, datum in enumerate(processed_data):
+for i, datum in enumerate(processed_dataset):
     datum_spin_sys = datum.split()  # get simulation from the three spin systems.
     for j, item in enumerate(datum_spin_sys):
         ax[i, j].plot(

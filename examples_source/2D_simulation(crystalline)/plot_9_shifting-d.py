@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 MCl₂.2D₂O, ²H (I=1) Shifting-d echo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,10 +14,9 @@ MCl₂.2D₂O, ²H (I=1) Shifting-d echo
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -97,11 +95,11 @@ spin_systems = [
 ]
 
 # %%
-# Use the generic 2D method, `Method2D`, to generate a shifting-d echo method. The
-# reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
+# Use the generic `Method` class to generate a 2D shifting-d echo method. The
+# reported shifting-d 2D sequence correlates the shielding frequencies to the
 # first-order quadrupolar frequencies. Here, we create a correlation method using the
 # :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
-# for including the frequency contributions from interaction during the event.
+# for including the frequency contributions from interactions during an event.
 #
 # In the following method, we assign the ``["Quad1_2"]`` and
 # ``["Shielding1_0", "Shielding1_2"]`` as the value to the ``freq_contrib`` key. The
@@ -109,10 +107,18 @@ spin_systems = [
 # frequency contributions. *Shielding1_0* and *Shielding1_2* are enumerations for
 # the first-order shielding with zeroth and second-rank tensor contributions,
 # respectively. See :ref:`freq_contrib_api` for details.
-shifting_d = Method2D(
+#
+# Like the previous example, we stipulate no mixing between the two spectral events
+# using a `MixingEvent` with ``NoMixing`` as the query. Since all spin systems in this
+# example have a single site, defining no mixing between the two spectral events is
+# superfluous. We include it such that the method is applicable with multi-site spin
+# systems.
+shifting_d = Method(
     name="Shifting-d",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
             count=512,
@@ -120,10 +126,10 @@ shifting_d = Method2D(
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
-                )
+                ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(
@@ -133,8 +139,7 @@ shifting_d = Method2D(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],
@@ -143,7 +148,7 @@ shifting_d = Method2D(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 2.5))
+plt.figure(figsize=(4, 1.5))
 shifting_d.plot()
 plt.show()
 
@@ -159,7 +164,7 @@ sim.run()
 
 # %%
 # Add post-simulation signal processing.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 processor = sp.SignalProcessor(
     operations=[
         # Gaussian convolution along both dimensions.
@@ -169,19 +174,19 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=data)
+processed_dataset = processor.apply_operations(dataset=dataset)
 
 
 # %%
 # The plot of the simulation. Because we configured the simulator object to simulate
-# spectrum per spin system, the following data is a CSDM object containing five
-# simulations (dependent variables). Let's visualize the first data corresponding to
+# spectrum per spin system, the following dataset is a CSDM object containing five
+# simulations (dependent variables). Let's visualize the first dataset corresponding to
 # :math:`\text{NiCl}_2\cdot 2 \text{D}_2\text{O}`.
-data_Ni = data.split()[0].real
+dataset_Ni = dataset.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data_Ni / data_Ni.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset_Ni / dataset_Ni.max(), aspect="auto", cmap="gist_ncar_r")
 plt.title(None)
 plt.colorbar(cb)
 plt.tight_layout()
@@ -190,11 +195,13 @@ plt.show()
 
 # %%
 # The plot of the simulation after signal processing.
-proc_data_Ni = processed_data.split()[0].real
+proc_dataset_Ni = processed_dataset.split()[0].real
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(proc_data_Ni / proc_data_Ni.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(
+    proc_dataset_Ni / proc_dataset_Ni.max(), cmap="gist_ncar_r", aspect="auto"
+)
 plt.title(None)
 plt.colorbar(cb)
 plt.tight_layout()
@@ -205,8 +212,8 @@ plt.show()
 fig, ax = plt.subplots(
     2, 5, sharex=True, sharey=True, figsize=(12, 5.5), subplot_kw={"projection": "csdm"}
 )
-for i, data_obj in enumerate([data, processed_data]):
-    for j, datum in enumerate(data_obj.split()):
+for i, dataset_obj in enumerate([dataset, processed_dataset]):
+    for j, datum in enumerate(dataset_obj.split()):
         ax[i, j].imshow((datum / datum.max()).real, aspect="auto", cmap="gist_ncar_r")
         ax[i, j].invert_xaxis()
         ax[i, j].invert_yaxis()
@@ -216,6 +223,6 @@ plt.show()
 
 # %%
 # .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
-#       Hydrogen motional disorder in crystalline iron group chloride dihydrates
+#       Hydrogen motional disorder in crystalline iron group chloride di-hydrates
 #       spectroscopy, J. Chem. Phys. (2018)  **149**, 084503.
 #       `DOI: 10.1063/1.5037151 <https://doi.org/10.1063/1.5037151>`_

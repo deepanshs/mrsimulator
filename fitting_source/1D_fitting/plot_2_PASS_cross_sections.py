@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 1D PASS/MAT sideband order cross-section
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -13,8 +12,8 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -24,7 +23,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-name = "https://sandbox.zenodo.org/record/835664/files/LHistidine_cross_section.csdf"
+name = "https://ssnmr.org/sites/default/files/mrsimulator/LHistidine_cross_section.csdf"
 pass_cross_section = cp.load(name)
 
 # standard deviation of noise from the dataset
@@ -77,10 +76,6 @@ PASS = BlochDecaySpectrum(
     experiment=pass_cross_section,  # also add the measurement to the method.
 )
 
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = PASS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
@@ -92,15 +87,15 @@ sim.run()
 
 # Post Simulation Processing
 # --------------------------
-processor = sp.SignalProcessor(operations=[sp.Scale(factor=2000)])
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processor = sp.SignalProcessor(operations=[sp.Scale(factor=20000)])
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(pass_cross_section, color="k", linewidth=1, label="Experiment")
-ax.plot(processed_data, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
+ax.plot(processed_dataset, color="r", alpha=0.75, linewidth=1, label="guess spectrum")
 plt.grid()
 ax.invert_xaxis()
 plt.legend()
@@ -123,7 +118,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # Run the minimization using LMFIT
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

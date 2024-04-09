@@ -4,10 +4,55 @@
 Spin System
 ===========
 
-At the heart of any ``mrsimulator`` calculation is the definition of a :ref:`spin_sys_api`
-object describing the sites and couplings within a spin system. Each :ref:`simulator_api` object
-holds a list of :ref:`spin_sys_api` objects which will be used to calculate frequency
-contributions.
+Overview
+--------
+
+At the heart of any **mrsimulator** calculation is the definition of
+a :ref:`spin_sys_api` object describing the sites and couplings within a spin
+system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
+objects which are used to calculate frequency contributions.
+
+**mrsimulator** faces the same limitation faced by all other NMR simulation
+codes: the computational cost increases exponentially with the number of
+couplings between sites in a spin system. In liquids, where isotropic molecular
+motion averages away intermolecular anisotropic couplings, the situation is more
+tractable as only the intramolecular isotropic J couplings remain.
+
+In solids, where no such isotropic motion exists, the situation is more
+problematic.  In solids that are dilute in NMR-active nuclei is often possible
+to build a set of SpinSystem objects that can accurately model a spectrum.  In
+solids that are not dilute in NMR-active nuclei, there are still situations
+where one can build approximately accurate spin systems models. One such case is
+when the individual anisotropic spin interactions, such as the shielding (shift)
+anisotropy or the quadrupolar couplings, dominant the spectrum, i.e., they are
+significantly larger than any dipolar couplings. This can happen for spin 1/2
+nuclei in static samples or samples spinning away from the magic-angle.  In the
+case of half-integer quadrupolar nuclei, this can also happen for a central
+transition spectrum that is significantly broadened by second-order quadrupolar
+effects. Another case is when an experimental method can successfully decouple
+the effects of dipolar couplings from the spectrum, rendering it similar to that
+of a dilute spin system.  This can be achieved through rapid sample rotation, a
+pulse sequence, or some clever combination of the two. In all such cases, any
+effects of residual dipolar couplings on the spectrum are usually modeled as an
+ad-hoc Gaussian lineshape convolution.
+
+A :ref:`spin_sys_api` object is organized according to the UML diagram
+below.
+
+.. figure:: ../../_static/SpinSystemUML.*
+    :width: 800
+    :alt: figure
+    :align: center
+
+.. note::
+
+  In UML (Unified Modeling Language) diagrams, each class is represented with
+  a box that contains two compartments.  The top compartment contains the name
+  of the class, and the bottom compartment contains the attributes of the class.
+  Default attribute values are shown as assignments. A composition
+  is depicted as a binary association decorated with a filled black diamond.
+  Inheritance is shown as a line with a hollow triangle as an arrowhead.
+
 
 .. _site_documentation:
 
@@ -44,30 +89,32 @@ Consider the example below of a :ref:`site_api` object for a deuterium nucleus c
         ),
     )
 
-The *isotope* key holds the spin isotope, here given a value of *2H*.
-The *isotropic_chemical_shift* is the isotropic chemical shift of the site isotope,
+The ``isotope`` key holds the spin isotope, here given a value of ``"2H"``.
+The ``isotropic_chemical_shift`` is the isotropic chemical shift of the site isotope,
 :math:`^2\text{H}`, here given as *4.1 ppm*. We have additionally defined an optional
-*shielding_symmetric* key, whose value is a second-rank traceless symmetric nuclear shielding
+``shielding_symmetric`` key, whose value is a second-rank traceless symmetric nuclear shielding
 tensor represented by a :ref:`sy_api` object.
 
 .. note::
-  We parameterize a SymmetricTensor using the Haeberlen convention with parameters *zeta* and *eta*,
-  defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, *alpha*,
-  *beta*, and *gamma* are the relative orientation of the nuclear shielding tensor from a common reference
+  We parameterize a SymmetricTensor using the Haeberlen convention with parameters ``zeta`` and ``eta``,
+  defined as the shielding anisotropy and asymmetry, respectively. The Euler angle orientations, ``alpha``,
+  ``beta``, and ``gamma`` are the relative orientation of the nuclear shielding tensor from a common reference
   frame.
 
 Since deuterium is a quadrupolar nucleus, :math:`I>1/2`, there also can be a quadrupolar coupling
 interaction between the nuclear quadrupole moment and the surrounding electric field gradient (EFG) tensor,
-defined in the optional *quadrupolar* key. An EFG tensor is a second-rank traceless
-symmetric tensor, and we describe its components with *Cq* and *eta*, i.e., the quadrupolar coupling constant
-and asymmetry parameter, respectively.  Additionally, we use the Euler angle orientations, *alpha*, *beta*,
-and *gamma*, which are the relative orientation of the EFG tensor from a common reference frame.
+defined in the optional ``quadrupolar`` key. An EFG tensor is a second-rank traceless
+symmetric tensor, and we describe its coupling to a quadrupolar nucleus with ``Cq``
+and ``eta``, i.e., the quadrupolar coupling constant and asymmetry parameter,
+respectively.  Additionally, we use the Euler angle orientations, ``alpha``, ``beta``,
+and ``gamma``, which are the relative orientation of the EFG tensor from a common
+reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  ``mrsimulator``
-have the attribute *property_units* which provides the units for all class properties.
+Also, all objects in  **mrsimulator**
+have the attribute ``property_units`` which provides the units for all class properties.
 
 .. code-block:: python
 
@@ -109,18 +156,24 @@ Consider the example below of a :ref:`coupling_api` object between two sites
         ),
     )
 
-The *site_index* key holds a list of two integers corresponding to the index of the two coupled sites
-within the spin system. The ordering of the integers is irrelevant.
+The ``site_index`` key holds a list of two integers corresponding to the index of the
+two coupled sites in the ordered list ``sites`` within the SpinSystem object. The
+ordering of the integers in ``site_index`` is irrelevant.
 
-The value of the *isotropic_j* is the isotropic
-*J*-coupling, here given as *15 Hz*. We have additionally defined an optional *j_symmetric* key,
+The value of the ``isotropic_j`` is the isotropic *J*-coupling, here given as
+``15 Hz``. We have additionally defined an optional ``j_symmetric`` key,
 whose value holds a SymmetricTensor object representing the traceless 2nd-rank symmetric *J*-coupling
 tensor.
 
 Additionally, the dipolar coupling interaction between the coupled nuclei is defined with an optional
-*dipolar* key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
-coupling constant with the parameter *D*.  The Euler angle orientations, *alpha*, *beta*, and *gamma*
+``dipolar`` key. A dipolar tensor is a second-rank traceless symmetric tensor, and we describe the dipolar
+coupling constant with the parameter ``D``.  The Euler angle orientations, ``alpha``, ``beta``, and ``gamma``
 are the relative orientation of the dipolar tensor from a common reference frame.
+
+.. note::
+
+  All frequency contributions from spin-spin couplings are calculated in the weak-coupling limit.
+
 
 See :numref:`table_coupling` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
@@ -151,14 +204,14 @@ Here we create a relatively unexciting single site proton spin system
         abundance=80,  # percentage
     )
 
-We find four keywords at the root level of our SpinSystem object definition: *name*,
-*description*, *sites*, and *abundance*. The value of the *name* key is the
+We find four keywords at the root level of our SpinSystem object definition: ``name``,
+``description``, ``sites``, and ``abundance``. The value of the ``name`` key is the
 optional name of the spin system. Likewise, the value of the description key is an optional
 string describing the spin system.
 
-The value of the *sites* key is a list of :ref:`site_api` objects. Here, this list is simply
+The value of the ``sites`` key is a list of :ref:`site_api` objects. Here, this list is simply
 the single object, `H1_site`.
-The value of the *abundance* key is the abundance of the spin system, here given
+The value of the ``abundance`` key is the abundance of the spin system, here given
 a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
 
 See :numref:`table_spin_system` for further description of the :ref:`spin_sys_api` class and
@@ -191,11 +244,11 @@ proton site to a new spin system.
         abundance=0.148,  # percentage
     )
 
-Again we see the optional *name* and *description* attributes. The *sites* attribute is now
+Again we see the optional ``name`` and ``description`` attributes. The ``sites`` attribute is now
 a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
-:math:`^{13}\text{C}` site. We have also set the *abundance* of this spin system to *0.148%*.
+:math:`^{13}\text{C}` site. We have also set the ``abundance`` of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
-simulated together. See our :ref:`introduction_ethanol_example` where isotopomers of varying
+simulated together. See our :ref:`introduction_isotopomers_example` where isotopomers of varying
 abundance are simulated in tandem.
 
 Coupled Spin System
@@ -261,18 +314,19 @@ construct such a spin system.
 
     coupled_spin_system = SpinSystem(sites=[H2_site, C13_site], couplings=[H2_C13_coupling])
 
-In contrast to the previous examples, we have omitted the optional *name*, *description*, and
-*abundance* keywords. The name and description for ``coupled_spin_system`` will both be ``None``
+In contrast to the previous examples, we have omitted the optional ``name``, ``description``, and
+``abundance`` keywords. The name and description for ``coupled_spin_system`` will both be ``None``
 and the abundance will be *100%*.
 
-A list of :ref:`coupling_api` objects passed to the *couplings* keywords. The
-*site_index* attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
-``C13_site`` in the sites list. If we were to add more sites, *site_index* might need to be
+A list of :ref:`coupling_api` objects passed to the ``couplings`` keywords. The
+``site_index`` attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
+``C13_site`` in the sites list. If we were to add more sites, ``site_index`` might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
-:ref:`introduction_ethanol_example` has good usage cases for multiple couplings in a
+:ref:`introduction_isotopomers_example` has good usage cases for multiple couplings in a
 spin system.
 
--------------------------
+Attribute Summaries
+-------------------
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_spin_system:
@@ -318,7 +372,7 @@ spin system.
 .. cssclass:: table-bordered table-striped centered
 .. _table_site:
 .. list-table::  The attributes of a Site object.
-  :widths: 30 15 50
+  :widths: 35 15 50
   :header-rows: 1
 
   * - Attribute name
@@ -327,7 +381,7 @@ spin system.
 
   * - ``name``, ``label``, and ``description``
     - String
-    - All three are *optional* attributes giving context to a **Site** object. The default
+    - All three are *optional* attributes giving context to a Site object. The default
       value for all three is an empty string.
 
   * - ``isotope``

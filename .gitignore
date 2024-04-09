@@ -4,12 +4,15 @@ __pycache__/*
 *$py.class
 .vscode/*
 
+figs/*
+
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
 build/
+reports/
 .vscode/*
 .idea/*
 develop-eggs/
@@ -67,11 +70,12 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/introduction/Al_acac
 
 # Spinx Gallery build dirs
 docs/examples/
 docs/fitting/
-docs/signal_processing
+docs/signal_processor
 
 # Doxygen output
 docs/xml/
@@ -124,10 +128,12 @@ class-diagram*
 *.mp4
 *.temp
 *.csdf
+!test*.csdf
 *.csdfe
 *.mrsim
 *.mrsys
 *.mrmtd
+*.f90
 test_os.py
 note.txt
 simulate_lineshape.py
@@ -140,6 +146,7 @@ test_dash.py
 # cython generated files
 test.c
 base_model.c
+clib.c
 sandbox.c
 *.bib
 3iKij9H

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Solid-state NMR spectra simulation module for Python
 ====================================================
@@ -14,15 +13,17 @@ minimization, using a collection of pre-defined NMR methods.
 
 See https://mrsimulator.readthedocs.io/en/stable/ for complete documentation.
 """
+from datetime import datetime
+
 # version has to be specified at the start.
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
-__copyright__ = "Copyright 2019-2021, The mrsimulator Project."
+__copyright__ = f"Copyright 2019-{datetime.now().year}, The mrsimulator Project."
 __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.7.0rc1"
+__version__ = "0.8.0rc"
 
 import os
 
@@ -40,8 +41,9 @@ from .method.spectral_dimension import (  # lgtm [py/import-own-module] # noqa:F
     SpectralDimension,
 )
 from .method import Method  # lgtm [py/import-own-module] # noqa:F401
+from mrsimulator.signal_processor import SignalProcessor
+from mrsimulator.utils.error import FileConversionError
 from mrsimulator.utils.importer import import_json
-from mrsimulator.signal_processing import SignalProcessor
 from mrsimulator.utils.parseable import Parseable
 import json
 from pydantic import Field
@@ -58,7 +60,7 @@ class Mrsimulator(Parseable):
 
     simulator: A :ref:`simulator_api` object.
 
-    signal_processor: A list of :ref:`signal_processing_api` objects.
+    signal_processor: A list of :ref:`signal_processor_api` objects.
 
     version: The current version of the library represented by a string. This attribute
         is not meant to be modified and serialization will only reflect the current
@@ -78,7 +80,7 @@ class Mrsimulator(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """Parse the physical quantity from a dictionary reperesentation of the
+        """Parse the physical quantity from a dictionary representation of the
         Mrsimulator object, where the physical quantity is expressed as a string with a
         number and a unit
 
@@ -118,7 +120,7 @@ class Mrsimulator(Parseable):
         ...           {
         ...             "count": 1024,
         ...             "spectral_width": "25000.0 Hz",
-        ...             "events": [{ "transition_query": [{ "ch1": { "P": [-1] } }] }]
+        ...             "events": [{ "transition_queries": [{ "ch1": { "P": [-1] } }] }]
         ...           }
         ...         ],
         ...         "magnetic_flux_density": "9.4 T",
@@ -178,7 +180,7 @@ class Mrsimulator(Parseable):
 
         Args:
             Dict py_dict: Dictionary representation of the Mrsimulator object
-            bool parse_units: If true, parse quantity and unitsfrom string.
+            bool parse_units: If true, parse quantity from units string.
 
         Returns:
             A :ref:`mrsimulator_api` object.
@@ -271,7 +273,7 @@ def save(
     filename: str,
     simulator: Simulator,
     signal_processors: List = None,
-    application: Dict = {},
+    application: Dict = None,
     with_units: bool = True,
 ):
     """Serialize the Simulator, list of SignalProcessor, and an application dict
@@ -297,7 +299,7 @@ def save(
 def dict(
     simulator: Simulator,
     signal_processors: List = None,
-    application: Dict = {},
+    application: Dict = None,
     with_units: bool = True,
 ):
     """Export the Simulator, list of SignalProcessor, and an application dict
@@ -324,15 +326,15 @@ def dict(
 
 
 def load(filename: str, parse_units: bool = True):
-    """Load Simulator object and list of SignalProcessor objects from a JSON searalized
-    file of a :py:class:`~mrsimulator.Mrsimulator` object.
+    """Load Simulator object, list of SignalProcessor objects and metadata from a JSON
+    serialized file of a :py:class:`~mrsimulator.Mrsimulator` object.
 
     Args:
         str filename: The location to the .mrsim file.
         bool parse_units: If true, parse the dictionary for units. The default is True.
 
     Return:
-        Ordered List: Simulator, List[SignalProcessor].
+        Ordered List: Simulator, List[SignalProcessor], Dict.
     """
     val = import_json(filename)
     return parse(val, parse_units)
@@ -355,63 +357,20 @@ def parse(py_dict, parse_units: bool = True):
     # Check for difference in keys
     root_keys = set(Mrsimulator().dict().keys())
     if len(set(py_dict.keys()) - root_keys) != 0:
-        raise ValueError(
-            "An incompatible JSON root-level structure was detected. Use the method"
-            "mrsim_to_v0_7 to convert to a compliant structure."
-        )
+        raise FileConversionError()
 
-    sim = Simulator.parse(py_dict["simulator"], parse_units)
+    py_copy_dict = deepcopy(py_dict)
+    sim = Simulator.parse(py_copy_dict["simulator"], parse_units)
 
     signal_processors = (
         [
             SignalProcessor.parse_dict_with_units(item)
-            for item in py_dict["signal_processors"]
+            for item in py_copy_dict["signal_processors"]
         ]
-        if "signal_processors" in py_dict
+        if "signal_processors" in py_copy_dict
         else [SignalProcessor() for _ in sim.methods]
     )
 
-    application = py_dict["application"] if "application" in py_dict else {}
+    application = py_copy_dict["application"] if "application" in py_copy_dict else None
 
     return sim, signal_processors, application
-
-
-def mrsim_to_v0_7(filename: str, overwrite: bool = False):
-    """Convert an old mrsim file where Simulator object keywords existed at the root
-    level along with other seralized attributes to a structure where each object exists
-    under its own keyword. New file will be saved as <given_name>_new.mrsim
-
-    Args:
-        str filename: path to searalized file
-        overwrite: Will overwrite file if true, otherwise just returns dict
-
-    Returns:
-        dict: Dictionary of newly seralized Mrsimulator object
-    """
-    py_dict = import_json(filename)
-
-    py_dict["simulator"] = {}
-    sim_keywords = {
-        "spin_systems",
-        "methods",
-        "config",
-        "name",
-        "label",
-        "description",
-        "indexes",
-    }
-
-    # Create Simulator dictionary
-    for key in set(py_dict.keys()).intersection(sim_keywords):
-        py_dict["simulator"][key] = py_dict.pop(key)
-
-    # Remove all other unknown keywords
-    bad_keys = set(py_dict.keys()) - set(Mrsimulator().dict().keys())
-    for key in bad_keys:
-        py_dict.pop(key)
-
-    obj = Mrsimulator.parse_dict_with_units(py_dict)
-    if overwrite:
-        obj.save(filename=filename)
-
-    return py_dict

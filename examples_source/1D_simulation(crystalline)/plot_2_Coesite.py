@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coesite, ¹⁷O (I=5/2)
 ^^^^^^^^^^^^^^^^^^^^
@@ -14,14 +13,15 @@ Coesite, ¹⁷O (I=5/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
-from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processor as sp
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
 
 # %%
-# **Step 1:** Create the sites.
+# Create the sites.
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17_1 = Site(
@@ -54,21 +54,21 @@ O17_5 = Site(
 sites = [O17_1, O17_2, O17_3, O17_4, O17_5]
 
 # %%
-# **Step 2:** Create the spin systems from these sites. For optimum performance, we
+# Create the spin systems from these sites. For optimum performance, we
 # create five single-site spin systems instead of a single five-site spin system. The
 # abundance of each spin system is taken from above reference. Here we are iterating
 # over both the *sites* and *abundance* list concurrently using a list comprehension
-# to construct a list of SpinSystens
+# to construct a list of SpinSystems
 abundance = [0.83, 1.05, 2.16, 2.05, 1.90]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 # %%
-# **Step 3:** Create a central transition selective Bloch decay spectrum method.
+# Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCTSpectrum(
     channels=["17O"],
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=2048,
             spectral_width=50000,  # in Hz
             label=r"$^{17}$O resonances",
@@ -83,13 +83,8 @@ method = BlochDecayCTSpectrum(
 # width using 2048 points.
 
 # %%
-# **Step 4:** Create the Simulator object and add the method and spin system objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
-
-# %%
-# **Step 5:** Simulate the spectrum.
+# Create the Simulator object and add method and spin system objects.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.
@@ -101,7 +96,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 6:** Add post-simulation signal processing.
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
         sp.IFFT(),
@@ -110,12 +105,12 @@ processor = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

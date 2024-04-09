@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Czjzek distribution, ²⁷Al (I=5/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -17,9 +16,10 @@ import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 
 from mrsimulator import Simulator
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import ThreeQ_VAS
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension
 
 
 # %%
@@ -89,13 +89,13 @@ len(spin_systems)
 mqvas = ThreeQ_VAS(
     channels=["27Al"],
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=26718.475776,  # in Hz
             reference_offset=-4174.76184,  # in Hz
             label="Isotropic dimension",
         ),
-        dict(
+        SpectralDimension(
             count=512,
             spectral_width=2e4,  # in Hz
             reference_offset=2e3,  # in Hz
@@ -106,19 +106,17 @@ mqvas = ThreeQ_VAS(
 
 # %%
 # Create the simulator object, add the spin systems and method, and run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [mqvas]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[mqvas])
 sim.config.number_of_sidebands = 1
 sim.run()
 
-data = sim.methods[0].simulation.real
+dataset = sim.methods[0].simulation.real
 
 # %%
 # The plot of the corresponding spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data / data.max(), cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(dataset / dataset.max(), cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.set_ylim(-20, -50)
 ax.set_xlim(80, 20)

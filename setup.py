@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import platform
 import sys
 from os.path import abspath
@@ -12,7 +11,6 @@ from setuptools import find_packages
 from setuptools import setup
 
 import numpy as np
-import numpy.distutils.system_info as sysinfo
 
 from settings import use_accelerate
 from settings import use_openblas
@@ -23,6 +21,8 @@ try:
     USE_CYTHON = True
 except ImportError:
     USE_CYTHON = False
+
+PY_MINOR_VERSION = 8
 
 
 def message(lib, env, command, key):
@@ -70,6 +70,7 @@ class Setup:
 
         print(sys.version)
         loc = dirname(sys.executable)
+        print("executable location", loc)
         if "conda" not in loc:
             return
 
@@ -109,22 +110,6 @@ class Setup:
         if not found_fftw:
             message("fftw", *cmd_list)
 
-    # def numpy_default_blas(self):
-    #     opt_info = np.__config__.blas_opt_info
-    #     if opt_info == {}:
-    #         return
-
-    #     if "pthread" in opt_info["libraries"]:
-    #         opt_info["libraries"].remove("pthread")
-
-    #     libs = opt_info["libraries"]
-    #     print(f"Linking mrsimulator with the default numpy blas: {libs}")
-
-    #     self.include_dirs += opt_info["include_dirs"]
-    #     self.library_dirs += opt_info["library_dirs"]
-    #     self.libraries += libs
-    #     self.BLAS_FOUND = True
-
     def mkl_blas_info(self):
         mkl_info = np.__config__.blas_mkl_info
         if mkl_info == {}:
@@ -162,6 +147,7 @@ class LinuxSetup(Setup):
         self.extra_compile_args = [
             "-O3",
             "-ffast-math",
+            "-fcommon",
             # "-msse4.2",
             # "-ftree-vectorize",
             # "-fopt-info-vec-all",
@@ -179,25 +165,6 @@ class LinuxSetup(Setup):
 
         self.library_dirs += ["/usr/lib64/", "/usr/lib/", "/usr/lib/x86_64-linux-gnu/"]
         self.libraries += ["openblas", "fftw3"]
-        openblas_info = sysinfo.get_info("openblas")
-        fftw3_info = sysinfo.get_info("fftw3")
-
-        if openblas_info == {} and fftw3_info == {}:
-            self.message("openblas-devel fftw-devel", "libopenblas-dev libfftw3-dev")
-
-        if openblas_info == {}:
-            self.message("openblas-devel", "libopenblas-dev")
-
-        if fftw3_info == {}:
-            self.message("fftw-devel", "libfftw3-dev")
-
-        self.get_location(openblas_info)
-        self.get_location(fftw3_info)
-
-    def get_location(self, dict_info):
-        for item in self.__slots__:
-            if item in dict_info.keys():
-                getattr(self, item).extend(dict_info[item])
 
     def message(self, lib_centos, lib_ubuntu):
         print(f"Warning: {lib_ubuntu} might not be installed. See below.\n")
@@ -228,18 +195,16 @@ class MacOSSetup(Setup):
         if use_openblas:
             self.openblas_info()
 
-        # if use_mkl:
-        #     self.mkl_blas_info()
-
         # FFTW
         self.fftw_info()
 
     def accelerate_info(self):
         """Apple's Accelerate framework for BLAS"""
-        acc_info = sysinfo.get_info("accelerate")
-        for item in ["extra_compile_args", "extra_link_args"]:
-            if item in acc_info:
-                self.extra_compile_args += acc_info[item]
+        self.extra_compile_args += [
+            "-I/System/Library/Frameworks/vecLib.framework/Headers",
+            "-Wl,-framework",
+            "-Wl,Accelerate",
+        ]
         print("Attempting to link mrsimulator with the Apple accelerate library.")
         self.extra_compile_args += ["-DUSE_ACCELERATE"]
 
@@ -265,21 +230,6 @@ class MacOSSetup(Setup):
         self.libraries += [blas_library]
         self.extra_compile_args += ["-DUSE_OPENBLAS"]
 
-    # def mkl_blas_info(self):
-    #     mkl_info = np.__config__.blas_mkl_info
-    #     if mkl_info == {}:
-    #         print("Please enable mkl for numpy before proceeding.")
-    #         message("mkl mkl-include", "pip", "pip", "")
-
-    #     if not self.check_if_file_exists("mkl.h"):
-    #         print("mkl header file not found.")
-    #         message("mkl-include", "pip", "pip", "")
-
-    #     self.include_dirs += mkl_info["include_dirs"]
-    #     self.library_dirs += mkl_info["library_dirs"]
-    #     self.libraries += mkl_info["libraries"]
-    #     self.extra_compile_args += ["-DUSE_MKL"]
-
     def fftw_info(self):
         """fftw includes and lib are for brew installation"""
         fftw_include_dir = [
@@ -303,11 +253,11 @@ class MacOSSetup(Setup):
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
-if python_version.major != 3 and python_version.minor < 6:
-    print(f"Python>=3.6 is required for the setup. You are using version {py_version}")
+if python_version.major != 3 and python_version.minor < PY_MINOR_VERSION:
+    print(f"Python>=3.{PY_MINOR_VERSION} is required, found {py_version}")
     sys.exit(1)
 
-with open("src/mrsimulator/__init__.py", "r") as f:
+with open("src/mrsimulator/__init__.py") as f:
     for line in f.readlines():
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
@@ -338,11 +288,11 @@ libraries = list(set(win.libraries))
 include_dirs += ["src/c_lib/include/", numpy_include]
 
 # print info
-print(include_dirs)
-print(library_dirs)
-print(libraries)
-print(extra_compile_args)
-print(extra_link_args)
+print("include_dirs", include_dirs)
+print("library_dirs", library_dirs)
+print("libraries", libraries)
+print("extra_compile_args", extra_compile_args)
+print("extra_link_args", extra_link_args)
 
 source = [
     "src/c_lib/lib/angular_momentum/wigner_element.c",
@@ -354,8 +304,10 @@ source = [
     "src/c_lib/lib/frequency_averaging.c",
     "src/c_lib/lib/schemes.c",
     "src/c_lib/lib/simulation.c",
+    "src/c_lib/lib/vm_linalg.c",
 ]
 
+print("USE_CYTHON", USE_CYTHON)
 ext = ".pyx" if USE_CYTHON else ".c"
 
 # method
@@ -386,22 +338,20 @@ ext_modules += [
     )
 ]
 
-# sandbox
-# ext_modules += [
-#     Extension(
-#         name="mrsimulator.sandbox",
-#         sources=[*source, "src/c_lib/sandbox/sandbox" + ext],
-#         include_dirs=include_dirs,
-#         language="c",
-#         libraries=libraries,
-#         library_dirs=library_dirs,
-#         extra_compile_args=extra_compile_args,
-#         extra_link_args=extra_link_args,
-#     )
-# ]
+# c-lib
+ext_modules += [
+    Extension(
+        name="mrsimulator.clib",
+        sources=["src/c_lib/lib/histogram.c", "src/c_lib/clib/clib" + ext],
+        include_dirs=include_dirs,
+        language="c",
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args,
+    )
+]
 
 if USE_CYTHON:
-    ext_modules = cythonize(ext_modules, language_level=3)
+    ext_modules = cythonize(ext_modules, language_level=3, gdb_debug=False)
 
 extras = {}  # {"all": ["matplotlib>=3.3.4"]}
 
@@ -414,15 +364,15 @@ setup(
     long_description_content_type="text/markdown",
     author="Deepansh J. Srivastava",
     author_email="srivastava.89@osu.edu",
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=1.17"],
+    setup_requires=["numpy>=1.20"],
     install_requires=[
-        "numpy>=1.17",
-        "csdmpy>=0.4.1",
-        "pydantic>=1.9",
+        "numpy>=1.20",
+        "csdmpy>=0.6",
+        "pydantic<2",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
         "psutil>=5.4.8",
@@ -431,6 +381,7 @@ setup(
         "lmfit>=1.0.2",
         "matplotlib>=3.3.4",
     ],
+    entry_points={"console_scripts": ["mrsimulator=mrsimulator.__main__:run"]},
     extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,
@@ -447,11 +398,11 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Programming Language :: C",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Education",
         "Topic :: Scientific/Engineering :: Chemistry",
     ],

@@ -1,13 +1,23 @@
-# -*- coding: utf-8 -*-
+"""
+Analytical czjzek distribution on polar and non-polar grid
+
+__author__ = "Deepansh J. Srivastava"
+__email__ = "dsrivastava@hyperfine.io"
+"""
+import csdmpy as cp
+import mrsimulator.models.analytical_distributions as analytical_dist
 import numpy as np
+from mrsimulator.base_model import get_Haeberlen_components
+from mrsimulator.clib import histogram2d
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-from .utils import get_Haeberlen_components
 from .utils import get_principal_components
-from .utils import x_y_from_zeta_eta
+from .utils import zeta_eta_to_x_y
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+ANALYTICAL_AVAILABLE = {"czjzek": analytical_dist.czjzek}
 
 
 def _czjzek_random_distribution_tensors(sigma, n):
@@ -40,36 +50,98 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
     Syz = Szy = sqrt(3) * U3
     """
-
-    # The random sampling U1, U2, ... U5
-    U1 = np.random.normal(0.0, sigma, n)
-
-    sqrt_3_sigma = np.sqrt(3) * sigma
-    sqrt_3_U2 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U3 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U4 = np.random.normal(0.0, sqrt_3_sigma, n)
-    sqrt_3_U5 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u1, u2, u3, u4, u5 = czjzek_random_components(sigma, n)
 
     # Create N random tensors
-    tensors = np.zeros((n, 3, 3))  # n x 3 x 3 tensors
+    tensors = np.empty((n, 3, 3))  # n x 3 x 3 tensors
 
-    tensors[:, 0, 0] = sqrt_3_U5 - U1  # xx
-    tensors[:, 0, 1] = sqrt_3_U4  # xy
-    tensors[:, 0, 2] = sqrt_3_U2  # xz
+    tensors[:, 0, 0] = u5 - u1  # xx
+    # tensors[:, 0, 1] = U4  # xy
+    # tensors[:, 0, 2] = U2  # xz
 
-    tensors[:, 1, 0] = sqrt_3_U4  # yx
-    tensors[:, 1, 1] = -sqrt_3_U5 - U1  # yy
-    tensors[:, 1, 2] = sqrt_3_U3  # yz
+    tensors[:, 1, 0] = u4  # yx
+    tensors[:, 1, 1] = -u5 - u1  # yy
+    # tensors[:, 1, 2] = U3  # yz
 
-    tensors[:, 2, 0] = sqrt_3_U2  # zx
-    tensors[:, 2, 1] = sqrt_3_U3  # zy
-    tensors[:, 2, 2] = 2 * U1  # zz
+    tensors[:, 2, 0] = u2  # zx
+    tensors[:, 2, 1] = u3  # zy
+    tensors[:, 2, 2] = 2 * u1  # zz
 
     return tensors
 
 
+def czjzek_random_components(sigma: float, n: int):
+    """Five dimensional random components of a 2nd rank symmetri tensor of size n.
+
+    Args:
+        float sigma: The standard deviation of the five-dimensional multi-variate normal
+            distribution.
+        int n: Number of samples drawn from the Czjzek random distribution model.
+    """
+    # The random sampling U1, U2, ... U5
+    u1 = np.random.normal(0.0, sigma, n)
+
+    sqrt_3_sigma = np.sqrt(3) * sigma
+    u2 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u3 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u4 = np.random.normal(0.0, sqrt_3_sigma, n)
+    u5 = np.random.normal(0.0, sqrt_3_sigma, n)
+    return u1, u2, u3, u4, u5
+
+
+def get_p_q_basis(u1, u2, u3, u4, u5):
+    """Evalute the one expression base"""
+    temp_q = u2**2 + u3**2 - 2 * u4**2 - 2 * u5**2
+    temp_q2 = u2**2 - u3**2
+
+    q_basis = np.array(
+        [
+            -u1 * (2 * u1**2 + temp_q) - u5 * temp_q2 - 2 * u2 * u3 * u4,  # rho^3
+            -3 * u1**2 - 0.5 * temp_q,  # zeta rho^2
+            -2.0 * u1 * u5 + 0.5 * temp_q2,  # zeta eta rho^2
+            0.5 * u1,  # zeta^2 rho (-3 + eta^2)
+            -0.25 * np.ones(u1.size),  # zeta^3 (1 - eta^2)
+            -u5,  # zeta^2 eta rho
+        ]
+    )
+
+    p_basis = np.array(
+        [
+            -3 * u1**2 - u2**2 - u3**2 - u4**2 - u5**2,  # rho^2
+            -3 * u1,  # zeta rho
+            u5,  # zeta eta rho
+            -0.25 * np.ones(u1.size),  # zeta^2 (3.0 + eta^2)
+        ]
+    )
+    return -p_basis / 3.0, -q_basis / 2.0
+
+
 class AbstractDistribution:
-    def pdf(self, pos, size: int = 400000):
+    """Abstract distribution"""
+
+    model_name = "base"
+
+    def __init__(
+        self,
+        mean_isotropic_chemical_shift=0.0,
+        abundance=100.0,
+        polar=False,
+        cache_tensors=False,
+    ):
+        """Basic class attributes for distributions"""
+        self._cache_tensors = cache_tensors
+        self._basis_p_q = None
+        self.mean_isotropic_chemical_shift = mean_isotropic_chemical_shift
+        self.abundance = abundance
+        self.polar = polar
+
+    def pdf(
+        self,
+        pos,
+        size: int = 400000,
+        analytical: bool = True,
+        pack_as_csdm: bool = False,
+    ):
         """Generates a probability distribution function by binning the random
         variates of length size onto the given grid system.
 
@@ -77,16 +149,33 @@ class AbstractDistribution:
             pos: A list of coordinates along the two dimensions given as NumPy arrays.
             size: The number of random variates drawn in generating the pdf. The default
                 is 400000.
+            pack_as_csdm: If true, returns as csdm object.
 
         Returns:
-            A list of x and y coordinates and the corresponding amplitudes.
+            A list of x and y coordinates and the corresponding amplitudes if not packed
+            as csdm object, else a csdm object.
 
         Example:
             >>> import numpy as np
             >>> cq = np.arange(50) - 25
             >>> eta = np.arange(21)/20
-            >>> Cq_dist, eta_dist, amp = cz_model.pdf(pos=[cq, eta])
+            >>> amp = cz_model.pdf(pos=[cq, eta])  # returns amp as a CSDM object.
         """
+        if analytical and self.model_name in ANALYTICAL_AVAILABLE:
+            analytical_model = ANALYTICAL_AVAILABLE[self.model_name]
+            pos_a, pos_b, data_ = analytical_model(self.sigma, pos, self.polar)
+        else:
+            pos_a, pos_b, data_ = self.pdf_numerical(pos, size)
+
+        if pack_as_csdm:
+            if len(pos_a.shape) == 1:
+                return self.pack_csdm_object([pos_a, pos_b], data_)
+            else:
+                return self.pack_csdm_object([pos_a[0, :], pos_b[:, 0]], data_)
+        return pos_a, pos_b, data_
+
+    def pdf_numerical(self, pos, size: int = 400000):
+        """Generate distribution numerically"""
         delta_z = (pos[0][1] - pos[0][0]) / 2
         delta_e = (pos[1][1] - pos[1][0]) / 2
         x = [pos[0][0] - delta_z, pos[0][-1] + delta_z]
@@ -95,12 +184,44 @@ class AbstractDistribution:
         x_size = pos[0].size
         y_size = pos[1].size
         zeta, eta = self.rvs(size)
-        hist, _, _ = np.histogram2d(zeta, eta, bins=[x_size, y_size], range=[x, y])
+
+        _, _, hist = histogram2d(
+            sample_x=zeta,
+            sample_y=eta,
+            weights=np.ones(zeta.size, dtype=float),
+            x_count=x_size,
+            y_count=y_size,
+            x_min=x[0],
+            x_max=x[1],
+            y_min=y[0],
+            y_max=y[1],
+        )
 
         hist /= hist.sum()
+        return pos[0], pos[1], hist.T
 
-        x_, y_ = np.meshgrid(pos[0], pos[1])
-        return x_, y_, hist.T
+    def pack_csdm_object(self, pos, data):
+        """Pack data and coordinates as csdm objects"""
+        dims = [cp.as_dimension(item) for item in pos]
+        dvs = cp.as_dependent_variable(data)
+        return cp.CSDM(dimensions=dims, dependent_variables=[dvs])
+
+    def add_lmfit_params(self, params, i):
+        """Add lmfit params for base class"""
+        prefix = self.model_name
+        params.add(
+            f"{prefix}_{i}_mean_isotropic_chemical_shift",
+            value=self.mean_isotropic_chemical_shift,
+        )
+        params.add(f"{prefix}_{i}_abundance", value=self.abundance, min=0, max=100)
+
+    def update_lmfit_params(self, params, i):
+        """Update lmfit params for base class"""
+        prefix = self.model_name
+        self.mean_isotropic_chemical_shift = params[
+            f"{prefix}_{i}_mean_isotropic_chemical_shift"
+        ].value
+        self.abundance = params[f"{prefix}_{i}_abundance"].value
 
 
 class CzjzekDistribution(AbstractDistribution):
@@ -138,9 +259,23 @@ class CzjzekDistribution(AbstractDistribution):
         >>> cz_model = CzjzekDistribution(0.5)
     """
 
-    def __init__(self, sigma: float, polar=False):
+    model_name = "czjzek"
+
+    def __init__(
+        self,
+        sigma: float,
+        mean_isotropic_chemical_shift: float = 0.0,
+        abundance: float = 100.0,
+        polar=False,
+        cache=True,
+    ):
+        super().__init__(
+            cache_tensors=cache,
+            polar=polar,
+            mean_isotropic_chemical_shift=mean_isotropic_chemical_shift,
+            abundance=abundance,
+        )
         self.sigma = sigma
-        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -156,10 +291,32 @@ class CzjzekDistribution(AbstractDistribution):
         Example:
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
-        tensors = _czjzek_random_distribution_tensors(self.sigma, size)
+        if self._cache_tensors:
+            if self._basis_p_q is None:
+                self._basis_p_q = get_p_q_basis(
+                    *czjzek_random_components(self.sigma, size)
+                )
+            basis_p_q = self._basis_p_q
+        else:
+            basis_p_q = get_p_q_basis(*czjzek_random_components(self.sigma, size))
+
+        zeta, eta = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
         if not self.polar:
-            return get_Haeberlen_components(tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(tensors))
+            return zeta, eta
+        return zeta_eta_to_x_y(zeta, eta)
+
+    def add_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.model_name
+        params.add(f"{prefix}_{i}_sigma", value=self.sigma, min=0)
+        super().add_lmfit_params(params, i)
+        return params
+
+    def update_lmfit_params(self, params, i):
+        """Update lmfit params for index i"""
+        prefix = self.model_name
+        self.sigma = params[f"{prefix}_{i}_sigma"].value
+        super().update_lmfit_params(params, i)
 
 
 class ExtCzjzekDistribution(AbstractDistribution):
@@ -203,10 +360,28 @@ class ExtCzjzekDistribution(AbstractDistribution):
     >>> ext_cz_model = ExtCzjzekDistribution(S0, eps=0.35)
     """
 
-    def __init__(self, symmetric_tensor: SymmetricTensor, eps: float, polar=False):
-        self.symmetric_tensor = symmetric_tensor
+    model_name = "ext_czjzek"
+
+    def __init__(
+        self,
+        symmetric_tensor: SymmetricTensor,
+        eps: float,
+        mean_isotropic_chemical_shift: float = 0.0,
+        abundance: float = 100.0,
+        polar=False,
+        cache=True,
+    ):
+        super().__init__(
+            cache_tensors=cache,
+            polar=polar,
+            mean_isotropic_chemical_shift=mean_isotropic_chemical_shift,
+            abundance=abundance,
+        )
+        if isinstance(symmetric_tensor, dict):
+            self.symmetric_tensor = SymmetricTensor(**symmetric_tensor)
+        else:
+            self.symmetric_tensor = symmetric_tensor
         self.eps = eps
-        self.polar = polar
 
     def rvs(self, size: int):
         """Draw random variates of length `size` from the distribution.
@@ -224,12 +399,14 @@ class ExtCzjzekDistribution(AbstractDistribution):
         """
 
         # czjzek_random_distribution model
-        tensors = _czjzek_random_distribution_tensors(1, size)
+        if self._cache_tensors:
+            if self._basis_p_q is None:
+                self._basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
+            basis_p_q = self._basis_p_q
+        else:
+            basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
 
         symmetric_tensor = self.symmetric_tensor
-
-        if isinstance(symmetric_tensor, dict):
-            symmetric_tensor = SymmetricTensor(**symmetric_tensor)
 
         zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
         eta = symmetric_tensor.eta
@@ -242,12 +419,42 @@ class ExtCzjzekDistribution(AbstractDistribution):
         # 2-norm of the tensor
         norm_T0 = np.linalg.norm(T0)
 
-        # the perturbation factor
-        rho = self.eps * norm_T0 / np.sqrt(30)
+        # the perturbation factor # np.sqrt(30) = 5.477225575
+        rho = self.eps * norm_T0 / 5.4772255751
 
-        # total tensor
-        total_tensors = np.diag(T0) + rho * tensors
-
+        zeta, eta = get_Haeberlen_components(*basis_p_q, zeta, eta, rho)
         if not self.polar:
-            return get_Haeberlen_components(total_tensors)
-        return x_y_from_zeta_eta(*get_Haeberlen_components(total_tensors))
+            return zeta, eta
+        return zeta_eta_to_x_y(zeta, eta)
+
+    def add_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.model_name
+        if self.symmetric_tensor.zeta is not None:
+            zeta = self.symmetric_tensor.zeta
+        else:
+            zeta = self.symmetric_tensor.Cq
+        params.add(f"{prefix}_{i}_symmetric_tensor_zeta", value=zeta)
+        params.add(
+            f"{prefix}_{i}_symmetric_tensor_eta",
+            value=self.symmetric_tensor.eta,
+            min=0,
+            max=1,
+        )
+        params.add(f"{prefix}_{i}_eps", value=self.eps, min=1e-6)
+        super().add_lmfit_params(params, i)
+        return params
+
+    def update_lmfit_params(self, params, i):
+        """Create lmfit params for index i"""
+        prefix = self.model_name
+
+        zeta = params[f"{prefix}_{i}_symmetric_tensor_zeta"].value
+        if self.symmetric_tensor.zeta is not None:
+            self.symmetric_tensor.zeta = zeta
+        else:
+            self.symmetric_tensor.Cq = zeta
+
+        self.symmetric_tensor.eta = params[f"{prefix}_{i}_symmetric_tensor_eta"].value
+        self.eps = params[f"{prefix}_{i}_eps"].value
+        super().update_lmfit_params(params, i)

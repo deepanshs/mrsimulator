@@ -1,16 +1,17 @@
-# -*- coding: utf-8 -*-
 import csdmpy as cp
 import mrsimulator.utils.spectral_fitting as sf
 import numpy as np
 import pytest
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator.methods import SSB2D
-from mrsimulator.methods import ThreeQ_VAS
+from mrsimulator.method.lib import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.method.lib import SSB2D
+from mrsimulator.method.lib import ThreeQ_VAS
+from mrsimulator.models import CzjzekDistribution
+from mrsimulator.models import ExtCzjzekDistribution
 
 
 def test_str_encode():
@@ -193,6 +194,28 @@ def test_raise_messages():
         sf.make_LMFIT_params(Simulator(spin_systems=[SpinSystem()]), 21)
 
 
+def test_no_exp_data():
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    mth = BlochDecaySpectrum(channels=["1H"])
+    sim = Simulator(spin_systems=[sys], methods=[mth])
+    params = sf.make_LMFIT_params(
+        sim,
+    )
+
+    e = r".*No experimental data found for method at index \[0\].*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+    sim = Simulator(spin_systems=[sys], methods=[mth] * 4)
+    params = sf.make_LMFIT_params(
+        sim,
+    )
+
+    e = r".*No experimental data found for method at index \[0, 1, 2, 3\].*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+
 H = {
     "isotope": "1H",
     "isotropic_chemical_shift": "10 ppm",
@@ -222,13 +245,13 @@ op_list = [
 
 
 def compare_result(params, valuesdict_system, sim):
-    valuedict_proc = {
+    valuesdict_proc = {
         "SP_0_operation_1_Exponential_FWHM": 100,
         "SP_0_operation_3_Scale_factor": 10,
     }
     assert params.valuesdict() == {
         **valuesdict_system,
-        **valuedict_proc,
+        **valuesdict_proc,
     }, "Parameter creation failed"
 
     params = sf.make_LMFIT_params(sim)
@@ -309,17 +332,17 @@ def test_7():
 
     def test_array():
         sim.run()
-        data = processor.apply_operations(sim.methods[0].simulation)
+        dataset = processor.apply_operations(sim.methods[0].simulation)
 
         data_sum = 0
-        for dv in data.y:
+        for dv in dataset.y:
             data_sum += dv.components[0]
 
         params = sf.make_LMFIT_params(sim, processor)
         a = sf.LMFIT_min_function(params, sim, processor)
         np.testing.assert_almost_equal(-a, data_sum, decimal=8)
 
-        dat = sf.add_csdm_dvs(data.real)
+        dat = sf.add_csdm_dvs(dataset.real)
         fits = sf.bestfit(sim, processor)
         assert sf.add_csdm_dvs(fits[0]) == dat
 
@@ -331,8 +354,32 @@ def test_7():
     sim.config.decompose_spectrum = "spin_system"
     test_array()
 
-    # data = processor.apply_operations(sim.methods[0].simulation)
+    # dataset = processor.apply_operations(sim.methods[0].simulation)
 
     # params = sf.make_LMFIT_params(sim, processor)
     # a = sf.LMFIT_min_function(params, sim, processor)
-    # np.testing.assert_almost_equal(-a.sum(), data.sum().real, decimal=8)
+    # np.testing.assert_almost_equal(-a.sum(), dataset.sum().real, decimal=8)
+
+
+def test_distribution():
+    dist1 = CzjzekDistribution(sigma=0.5)
+    dist2 = CzjzekDistribution(sigma=1.4, mean_isotropic_chemical_shift=4.7)
+    dist3 = ExtCzjzekDistribution(symmetric_tensor={"Cq": 1e6, "eta": 0.1}, eps=0.5)
+
+    models = [dist1, dist2, dist3]
+
+    params = sf.make_LMFIT_params(spin_system_models=models)
+
+    assert params["czjzek_0_sigma"] == 0.5
+    assert params["czjzek_0_mean_isotropic_chemical_shift"] == 0.0
+    assert np.allclose(params["czjzek_0_abundance"], 100.0 / 3.0)
+
+    assert params["czjzek_1_sigma"] == 1.4
+    assert params["czjzek_1_mean_isotropic_chemical_shift"] == 4.7
+    assert np.allclose(params["czjzek_1_abundance"], 100.0 / 3.0)
+
+    assert params["ext_czjzek_2_symmetric_tensor_zeta"] == 1e6
+    assert params["ext_czjzek_2_symmetric_tensor_eta"] == 0.1
+    assert params["ext_czjzek_2_eps"] == 0.5
+    assert params["ext_czjzek_2_mean_isotropic_chemical_shift"] == 0.0
+    assert np.allclose(params["ext_czjzek_2_abundance"], 100.0 / 3.0)

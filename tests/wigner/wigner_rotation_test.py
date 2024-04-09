@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
 import numpy as np
 
@@ -28,15 +27,11 @@ def test__batch_wigner_rotation():
     R2 = np.asarray([0 + 0.5j, 0, 0 + 0.1j, 0, 0 - 0.5j], dtype=np.complex128)
 
     cos_alpha = np.cos(alpha)
-    exp_im_alpha = clib.get_exp_Im_alpha(n, cos_alpha, True).ravel()
-    exp_im_alpha_in = np.empty(4 * n, dtype=np.complex128)
-    exp_im_alpha_in[:] = exp_im_alpha.copy()
+    exp_im_alpha = clib.get_exp_Im_angle(n, cos_alpha, True).ravel()
 
     w2, w4 = clib.__batch_wigner_rotation(
         n, n_octants, wigner_2j_matrices, R2, wigner_4j_matrices, R4, exp_im_alpha
     )
-
-    # assert np.allclose(exp_im_alpha_in, exp_im_alpha, atol=1e-15)
 
     alpha_octants = []
     for i in range(n_octants):
@@ -64,6 +59,7 @@ def test_single_2j_rotation_00():
 
     for _ in range(10):
         euler_angle = np.random.rand(3) * 2.0 * np.pi
+        euler_angle[1] /= 2  # beta ranges from 0 to pi
 
         # single rotation
         R_out = clib.single_wigner_rotation(ang_momentum_l, euler_angle, R_in)
@@ -88,6 +84,7 @@ def test_single_4j_rotation_00():
 
     for _ in range(10):
         euler_angle = np.random.rand(3) * 2.0 * np.pi
+        euler_angle[1] /= 2  # beta ranges from 0 to pi
 
         # single rotation
         R_out = clib.single_wigner_rotation(ang_momentum_l, euler_angle, R_in)

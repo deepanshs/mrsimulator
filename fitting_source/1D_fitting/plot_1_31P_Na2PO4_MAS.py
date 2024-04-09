@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ³¹P MAS NMR of crystalline Na2PO4 (CSA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -19,17 +18,18 @@
 #
 # Start by importing the relevant modules.
 import csdmpy as cp
+import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
@@ -41,9 +41,6 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
 filename = "31P Phosphate 6kHz.csdf"
 experiment = cp.load(host + filename)
-
-# standard deviation of noise from the dataset
-sigma = 1.523217
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -59,6 +56,23 @@ ax.set_xlim(150, -150)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords < -100e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.plot(noise_data, label="noise")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -77,8 +91,8 @@ spin_systems = [SpinSystem(sites=[P_31])]
 
 # %%
 # **Step 2:** Create the method object. Create an appropriate method object that closely
-# resembles the technique used in acquiring the experimental data. The attribute values
-# of this method must meet the experimental conditions, including the acquisition
+# resembles the technique used in acquiring the experimental dataset. The attribute
+# values of this method must meet the experimental conditions, including the acquisition
 # channels, the magnetic flux density, rotor angle, rotor frequency, and the
 # spectral/spectroscopic dimension.
 #
@@ -100,14 +114,6 @@ MAS = BlochDecaySpectrum(
     experiment=experiment,  # experimental dataset
 )
 
-# A method object queries every spin system for a list of transition pathways that are
-# relevant to the given method. Since the method and the number of spin systems remains
-# unchanged during the least-squares analysis, a one-time query is sufficient. To avoid
-# querying for the transition pathways at every iteration in a least-squares fitting,
-# evaluate the transition pathways once and store it as follows
-for sys in spin_systems:
-    sys.transition_pathways = MAS.get_transition_pathways(sys)
-
 # %%
 # **Step 3:** Create the Simulator object and add the method and spin system objects.
 sim = Simulator(spin_systems=spin_systems, methods=[MAS])
@@ -121,18 +127,18 @@ processor = sp.SignalProcessor(
         sp.IFFT(),
         sp.apodization.Exponential(FWHM="0.3 kHz"),
         sp.FFT(),
-        sp.Scale(factor=300),
+        sp.Scale(factor=3000),
         sp.baseline.ConstantOffset(offset=-2),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # %%
-# **Step 5:** The plot of the data and the guess spectrum.
+# **Step 5:** The plot of the dataset and the guess spectrum.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.plot(experiment, color="black", linewidth=0.5, label="Experiment")
-ax.plot(processed_data, linewidth=2, alpha=0.6, label="Guess Spectrum")
+ax.plot(processed_dataset, linewidth=2, alpha=0.6, label="Guess Spectrum")
 ax.set_xlim(150, -150)
 plt.legend()
 plt.grid()
@@ -170,13 +176,28 @@ params.pop("sys_0_abundance")
 print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
-# **Step 7:** Perform the least-squares minimization. For the user's convenience, we
+# **Step 7:** Perform the least-squares minimization.
+# A method object queries every spin system for a list of transition pathways that are
+# relevant to the given method. Since the method and the number of spin systems remains
+# unchanged during the least-squares analysis, a one-time query is sufficient. To avoid
+# querying for the transition pathways at every iteration in a least-squares fitting,
+# call the :py:meth:`~mrsimulator.Simulator.optimize()` method to pre-compute the
+# pathways.
+#
+# For the user's convenience, we
 # also provide a utility function,
 # :func:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`, for evaluating the
 # difference vector between the simulation and experiment, based on
-# the parameters update. You may use this function directly as the argument of the
-# LMFIT Minimizer class, as follows,
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+# the parameters update. You may use this function directly to instantiate the
+# LMFIT Minimizer class where `fcn_args` and `fcn_kws` are arguments passed to the
+# function, as follows,
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 

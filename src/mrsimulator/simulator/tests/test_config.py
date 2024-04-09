@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base ConfigSimulator class."""
 import pytest
 from mrsimulator import Simulator
@@ -53,7 +52,7 @@ def test_config():
 
     error = "unexpected value; permitted: 'octant', 'hemisphere'"
     with pytest.raises(ValueError, match=f".*{error}.*"):
-        a.config.integration_volume = "sphere"
+        a.config.integration_volume = "pentagon"
 
     # decompose spectrum
     assert a.config.decompose_spectrum == "none"
@@ -64,12 +63,33 @@ def test_config():
     with pytest.raises(ValueError, match=f".*{error}.*"):
         a.config.decompose_spectrum = "haha"
 
-    # overall
+    # isotropic interpolation
+    assert a.config.isotropic_interpolation == "linear"
+    a.config.isotropic_interpolation = "gaussian"
+    assert a.config.isotropic_interpolation == "gaussian"
+
+    error = "unexpected value; permitted: 'linear', 'gaussian'"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.isotropic_interpolation = "haha"
+
+    # number of gamma angles
+    assert a.config.number_of_gamma_angles == 1
+    a.config.number_of_gamma_angles = 14
+    assert a.config.number_of_gamma_angles == 14
+
+    error = "ensure this value is greater than 0"
+    with pytest.raises(ValueError, match=f".*{error}.*"):
+        a.config.integration_density = -1
+
+    # overall hemisphere
     assert a.config.dict(exclude={"property_units"}) == {
+        "custom_sampling": None,
         "decompose_spectrum": "spin_system",
         "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
         "integration_volume": "hemisphere",
         "integration_density": 20,
+        "isotropic_interpolation": "gaussian",
         "name": None,
         "description": None,
         "label": None,
@@ -78,11 +98,43 @@ def test_config():
     assert a.config.get_int_dict() == {
         "decompose_spectrum": 1,
         "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
         "integration_volume": 1,
         "integration_density": 20,
+        "isotropic_interpolation": 1,
     }
 
     assert b != a
 
     # get orientation count
-    assert a.config.get_orientations_count() == 4 * 21 * 22 / 2
+    assert a.config.get_orientations_count() == 4 * 21 * 22 * 14 / 2
+
+    # overall sphere
+    a.config.integration_volume = "sphere"
+    assert a.config.integration_volume == "sphere"
+    assert a.config.dict(exclude={"property_units"}) == {
+        "custom_sampling": None,
+        "decompose_spectrum": "spin_system",
+        "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
+        "integration_volume": "sphere",
+        "integration_density": 20,
+        "isotropic_interpolation": "gaussian",
+        "name": None,
+        "description": None,
+        "label": None,
+    }
+
+    assert a.config.get_int_dict() == {
+        "decompose_spectrum": 1,
+        "number_of_sidebands": 10,
+        "number_of_gamma_angles": 14,
+        "integration_volume": 2,
+        "integration_density": 20,
+        "isotropic_interpolation": 1,
+    }
+
+    assert b != a
+
+    # get orientation count
+    assert a.config.get_orientations_count() == 4 * 21 * 22 * 14

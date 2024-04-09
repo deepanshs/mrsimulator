@@ -1,0 +1,238 @@
+{
+    "old_root_level": {
+        "version": "0.6.0",
+        "name": "Test Conversion Simulator",
+        "description": "JSON to test conversion of old structures",
+        "label": "Simulator label",
+        "spin_systems": [
+            {
+                "name": "test sys 1",
+                "sites": [
+                    {
+                        "isotope": "1H",
+                        "isotropic_chemical_shift": "10 ppm"
+                    }
+                ],
+                "abundance": "80 %"
+            },
+            {
+                "name": "test sys 2",
+                "sites": [
+                    {
+                        "isotope": "17O",
+                        "isotropic_chemical_shift": "60 ppm"
+                    }
+                ],
+                "abundance": "1.1 %"
+            }
+        ],
+        "methods": [
+            {
+                "name": "DAS",
+                "channels": ["17O"],
+                "spectral_dimensions": [
+                    {
+                        "count": 1024,
+                        "label": "Isotropic dimension",
+                        "events": [
+                            {
+                                "fraction": 0.5,
+                                "rotor_angle": "0.6524035233333334 rad",
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                            },
+                            {
+                                "fraction": 0.5,
+                                "rotor_angle": "1.3821250672222223 rad",
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                            }
+                        ]
+                    },
+                    {
+                        "count": 1024,
+                        "label": "MAS dimension",
+                        "events": [
+                            {
+                                "rotor_angle": "0.9553051591666667 rad",
+                                "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "number_of_sidebands": 64,
+            "integration_volume": "octant",
+            "integration_density": 70,
+            "decompose_spectrum": "none"
+        },
+        "signal_processors": [
+            {
+                "operations": [
+                    {
+                        "factor": 500,
+                        "function": "Scale"
+                    }
+                ]
+            }
+        ],
+        "some_bad_key": "I should be removed"
+    },
+    "old_root_level_and_transition_queries": {
+        "name": "Test Conversion Simulator",
+        "description": "JSON to test conversion of old structures",
+        "label": "Simulator label",
+        "spin_systems": [
+            {
+                "name": "test sys 1",
+                "sites": [
+                    {
+                        "isotope": "1H",
+                        "isotropic_chemical_shift": "10 ppm"
+                    }
+                ],
+                "abundance": "80 %"
+            },
+            {
+                "name": "test sys 2",
+                "sites": [
+                    {
+                        "isotope": "17O",
+                        "isotropic_chemical_shift": "60 ppm"
+                    }
+                ],
+                "abundance": "1.1 %"
+            }
+        ],
+        "methods": [
+            {
+                "name": "DAS",
+                "channels": ["17O"],
+                "spectral_dimensions": [
+                    {
+                        "count": 1024,
+                        "label": "Isotropic dimension",
+                        "events": [
+                            {
+                                "fraction": 0.5,
+                                "rotor_angle": "0.6524035233333334 rad",
+                                "transition_queries": {"P": [-1], "D": [0]}
+                            },
+                            {
+                                "fraction": 0.5,
+                                "rotor_angle": "1.3821250672222223 rad",
+                                "transition_queries": {"P": [-1], "D": [0]}
+                            }
+                        ]
+                    },
+                    {
+                        "count": 1024,
+                        "label": "MAS dimension",
+                        "events": [
+                            {
+                                "rotor_angle": "0.9553051591666667 rad",
+                                "transition_queries": {"P": [-1], "D": [0]}
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "number_of_sidebands": 64,
+            "integration_volume": "octant",
+            "integration_density": 70,
+            "decompose_spectrum": "none"
+        },
+        "signal_processors": [
+            {
+                "operations": [
+                    {
+                        "factor": 500,
+                        "function": "Scale"
+                    }
+                ]
+            }
+        ],
+        "version": "0.6.0"
+    },
+    "serialization_should_be": {
+        "simulator": {
+            "name": "Test Conversion Simulator",
+            "description": "JSON to test conversion of old structures",
+            "label": "Simulator label",
+            "spin_systems": [
+                {
+                    "name": "test sys 1",
+                    "sites": [
+                        {
+                            "isotope": "1H",
+                            "isotropic_chemical_shift": "10.0 ppm"
+                        }
+                    ],
+                    "abundance": "80.0 %"
+                },
+                {
+                    "name": "test sys 2",
+                    "sites": [
+                        {
+                            "isotope": "17O",
+                            "isotropic_chemical_shift": "60.0 ppm"
+                        }
+                    ],
+                    "abundance": "1.1 %"
+                }
+            ],
+            "methods": [
+                {
+                    "name": "DAS",
+                    "channels": ["17O"],
+                    "spectral_dimensions": [
+                        {
+                            "count": 1024,
+                            "label": "Isotropic dimension",
+                            "events": [
+                                {
+                                    "fraction": 0.5,
+                                    "rotor_angle": "0.6524035233333334 rad",
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                                },
+                                {
+                                    "fraction": 0.5,
+                                    "rotor_angle": "1.3821250672222223 rad",
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                                }
+                            ]
+                        },
+                        {
+                            "count": 1024,
+                            "label": "MAS dimension",
+                            "events": [
+                                {
+                                    "rotor_angle": "0.9553051591666667 rad",
+                                    "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "config": {
+                "number_of_sidebands": 64,
+                "integration_volume": "octant",
+                "integration_density": 70,
+                "decompose_spectrum": "none"
+            }
+        },
+        "signal_processors": [
+            {
+                "operations": [
+                    {
+                        "factor": 500.0,
+                        "function": "Scale"
+                    }
+                ]
+            }
+        ]
+    }
+}

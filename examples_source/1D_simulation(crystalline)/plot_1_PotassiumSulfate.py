@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Potassium Sulfate, ³³S (I=3/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -13,14 +12,15 @@ Potassium Sulfate, ³³S (I=3/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator import signal_processing as sp
-from mrsimulator.methods import BlochDecayCTSpectrum
+from mrsimulator import signal_processor as sp
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 3
 
 # %%
-# **Step 1:** Create the spin system
+# Create the spin system
 site = Site(
     name="33S",
     isotope="33S",
@@ -30,13 +30,13 @@ site = Site(
 spin_system = SpinSystem(sites=[site])
 
 # %%
-# **Step 2:** Create a central transition selective Bloch decay spectrum method.
+# Create a central transition selective Bloch decay spectrum method.
 method = BlochDecayCTSpectrum(
     channels=["33S"],
     magnetic_flux_density=21.14,  # in T
     rotor_frequency=14000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=2048,
             spectral_width=5000,  # in Hz
             reference_offset=22500,  # in Hz
@@ -46,18 +46,13 @@ method = BlochDecayCTSpectrum(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(4, 3))
+plt.figure(figsize=(4, 2.5))
 method.plot()
 plt.show()
 
 # %%
-# **Step 3:** Create the Simulator object and add method and spin system objects.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
-
-# %%
-# **Step 4:** Simulate the spectrum.
+# Create the Simulator object and add method and spin system objects.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.
@@ -69,16 +64,16 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# **Step 5:** Add post-simulation signal processing.
+# Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

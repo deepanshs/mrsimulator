@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from mrsimulator.utils.collection import _check_lengths_of_args
@@ -24,7 +23,7 @@ def test_flatten_item():
     assert isinstance(flat_lst, np.ndarray)
     assert np.array_equal(flat_lst, np.array([0, 1, 2, 3, 4]))
 
-    # Check list flattenning
+    # Check list flattening
     lst = [
         [0, 1, 2, 3],
         [4, 5, 6, 7],
@@ -101,14 +100,14 @@ def test_shielding_01():
 
 
 def test_shielding_02():
-    isotropics = np.arange(20)
+    isotropic = np.arange(20)
     sys = single_site_system_generator(
-        isotope="71Ga", isotropic_chemical_shift=isotropics
+        isotope="71Ga", isotropic_chemical_shift=isotropic
     )
 
     for i in range(20):
         assert sys[i].sites[0].isotope.symbol == "71Ga"
-        assert sys[i].sites[0].isotropic_chemical_shift == isotropics[i]
+        assert sys[i].sites[0].isotropic_chemical_shift == isotropic[i]
         assert sys[i].sites[0].shielding_symmetric is None
         assert sys[i].sites[0].quadrupolar is None
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Coupled spin-1/2 (Static dipolar spectrum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -10,15 +9,14 @@ Coupled spin-1/2 (Static dipolar spectrum)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 1
 
 # %%
-# **Spin Systems**
-#
 # Create a 13C-1H coupled spin system.
 spin_system = SpinSystem(
     sites=[
@@ -28,27 +26,21 @@ spin_system = SpinSystem(
     couplings=[Coupling(site_index=[0, 1], dipolar=SymmetricTensor(D=-2e4))],
 )
 # %%
-# **Methods**
-#
 # Create a BlochDecaySpectrum method.
 method = BlochDecaySpectrum(
     channels=["13C"],
     magnetic_flux_density=9.4,  # in T
-    spectral_dimensions=[dict(count=2048, spectral_width=8.0e4)],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
+    spectral_dimensions=[SpectralDimension(count=2048, spectral_width=8.0e4)],
 )
 
 # %%
-# **Simulator**
-#
 # Create the Simulator object and add the method and the spin system object.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system.
-sim.methods = [method]  # add the method.
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # %%
-# **Post-Simulation Processing**
-#
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[
@@ -57,14 +49,12 @@ processor = sp.SignalProcessor(
         sp.FFT(),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
 
 # %%
-# **Plot**
-#
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-ax.plot(processed_data.real, color="black", linewidth=1)
+ax.plot(processed_dataset.real, color="black", linewidth=1)
 ax.invert_xaxis()
 plt.tight_layout()
 plt.show()

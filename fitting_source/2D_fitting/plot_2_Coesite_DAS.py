@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹⁷O 2D DAS NMR of Coesite
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -15,23 +14,19 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator
-from mrsimulator.methods import Method2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/DASCoesite.csdf"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/DASCoesite.csdf"
 experiment = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 921.6698
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -52,6 +47,23 @@ ax.set_ylim(30, -30)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords < -75e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -81,23 +93,26 @@ spin_systems = single_site_system_generator(
 # Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-DAS = Method2D(
+DAS = Method(
     channels=["17O"],
     magnetic_flux_density=11.744,  # in T
+    rotor_frequency=np.inf,
     spectral_dimensions=[
         SpectralDimension(
             **spectral_dims[0],
             events=[
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=37.38 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=37.38 * np.pi / 180,  # in rads
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
+                MixingEvent(query="NoMixing"),
                 SpectralEvent(
                     fraction=0.5,
-                    rotor_angle=79.19 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=79.19 * np.pi / 180,  # in rads
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         # The last spectral dimension block is the direct-dimension
@@ -105,19 +120,14 @@ DAS = Method2D(
             **spectral_dims[1],
             events=[
                 SpectralEvent(
-                    rotor_angle=54.735 * 3.14159 / 180,
-                    transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                    rotor_angle=54.735 * np.pi / 180,  # in rads
+                    transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 )
             ],
         ),
     ],
     experiment=experiment,  # also add the measurement to the method.
 )
-
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the das method.
-for sys in spin_systems:
-    sys.transition_pathways = DAS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
@@ -137,17 +147,17 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="0.15 kHz", dim_index=0),
         sp.apodization.Gaussian(FWHM="0.1 kHz", dim_index=1),
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=4e7),
+        sp.Scale(factor=4e8),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.invert_xaxis()
 ax.set_ylim(30, -30)
 plt.grid()
@@ -165,10 +175,15 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize(method="powell")
 result
-
 
 # %%
 # The best fit solution
@@ -196,11 +211,12 @@ fig, ax = plt.subplots(
 )
 vmax, vmin = experiment.max(), experiment.min()
 for i, dat in enumerate([experiment, best_fit, residuals]):
-    ax[i].imshow(dat, aspect="auto", vmax=vmax, vmin=vmin)
+    ax[i].imshow(dat, aspect="auto", vmax=vmax, vmin=vmin, interpolation="none")
     ax[i].invert_xaxis()
 ax[0].set_ylim(30, -30)
 plt.tight_layout()
 plt.show()
+
 # %%
 # .. [#f1] Grandinetti, P. J., Baltisberger, J. H., Farnan, I., Stebbins, J. F.,
 #       Werner, U. and Pines, A.

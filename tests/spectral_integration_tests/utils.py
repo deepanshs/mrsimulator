@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 import json
 from os import path
 
+import csdmpy as cp
 import numpy as np
 from mrsimulator import Method
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator import Simulator
 from mrsimulator import SpinSystem
 from numpy.fft import fft
@@ -48,21 +48,37 @@ def get_data(filename):
     test_data_object = data_object["test_data"]
 
     source_file = test_data_object["filename"]
-    path_ = path.abspath(filename)
-    path_ = path.split(path_)[0]
+    path_ = path.split(filename)[0]
     source_file = path.join(path_, source_file)
 
+    if test_data_object["type"] == "npz":
+        data_source = np.load(source_file)[1]
+        return data_object, data_source
+
+    elif test_data_object["type"] == "csdm":
+        data_source = get_csdm_data(source_file, test_data_object["quantity"])
+        return data_object, data_source
+
+    else:
+        data_source = get_textfile_data(source_file, test_data_object)
+        return data_object, data_source
+
+
+def get_csdm_data(source_file, quantity):
+    """Get data from csdm object"""
+    csdm = cp.load(source_file)
+    data_source = csdm.y[0].components[0]
+    return data_source
+
+
+def get_textfile_data(source_file, test_data_object):
+    """Get data from text file"""
     delimiter = None
     periodic = False
     if "delimiter" in test_data_object.keys():
         delimiter = test_data_object["delimiter"]
     if "periodic" in test_data_object.keys():
         periodic = test_data_object["periodic"]
-
-    if test_data_object["type"] == "npz":
-        data_source = np.load(source_file)[1]
-        data_source /= data_source.max()
-        return data_object, data_source
 
     skip_header, skip_footer = _get_header_and_footer(source_file)
 
@@ -91,14 +107,7 @@ def get_data(filename):
         else:
             data_source[0] /= 2.0
             data_source = fftshift(fft(data_source)).real
-
-    data_source /= data_source.max()
-
-    # if test_data_object["source"] == "dmfit":
-    #     data_source = data_source[::-1]
-    #     data_source = np.roll(data_source, 1)
-
-    return data_object, data_source
+    return data_source
 
 
 def simulator_setup(
@@ -112,37 +121,30 @@ def simulator_setup(
     spin_systems = [
         SpinSystem.parse_dict_with_units(item) for item in data_object["spin_systems"]
     ]
-    s1 = Simulator(spin_systems=spin_systems, methods=methods)
-    s1.config.decompose_spectrum = "spin_system"
-    s1.spin_systems[0].name = "test name"
-    s1.spin_systems[0].description = "test description"
-    s1.config.integration_density = integration_density
-    s1.config.number_of_sidebands = number_of_sidebands
-    s1.config.integration_volume = integration_volume
+    sim = Simulator(spin_systems=spin_systems, methods=methods)
+    sim.config.integration_density = integration_density
+    sim.config.number_of_sidebands = number_of_sidebands
+    sim.config.integration_volume = integration_volume
 
-    return s1
+    return sim
 
 
 def simulator_process(sim, data_object):
     sim.run()
 
-    sim_data = sim.methods[0].simulation
+    sim_dataset = sim.methods[0].simulation
 
     if "operations" in data_object:
         processor = sp.SignalProcessor.parse_dict_with_units(
             {"operations": data_object["operations"]}
         )
-        sim_data = processor.apply_operations(data=sim_data)
+        sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
-    data_mrsimulator = np.asarray(sim_data.to_list()[1:])
-    data_mrsimulator = data_mrsimulator.sum(axis=0)
-    data_mrsimulator /= data_mrsimulator.sum()
+    dimension_coords = sim_dataset.x[0].coordinates.to("ppm").value
+    data_mrsimulator = sim_dataset.y[0].components[0]
+    data_mrsimulator /= np.real(data_mrsimulator).mean()
 
-    dv = sim_data.y[0]
-    assert dv.name == "test name"
-    assert dv.description == "test description"
-
-    return data_mrsimulator
+    return data_mrsimulator, dimension_coords
 
 
 def c_setup(
@@ -153,19 +155,20 @@ def c_setup(
 ):
     # mrsimulator
     data_object, data_source = get_data(filename)
-    data_source /= data_source.sum()
+    data_source /= np.real(data_source).mean()
 
     sim = simulator_setup(
         data_object, integration_volume, integration_density, number_of_sidebands
     )
-    data_mrsimulator = simulator_process(sim, data_object)
-    return data_mrsimulator, data_source
+    info = sim.json()
+    data_mrsimulator, x = simulator_process(sim, data_object)
+    return data_mrsimulator.real, data_source.real, info, x
 
 
 def c_setup_random_euler_angles(filename, group):
     # mrsimulator
     data_object, data_source = get_data(filename)
-    data_source /= data_source.sum()
+    data_source /= np.real(data_source).mean()
 
     sim = simulator_setup(data_object, integration_volume="hemisphere")
     pix2 = 2 * np.pi
@@ -181,5 +184,5 @@ def c_setup_random_euler_angles(filename, group):
             spin_system.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
             spin_system.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
 
-    data_mrsimulator = simulator_process(sim, data_object)
+    data_mrsimulator, _ = simulator_process(sim, data_object)
     return data_mrsimulator, data_source

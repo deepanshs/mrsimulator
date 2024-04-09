@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test for the base Simulator class."""
 import os
 from random import randint
@@ -10,8 +9,8 @@ from mrsimulator import Coupling
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.simulator import __CPU_count__
 from mrsimulator.simulator import get_chunks
 from mrsimulator.simulator import Sites
@@ -133,7 +132,7 @@ def test_simulator_1():
                 "spectral_dimensions": [
                     {
                         "count": 1024,
-                        "events": [{"transition_query": [{"ch1": {"P": [-1]}}]}],
+                        "events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}],
                         "spectral_width": 25000.0,
                     }
                 ],
@@ -254,10 +253,10 @@ def test_simulator_2():
     sim.save("test_sim_save.temp")
     sim_load = Simulator.load("test_sim_save.temp")
 
-    sim_load_data = sim_load.methods[0].simulation
-    sim_data = sim.methods[0].simulation
-    sim_load_data._timestamp = ""
-    assert sim_load_data.dict() == sim_data.dict()
+    sim_load_dataset = sim_load.methods[0].simulation
+    sim_dataset = sim.methods[0].simulation
+    sim_load_dataset._timestamp = ""
+    assert sim_load_dataset.dict() == sim_dataset.dict()
 
     sim_load.methods[0].simulation = None
     sim.methods[0].simulation = None
@@ -393,3 +392,13 @@ def test_parallel_chunks():
         lst[i] += 1
     items_list = np.arange(85).tolist()
     check_chunks(items_list, -1, lst)
+
+
+def test_sim_optimize():
+    sim = Simulator()
+    sim.spin_systems = [SpinSystem(sites=[Site(isotope="1H"), Site(isotope="23Na")])]
+    sim.methods = [BlochDecaySpectrum(channels=["1H"])]
+
+    opt = sim.optimize()
+
+    assert set(opt.keys()) == {"precomputed_pathways", "precomputed_weights"}

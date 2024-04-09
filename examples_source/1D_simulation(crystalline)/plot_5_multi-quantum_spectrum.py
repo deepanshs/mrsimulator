@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Arbitrary spin transition (multi-quantum)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -8,11 +7,11 @@ Arbitrary spin transition (multi-quantum)
 """
 # %%
 # Simulate a triple quantum spectrum.
+import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import Method1D
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 
 # sphinx_gallery_thumbnail_number = 2
@@ -38,12 +37,16 @@ spin_system = SpinSystem(sites=[site])
 # - :math:`|5/2\rangle\rightarrow|-1/2\rangle` (:math:`P=-3, D=-6`)
 #
 # To select one or more triple-quantum transitions, assign the respective value of P and
-# D to the `transition_query`. Here, we select the symmetric triple-quantum transition.
-method = Method1D(
+# D to the symmetry query object of `transition_queries`. Refer to the
+# :ref:`transition_query_documentation` for details.
+#
+# Here, we select the symmetric triple-quantum transition.
+method = Method(
     name="Arbitrary Transition Method",
     channels=["27Al"],
     magnetic_flux_density=21.14,  # in T
-    rotor_frequency=1e9,  # in Hz
+    rotor_frequency=np.inf,  # in Hz
+    rotor_angle=54.7356 * np.pi / 180,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             count=1024,
@@ -52,7 +55,7 @@ method = Method1D(
             events=[
                 SpectralEvent(
                     # symmetric triple quantum transitions
-                    transition_query=[{"ch1": {"P": [-3], "D": [0]}}]
+                    transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]
                 ),
             ],
         )
@@ -60,15 +63,13 @@ method = Method1D(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3))
+plt.figure(figsize=(4, 2.5))
 method.plot()
 plt.show()
 
 # %%
 # Create the Simulator object and add the method and the spin system object.
-sim = Simulator()
-sim.spin_systems = [spin_system]  # add the spin system
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=[spin_system], methods=[method])
 sim.run()
 
 # The plot of the simulation before signal processing.

@@ -1,15 +1,15 @@
 {
   "methods": [{
     "channels": ["29Si"],
+    "magnetic_flux_density": "1 T",
+    "rotor_frequency": "1 kHz",
     "spectral_dimensions": [{
       "count": 100,
       "spectral_width": "100 kHz",
       "events": [{
-        "magnetic_flux_density": "1 T",
-        "rotor_frequency": "1 kHz",
-        "transition_query": [{
-          "P": {
-            "ch1": [-1]
+        "transition_queries": [{
+          "ch1": {
+            "P": [-1]
           }
         }]
       }]

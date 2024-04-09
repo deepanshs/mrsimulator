@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 import numpy as np
+from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.methods import Method1D
-from mrsimulator.methods import Method2D
+from mrsimulator.method import MixingEvent
+from mrsimulator.method import SpectralDimension
+from mrsimulator.method import SpectralEvent
+from mrsimulator.method.query import MixingEnum
 from mrsimulator.transition import TransitionPathway
 
 __author__ = "Deepansh J. Srivastava"
@@ -11,12 +13,12 @@ __email__ = "srivastava.89@osu.edu"
 
 method1 = Method(
     channels=["13C"],
-    spectral_dimensions=[{"events": [{"transition_query": [{"ch1": {"P": [-1]}}]}]}],
+    spectral_dimensions=[{"events": [{"transition_queries": [{"ch1": {"P": [-1]}}]}]}],
 )
 
 method2 = Method(
     channels=["13C"],
-    spectral_dimensions=[{"events": [{"transition_query": [{"ch1": {"P": [-2]}}]}]}],
+    spectral_dimensions=[{"events": [{"transition_queries": [{"ch1": {"P": [-2]}}]}]}],
 )
 
 
@@ -90,14 +92,14 @@ def test_04():
 
 def test_hahn():
     system = SpinSystem(sites=[{"isotope": "13C"}, {"isotope": "13C"}])
-    hahn = Method1D(
+    hahn = Method(
         channels=["13C"],
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 0.5, "transition_query": {"P": [1]}},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi, "phase": 0}}},
-                    {"fraction": 0.5, "transition_query": {"P": [-1]}},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [1]}}]},
+                    {"query": {"ch1": {"angle": np.pi, "phase": 0}}},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
                 ]
             },
         ],
@@ -118,17 +120,19 @@ def test_hahn():
 
 def test_cosy():
     system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "1H"}])
-    cosy = Method2D(
+    cosy = Method(
         channels=["1H"],
         spectral_dimensions=[
             {
                 "events": [
-                    {"fraction": 1, "transition_query": {"P": [-1]}},
-                    {"mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": 0}}},
+                    {"fraction": 1, "transition_queries": [{"ch1": {"P": [-1]}}]},
+                    {"query": {"ch1": {"angle": np.pi / 2, "phase": 0}}},
                 ],
             },
             {
-                "events": [{"fraction": 1, "transition_query": {"P": [-1]}}],
+                "events": [
+                    {"fraction": 1, "transition_queries": [{"ch1": {"P": [-1]}}]}
+                ],
             },
         ],
     )
@@ -161,6 +165,68 @@ def test_cosy():
     assert_transitions(transition_pathways, weights, tr)
 
 
+def test_total_mixing():
+    system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "14N"}])
+    total_mix = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query=MixingEnum.TotalMixing),
+                ]
+            ),
+            SpectralDimension(
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])]
+            ),
+        ],
+    )
+    transitions = total_mix.get_transition_pathways(system)
+    tr_should_be = 0.5 * np.asarray(
+        [
+            [[[1, -2], [-1, -2]], [[1, -2], [-1, -2]]],
+            [[[1, -2], [-1, -2]], [[1, 0], [-1, 0]]],
+            [[[1, -2], [-1, -2]], [[1, 2], [-1, 2]]],
+            [[[1, 0], [-1, 0]], [[1, -2], [-1, -2]]],
+            [[[1, 0], [-1, 0]], [[1, 0], [-1, 0]]],
+            [[[1, 0], [-1, 0]], [[1, 2], [-1, 2]]],
+            [[[1, 2], [-1, 2]], [[1, -2], [-1, -2]]],
+            [[[1, 2], [-1, 2]], [[1, 0], [-1, 0]]],
+            [[[1, 2], [-1, 2]], [[1, 2], [-1, 2]]],
+        ]
+    )
+    weights_should_be = np.ones(9)
+    assert_transitions(tr_should_be, weights_should_be, transitions)
+
+
+def test_no_mixing():
+    system = SpinSystem(sites=[{"isotope": "1H"}, {"isotope": "14N"}])
+    no_mix = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
+                    MixingEvent(query=MixingEnum.NoMixing),
+                ]
+            ),
+            SpectralDimension(
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])]
+            ),
+        ],
+    )
+    transitions = no_mix.get_transition_pathways(system)
+    tr_should_be = 0.5 * np.asarray(
+        [
+            [[[1, -2], [-1, -2]], [[1, -2], [-1, -2]]],
+            [[[1, 0], [-1, 0]], [[1, 0], [-1, 0]]],
+            [[[1, 2], [-1, 2]], [[1, 2], [-1, 2]]],
+        ]
+    )
+    weights_should_be = np.ones(3)
+    assert_transitions(tr_should_be, weights_should_be, transitions)
+
+
 def assert_transitions(transition_pathways, weights, tr):
     expected = [
         TransitionPathway(
@@ -174,3 +240,57 @@ def assert_transitions(transition_pathways, weights, tr):
     ]
 
     assert tr == expected
+
+
+def test_empty_segments():
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    mth = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [3]}}]),
+                ]
+            )
+        ],
+    )
+
+    # Filter is empty since no p=3 transition for single proton, ensure no error raised
+    assert mth._get_transition_pathways_np(sys).size == 0  # Empty list
+
+
+def test_no_zero_transition_weights():
+    """This method and spin system produces four transition pathways, two with weight
+    1 and two with weight 0. Ensure 0 weight pathways are excluded
+    """
+    sys = SpinSystem(sites=[Site(isotope="2H")])
+    mth = Method(
+        channels=["2H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [1]}}]),
+                    MixingEvent(query={"ch1": {"angle": np.pi}}),
+                    SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
+                ]
+            )
+        ],
+    )
+    pathways = mth._get_transition_pathways_np(sys)
+    weights = mth._get_transition_pathway_weights_np(pathways, sys)
+
+    # Make sure zero pathways are present in the underlying calculation
+    underlying_weights_should_be = np.asarray([0, 1, 1, 0])
+    assert np.allclose(underlying_weights_should_be, weights)
+
+    # Now, ensure zero weight pathways excluded with the combined pathway/weight func
+    pathways, weights = mth._get_transition_pathway_and_weights_np(sys)
+
+    transitions_should_be = np.asarray(
+        [[[[-1], [0]], [[1], [0]]], [[[0], [1]], [[0], [-1]]]]
+    )
+
+    weights_should_be = np.ones(2)
+
+    assert np.allclose(pathways, transitions_should_be)
+    assert np.allclose(weights, weights_should_be)

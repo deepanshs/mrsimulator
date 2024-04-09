@@ -1,24 +1,21 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-import pytest
 from matplotlib.pyplot import Figure
 from mrsimulator.method import Method
-from mrsimulator.method import SpectralDimension
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 ME = "MixingEvent"
-CDE = "ConstantDurationEvent"
+CDE = "DelayEvent"
 SE = "SpectralEvent"
 REQUIRED = [
     "type",
     "label",
     "duration",
     "fraction",
-    "mixing_query",
+    "query",
     "spec_dim_index",
     "spec_dim_label",
     "p",
@@ -31,7 +28,7 @@ ALL_PARAMS = [
     "label",
     "duration",
     "fraction",
-    "mixing_query",
+    "query",
     "magnetic_flux_density",
     "rotor_frequency",
     "rotor_angle",
@@ -39,26 +36,6 @@ ALL_PARAMS = [
     "p",
     "d",
 ]
-
-
-def test_empty_spec_dims():
-    # Empty list
-    empty_method = Method(channels=["1H"], spectral_dimensions=[])
-    error = (
-        r".*Method has empty spectral_dimensions. At least one SpectralDimension "
-        r"is needed with at least one Event..*"
-    )
-    with pytest.raises(AttributeError, match=error):
-        empty_method.summary()
-
-    # No events
-    empty_method.spectral_dimensions = [SpectralDimension(events=[])]
-    error = (
-        r".*Method has no Events. At least one SpectralDimension "
-        r"is needed with at least one Event..*"
-    )
-    with pytest.raises(AttributeError, match=error):
-        empty_method.summary()
 
 
 def basic_summary_tests(the_method):
@@ -137,7 +114,7 @@ def basic_summary_tests(the_method):
     ]
     assert check_col_equal(df["rotor_angle"], temp)
 
-    assert "mixing_query" in df.columns
+    assert "query" in df.columns
     assert "freq_contrib" in df.columns
 
 
@@ -180,9 +157,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "mixing_query": {
-                        "ch1": {"tip_angle": np.pi / 4, "phase": np.pi / 2}
-                    },
+                    "query": {"ch1": {"angle": np.pi / 4, "phase": np.pi / 2}},
                 },
                 {
                     "label": "Dur0",
@@ -190,7 +165,7 @@ def test_summary():
                     "magnetic_flux_density": 1,
                     "rotor_frequency": 0,  # in kHz
                     "rotor_angle": 0.1,
-                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
@@ -198,7 +173,7 @@ def test_summary():
                     "magnetic_flux_density": 2,
                     "rotor_frequency": 20000,
                     "rotor_angle": 0.2,
-                    "transition_query": [{"ch1": {"P": [1], "D": [-2]}}],
+                    "transition_queries": [{"ch1": {"P": [1], "D": [-2]}}],
                 },
             ]
         },
@@ -206,7 +181,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
@@ -214,7 +189,7 @@ def test_summary():
                     "magnetic_flux_density": 3,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.3,
-                    "transition_query": [{"ch1": {"P": [3], "D": [-4]}}],
+                    "transition_queries": [{"ch1": {"P": [3], "D": [-4]}}],
                 },
                 {
                     "label": "Spec1",
@@ -222,7 +197,7 @@ def test_summary():
                     "magnetic_flux_density": 4,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.4,
-                    "transition_query": [{"ch1": {"P": [4], "D": [-6]}}],
+                    "transition_queries": [{"ch1": {"P": [4], "D": [-6]}}],
                 },
             ]
         },
@@ -233,21 +208,21 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur0",
                     "duration": 1,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [0], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [0], "D": [0]}}],
                 },
                 {
                     "label": "Spec0",
                     "fraction": 1,
                     "rotor_frequency": 20000,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [1], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [1], "D": [0]}}],
                 },
             ]
         },
@@ -255,21 +230,21 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "mixing_query": {"ch1": {"tip_angle": np.pi / 2, "phase": np.pi}},
+                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
                 },
                 {
                     "label": "Dur1",
                     "duration": 2,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [3], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [3], "D": [0]}}],
                 },
                 {
                     "label": "Spec1",
                     "fraction": 1,
                     "rotor_frequency": 0,
                     "rotor_angle": 0.5,
-                    "transition_query": [{"ch1": {"P": [4], "D": [0]}}],
+                    "transition_queries": [{"ch1": {"P": [4], "D": [0]}}],
                 },
             ]
         },

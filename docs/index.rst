@@ -24,9 +24,9 @@ Welcome to the Mrsimulator documentation
             :alt: PyPI - Python Version
 
       * - Build Status
-        - .. image:: https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub
-            :target: https://github.com/deepanshs/mrsimulator/actions
-            :alt: GitHub Workflow Status
+        - .. image:: https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg?branch=master
+            :target: hthttps://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml
+            :alt: CI
 
           .. image:: https://readthedocs.org/projects/mrsimulator/badge/?version=stable
             :target: https://mrsimulator.readthedocs.io/en/stable/
@@ -38,16 +38,8 @@ Welcome to the Mrsimulator documentation
             :alt: License
 
       * - Metrics
-        - .. image:: https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python
-            :alt: Language grade: Python
-
-          .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
+        - .. image:: https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg
             :target: https://codecov.io/gh/deepanshs/mrsimulator
-
-          .. image:: https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm
-            :target: https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/
-            :alt: Total alerts
 
           .. image:: https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge
             :target: https://www.codefactor.io/repository/github/deepanshs/mrsimulator
@@ -77,11 +69,18 @@ Welcome to the Mrsimulator documentation
 ..     :target: https://img.shields.io/pypi/dm/mrsimulator
 ..     :alt: PyPI - Downloads
 
-**About**
+.. only:: html
 
-``mrsimulator`` is an open-source python package for fast simulation and analysis of
-multi-dimensional solid-state magnetic resonance (NMR) spectra of crystalline and
-amorphous materials.
+  **About**
+
+.. only:: not html
+
+  About
+  '''''
+
+**mrsimulator** is an open-source Python package for fast computation/analysis of nuclear
+magnetic resonance (NMR) spectra in fluid and solid phases.
+
 
 ----
 
@@ -89,7 +88,7 @@ amorphous materials.
 
     .. raw:: html
 
-        <h3>See our example gallery</h3>
+        <h3>See our example galleries</h3>
         <div class='sim-gallery'>
           <div>
             <a href="examples/index.html">Gallery
@@ -111,14 +110,14 @@ amorphous materials.
 **Why use mrsimulator?**
 
 - It is open-source and free.
-- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator including, MAS
+- It is a fast and versatile multi-dimensional solid-state NMR spectra simulator, including MAS
   and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
   coupling interactions.
 - It includes simulation of weakly coupled nuclei experiencing J and dipolar couplings.
-- It is fully documented with a stable and simple API and is easily incorporated into your
-  python scripts and web apps.
-- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
-- Packages using mrsimulator -
+- It is fully documented with a stable and simple API and is easily incorporated into
+  Python scripts and web apps.
+- It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
+- Packages using **mrsimulator** -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
 
@@ -129,10 +128,10 @@ amorphous materials.
 .. skip: next
 
 .. plot::
-    :caption: An example simulating solid-state NMR spectrums of static and MAS experiments
+    :caption: Simulation of static and MAS solid-state NMR spectra
 
     from mrsimulator import Simulator, SpinSystem, Site
-    from mrsimulator.methods import BlochDecaySpectrum
+    from mrsimulator.method.lib import BlochDecaySpectrum
     import matplotlib.pyplot as plt
 
     # Make Site and SpinSystem objects
@@ -149,20 +148,25 @@ amorphous materials.
 
     # Plot the spectra
     fig, ax = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={"projection": "csdm"})
-    ax[0].plot(sim.methods[0].simulation.real, color="black", linewidth=1)
+    ax[0].plot(sim.methods[0].simulation)
     ax[0].set_title("Static")
-    ax[1].plot(sim.methods[1].simulation.real, color="black", linewidth=1)
+    ax[1].plot(sim.methods[1].simulation)
     ax[1].set_title("MAS")
     plt.tight_layout()
     plt.show()
 
-
 ----
+
+.. note::
+
+  Throughout the web version of this documentation, you can copy code blocks into your clipboard by
+  hovering over the top right corner of each gray code block and clicking the copy-to-clipboard
+  icon. This is useful for copying code examples into your Python scripts and Jupyter notebooks.
 
 
 **Features**
 
-The ``mrsimulator`` package offers the following
+The **mrsimulator** package offers the following
 
 - **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
@@ -172,29 +176,20 @@ The ``mrsimulator`` package offers the following
     - at arbitrary rotor angles
     - at arbitrary spinning frequency
 
-- A library of **NMR methods**,
+- A library of pre-built **NMR methods**,
     - 1D Bloch decay spectrum
     - 1D Bloch decay central transition spectrum
-    - 2D Multi-quantum Variable Angle Spinning (MQ-VAS)
-    - 2D Satellite-transition Variable Angle Spinning (ST-VAS)
-    - 2D Dynamic Angle Spinning (DAS)
+    - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
+    - 2D Satellite-Transition Variable Angle Spinning (ST-VAS)
     - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
-    - 2D Magic Angle Flipping (MAF)
-    - Custom user-defined 1D and 2D methods (Method)
+    - 2D Magic-Angle Flipping (MAF)
+    - 2D Dynamic-Angle Spinning (DAS)
+    - Custom user-defined methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
     - Czjzek
     - Extended Czjzek
     - Custom user-defined models
-
-----
-
-.. Contribution
-.. ------------
-
-.. ``Mrsimulator`` is a open source NMR simulation package. We are a small team
-.. working on developing the package for the NMR community. Any contribution and
-.. suggestion is greatly appreciated.
 
 ----
 
@@ -207,21 +202,22 @@ Introduction
 
     installation/installation
     introduction/getting_started
-    introduction/ethanol_example
+    introduction/isotopomers_example
+    introduction/fitting_example
 
 User Guide
 ----------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
     :caption: User Documentation
 
     user_guide/spin_system/spin_system
     user_guide/spin_system_distributions/spin_system_distributions
-    user_guide/method/method
     user_guide/methods_library/methods_library
+    user_guide/method/method
     user_guide/simulator/simulator
-    user_guide/signal_processing/signal_processing
+    user_guide/signal_processor/signal_processor
     user_guide/io/mrsim_IO
 
 Examples
@@ -233,7 +229,7 @@ Examples
 
     examples/index
     fitting/index
-    signal_processing/index
+    signal_processor/index
 
 Theory
 ------
@@ -253,10 +249,11 @@ API and references
     :caption: API and references
 
     api_py/py-simulator
-    api_py/py-signal-processing
+    api_py/py-signal-processor
     api_py/py-model
     api_py/py-fitting
-    api_c/c_api
+
+.. api_c/c_api
 
 
 Project details
@@ -271,32 +268,6 @@ Project details
     credits/license
     credits/acknowledgment
 
-.. .. only:: html
-
-.. 	.. toctree::
-.. 		:maxdepth: 2
-.. 		:caption: Table of Contents:
-
-.. 		about
-.. 		installation
-.. 		requirements
-.. 		understanding-spin_systems
-.. 		getting_started
-.. 		using_mrsimulator_objects
-.. 		load_sample
-.. 		configuring_simulator
-.. 		benchmark
-.. 		examples/index
-.. 		theory/components
-.. 		api_py/py_api
-.. 		api_c/c_api
-
-
-.. understanding_system
-..    objects
-..    spectrum_object
-..    theory/wigner_rotations
-..    examples
 
 Reporting Bugs
 --------------
@@ -310,15 +281,7 @@ Discussions are welcome on the `Github discussion <https://github.com/deepanshs/
 How to cite
 -----------
 
-If you use mrsimulator in your publication, please consider citing the following.
-
-- Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
-
-- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
-
-*Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package.*
-
-- Matt Newville; Renee Otten; Andrew Nelson; Antonino Ingargiola; Till Stensitzki; Dan Allan; Austin Fox; Faustin Carter; Michał; Dima Pustakhod; lneuhaus; Sebastian Weigand; Ray Osborn; Glenn; Christoph Deil; Mark; Allan L. R. Hansen; Gustavo Pasquevich; Leon Foks; Nicholas Zobrist; Oliver Frost; Alexandre Beelen; Stuermer; kwertyops; Anthony Polloreno; Shane Caldwell; Anthony Almarza; Arun Persaud; Ben Gamari; Benjamin F. Maier. (2021, February 7). lmfit/lmfit-py 1.0.2 (Version 1.0.2). Zenodo. http://doi.org/10.5281/zenodo.4516651
+Please refer to `mrsimulator Github page <https://github.com/deepanshs/mrsimulator>`_ for details.
 
 .. only:: html
 

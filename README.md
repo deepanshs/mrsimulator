@@ -1,14 +1,28 @@
 # The Mrsimulator project
 
-|              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Deployment   | [![PyPI version](https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.python.org/pypi/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                                                                                                                                                                                                                                                                                          |
-| Build Status | [![GitHub Workflow Status](<https://img.shields.io/github/workflow/status/deepanshs/mrsimulator/CI?logo=GitHub>)](https://github.com/deepanshs/mrsimulator/actions) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/stable/)                                                                                                                                                                                                                                                                                                                                         |
-| License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Metrics      | [![Total alerts](https://img.shields.io/lgtm/alerts/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/deepanshs/mrsimulator.svg?logo=lgtm)](https://lgtm.com/projects/g/deepanshs/mrsimulator/context:python) [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator) |
+|              |                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deployment   | [![PyPI version](https://img.shields.io/pypi/v/mrsimulator.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.python.org/pypi/mrsimulator) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mrsimulator)                                                                                                                                               |
+| Build Status | [![CI](https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml/badge.svg?branch=master)](https://github.com/deepanshs/mrsimulator/actions/workflows/continuous-integration-pip.yml) [![Read the Docs](https://img.shields.io/readthedocs/mrsimulator)](https://mrsimulator.readthedocs.io/en/latest/) |
+| License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                  |
+| Metrics      | [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator)                                                                           |
 
-`mrsimulator` is an open-source python package for fast computation/analysis of solid-state
-magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
+Shortly after the birth of Nuclear Magnetic Resonance (NMR) spectroscopy, it was realized that spin
+and spatial degrees of freedom could be manipulated on a time scale faster than the coherence
+lifetimes of the nuclear spin transitions. This led to an explosion of multi-pulse and sample
+reorientation methodologies in magnetic resonance for probing the structure and dynamics of matter
+over a wide range of length and time scales.
+
+Numerical simulations of the NMR spectra from these methods have long been a critical
+part of their analyses. The most robust and rigorous numerical approaches employ the full density
+operator, ideal for dealing with finite pulse effects, weak to intermediate to strong couplings,
+non-commuting Hamiltonians, and relaxation and exchange processes. However, such approaches can be
+highly inefficient, particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation
+can be treated as an ad-hoc line broadening. `mrsimulator`, an open-source python package, achieves
+high benchmarks in spectral simulations and analyses by limiting itself to these simpler situations.
+Fortunately, working within this limit only prevents `mrsimulator` from modeling spectra of a small
+fraction of popular NMR methods. The efficiency gains with this approach over conventional density
+operator simulations are tremendous.
 
 **Why use mrsimulator?**
 
@@ -29,13 +43,13 @@ magnetic resonance (NMR) spectra of both crystalline and amorphous materials.
 pip install mrsimulator
 ```
 
-Please refer to our [installation document](https://mrsimulator.readthedocs.io/en/latest/installation/users.html) for details.
+Please refer to our [installation documentation](https://mrsimulator.readthedocs.io/en/stable/installation/users.html) for details.
 
 #### A 1D static and MAS example
 
 ```py
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 import matplotlib.pyplot as plt
 
 # Make Site and SpinSystem objects
@@ -94,10 +108,10 @@ The `mrsimulator` package currently offers the following
   - 1D Bloch decay central transition spectrum
   - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
   - 2D Satellite-transition Variable Angle Spinning (MQ-VAS)
-  - 2D Dynamic Angle Spinning (DAS)
   - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
   - 2D Magic Angle Flipping (MAF)
-  - Custom user-defined 1D and 2D methods (Method)
+  - 2D Dynamic Angle Spinning (DAS)
+  - Custom user-defined methods (Method)
 
 - **Models** for tensor parameter distribution in amorphous materials.
 
@@ -118,8 +132,8 @@ Discussions are welcome on the [Github discussion](https://github.com/deepanshs/
 
 If you use mrsimulator in your publication, please consider citing the following.
 
-- Deepansh J. Srivastava, Matthew Giammar, Maxwell C. Venetos, Shyam Dwaraknath, Philip J. Grandinetti, & Alexis McCarthy. (2021). mrsimulator: v0.6.1. Zenodo. https://doi.org/10.5281/zenodo.5559730
+- Please use the GitHub citation tool to cite this repository. The tool in located in the About section under the `Cite this repository` category.
 
-- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific data. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
+- Srivastava DJ, Vosegaard T, Massiot D, Grandinetti PJ (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific dataset. PLOS ONE 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
-_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. http://doi.org/10.5281/zenodo.4516651
+_Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. https://doi.org/10.5281/zenodo.4516651

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 NiCl₂.2D₂O, ²H (I=1) Shifting-d echo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,23 +15,19 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator, Site, SpinSystem
-from mrsimulator.methods import Method2D
-from mrsimulator import signal_processing as sp
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import SpectralDimension, SpectralEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/NiCl2.2D2O.csdf"
+filename = "https://ssnmr.org/sites/default/files/mrsimulator/NiCl2.2D2O.csdf"
 experiment = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 7.500
 
 # For spectral fitting, we only focus on the real part of the complex dataset
 experiment = experiment.real
@@ -53,6 +48,23 @@ ax.set_ylim(1500, -1500)
 plt.grid()
 plt.tight_layout()
 plt.show()
+
+# %%
+# Estimate noise statistics from the dataset
+coords = experiment.dimensions[0].coordinates
+noise_region = np.where(coords > 700e-6)
+noise_data = experiment[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = experiment[noise_region].mean(), experiment[noise_region].std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -78,7 +90,7 @@ spin_systems = [SpinSystem(sites=[site])]
 # %%
 # **Method**
 #
-# Use the generic 2D method, `Method2D`, to generate a shifting-d echo method. The
+# Use the generic method, `Method`, to generate a shifting-d echo method. The
 # reported shifting-d 2D sequence is a correlation of the shielding frequencies to the
 # first-order quadrupolar frequencies. Here, we create a correlation method using the
 # :attr:`~mrsimulator.method.event.freq_contrib` attribute, which acts as a switch
@@ -94,19 +106,21 @@ spin_systems = [SpinSystem(sites=[site])]
 # Get the spectral dimension parameters from the experiment.
 spectral_dims = get_spectral_dimensions(experiment)
 
-shifting_d = Method2D(
+shifting_d = Method(
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[
         SpectralDimension(
             **spectral_dims[0],
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
-                )
+                ),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(
@@ -114,8 +128,7 @@ shifting_d = Method2D(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    rotor_frequency=0,
-                    transition_query=[{"ch1": {"P": [-1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_0", "Shielding1_2"],
                 )
             ],
@@ -123,11 +136,6 @@ shifting_d = Method2D(
     ],
     experiment=experiment,  # also add the measurement to the method.
 )
-
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = shifting_d.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
@@ -147,17 +155,17 @@ processor = sp.SignalProcessor(
         sp.apodization.Gaussian(FWHM="5 kHz", dim_index=0),  # along dimension 0
         sp.apodization.Gaussian(FWHM="5 kHz", dim_index=1),  # along dimension 1
         sp.FFT(dim_index=(0, 1)),
-        sp.Scale(factor=5e8),
+        sp.Scale(factor=5e9),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 ax.contour(experiment, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.set_xlim(1000, -1000)
 ax.set_ylim(1500, -1500)
 plt.grid()
@@ -174,7 +182,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 
@@ -204,13 +218,20 @@ fig, ax = plt.subplots(
 )
 vmax, vmin = experiment.max(), experiment.min()
 for i, dat in enumerate([experiment, best_fit, residuals]):
-    ax[i].imshow(dat, aspect="auto", cmap="gist_ncar_r", vmax=vmax, vmin=vmin)
+    ax[i].imshow(
+        dat,
+        aspect="auto",
+        cmap="gist_ncar_r",
+        vmax=vmax,
+        vmin=vmin,
+        interpolation="none",
+    )
     ax[i].set_xlim(1000, -1000)
 ax[0].set_ylim(1500, -1500)
 plt.tight_layout()
 plt.show()
 # %%
 # .. [#f1] Walder B.J, Patterson A.M., Baltisberger J.H, and Grandinetti P.J
-#       Hydrogen motional disorder in crystalline iron group chloride dihydrates
+#       Hydrogen motional disorder in crystalline iron group chloride di-hydrates
 #       spectroscopy, J. Chem. Phys. (2018)  **149**, 084503.
 #       `DOI: 10.1063/1.5037151 <https://doi.org/10.1063/1.5037151>`_

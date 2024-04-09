@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Amorphous material, ²⁹Si (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -7,18 +6,19 @@ Amorphous material, ²⁹Si (I=1/2)
 ²⁹Si (I=1/2) simulation of amorphous material.
 """
 # %%
-# One of the advantages of the ``mrsimulator`` package is that it is a fast NMR
+# One of the advantages of the mrsimulator package is that it is a fast NMR
 # spectrum simulation library. We can exploit this feature to simulate bulk spectra and
 # eventually model amorphous materials. In this section, we illustrate how the
-# ``mrsimulator`` library may be used in simulating the NMR spectrum of amorphous
+# mrsimulator library may be used in simulating the NMR spectrum of amorphous
 # materials.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import multivariate_normal
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum
+from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 2
 
@@ -101,8 +101,10 @@ spin_systems = single_site_system_generator(
 # Let's also create a Bloch decay spectrum method.
 method = BlochDecaySpectrum(
     channels=["29Si"],
+    rotor_frequency=0,  # in Hz
+    rotor_angle=0,  # in rads
     spectral_dimensions=[
-        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 
@@ -114,9 +116,7 @@ method = BlochDecaySpectrum(
 #
 # Now that we have the spin systems and the method, create the simulator object and
 # add the respective objects.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 
 # %%
 # Static spectrum
@@ -148,7 +148,7 @@ sim.methods[0] = BlochDecaySpectrum(
     rotor_frequency=5000,  # in Hz
     rotor_angle=1.57079,  # in rads, equivalent to 90 deg.
     spectral_dimensions=[
-        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 8  # eight sidebands are sufficient for this example
@@ -170,9 +170,9 @@ plt.show()
 sim.methods[0] = BlochDecaySpectrum(
     channels=["29Si"],
     rotor_frequency=1000,  # in Hz
-    rotor_angle=54.735 * np.pi / 180.0,  # in rads
+    rotor_angle=54.7356 * np.pi / 180.0,  # in rads
     spectral_dimensions=[
-        dict(spectral_width=25000, reference_offset=-7000)  # values in Hz
+        SpectralDimension(spectral_width=25000, reference_offset=-7000)  # values in Hz
     ],
 )
 sim.config.number_of_sidebands = 16  # sixteen sidebands are sufficient for this example

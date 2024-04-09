@@ -1,16 +1,17 @@
 .. _IO_documentation:
 
-===================
-``mrsimulator`` I/O
-===================
+===============
+mrsimulator I/O
+===============
 
 We offer a range of serialization options based on a JSON structure demonstrated below.
 
 Dictionary Representation of Objects
 ------------------------------------
 
-All ``mrsimulator`` objects can be serialized into a JSON format. Calling the
-``json()`` method on an object will return a Python dictionary of the objects JSON format.
+All **mrsimulator** objects can be serialized into a JSON format. Calling the
+``json()`` method on an object will return a Python dictionary representing the object
+in JSON format.
 Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
 
 .. code-block:: python
@@ -35,10 +36,10 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
     #     'shielding_symmetric': {'zeta': '59.8 ppm', 'eta': 0.62}
     # }
 
-By default, all values are serialized with units when applicable, but you may call
-``json(units=False)`` if you wish to serialize without units.
+All values are serialized with units when applicable, but you may call ``json(units=False)``
+if you wish to serialize values without units.
 
-Similarly, all ``mrsimulator`` objects can be loaded from a dictionary representation. Here we
+Similarly, all **mrsimulator** objects can be loaded from a dictionary representation. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 
@@ -59,8 +60,8 @@ to create a :ref:`site_api` object from a dictionary.
 
 We see that both these sites are equivalent. Values in dictionaries can be given as a
 number and a unit in a string. However, passing values with units increases overhead and
-will throw errors if the units cannot be converted into the default units. For this
-reason, we recommend sticking with objects.
+will throw errors if the units cannot be converted into the expected units for a field.
+For this reason, we recommend instantiating objects directly from classes.
 
 .. _load_spin_systems:
 
@@ -111,12 +112,11 @@ systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
     # Save spin systems to file
     sim.export_spin_systems("example.mrsys")
 
-Now the file ``example.mrsys`` holds a JSON representation of the spin system objects. The
-extension of the file is irrelevant, however, we strongly encourage using ``.mrsys`` to
-adhere to convention.
+Now the file ``example.mrsys`` holds a JSON representation of the spin system objects.
+We encourage the convention of using .mrsys extension for this JSON file.
 
-Just as spin systems can be saved to a file, spin systems can be loaded from a file. This can
-be useful when working with a large number of spin systems in multiple Python scripts. Here
+Just as spin systems can be saved to a file, spin systems can be loaded from a file. Loading spin
+systems is useful when working with a large number of spin systems over multiple Python scripts. Here
 we load the spin system file, ``example.mrsys``, into a new simulator using the method
 :meth:`~mrsimulator.Simulator.load_spin_systems`.
 
@@ -137,11 +137,11 @@ custom DAS method and serialize it to a file using the method
 .. code-block:: python
 
     from mrsimulator import Simulator
-    from mrsimulator.methods import Method2D
+    from mrsimulator.method import Method
     from mrsimulator.method import SpectralDimension, SpectralEvent
 
     # Create DAS method
-    das = Method2D(
+    das = Method(
         name="DAS of 17O",
         channels=["17O"],
         magnetic_flux_density=11.744,
@@ -156,12 +156,12 @@ custom DAS method and serialize it to a file using the method
                     SpectralEvent(
                         fraction=0.5,
                         rotor_angle=37.38 * 3.14159 / 180,
-                        transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                     ),
                     SpectralEvent(
                         fraction=0.5,
                         rotor_angle=79.19 * 3.14159 / 180,
-                        transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                     ),
                 ],
             ),
@@ -175,7 +175,7 @@ custom DAS method and serialize it to a file using the method
                 events=[
                     SpectralEvent(
                         rotor_angle=54.735 * 3.14159 / 180,
-                        transition_query=[{"ch1": {"P": [-1], "D": [0]}}],
+                        transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                     )
                 ],
             ),
@@ -189,9 +189,8 @@ custom DAS method and serialize it to a file using the method
     sim.export_methods("example.mrmtd")
 
 Now the file ``example.mrmtd`` holds a JSON representation of the method object. If multiple
-methods are present, say at different spinning speeds, they will also be serialized. The
-extension of the file is irrelevant, however, we strongly encourage using ``.mrmtd`` to
-adhere to convention.
+methods are present, e.g., at different spinning speeds, they will also be serialized.  We
+encourage the convention of using .mrmtd extension for this JSON file.
 
 Just like spin systems, methods can also be loaded from a file. Here we load the DAS
 method into a new simulator object by calling the method
@@ -204,15 +203,15 @@ method into a new simulator object by calling the method
     print(new_sim.methods[0].name)
     # DAS of 17O
 
-Loading in complex methods from a file, like the DAS example above, can reduce complex code.
-Methods representing real experiments can be saved to a file to later be loaded into a script
+Loading complex methods from a file, like the DAS example above, can reduce complex code.
+Methods representing actual experiments can be saved to a file to later be loaded into a script
 as needed.
 
 Serializing a Simulator Object
 ------------------------------
 
-The entire :ref:`simulator_api` object may be serialized to a JSON-compliant file
-using the :meth:`~mrsimulator.Simulator.save` method.
+The entire :ref:`simulator_api` object may be serialized to a JSON-compliant file using the
+:meth:`~mrsimulator.Simulator.save` Python method.
 By default, the attribute values are serialized as physical quantities represented as a
 string with a value and a unit.
 
@@ -233,7 +232,7 @@ By default, the load method parses the file for units.
 Serialize simulation from a Method to a CSDM Compliant File
 -----------------------------------------------------------
 
-The simulated spectrum may be exported to a CSDM compliant JSON file using the following code:
+The simulated spectrum may be exported to a CSDM-compliant JSON file using the following code:
 
 .. skip: next
 .. code-block:: python
@@ -241,13 +240,13 @@ The simulated spectrum may be exported to a CSDM compliant JSON file using the f
     sim_coesite.methods[0].simulation.save("coesite_simulation.csdf")
 
 
-For more information on the CSDM format see the
+For more information on the CSDM format, see the
 `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 Serialize Simulator and SignalProcessor object
 ----------------------------------------------
 
-The :ref:`simulator_api` object and a list of :ref:`signal_processing_api` objects
+The :ref:`simulator_api` object and a list of :ref:`signal_processor_api` objects
 can both be serialized within the same file by calling the :meth:`~mrsimulator.save`
 method.
 
@@ -255,7 +254,7 @@ method.
 
     from mrsimulator import save
     from mrsimulator import Simulator
-    from mrsimulator import signal_processing as sp
+    from mrsimulator import signal_processor as sp
 
     sim = Simulator()
     processor1 = sp.SignalProcessor()
@@ -267,13 +266,15 @@ method.
         signal_processors=[processor1, processor2],
     )
 
-All attribute values are serialized with units by default, but you may serialize without
-units by passing ``with_units=False`` to the method.
-Additionally, a dictionary of metadata can be passed using the ``application`` keyword.
+By default, all attribute values are serialized with units.  You can serialize attributes
+without units, assuming the default unit of the attribute, by passing
+``with_units=False`` to the method.  Recall that all objects in  **mrsimulator**
+have the attribute ``property_units`` which provides the default units for all class
+properties.  Additionally, a metadata dictionary can be passed using the ``application`` keyword.
 
 To load a simulator and signal processors from a file, call the :meth:`~mrsimulator.load`
 method. This method will return an ordered list of a :ref:`simulator_api` object, a list of
-:ref:`signal_processing_api` objects, and a metadata dictionary
+:ref:`signal_processor_api` objects, and a metadata dictionary
 
 .. code-block:: python
 
@@ -281,12 +282,19 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
 
     sim, processors, application = load("example.mrsim")
 
+.. note::
+
+    The serialization structure has been updated in **mrsimulator** v0.7. Any `.mrsim` files
+    from v0.6 and earlier will not work. See :ref:`changelog` for breaking changes.
+
 
 .. plot::
     :include-source: False
 
     import os
-    os.remove("example.mrmtd")
-    os.remove("example.mrsim")
-    os.remove("example.mrsys")
-    os.remove("sample.mrsim")
+    from os.path import isfile
+
+    if isfile("example.mrmtd"): os.remove("example.mrmtd")
+    if isfile("example.mrsim"): os.remove("example.mrsim")
+    if isfile("example.mrsys"): os.remove("example.mrsys")
+    if isfile("sample.mrsim"): os.remove("sample.mrsim")

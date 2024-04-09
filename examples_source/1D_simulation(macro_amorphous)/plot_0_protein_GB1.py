@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Protein GB1, ¹³C and ¹⁵N (I=1/2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -16,8 +15,9 @@ Protein GB1, ¹³C and ¹⁵N (I=1/2)
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
-from mrsimulator.methods import BlochDecaySpectrum
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import BlochDecaySpectrum
+from mrsimulator.method import SpectralDimension
+from mrsimulator import signal_processor as sp
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -25,8 +25,9 @@ from mrsimulator import signal_processing as sp
 # Create the Simulator object and load the spin systems from an external file.
 sim = Simulator()
 
-file_ = "https://sandbox.zenodo.org/record/835664/files/protein_GB1_15N_13CA_13CO.mrsys"
-sim.load_spin_systems(file_)  # load the spin systems.
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+filename = "protein_GB1_15N_13CA_13CO.mrsys"
+sim.load_spin_systems(host + filename)  # load the spin systems.
 print(f"number of spin systems = {len(sim.spin_systems)}")
 
 # %%
@@ -40,7 +41,7 @@ method_13C = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=8192,
             spectral_width=5e4,  # in Hz
             reference_offset=2e4,  # in Hz
@@ -57,7 +58,7 @@ method_15N = BlochDecaySpectrum(
     magnetic_flux_density=11.74,  # in T
     rotor_frequency=3000,  # in Hz
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=8192,
             spectral_width=4e4,  # in Hz
             reference_offset=7e3,  # in Hz
@@ -75,20 +76,20 @@ sim.methods = [method_13C, method_15N]
 # Run the simulation.
 sim.run()
 
-# Get the simulation data from the respective methods.
-data_13C = sim.methods[0].simulation  # method at index 0 is 13C Bloch decay method.
-data_15N = sim.methods[1].simulation  # method at index 1 is 15N Bloch decay method.
+# Get the simulation dataset from the respective methods.
+dataset_13C = sim.methods[0].simulation  # method at index 0 is 13C Bloch decay method.
+dataset_15N = sim.methods[1].simulation  # method at index 1 is 15N Bloch decay method.
 
 # %%
 # Add post-simulation signal processing.
 processor = sp.SignalProcessor(
     operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="10 Hz"), sp.FFT()]
 )
-# apply post-simulation processing to data_13C
-processed_data_13C = processor.apply_operations(data=data_13C).real
+# apply post-simulation processing to dataset_13C
+processed_dataset_13C = processor.apply_operations(dataset=dataset_13C).real
 
-# apply post-simulation processing to data_15N
-processed_data_15N = processor.apply_operations(data=data_15N).real
+# apply post-simulation processing to dataset_15N
+processed_dataset_15N = processor.apply_operations(dataset=dataset_15N).real
 
 # %%
 # The plot of the simulation after signal processing.
@@ -96,10 +97,10 @@ fig, ax = plt.subplots(
     1, 2, subplot_kw={"projection": "csdm"}, sharey=True, figsize=(9, 4)
 )
 
-ax[0].plot(processed_data_13C, color="black", linewidth=0.5)
+ax[0].plot(processed_dataset_13C, color="black", linewidth=0.5)
 ax[0].invert_xaxis()
 
-ax[1].plot(processed_data_15N, color="black", linewidth=0.5)
+ax[1].plot(processed_dataset_15N, color="black", linewidth=0.5)
 ax[1].set_ylabel(None)
 ax[1].invert_xaxis()
 

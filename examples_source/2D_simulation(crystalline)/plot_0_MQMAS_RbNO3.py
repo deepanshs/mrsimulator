@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 RbNO₃, ⁸⁷Rb (I=3/2) 3QMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -14,9 +13,10 @@ RbNO₃, ⁸⁷Rb (I=3/2) 3QMAS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import ThreeQ_VAS
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import ThreeQ_VAS
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -48,13 +48,13 @@ method = ThreeQ_VAS(
     channels=["87Rb"],
     magnetic_flux_density=9.4,  # in T
     spectral_dimensions=[
-        dict(
+        SpectralDimension(
             count=128,
             spectral_width=7e3,  # in Hz
             reference_offset=-7e3,  # in Hz
             label="Isotropic dimension",
         ),
-        dict(
+        SpectralDimension(
             count=256,
             spectral_width=1e4,  # in Hz
             reference_offset=-4e3,  # in Hz
@@ -64,25 +64,23 @@ method = ThreeQ_VAS(
 )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 method.plot()
 plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = [method]  # add the method.
+sim = Simulator(spin_systems=spin_systems, methods=[method])
 sim.run()
 
 # %%
 # The plot of the simulation.
-data = sim.methods[0].simulation
+dataset = sim.methods[0].simulation
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(data.real / data.real.max(), aspect="auto", cmap="gist_ncar_r")
+cb = ax.imshow(dataset.real / dataset.real.max(), aspect="auto", cmap="gist_ncar_r")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()
@@ -100,14 +98,14 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation)
-processed_data /= processed_data.max()
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation)
+processed_dataset /= processed_dataset.max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data.real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset.real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.set_ylim(-40, -70)
 ax.set_xlim(-20, -60)

@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+type: software
+title: mrsimulator
+message: Please cite this software using these metadata.
+abstract: A fast solid-state NMR spectrum simulation and analysis library.
+
+authors:
+  - given-names: Deepansh
+    family-names: Srivastava
+    email: deepansh2012@gmail.com
+    affiliation: Hyperfine
+    orcid: https://orcid.org/0000-0003-1341-2197
+  - given-names: Matthew
+    family-names: Giammar
+    email: giammar.7@osu.edu
+    affiliation: The Ohio State University
+  - given-names: Maxwell
+    family-names: Venetos
+    affiliation: 'University of California, Berkeley'
+  - given-names: Alexis
+    family-names: McCarthy
+    affiliation: The Ohio State University
+    email: mccarthy.677@osu.edu
+  - given-names: Philip
+    family-names: Grandinetti
+    email: grandinetti@chemistry.ohio-state.edu
+    affiliation: The Ohio State University
+    orcid: https://orcid.org/0000-0003-0102-316X
+
+identifiers:
+  - description: "Release version 0.7.0 of Mrsimulator"
+    type: doi
+    value: "10.5281/zenodo.6892947"
+  - description: "Release version 0.6.1post1 of Mrsimulator"
+    type: doi
+    value: "10.5281/zenodo.5559730"
+  - description: "Release version 0.5.1 of Mrsimulator"
+    type: doi
+    value: "10.5281/zenodo.4315456"
+  - description: "Release version 0.4.0 of Mrsimulator"
+    type: doi
+    value: "10.5281/zenodo.4014009"
+  - description: "Release version 0.3.0 of Mrsimulator"
+    type: doi
+    value: "10.5281/zenodo.3978780"
+
+version: 0.7.0
+license: BSD-3-Clause
+doi: "10.5281/zenodo.6892947"
+# date-released: "Unreleased"
+repository-code: https://github.com/deepanshs/mrsimulator

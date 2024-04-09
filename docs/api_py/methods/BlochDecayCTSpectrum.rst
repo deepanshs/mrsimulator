@@ -2,7 +2,7 @@
 Bloch Decay Central Transition Spectrum method
 ----------------------------------------------
 
-.. currentmodule:: mrsimulator.methods
+.. currentmodule:: mrsimulator.method.lib
 
 .. autoclass:: BlochDecayCTSpectrum
     :show-inheritance:
@@ -13,24 +13,25 @@ Bloch Decay Central Transition Spectrum method
 
 .. doctest::
 
-    >>> from mrsimulator.methods import BlochDecayCTSpectrum
-    >>> Bloch_CT_method = BlochDecayCTSpectrum(
+    >>> from mrsimulator.method.lib import BlochDecayCTSpectrum
+    >>> from mrsimulator.method import SpectralDimension
+    >>> bloch_decay_ct = BlochDecayCTSpectrum(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
     ...     magnetic_flux_density=9.4,  # in T
     ...     spectral_dimensions=[
-    ...         dict(count=1024, spectral_width=50000, reference_offset=-8000)
+    ...         SpectralDimension(count=1024, spectral_width=50000, reference_offset=-8000)
     ...     ],
     ... )
 
-Bloch decay central transition selective method is a special case of
-:py:class:`~mrsimulator.methods.Method1D`, given as
+Bloch decay central transition selective method is part of the methods library,
+but can be constructed with a generic method as follows
 
 .. doctest::
 
-    >>> from mrsimulator.methods import Method1D
-    >>> BlochdecayCT = Method1D(
+    >>> from mrsimulator.method import Method
+    >>> bloch_decay_ct = Method(
     ...     channels=["1H"],
     ...     rotor_frequency=5000,  # in Hz
     ...     rotor_angle=54.735 * 3.14159 / 180,  # in rad
@@ -40,7 +41,7 @@ Bloch decay central transition selective method is a special case of
     ...             "count": 1024,
     ...             "spectral_width": 50000,  # in Hz
     ...             "reference_offset": -8000,  # in Hz
-    ...             "events": [{"transition_query": [{"P": [-1], "D": [0]}]}],
+    ...             "events": [{"transition_queries": [{"ch1": {"P": [-1], "D": [0]}}]}],
     ...         }
     ...     ],
     ... )

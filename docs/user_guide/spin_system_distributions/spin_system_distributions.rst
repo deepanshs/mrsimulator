@@ -4,21 +4,13 @@
 Spin System Distributions
 =========================
 
-Czjzek Distribution
--------------------
+Library distributions
+---------------------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     czjzek
-
-
-Extended Czjzek Distribution
-----------------------------
-
-.. toctree::
-    :maxdepth: 2
-
     extended_czjzek
 
 

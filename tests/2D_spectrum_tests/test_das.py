@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """Lineshape Test."""
 import numpy as np
 from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
-from mrsimulator.methods import BlochDecayCTSpectrum
-from mrsimulator.methods import Method2D
+from mrsimulator.method import Method
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
@@ -43,25 +42,27 @@ spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abunda
 
 def test_DAS():
     B0 = 11.7
-    das = Method2D(
+    das = Method(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
+        rotor_frequency=1e12,
         spectral_dimensions=[
             {
                 "count": 912,
                 "spectral_width": 5e3,  # in Hz
                 "reference_offset": 0,  # in Hz
+                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
                     {
                         "fraction": 0.5,
                         "rotor_angle": 37.38 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                     {
                         "fraction": 0.5,
                         "rotor_angle": 79.19 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     },
                 ],
             },
@@ -70,11 +71,12 @@ def test_DAS():
                 "count": 2048,
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
+                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "MAS dimension",
                 "events": [
                     {
                         "rotor_angle": 54.735 * 3.14159 / 180,
-                        "transition_query": [{"P": [-1], "D": [0]}],
+                        "transition_queries": [{"ch1": {"P": [-1], "D": [0]}}],
                     }
                 ],
             },
@@ -87,14 +89,14 @@ def test_DAS():
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
-    data_das = sim.methods[0].simulation
-    data_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
+    dataset_das = sim.methods[0].simulation
+    dataset_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
     bloch = BlochDecayCTSpectrum(
         channels=["17O"],
         magnetic_flux_density=B0,  # in T
-        rotor_frequency=1e9,  # in Hz
+        rotor_frequency=np.inf,  # in Hz
         rotor_angle=54.735 * 3.14159 / 180,
         spectral_dimensions=[
             {
@@ -112,7 +114,7 @@ def test_DAS():
     sim.config.decompose_spectrum = "spin_system"
     sim.run(pack_as_csdm=False)
 
-    data_bloch = sim.methods[0].simulation
+    dataset_bloch = sim.methods[0].simulation
 
     larmor_freq = das.channels[0].gyromagnetic_ratio * B0 * 1e6
     spin = das.channels[0].spin
@@ -127,13 +129,13 @@ def test_DAS():
             iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
 
             # get the index where there is a signal
-            id1 = data_das[i] / data_das[i].max()
+            id1 = dataset_das[i] / dataset_das[i].max()
             index = np.where(id1 == id1.max())[0]
-            iso_spectrum = data_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
+            iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
 
             # test for the position of isotropic peaks.
             np.testing.assert_almost_equal(iso_obs, iso_spectrum, decimal=1)
 
             # test for the spectrum across the isotropic peaks.
-            data_bloch_i = data_bloch[i] / data_bloch[i].max()
-            assert np.allclose(id1[index[0]], data_bloch_i)
+            dataset_bloch_i = dataset_bloch[i] / dataset_bloch[i].max()
+            assert np.allclose(id1[index[0]], dataset_bloch_i)

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# https://www.sphinx-doc.org/en/master/config
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -31,7 +30,7 @@ author = "The Mrsimulator Developers"
 
 
 # get version number from the file
-with open("../src/mrsimulator/__init__.py", "r") as f:
+with open("../src/mrsimulator/__init__.py") as f:
     for line in f.readlines():
         if "__version__" in line:
             before_keyword, keyword, after_keyword = line.partition("=")
@@ -70,6 +69,9 @@ extensions = [
     "recommonmark",
     "versionwarning.extension",
 ]
+
+# sphinx-tabs
+sphinx_tabs_disable_tab_closing = True
 
 # generate autosummary even if no references
 autosummary_generate = True
@@ -149,13 +151,13 @@ warnings.filterwarnings(
 # sphinx gallery config
 sphinx_gallery_conf = {
     "examples_dirs": [
-        "../signal_processing_source",
+        "../signal_processor_source",
         "../examples_source",
         "../fitting_source",
     ],
     "remove_config_comments": True,
     "gallery_dirs": [
-        "signal_processing",
+        "signal_processor",
         "examples",
         "fitting",
     ],  # path to where to save gallery generated output
@@ -164,7 +166,7 @@ sphinx_gallery_conf = {
     # "line_numbers": True,
     "subsection_order": ExplicitOrder(
         [
-            "../signal_processing_source",
+            "../signal_processor_source",
             "../examples_source/1D_simulation(crystalline)",
             "../examples_source/1D_simulation(macro_amorphous)",
             "../examples_source/2D_simulation(crystalline)",
@@ -205,13 +207,17 @@ sphinx_gallery_conf = {
 }
 
 intersphinx_mapping = {
-    "matplotlib": ("https://matplotlib.org", None),
+    "matplotlib": ("https://matplotlib.org/stable", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "csdmpy": ("https://csdmpy.readthedocs.io/en/stable/", None),
     "astropy": ("https://docs.astropy.org/en/stable/", None),
-    "lmfit": ("https://lmfit-py.readthedocs.io/en/stable/", None),
+    "lmfit": ("https://lmfit.github.io/lmfit-py/", None),
 }
+
+rst_prolog = """
+.. |PY_VERSION| replace:: 3.8
+"""
 
 # ---------------------------------------------------------------------------- #
 #                              Sphinx copybutton                               #
@@ -227,9 +233,9 @@ try:
     doxy_output = os.path.abspath("./xml")
 
     # Setup the breathe extension
-    breathe_projects = {"My Project": doxy_output}
-    breathe_default_project = "My Project"
-    breathe_domain_by_extension = {"h": "c", "py": "py"}
+    breathe_projects = {"mrsim": doxy_output}
+    breathe_default_project = "mrsim"
+    breathe_domain_by_extension = {"h": "c"}
     breathe_use_project_refids = True
     breathe_doxygen_config_options = {
         "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
@@ -253,7 +259,7 @@ math_number_all = True
 primary_domain = "py"
 
 # Tell sphinx what the pygments highlight language should be.
-highlight_language = "c"
+# highlight_language = "c"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -276,7 +282,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -284,7 +290,7 @@ language = None
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "default"
 
 
 # ---------------------------------------------------------------------------- #
@@ -335,9 +341,9 @@ html_theme_options = {
     # Enable Google Web Font. Defaults to false
     # "googlewebfont": True,
     # Set the URL of Google Web Font's CSS.
-    # Defaults to 'http://fonts.googleapis.com/css?family=Text+Me+One'
-    # "googlewebfont_url": "http://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
-    # "googlewebfont_url": "http://fonts.googleapis.com/css2?family=Inter",
+    # Defaults to 'https://fonts.googleapis.com/css?family=Text+Me+One'
+    # "googlewebfont_url": "https://fonts.googleapis.com/css?family=Roboto+Script+One",  # NOQA
+    # "googlewebfont_url": "https://fonts.googleapis.com/css2?family=Inter",
     # Set the Style of Google Web Font's CSS.
     # Defaults to "font-family: 'Text Me One', sans-serif;"
     # "googlewebfont_style": "font-family: Helvetica",
@@ -383,6 +389,123 @@ htmlhelp_basename = "MRSimulatordoc"
 # ---------------------------------------------------------------------------- #
 #                              LaTeX setup                                     #
 # ---------------------------------------------------------------------------- #
+preamble = r"""
+    %%%add number to subsubsection 2=subsection, 3=subsubsection
+    %%% below subsubsection is not good idea.
+    \setcounter{secnumdepth}{2}
+
+    %%%% Table of content upto 2=subsection, 3=subsubsection
+    \setcounter{tocdepth}{2}
+
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage{helvet}
+    \usepackage{amsfonts, amsmath, amssymb, mathbbol}
+    \usepackage{graphicx}
+    \usepackage{caption}
+    \usepackage{xcolor}
+
+    \definecolor{ocre}{RGB}{64,64,64}
+    \usepackage[font={color=ocre}]{caption}
+
+    %% unicode characters
+    \usepackage{newunicodechar}
+    \newunicodechar{⁹}{$^9$}
+    \newunicodechar{⁸}{$^8$}
+    \newunicodechar{⁷}{$^7$}
+    \newunicodechar{⁶}{$^6$}
+    \newunicodechar{⁵}{$^5$}
+    \newunicodechar{⁴}{$^4$}
+    \newunicodechar{³}{$^3$}
+    \newunicodechar{²}{$^2$}
+    \newunicodechar{¹}{$^1$}
+    \newunicodechar{⁰}{$^0$}
+
+    \newunicodechar{₉}{$_9$}
+    \newunicodechar{₈}{$_8$}
+    \newunicodechar{₇}{$_7$}
+    \newunicodechar{₆}{$_6$}
+    \newunicodechar{₅}{$_5$}
+    \newunicodechar{₄}{$_4$}
+    \newunicodechar{₃}{$_3$}
+    \newunicodechar{₂}{$_2$}
+    \newunicodechar{₁}{$_1$}
+    \newunicodechar{₀}{$_0$}
+
+    \newunicodechar{⟨}{$\langle$}
+    \newunicodechar{⟩}{$\rangle$}
+    \newunicodechar{−}{$-$}
+    \newunicodechar{⟶}{$\longrightarrow$}
+    \newunicodechar{Δ}{$\Delta$}
+    \newunicodechar{⭐}{$\star$}
+
+    \newcommand{\bra}[1]{\mbox{$\left \langle #1 \right|$}}
+    \newcommand{\ket}[1]{\mbox{$\left |#1 \right \rangle $}}
+    \newcommand{\braket}[2]{\mbox{$\left \langle #1 |#2 \right \rangle $}}
+    \newcommand{\ketbra}[2]{\mbox{$\left | #1 \right\rangle\left\langle #2 \right |$}}
+
+    %%% reduce spaces for Table of contents, figures and tables
+    %%% it is used "\addtocontents{toc}{\vskip -1.2cm}" etc. in the document
+    \usepackage[notlot,nottoc,notlof]{}
+
+    \usepackage{setspace}
+    \singlespacing
+
+    %% table setting
+    \renewcommand{\arraystretch}{1.75}
+
+    %%%%%%%%%%% datetime
+    \usepackage{datetime}
+
+    \newdateformat{MonthYearFormat}{%
+        \monthname[\THEMONTH], \THEYEAR}
+
+    %% RO, LE will not work for 'oneside' layout.
+    %% Change oneside to twoside in document class
+    \usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \fancyhf{}
+
+    %%% Alternating Header for oneside
+    \fancyhead[L]{
+        \ifthenelse{\isodd{\value{page}}}{ \small \nouppercase{\leftmark} }{}
+    }
+    \fancyhead[R]{
+        \ifthenelse{\isodd{\value{page}}}{}{ \small \nouppercase{\rightmark} }
+    }
+
+    %%% page number
+    \fancyfoot[CO, CE]{\thepage}
+
+    %%reduce spacing for itemize
+    \usepackage{enumitem} \setlist{nosep}
+
+    \makeatletter
+        \renewcommand{\sphinxtableofcontents}{%
+        %
+        % before resetting page counter, let's do the right thing.
+        \if@openright\cleardoublepage\else\clearpage\fi
+        \addcontentsline{toc}{chapter}{Table of Contents}%
+        \pagenumbering{roman}%
+        \begingroup
+            \parskip \z@skip
+            \tableofcontents
+        \endgroup
+        %
+        %% additional lists
+        \if@openright\cleardoublepage\else\clearpage\fi
+        \addcontentsline{toc}{chapter}{List of Figures}%
+        \listoffigures
+        %
+        \if@openright\cleardoublepage\else\clearpage\fi
+        \addcontentsline{toc}{chapter}{List of Tables}%
+        \listoftables
+        %
+        \if@openright\cleardoublepage\else\clearpage\fi
+        \pagenumbering{arabic}%
+        }
+    \makeatother
+"""
 latex_engine = "pdflatex"
 latex_logo = "_static/mrsimulator_logo.pdf"
 latex_show_pagerefs = True
@@ -396,145 +519,12 @@ latex_elements = {
     "pointsize": "10pt",
     "fontenc": "\\usepackage[utf8]{inputenc}",
     "fontpkg": "\\usepackage{amsmath,amsfonts,amssymb,amsthm}",
+    # "releasename":
     # "geometry": "\\usepackage[vmargin=2.5cm, hmargin=1.5cm]{geometry}",
     # "fncychap": "\usepackage[Rejne]{fncychap}",
     # Additional stuff for the LaTeX preamble.
     # \usepackage[T1]{fontenc}
-    "preamble": r"""
-        %%%add number to subsubsection 2=subsection, 3=subsubsection
-        %%% below subsubsection is not good idea.
-        \setcounter{secnumdepth}{2}
-
-        %%%% Table of content upto 2=subsection, 3=subsubsection
-        \setcounter{tocdepth}{2}
-
-        \usepackage[utf8]{inputenc}
-        \usepackage[T1]{fontenc}
-        \usepackage{helvet}
-        \usepackage{amsfonts, amsmath, amssymb, mathbbol}
-        \usepackage{graphicx}
-        \usepackage{caption}
-        \usepackage{xcolor}
-
-        \definecolor{ocre}{RGB}{64,64,64}
-        \usepackage[font={color=ocre}]{caption}
-
-        %% unicode characters
-        \usepackage{newunicodechar}
-        \newunicodechar{⁹}{$^9$}
-        \newunicodechar{⁸}{$^8$}
-        \newunicodechar{⁷}{$^7$}
-        \newunicodechar{⁶}{$^6$}
-        \newunicodechar{⁵}{$^5$}
-        \newunicodechar{⁴}{$^4$}
-        \newunicodechar{³}{$^3$}
-        \newunicodechar{²}{$^2$}
-        \newunicodechar{¹}{$^1$}
-        \newunicodechar{⁰}{$^0$}
-
-        \newunicodechar{₉}{$_9$}
-        \newunicodechar{₈}{$_8$}
-        \newunicodechar{₇}{$_7$}
-        \newunicodechar{₆}{$_6$}
-        \newunicodechar{₅}{$_5$}
-        \newunicodechar{₄}{$_4$}
-        \newunicodechar{₃}{$_3$}
-        \newunicodechar{₂}{$_2$}
-        \newunicodechar{₁}{$_1$}
-        \newunicodechar{₀}{$_0$}
-
-        \newunicodechar{⟨}{$\langle$}
-        \newunicodechar{⟩}{$\rangle$}
-        \newunicodechar{−}{$-$}
-        \newunicodechar{⟶}{$\longrightarrow$}
-        \newunicodechar{Δ}{$\Delta$}
-        \newunicodechar{⭐}{$\star$}
-
-
-        %%% reduce spaces for Table of contents, figures and tables
-        %%% it is used "\addtocontents{toc}{\vskip -1.2cm}" etc. in the document
-        \usepackage[notlot,nottoc,notlof]{}
-
-        \usepackage{setspace}
-        \singlespacing
-
-        %% table setting
-        \renewcommand{\arraystretch}{1.75}
-
-        %%%%%%%%%%% datetime
-        \usepackage{datetime}
-
-        \newdateformat{MonthYearFormat}{%
-            \monthname[\THEMONTH], \THEYEAR}
-
-        %% RO, LE will not work for 'oneside' layout.
-        %% Change oneside to twoside in document class
-        \usepackage{fancyhdr}
-        \pagestyle{fancy}
-        \fancyhf{}
-
-        %%% Alternating Header for oneside
-        \fancyhead[L]{
-            \ifthenelse{\isodd{\value{page}}}{ \small \nouppercase{\leftmark} }{}
-        }
-        \fancyhead[R]{
-            \ifthenelse{\isodd{\value{page}}}{}{ \small \nouppercase{\rightmark} }
-        }
-
-        %%% page number
-        \fancyfoot[CO, CE]{\thepage}
-
-        %%reduce spacing for itemize
-        \usepackage{enumitem} \setlist{nosep}
-
-        \makeatletter
-            \renewcommand{\sphinxtableofcontents}{%
-            %
-            % before resetting page counter, let's do the right thing.
-            \if@openright\cleardoublepage\else\clearpage\fi
-            \addcontentsline{toc}{chapter}{Table of Contents}%
-            \pagenumbering{roman}%
-            \begingroup
-                \parskip \z@skip
-                \tableofcontents
-            \endgroup
-            %
-            %% additional lists
-            \if@openright\cleardoublepage\else\clearpage\fi
-            \addcontentsline{toc}{chapter}{List of Figures}%
-            \listoffigures
-            %
-            \if@openright\cleardoublepage\else\clearpage\fi
-            \addcontentsline{toc}{chapter}{List of Tables}%
-            \listoftables
-            %
-            \if@openright\cleardoublepage\else\clearpage\fi
-            \addcontentsline{toc}{chapter}{List of Code Blocks}%
-            \listof{literalblock}{List of Code Blocks}%
-            %
-            \if@openright\cleardoublepage\else\clearpage\fi
-            \pagenumbering{arabic}%
-            }
-        \makeatother
-    """,
-    # "maketitle": r"""
-    #     \pagenumbering{Roman} %%% to avoid page 1 conflict with actual page 1
-    #     \begin{titlepage}
-    #         \begin{figure}[!h]
-    #             \centering
-    #             \includegraphics[scale=0.3]{mrsimulator.png}
-    #         \end{figure}
-    #         %% \vfill adds at the bottom
-    #         \vfill
-    #     \end{titlepage}
-    #     \clearpage
-    #     \pagenumbering{roman}
-    #     \tableofcontents
-    #     \listoffigures
-    #     \listoftables
-    #     \clearpage
-    #     \pagenumbering{arabic}
-    # """,
+    "preamble": preamble,
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",

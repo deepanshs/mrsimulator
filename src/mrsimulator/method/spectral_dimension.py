@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import warnings
 from copy import deepcopy
 from typing import ClassVar
@@ -14,8 +13,10 @@ from mrsimulator.utils.parseable import Parseable
 from pydantic import Field
 from pydantic import validator
 
-from .event import ConstantDurationEvent
+from .event import DelayEvent
+from .event import Event
 from .event import MixingEvent
+from .event import parse_dict_to_ev_class
 from .event import SpectralEvent
 from .utils import cartesian_product
 
@@ -71,22 +72,22 @@ class SpectralDimension(Parseable):
         The value describes a series of events along the spectroscopic dimension.
     """
     count: int = Field(1024, gt=0)
-    spectral_width: float = Field(default=25000.0, gt=0)
+    spectral_width: float = Field(default=25000.0)
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[MixingEvent, ConstantDurationEvent, SpectralEvent]] = []
+    events: List[Union[MixingEvent, DelayEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
-        "spectral_width": ["frequency", "dimensionless"],
-        "reference_offset": ["frequency", "dimensionless"],
-        "origin_offset": ["frequency", "dimensionless"],
+        "spectral_width": ["frequency"],
+        "reference_offset": ["frequency"],
+        "origin_offset": ["frequency"],
     }
 
     property_default_units: ClassVar[Dict] = {
-        "spectral_width": ["Hz", "ppm"],
-        "reference_offset": ["Hz", "ppm"],
-        "origin_offset": ["Hz", "ppm"],
+        "spectral_width": ["Hz"],
+        "reference_offset": ["Hz"],
+        "origin_offset": ["Hz"],
     }
 
     property_units: Dict = {
@@ -99,12 +100,26 @@ class SpectralDimension(Parseable):
         extra = "forbid"
         validate_assignment = True
 
-    @validator("events", always=True)
+    @validator("spectral_width", pre=True, always=True)
+    def validate_spectral_width(cls, value):
+        """Spectral width cannot be zero."""
+        if value != 0:
+            return value
+        raise ValueError("Spectral width cannot be zero.")
+
+    @validator("events", pre=True, always=True)
     def validate_events(v, **kwargs):
         """Ensure at least one spectralEvent and warn is the sum of fraction in
         SpectralEvents is not 1."""
         if v != []:
-            total = sum([e.fraction for e in v if isinstance(e, SpectralEvent)])
+            new_v = [
+                Event(event=item).event if isinstance(item, dict) else item
+                for item in v
+            ]
+            fractions = [e.fraction for e in new_v if isinstance(e, SpectralEvent)]
+            if len(fractions) == 0:  # No SpectralEvent in dimension
+                raise MissingSpectralEventError()
+            total = sum(fractions)
             if total != 1:
                 e = (
                     "The fraction attribute of each SpectralEvent in a "
@@ -112,8 +127,6 @@ class SpectralDimension(Parseable):
                     "If this was not intentional, check the fraction attributes."
                 )
                 warn(e)
-            if total == 0:
-                raise MissingSpectralEventError()
         return v
 
     @classmethod
@@ -127,10 +140,7 @@ class SpectralDimension(Parseable):
         py_dict_copy = deepcopy(py_dict)
         if "events" in py_dict_copy:
             py_dict_copy["events"] = [
-                ConstantDurationEvent.parse_dict_with_units(e)
-                if "duration" in e
-                else SpectralEvent.parse_dict_with_units(e)
-                for e in py_dict_copy["events"]
+                parse_dict_to_ev_class(e) for e in py_dict_copy["events"]
             ]
 
         return super().parse_dict_with_units(py_dict_copy)
@@ -165,7 +175,7 @@ class SpectralDimension(Parseable):
             )
             return
 
-        denominator = (self.origin_offset - self.reference_offset) / 1e6
+        denominator = self.origin_offset / 1e6
         return self.coordinates_Hz() / abs(denominator)
 
     def to_csdm_dimension(self) -> cp.Dimension:
@@ -174,7 +184,10 @@ class SpectralDimension(Parseable):
         label = "" if self.label is None else self.label
         description = "" if self.description is None else self.description
 
-        default_reciprocal = {"coordinates_offset": f"{-1/(2*increment)} s"}
+        default_reciprocal = {
+            "coordinates_offset": f"{-1/(2*increment)} s",
+            "period": f"{1/increment} s",
+        }
         reciprocal = (
             default_reciprocal if self.reciprocal is None else self.reciprocal.json()
         )
@@ -187,6 +200,7 @@ class SpectralDimension(Parseable):
             label=label,
             description=description,
             complex_fft=True,
+            period=f"{self.spectral_width} Hz",
             reciprocal=reciprocal,
         )
         if self.origin_offset is not None:
@@ -202,8 +216,8 @@ class SpectralDimension(Parseable):
     #     df = pd.DataFrame(index=rows)
     #     for i in range(len(self.events)):
     #         _lst = [getattr(self.events[i], att) for att in attributes]
-    #         _lst.append(self.events[i].transition_query.get_p())
-    #         _lst.append(self.events[i].transition_query.get_d())
+    #         _lst.append(self.events[i].transition_queries.get_p())
+    #         _lst.append(self.events[i].transition_queries.get_d())
     #         df[i] = _lst
     #     return df
 
@@ -224,14 +238,14 @@ class SpectralDimension(Parseable):
             >>> sp = SpectralDimension(
             ...     events = [{
             ...         "fraction": 0.5,
-            ...         "transition_query": [
+            ...         "transition_queries": [
             ...             {"ch1": {"P": [1, 1]}, "ch2": {"P": [1], "D": [2]}},
             ...             {"ch1": {"P": [-1, -1]}},
             ...         ]
             ...     },
             ...     {
             ...         "fraction": 0.5,
-            ...         "transition_query": [
+            ...         "transition_queries": [
             ...             {"ch1": {"P": [-1]}},
             ...         ]
             ...     }]
@@ -241,7 +255,7 @@ class SpectralDimension(Parseable):
              {'ch1': [[-1, -1], [-1]], 'ch2': [None, None], 'ch3': [None, None]}]
         """
         ha, ga = hasattr, getattr
-        tq, de = "transition_query", np.asarray([0])
+        tq, de = "transition_queries", np.asarray([0])
 
         indexes = [np.arange(len(ga(e, tq))) if ha(e, tq) else de for e in self.events]
         products = cartesian_product(*indexes)
@@ -249,8 +263,8 @@ class SpectralDimension(Parseable):
         return [
             {
                 ch: [
-                    ga(ga(e.transition_query[i], ch), symmetry_element)
-                    if ha(e, tq) and ga(e.transition_query[i], ch) is not None
+                    ga(ga(e.transition_queries[i], ch), symmetry_element)
+                    if ha(e, tq) and ga(e.transition_queries[i], ch) is not None
                     else None
                     for e, i in zip(self.events, item)
                 ]

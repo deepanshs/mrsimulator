@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 ¹³C 2D MAT NMR of L-Histidine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -13,47 +12,62 @@ import matplotlib.pyplot as plt
 from lmfit import Minimizer
 
 from mrsimulator import Simulator
-from mrsimulator.methods import SSB2D
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import SSB2D
+from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.utils.collection import single_site_system_generator
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 4
 
 # %%
 # Import the dataset
 # ------------------
-filename = "https://sandbox.zenodo.org/record/835664/files/1H13C_CPPASS_LHistidine.csdf"
-mat_data = cp.load(filename)
-
-# standard deviation of noise from the dataset
-sigma = 0.4192854
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
+filename = "1H13C_CPPASS_LHistidine.csdf"
+mat_dataset = cp.load(host + filename)
 
 # For the spectral fitting, we only focus on the real part of the complex dataset.
-mat_data = mat_data.real
+mat_dataset = mat_dataset.real
 
 # Convert the coordinates along each dimension from Hz to ppm.
-_ = [item.to("ppm", "nmr_frequency_ratio") for item in mat_data.dimensions]
+_ = [item.to("ppm", "nmr_frequency_ratio") for item in mat_dataset.dimensions]
 
 # %%
 # When using the SSB2D method, ensure the horizontal dimension of the dataset is the
 # isotropic dimension. Here, we apply an appropriate transpose operation to the dataset.
-mat_data = mat_data.T  # transpose
+mat_dataset = mat_dataset.T  # transpose
 
 # plot of the dataset.
-max_amp = mat_data.max()
+max_amp = mat_dataset.max()
 levels = (np.arange(24) + 1) * max_amp / 25  # contours are drawn at these levels.
 options = dict(levels=levels, alpha=0.75, linewidths=0.5)  # plot options
 
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
+ax.contour(mat_dataset, colors="k", **options)
 ax.set_xlim(180, 15)
 plt.grid()
 plt.tight_layout()
 plt.show()
 
+# %%
+# Estimate noise statistics from the dataset
+coords = mat_dataset.dimensions[0].coordinates
+# noise_region = np.where(np.logical_and(coords > 65e-6, coords < 110e-6))
+noise_region = np.where(np.logical_and(coords < 110e-6, coords > 65e-6))
+noise_data = mat_dataset[noise_region]
+
+plt.figure(figsize=(3.75, 2.5))
+ax = plt.subplot(projection="csdm")
+ax.imshow(noise_data, aspect="auto", interpolation="none")
+plt.title("Noise section")
+plt.axis("off")
+plt.tight_layout()
+plt.show()
+
+noise_mean, sigma = noise_data.mean(), noise_data.std()
+noise_mean, sigma
 
 # %%
 # Create a fitting model
@@ -64,7 +78,7 @@ plt.show()
 
 shifts = [120, 128, 135, 175, 55, 25]  # in ppm
 zeta = [-70, -65, -60, -60, -10, -10]  # in ppm
-eta = [0.8, 0.4, 0.9, 0.3, 0.0, 0.0]
+eta = [0.8, 0.4, 0.9, 0.3, 0.05, 0.05]
 
 spin_systems = single_site_system_generator(
     isotope="13C",
@@ -79,20 +93,15 @@ spin_systems = single_site_system_generator(
 # Create the SSB2D method.
 
 # Get the spectral dimension parameters from the experiment.
-spectral_dims = get_spectral_dimensions(mat_data)
+spectral_dims = get_spectral_dimensions(mat_dataset)
 
 PASS = SSB2D(
     channels=["13C"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=1500,  # in Hz
     spectral_dimensions=spectral_dims,
-    experiment=mat_data,  # add the measurement to the method.
+    experiment=mat_dataset,  # add the measurement to the method.
 )
-
-# Optimize the script by pre-setting the transition pathways for each spin system from
-# the method.
-for sys in spin_systems:
-    sys.transition_pathways = PASS.get_transition_pathways(sys)
 
 # %%
 # **Guess Spectrum**
@@ -110,17 +119,17 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=0),
         sp.apodization.Exponential(FWHM="50 Hz"),
         sp.IFFT(dim_index=0),
-        sp.Scale(factor=60),
+        sp.Scale(factor=2122600),
     ]
 )
-processed_data = processor.apply_operations(data=sim.methods[0].simulation).real
+processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
 # Plot of the guess Spectrum
 # --------------------------
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
-ax.contour(processed_data, colors="r", linestyles="--", **options)
+ax.contour(mat_dataset, colors="k", **options)
+ax.contour(processed_dataset, colors="r", linestyles="--", **options)
 ax.set_xlim(180, 15)
 plt.grid()
 plt.tight_layout()
@@ -137,7 +146,13 @@ print(params.pretty_print(columns=["value", "min", "max", "vary", "expr"]))
 
 # %%
 # **Solve the minimizer using LMFIT**
-minner = Minimizer(sf.LMFIT_min_function, params, fcn_args=(sim, processor, sigma))
+opt = sim.optimize()  # Pre-compute transition pathways
+minner = Minimizer(
+    sf.LMFIT_min_function,
+    params,
+    fcn_args=(sim, processor, sigma),
+    fcn_kws={"opt": opt},
+)
 result = minner.minimize()
 result
 
@@ -150,7 +165,7 @@ best_fit = sf.bestfit(sim, processor)[0].real
 # Plot of the best fit solution
 plt.figure(figsize=(8, 3.5))
 ax = plt.subplot(projection="csdm")
-ax.contour(mat_data, colors="k", **options)
+ax.contour(mat_dataset, colors="k", **options)
 ax.contour(best_fit, colors="r", linestyles="--", **options)
 ax.set_xlim(180, 15)
 plt.grid()

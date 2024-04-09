@@ -33,7 +33,7 @@ extern void mrsimulator_core(
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron.
     unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    bool interpolation, bool *freq_contrib, double *affine_matrix);
+    unsigned int interpolate_type, unsigned char *freq_contrib, double *affine_matrix);
 
 extern void __mrsimulator_core(
     // spectrum information and related amplitude
@@ -51,7 +51,7 @@ extern void __mrsimulator_core(
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
-    bool interpolation,                 // If true, perform a 1D interpolation.
+    unsigned int interpolate_type,
 
     /**
      * Each event consists of the following freq contrib ordered as
@@ -67,6 +67,6 @@ extern void __mrsimulator_core(
      * a stack of boolean list, where the stack is ordered according to the
      * events.
      */
-    bool *freq_contrib,
+    unsigned char *freq_contrib,
     double *affine_matrix  // Affine transformation matrix.
 );

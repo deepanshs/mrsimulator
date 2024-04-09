@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from mrsimulator import Coupling
 from mrsimulator import Site
 from mrsimulator import SpinSystem
@@ -54,7 +53,7 @@ def setup_uncoupled_system():
     return sys, simplified_sys
 
 
-def setup_somecoupled_system():
+def setup_some_coupled_system():
     """Systems A-C, B, D-E, F"""
     sites = setup_sites()
 
@@ -163,7 +162,7 @@ def test_builder():
     test_fn = [
         setup_system_simplifiedSystem,
         setup_uncoupled_system,
-        setup_somecoupled_system,
+        setup_some_coupled_system,
         setup_partially_coupled_system,
         setup_partially_coupled_system2,
         setup_partially_coupled_system3,

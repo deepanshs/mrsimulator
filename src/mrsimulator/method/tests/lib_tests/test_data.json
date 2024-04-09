@@ -1,0 +1,155 @@
+{
+	"generic": {
+		"name": "generic",
+		"magnetic_flux_density": "9.4 T",
+		"rotor_frequency": "1000000000000.0 Hz",
+		"rotor_angle": "0.9553166181245 rad",
+		"spectral_dimensions": [{
+				"count": 1024,
+				"spectral_width": "50000.0 Hz",
+				"events": [{
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1]
+						}
+					}]
+				}]
+			},
+			{
+				"count": 1024,
+				"spectral_width": "50000.0 Hz",
+				"events": [{
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1]
+						}
+					}]
+				}]
+			}
+		],
+		"channels": ["87Rb"]
+	},
+	"SAS": {
+		"name": "SAS",
+		"magnetic_flux_density": "9.4 T",
+		"rotor_frequency": "1000000000000.0 Hz",
+		"rotor_angle": "1.223824871498424 rad",
+		"spectral_dimensions": [{
+				"count": 512,
+				"spectral_width": "50000.0 Hz",
+				"events": [{
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
+						}
+					}]
+				}]
+			},
+			{
+				"count": 128,
+				"spectral_width": "50000.0 Hz",
+				"events": [{
+					"rotor_angle": "0.9553059660790962 rad",
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
+						}
+					}]
+				}]
+			}
+		],
+		"channels": ["87Rb"]
+	},
+	"STMAS": {
+		"name": "STMAS",
+		"magnetic_flux_density": "9.4 T",
+		"rotor_frequency": "1000000000000.0 Hz",
+		"rotor_angle": "0.9553166181245 rad",
+		"spectral_dimensions": [{
+				"count": 512,
+				"spectral_width": "5000000.0 Hz",
+				"events": [{
+					"rotor_angle": "0.0 rad",
+					"transition_queries": [{
+							"ch1": {
+								"P": [-1],
+								"D": [2]
+							}
+						},
+						{
+							"ch1": {
+								"P": [-1],
+								"D": [-2]
+							}
+						}
+					]
+				}]
+			},
+			{
+				"count": 128,
+				"spectral_width": "50000.0 Hz",
+				"events": [{
+					"rotor_angle": "0.9553059660790962 rad",
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
+						}
+					}]
+				}]
+			}
+		],
+		"channels": ["87Rb"]
+	},
+	"DAS": {
+		"name": "DAS",
+		"magnetic_flux_density": "4.2 T",
+		"rotor_frequency": "1000000000000.0 Hz",
+		"rotor_angle": "0.9553051591666667 rad",
+		"spectral_dimensions": [{
+				"count": 256,
+				"spectral_width": "20000.0 Hz",
+				"reference_offset": "-5000.0 Hz",
+				"label": "70.12 dimension",
+				"events": [{
+						"fraction": 0.5,
+						"rotor_angle": "1.2238238377777777 rad",
+						"transition_queries": [{
+							"ch1": {
+								"P": [-1],
+								"D": [0]
+							}
+							}]
+						},
+						{
+						"fraction": 0.5,
+						"rotor_angle": "0.5256927266666667 rad",
+						"transition_queries": [{
+							"ch1": {
+								"P": [-1],
+								"D": [0]
+							}
+						}]
+					}
+				]
+			},
+			{
+				"count": 256,
+				"spectral_width": "30000.0 Hz",
+				"reference_offset": "-7000.0 Hz",
+				"label": "MAS dimension",
+				"events": [{
+					"transition_queries": [{
+						"ch1": {
+							"P": [-1],
+							"D": [0]
+						}
+					}]
+				}]
+			}
+		],
+		"channels": ["87Rb"]
+	}
+}

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from mrsimulator.transition.pathway import TransitionPathway
 
 __author__ = "Deepansh Srivastava"

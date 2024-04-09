@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import mrsimulator.tests.tests as clib
 import numpy as np
 from sympy.physics.quantum.spin import Rotation
@@ -31,7 +30,7 @@ def wigner(ang_momentum_l, cos_beta):
 
 
 # All wigner matrix are tested against the wigner matrix computed using
-# Sympy Rotaion methods. See the main function in this file.
+# Sympy Rotation methods. See the main function in this file.
 
 
 def test_wigner_2j_matrix_angle_00():

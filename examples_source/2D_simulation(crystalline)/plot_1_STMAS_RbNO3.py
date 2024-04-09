@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-⁸⁷Rb (I=3/2) staellite-transition off magic-angle spinning simulation.
+⁸⁷Rb (I=3/2) satellite-transition off magic-angle spinning simulation.
 """
 # %%
 # The following is an example of the STMAS simulation of :math:`\text{RbNO}_3`. The
@@ -12,9 +11,10 @@ RbNO₃, ⁸⁷Rb (I=3/2) STMAS
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
-from mrsimulator.methods import ST1_VAS
-from mrsimulator import signal_processing as sp
+from mrsimulator.method.lib import ST1_VAS
+from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
+from mrsimulator.method import SpectralDimension
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -40,11 +40,11 @@ sites = [Rb87_1, Rb87_2, Rb87_3]  # all sites
 spin_systems = [SpinSystem(sites=[s]) for s in sites]
 
 # %%
-# **Step 2:** Select a satellite-transition variable-angle spinning method. The
+# Select a satellite-transition variable-angle spinning method. The
 # following `ST1_VAS` method correlates the frequencies from the two inner-satellite
 # transitions to the central transition. Note, STMAS measurements are highly suspectable
-# to rotor angle mismatch. In the following, we show two methods, first set to
-# magic-angle and the second deliberately miss-sets by approximately 0.0059 degrees.
+# to rotor angle mismatch. In the following, we show two methods, the first at the
+# magic angle and second deliberately miss-sets by approximately 0.0059 degrees.
 
 angles = [54.7359, 54.73]
 method = []
@@ -55,13 +55,13 @@ for angle in angles:
             magnetic_flux_density=7,  # in T
             rotor_angle=angle * 3.14159 / 180,  # in rad (magic angle)
             spectral_dimensions=[
-                dict(
+                SpectralDimension(
                     count=256,
                     spectral_width=3e3,  # in Hz
                     reference_offset=-2.4e3,  # in Hz
                     label="Isotropic dimension",
                 ),
-                dict(
+                SpectralDimension(
                     count=512,
                     spectral_width=5e3,  # in Hz
                     reference_offset=-4e3,  # in Hz
@@ -72,25 +72,23 @@ for angle in angles:
     )
 
 # A graphical representation of the method object.
-plt.figure(figsize=(5, 3.5))
+plt.figure(figsize=(5, 2.5))
 method[0].plot()
 plt.show()
 
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator()
-sim.spin_systems = spin_systems  # add the spin systems
-sim.methods = method  # add the methods.
+sim = Simulator(spin_systems=spin_systems, methods=method)
 sim.run()
 
 # %%
 # The plot of the simulation.
-data = [sim.methods[0].simulation, sim.methods[1].simulation]
+dataset = [sim.methods[0].simulation, sim.methods[1].simulation]
 fig, ax = plt.subplots(1, 2, figsize=(8.5, 3), subplot_kw={"projection": "csdm"})
 
 titles = ["STVAS @ magic-angle", "STVAS @ 0.0059 deg off magic-angle"]
-for i, item in enumerate(data):
+for i, item in enumerate(dataset):
     cb1 = ax[i].imshow(item.real / item.real.max(), aspect="auto", cmap="gist_ncar_r")
     ax[i].set_title(titles[i])
     plt.colorbar(cb1, ax=ax[i])
@@ -110,16 +108,16 @@ processor = sp.SignalProcessor(
         sp.FFT(dim_index=(0, 1)),
     ]
 )
-processed_data = []
-for item in data:
-    processed_data.append(processor.apply_operations(data=item))
-    processed_data[-1] /= processed_data[-1].max()
+processed_dataset = []
+for item in dataset:
+    processed_dataset.append(processor.apply_operations(dataset=item))
+    processed_dataset[-1] /= processed_dataset[-1].max()
 
 # %%
 # The plot of the simulation after signal processing.
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
-cb = ax.imshow(processed_data[1].real, cmap="gist_ncar_r", aspect="auto")
+cb = ax.imshow(processed_dataset[1].real, cmap="gist_ncar_r", aspect="auto")
 plt.colorbar(cb)
 ax.invert_xaxis()
 ax.invert_yaxis()

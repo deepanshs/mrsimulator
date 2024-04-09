@@ -265,7 +265,7 @@ table caption:hover {
 .toctree-wrapper.compound > p.caption {
   display: none;
 }
-.sidebar.hidden-xs > p.caption {
+.sidebar.hidden-xs > p:not(p.logo) {
   padding-left: 24px;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -315,10 +315,24 @@ table caption:hover {
   cursor: pointer;
 }
 
+.sidebar .toctree-l3 {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  padding-left: 26px;
+  padding-right: 26px;
+}
+
+.sidebar .toctree-l3 > a {
+  display: block;
+  color: #5e5e5e;
+}
 /* selected list item header */
 .sidebar > ul > li.current > a {
   color: black;
-  font-weight: 500;
+  font-weight: 550;
 }
 
 /* selected list item's sub-list */
@@ -331,11 +345,15 @@ table caption:hover {
   list-style: none;
   background-color: rgb(235, 235, 235);
   color: gray;
+  font-weight: 500;
 }
 
 /* selected list item's sub-list's item on hover */
 .sidebar > ul > li.current > ul > li:hover {
   background-color: rgb(214, 214, 214);
+}
+.sidebar > ul > li.current > ul > li > ul > li:hover {
+  background-color: rgb(205, 205, 205);
 }
 
 /* selected list item's sub-list's item a tags */
@@ -551,4 +569,20 @@ h6.center {
 
 .sphx-glr-script-out .highlight {
   font-size: smaller;
+}
+
+details.reveal-theory  {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0;
+  box-shadow: 0 .1rem 1rem -.6rem #00000066;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+details.reveal-theory summary {
+  display: block;
+  padding-left: 1.2rem;
+  position: relative;
+  cursor: pointer;
 }

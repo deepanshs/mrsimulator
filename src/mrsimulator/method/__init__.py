@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
@@ -19,20 +18,29 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
 from .spectral_dimension import SpectralDimension
 from .utils import cartesian_product
+from .utils import check_for_at_least_one_event
+from .utils import check_for_number_of_spectral_dimensions
+from .utils import check_spectral_dimensions_are_dict
 from .utils import mixing_query_connect_map
-from .utils import tip_angle_and_phase_list
+from .utils import to_euler_list
 
-# from .event import ConstantDurationEvent  # noqa: F401
+# from .utils import convert_transition_query
+
+# from .event import DelayEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
+
+
+DEFAULT_EVENT = {}
 
 
 class Method(Parseable):
@@ -53,22 +61,24 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.channels = ['1H']
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[{}])
+        >>> bloch.channels = ['13C']  # Change channels
 
     spectral_dimensions:
         The number of spectral dimensions depends on the given method. For example, a
         `BlochDecaySpectrum` method is a one-dimensional method and thus requires a
-        single spectral dimension. The default is a single default
-        :ref:`spectral_dim_api` object.
+        single spectral dimension.
 
         Example
         -------
 
-        >>> bloch = Method(channels=['1H'])
-        >>> bloch.spectral_dimensions = [SpectralDimension(count=8, spectral_width=50)]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     SpectralDimension(count=8, spectral_width=50)
+        ... ])
         >>> # or equivalently
-        >>> bloch.spectral_dimensions = [{'count': 8, 'spectral_width': 50}]
+        >>> bloch = Method(channels=['1H'], spectral_dimensions=[
+        ...     {"count": 8, "spectral_width": 50}
+        ... ])
 
     simulation:
         An object holding the result of the simulation. The initial value of this
@@ -82,7 +92,7 @@ class Method(Parseable):
         Example
         -------
 
-        >>> bloch.experiment = my_data # doctest: +SKIP
+        >>> bloch.experiment = my_dataset # doctest: +SKIP
 
     name:
         Name or id of the method. The default value is None.
@@ -123,12 +133,12 @@ class Method(Parseable):
         Example
         -------
 
-        >>> method = Method2D(channels=['1H'])
+        >>> method = Method(channels=['1H'], spectral_dimensions=[{}, {}]) # 2D method
         >>> method.affine_matrix = [[1, -1], [0, 1]]
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    channels: List[str]
+    channels: List[Union[str, dict, Isotope]]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
@@ -169,10 +179,16 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        return [Isotope(symbol=_) for _ in v]
+        return [Isotope.parse(_v) for _v in v]
+
+    @validator("rotor_frequency", always=True, pre=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        return 1e12 if np.isinf(v) else v
 
     def __init__(self, **kwargs):
+        Method.check(kwargs)
         super().__init__(**kwargs)
+        # assign global attribute to local if it is None.
         _ = [
             setattr(ev, item, getattr(self, item))
             for sd in self.spectral_dimensions
@@ -180,16 +196,38 @@ class Method(Parseable):
             for item in self.property_units.keys()
             if hasattr(ev, item) and getattr(ev, item) is None
         ]
+        # Check for only one event with 0 < rotor_freq < infinity
+        speeds = [
+            ev.rotor_frequency
+            for sd in self.spectral_dimensions
+            for ev in sd.events
+            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+        ]
+        speeds = [sp for sp in speeds if 0 < sp < 1e12]
+        if len(speeds) > 1:
+            raise NotImplementedError(
+                f"Sideband-sideband correlation is not yet supported in mrsimulator. "
+                f"Only one event with non-zero and finite `rotor_frequency` is allowed "
+                f"in a method. Found {len(speeds)} events with rotor frequencies "
+                f"{speeds}."
+            )
+
+    @classmethod
+    def check(cls, kwargs, is_named_method=False, ndim=None):
+        check_for_number_of_spectral_dimensions(kwargs, is_named_method, ndim)
+        sd_is_dict = check_spectral_dimensions_are_dict(kwargs)
+        if sd_is_dict and not is_named_method:
+            check_for_at_least_one_event(kwargs)
 
     @staticmethod
-    def __check_csdm__(data):
-        if data is None:
+    def __check_csdm__(dataset):
+        if dataset is None:
             return None
-        if isinstance(data, dict):
-            return cp.parse_dict(data)
-        if isinstance(data, cp.CSDM):
-            return data
-        raise ValueError("Unable to read the data.")
+        if isinstance(dataset, dict):
+            return cp.parse_dict(dataset)
+        if isinstance(dataset, cp.CSDM):
+            return dataset
+        raise ValueError("Unable to read the dataset.")
 
     @validator("experiment", pre=True, always=True)
     def validate_experiment(cls, v, *, values, **kwargs):
@@ -211,31 +249,6 @@ class Method(Parseable):
             raise ValueError(f"Expecting a {dim_len}x{dim_len} affine matrix.")
         if v1.ravel()[0] == 0:
             raise ValueError("The first element of the affine matrix cannot be zero.")
-        return v
-
-    @validator("spectral_dimensions", always=True)
-    def validate_spectral_dimensions(cls, v, *, values, **kwargs):
-        """Check for exactly one non-zero and finite rotor_frequency in the method."""
-
-        global_rf = (
-            0.0 if "rotor_frequency" not in values else values["rotor_frequency"]
-        )
-        speeds = [
-            ev.rotor_frequency if ev.rotor_frequency is not None else global_rf
-            for sd in v
-            for ev in sd.events
-            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
-        ]
-        # remove all zero and infinite (>1e12 Hz) speeds from list
-        speeds = {sp for sp in speeds if 0 < sp < 1e12}
-        if len(speeds) > 1:
-            raise NotImplementedError(
-                (
-                    "Sideband-sideband correlation is not supported in mrsimulator. "
-                    "Only one event with non-zero finite `rotor_frequency` is allowed "
-                    "in a method."
-                )
-            )
         return v
 
     @classmethod
@@ -278,18 +291,16 @@ class Method(Parseable):
         ]
         glb_keys = set(glb.keys())
 
-        _ = [
-            (
-                None if "events" in dim else dim.update({"events": [{}]}),
-                [
-                    ev.update({k: glb[k]})
-                    for ev in dim["events"]
-                    for k in glb
-                    if k not in set(ev.keys()).intersection(glb_keys)
-                ],
-            )
-            for dim in py_dict["spectral_dimensions"]
-        ]
+        for dim in py_dict["spectral_dimensions"]:
+            if "events" not in dim:
+                dim.update({"events": [DEFAULT_EVENT.copy()]})  # Set default if empty
+
+            # Iterate over Events and update to global attributes, if necessary
+            for ev in dim["events"]:
+                shared_keys = set(ev.keys()).intersection(glb_keys)
+                for k in glb:
+                    if k not in shared_keys and "query" not in ev:  # Skip MixingEvent
+                        ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
         mth = super().dict(**kwargs)
@@ -310,9 +321,6 @@ class Method(Parseable):
         """
         mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [
-            item.json(units=units) for item in self.spectral_dimensions
-        ]
 
         # add global parameters
         global_ = (
@@ -321,6 +329,9 @@ class Method(Parseable):
             else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # remove event objects with global values.
         _ = [
@@ -355,25 +366,25 @@ class Method(Parseable):
         **Single channel example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [1]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [1]}}]
             ...                 },
             ...                 {
             ...                     "fraction": 0.5,
-            ...                     "transition_query": [{"ch1": {"P": [0]}}]
+            ...                     "transition_queries": [{"ch1": {"P": [0]}}]
             ...                 }
             ...             ],
             ...         },
             ...         {
             ...             "events": [
-            ...                 {"transition_query": [{"ch1": {"P": [-1]}}]},
+            ...                 {"transition_queries": [{"ch1": {"P": [-1]}}]},
             ...             ],
             ...         }
             ...     ]
@@ -387,21 +398,21 @@ class Method(Parseable):
         **Dual channels example**
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H', '13C'],
             ...     spectral_dimensions=[
             ...         {
             ...             "events": [{
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [
+            ...                 "transition_queries": [
             ...                     {"ch1": {"P": [1]}},
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             },
             ...             {
             ...                 "fraction": 0.5,
-            ...                 "transition_query": [  # selecting double quantum
+            ...                 "transition_queries": [  # selecting double quantum
             ...                     {"ch1": {"P": [-1]}, "ch2": {"P": [-1]}},
             ...                     {"ch1": {"P": [1]}, "ch2": {"P": [1]}},
             ...                 ]
@@ -409,7 +420,7 @@ class Method(Parseable):
             ...         },
             ...         {
             ...             "events": [{
-            ...                 "transition_query": [ # selecting single quantum
+            ...                 "transition_queries": [ # selecting single quantum
             ...                     {"ch1": {"P": [-1]}},
             ...                 ]
             ...             }],
@@ -463,7 +474,7 @@ class Method(Parseable):
         isotopes = spin_system.get_isotopes(symbol=True)
         channels = [item.symbol for item in self.channels]
         if np.any([item not in isotopes for item in channels]):
-            return []
+            return np.asarray([])
 
         segments = [
             evt.filter_transitions(all_transitions, isotopes, channels)
@@ -471,38 +482,39 @@ class Method(Parseable):
             for evt in dim.events
             if evt.__class__.__name__ != "MixingEvent"
         ]
+        if all([sg.size == 0 for sg in segments]):  # List of empty segments
+            return np.asarray([])
 
         segments_index = [np.arange(item.shape[0]) for item in segments]
         cartesian_index = cartesian_product(*segments_index)
-        return [
-            [segments[i][j] for i, j in enumerate(item)] for item in cartesian_index
-        ]
+        return np.array(
+            [[segments[i][j] for i, j in enumerate(item)] for item in cartesian_index]
+        )
 
-    def _get_transition_pathway_weights(self, pathways, spin_system):
-        if pathways == []:
-            return []
+    def _get_transition_pathway_weights_np(self, pathways, spin_system):
+        if np.asarray(pathways).size == 0:
+            return np.asarray([])
 
         symbol = [item.isotope.symbol for item in spin_system.sites]
         spins = np.asarray([item.isotope.spin for item in spin_system.sites])
         channels = [item.symbol for item in self.channels]
         weights = np.ones(len(pathways), dtype=complex)
 
+        # Mapping is a list of dict where each dict
         mapping = mixing_query_connect_map(self.spectral_dimensions)
         for obj in mapping:
-            theta_, phi_ = tip_angle_and_phase_list(
-                symbol, channels, obj["mixing_query"]
-            )
-            map_ = obj["near_index"]
+            euler_angles = to_euler_list(symbol, channels, obj["mixing_query_list"])
+            # Each column is list of the same angles
+            alpha_, beta_, gamma_ = np.r_[euler_angles].T
+            near_ = obj["near_index"]
             for j, path in enumerate(pathways):
-                # if weights[j] == 0:
-                #     continue
                 weights[j] *= self._calculate_transition_connect_weight(
-                    path[map_[0]], path[map_[1]], spins, theta_, phi_
+                    path[near_[0]], path[near_[1]], spins, alpha_, beta_, gamma_
                 )
         return np.round(weights, decimals=6)
 
     @staticmethod
-    def _calculate_transition_connect_weight(trans1, trans2, spins, theta, phi):
+    def _calculate_transition_connect_weight(trans1, trans2, spins, alpha, beta, gamma):
         """Return the transition connection weight of transitions `trans1` and `trans2`.
 
         Args:
@@ -515,8 +527,11 @@ class Method(Parseable):
                 entries at axis 0 corresponds to initial (index 0) and final (index 1)
                 Zeeman energy states.
             spins: ndarray of spin quantum numbers of the sites.
-            theta: ndarray of rotation tip_angle per site from the mixing event.
+            theta: ndarray of rotation angle per site from the mixing event.
             phi: ndarray of rotation phase per site from the mixing event.
+            alpha: ndarray of first Euler angle per site from the mixing query.
+            beta: ndarray of second Euler angle per site from the mixing query.
+            gamma: ndarray of third Euler angle per site from the mixing query.
         """
         amp = 1
         for i, spin in enumerate(spins):
@@ -526,16 +541,23 @@ class Method(Parseable):
             m2_i = trans2[0][i]  # landing transition initial state
 
             amp *= transition_connect_factor(
-                spin, m1_f, m1_i, m2_f, m2_i, theta[i], phi[i]
+                spin,
+                m1_f,
+                m1_i,
+                m2_f,
+                m2_i,
+                alpha[i],
+                beta[i],
+                gamma[i],
             )
         return amp
 
     def _get_transition_pathway_and_weights_np(self, spin_system):
         segments = self._get_transition_pathways_np(spin_system)
-        weights = self._get_transition_pathway_weights(segments, spin_system)
-        return segments, weights
-        # indexes = np.where(weights != 0)[0]
-        # return np.asarray(segments)[indexes], weights[indexes]
+        weights = self._get_transition_pathway_weights_np(segments, spin_system)
+        indexes = np.where(weights != 0)[0]
+
+        return np.asarray(segments)[indexes], np.asarray(weights)[indexes]
 
     def get_transition_pathways(self, spin_system) -> List[TransitionPathway]:
         """Return a list of transition pathways from the given spin system that satisfy
@@ -550,7 +572,7 @@ class Method(Parseable):
 
         Example:
             >>> from mrsimulator import SpinSystem
-            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> from mrsimulator.method.lib import ThreeQ_VAS
             >>> sys = SpinSystem(sites=[{'isotope': '27Al'}, {'isotope': '29Si'}])
             >>> method = ThreeQ_VAS(channels=['27Al'])
             >>> pprint(method.get_transition_pathways(sys))
@@ -569,7 +591,6 @@ class Method(Parseable):
                 weight=w,
             )
             for item, w in zip(segments, weights)
-            if w != 0
         ]
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
@@ -596,7 +617,7 @@ class Method(Parseable):
 
         Args:
             (bool) drop_constant_columns:
-                Removes constant properties if True. Default is True.
+                Removes constant properties if True. Default is True.
 
         Returns:
             pd.DataFrame df:
@@ -608,9 +629,9 @@ class Method(Parseable):
             - (str) type: Event type
             - (int) spec_dim_index: Index of spectral dimension which event belongs to
             - (str) label: Event label
-            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingQuery) mixing_query: MixingQuery object of the MixingEvent
+            - (MixingQuery) query: MixingQuery object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
             - (float) rotor_frequency: Rotor frequency during event in Hz
             - (float) rotor_angle: Rotor angle during event converted to Degrees
@@ -619,7 +640,7 @@ class Method(Parseable):
         Example:
             **All Possible Columns**
 
-            >>> from mrsimulator.methods import ThreeQ_VAS
+            >>> from mrsimulator.method.lib import ThreeQ_VAS
             >>> method = ThreeQ_VAS(channels=["17O"])
             >>> df = method.summary(drop_constant_columns=False)
             >>> pprint(list(df.columns))
@@ -629,7 +650,7 @@ class Method(Parseable):
              'label',
              'duration',
              'fraction',
-             'mixing_query',
+             'query',
              'magnetic_flux_density',
              'rotor_frequency',
              'rotor_angle',
@@ -637,21 +658,7 @@ class Method(Parseable):
              'p',
              'd']
         """
-        # Make sure spectral_dimensions has at least one SpectralDimension
-        if len(self.spectral_dimensions) == 0:
-            raise AttributeError(
-                "Method has empty spectral_dimensions. At least one SpectralDimension "
-                "is needed with at least one Event."
-            )
-
-        # Make sure there is at least one event within spectral_dimensions
-        if sum([len(spec_dim.events) for spec_dim in self.spectral_dimensions]) == 0:
-            raise AttributeError(
-                "Method has no Events. At least one SpectralDimension "
-                "is needed with at least one Event."
-            )
-
-        CD = "ConstantDurationEvent"
+        CD = "DelayEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
 
@@ -661,7 +668,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            "mixing_query",
+            "query",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -674,7 +681,7 @@ class Method(Parseable):
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            "mixing_query": MX,
+            "query": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),
@@ -738,14 +745,14 @@ class Method(Parseable):
             matplotlib.pyplot.figure
 
         Example:
-            >>> from mrsimulator.methods import BlochDecaySpectrum
+            >>> from mrsimulator.method.lib import BlochDecaySpectrum
             >>> method = BlochDecaySpectrum(channels=["13C"])
             >>> fig = method.plot()
 
             **Adjusting Figure Size rcParams**
 
             >>> import matplotlib as mpl
-            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> from mrsimulator.method.lib import FiveQ_VAS
             >>> mpl.rcParams["figure.figsize"] = [14, 10]
             >>> mpl.rcParams["font.size"] = 14
             >>> method = FiveQ_VAS(channels=["27Al"])
@@ -753,7 +760,7 @@ class Method(Parseable):
 
             **Plotting all Parameters, including Constant**
 
-            >>> from mrsimulator.methods import FiveQ_VAS
+            >>> from mrsimulator.method.lib import FiveQ_VAS
             >>> method = FiveQ_VAS(channels=["27Al"])
             >>> df = method.summary(drop_constant_columns=False)
             >>> fig = method.plot(df=df)
@@ -775,12 +782,12 @@ class Method(Parseable):
             tuple
 
         Example:
-            >>> from mrsimulator.methods import Method2D
-            >>> method = Method2D(
+            >>> from mrsimulator.method import Method
+            >>> method = Method(
             ...     channels=['1H'],
             ...     spectral_dimensions=[{'count': 40}, {'count': 10}]
             ... )
             >>> method.shape()
             (40, 10)
         """
-        return tuple([item.count for item in self.spectral_dimensions])
+        return tuple(item.count for item in self.spectral_dimensions)
