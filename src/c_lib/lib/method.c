@@ -162,7 +162,7 @@ static inline void create_plans_for_events_in_dimension(
   cblas_dscal(number_of_sidebands, dim->inverse_increment, plan->vr_freq, 1);
 
   for (i = 0; i < n_events; i++) {
-    dim->events[i].event_freq_amplitude = NULL;
+    dim->events[i].event_freq_amplitude = malloc_complex128(plan->size);
     // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
     //   dim->events[i].freq_amplitude = malloc_double(plan->size);
     //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);

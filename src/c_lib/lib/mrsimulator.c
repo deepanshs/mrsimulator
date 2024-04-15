@@ -274,7 +274,8 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
  *    https://doi.org/10.1006/jmre.1998.1427.
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
-                                  MRS_fftw_scheme *fftw_scheme, bool reset) {
+                                  MRS_fftw_scheme *fftw_scheme,
+                                  complex128 *event_amplitudes, bool reset) {
   /* If the number of sidebands is 1, the sideband amplitude at every sideband order is
    * one. In this case, return null,
    */
@@ -368,6 +369,20 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    * operation again updates the values of the array, `vector`. */
   fftw_execute(fftw_scheme->the_fftw_plan);
 
+  cblas_dcopy(2 * plan->size, (double *)fftw_scheme->vector, 1,
+              (double *)event_amplitudes, 1);
+
+  /** ONLY VALID FOR SINGLE EVENT **/
+  /**
+   * Evaluate the absolute value square of the `vector` array. The absolute value square
+   * is stores as the real part of the `vector` array. The imaginary part is now
+   * garbage. This method avoids creating new arrays. */
+  vm_double_square_inplace(2 * plan->size, (double *)fftw_scheme->vector);
+  cblas_daxpy(plan->size, 1.0, (double *)fftw_scheme->vector + 1, 2,
+              (double *)fftw_scheme->vector, 2);
+}
+
+void MRS_get_sideband_intensity(MRS_plan *plan, MRS_fftw_scheme *fftw_scheme) {
   /** ONLY VALID FOR SINGLE EVENT **/
   /**
    * Evaluate the absolute value square of the `vector` array. The absolute value square

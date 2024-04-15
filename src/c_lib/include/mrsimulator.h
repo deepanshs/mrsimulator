@@ -138,7 +138,8 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan);
  *            the existing array.
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
-                                  MRS_fftw_scheme *fftw_scheme, bool refresh);
+                                  MRS_fftw_scheme *fftw_scheme,
+                                  complex128 *event_amplitudes, bool refresh);
 
 // Important: `method.h` header file must be included after defining MRS_plan.
 #include "method.h"

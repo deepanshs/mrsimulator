@@ -124,7 +124,8 @@ void __mrsimulator_core(
       // Possibly calculate normalized frequencies first, then decide if frac or dur
       MRS_get_normalized_frequencies_from_plan(
           scheme, plan, R0, R2, R4, &dimensions[dim], fraction, is_spectral, duration);
-      MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
+      MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme,
+                                   event->event_freq_amplitude, 1);
 
       /* Copy the amplitudes from the `fftw_scheme->vector` to the
        * `event->freq_amplitude` for each event within the dimension. If the number of
@@ -155,6 +156,27 @@ void __mrsimulator_core(
     one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
     break;
   case 2:
+    // if (plan->number_of_sidebands != 1) {
+    // double ns = plan->number_of_sidebands, *freq_wr = malloc_double(ns * ns);
+    // complex128 *a11, *a21, as1, as2, as = malloc_complex128(ns * ns);
+    // unsigned int npts = scheme->octant_orientations;
+    // complex128 as1 = malloc_complex128(npts);
+    // complex128 as2 = malloc_complex128(npts);
+    // int n11, n21, n21p, n11p;
+
+    // a11 = dimensions[0].events[0].event_freq_amplitude;
+    // a21 = dimensions[1].events[1].event_freq_amplitude;
+    // for (n11 = 0; n11 < plan->number_of_sidebands; n11++) {
+    //   for (n21 = 0; n21 < plan->number_of_sidebands; n21++) {
+    //     for (n21p = 0; n21p < plan->number_of_sidebands; n21p++) {
+    //       n11p = n11 - (n21p - n21);
+    //       vm_double_complex_multiply(npts, &a11[n11 * npts], &a11[n11p * npts],
+    //       &as1); vm_double_complex_multiply(npts, &a21[n21 * npts], &a21[n21p *
+    //       npts], &as2); vm_double_complex_multiply(npts, &as1, &as2, &a_s);
+    //     }
+    //   }
+    // }
+    // }
     two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,
                               scheme->exp_I_phase);
     break;
