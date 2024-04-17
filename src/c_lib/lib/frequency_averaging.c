@@ -21,6 +21,22 @@
 //   }
 // }
 
+/**
+ * npts Number of array poinits
+ * a11 complex array of size npts, sideband amplitude event 11
+ * a21 complex array of size npts, sideband amplitude event 21
+ * res complex array of size npts, result  sideband amplitude
+ */
+static inline void sideband_amplitide(int npts, complex128 *a11, complex128 *a21,
+                                      int n1, int n2, int number_of_sidebands,
+                                      complex128 *res) {
+  int n2p, n1p;
+  for (n2p = 0; n2p < number_of_sidebands; n2p++) {
+    n1p = n1 - (n2p - n2);
+    vm_double_complex_multiply(npts, a21, a11, res);
+  }
+}
+
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                double *spec, unsigned int iso_intrp,
                                complex128 *exp_I_phase) {
