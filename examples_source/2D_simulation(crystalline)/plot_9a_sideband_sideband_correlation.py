@@ -3,10 +3,10 @@
 MCl₂.2D₂O, ²H (I=1) Shifting-d echo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-²H (I=1) 2D NMR CSA-Quad 1st order correlation spectrum simulation.
+²H (I=1) 2D NMR CSA-Quad 1st order sideband correlation spectrum simulation.
 """
 # %%
-# The following is a sideband-sideband NMR correlation simulation od crystalline solid,
+# Sideband-sideband NMR correlation simulation of crystalline solid as
 # reported by Aleksis and Pell [#f1]_.
 import matplotlib.pyplot as plt
 
@@ -14,7 +14,7 @@ from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
-# sphinx_gallery_thumbnail_number = 3
+# sphinx_gallery_thumbnail_number = 1
 
 # %%
 # Generate the site and spin system objects.
@@ -115,4 +115,4 @@ plt.show()
 # .. [#f1] Aleksis R and Pell A.J., Separation of quadrupolar and paramagnetic shift
 #        interactions in high-resolution nuclear magnetic resonance of spinning
 #        powders, J. Chem. Phys. (2021)  **155**, 094202.
-#       `DOI: 10.1063/5.0061611 <https://doi.org/10.1063/5.0061611>`_
+#        `DOI: 10.1063/5.0061611 <https://doi.org/10.1063/5.0061611>`_
