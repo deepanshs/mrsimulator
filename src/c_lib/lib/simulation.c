@@ -79,7 +79,7 @@ void __mrsimulator_core(
 
   // openblas_set_num_threads(1);
 
-  // Loop over the dimensionn.
+  // Loop over the dimension.
   for (dim = 0; dim < n_dimension; dim++) {
     // Reset the freqs to zero at the start of each spectral dimension.
     cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
@@ -119,7 +119,7 @@ void __mrsimulator_core(
       freq_contrib += FREQ_CONTRIB_INCREMENT;
 
       /* Get frequencies and amplitudes per octant .................................. */
-      /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
+      /* IMPORTANT: Always evaluate the frequencies before the amplitudes. */
       // NOTE: How to incorporate both "fraction" and "duration" into this function?
       // Possibly calculate normalized frequencies first, then decide if frac or dur
       MRS_get_normalized_frequencies_from_plan(
@@ -127,21 +127,13 @@ void __mrsimulator_core(
       MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme,
                                    event->event_freq_amplitude, 1);
 
-      /* Copy the amplitudes from the `fftw_scheme->vector` to the
-       * `event->freq_amplitude` for each event within the dimension. If the number of
-       * sidebands is 1, skip, because `fftw_scheme->vector` is not evaluated.*/
-      // if (plan->number_of_sidebands != 1) {
-      //   cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2,
-      //   event->freq_amplitude,
-      //               1);
-      // }
       if (plan->number_of_sidebands != 1) {
         vm_double_multiply_inplace(plan->size, (double *)fftw_scheme->vector, 2,
                                    dimensions[dim].freq_amplitude, 1);
       }
       transition += transition_increment;  // increment to next transition
-    }                                      // end events
-  }                                        // end dimensions
+    }  // end events
+  }  // end dimensions
 
   // calculate phase exponent of delay events
   vm_cosine_I_sine(total_pts, scheme->phase, scheme->exp_I_phase);
@@ -156,27 +148,6 @@ void __mrsimulator_core(
     one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
     break;
   case 2:
-    // if (plan->number_of_sidebands != 1) {
-    // double ns = plan->number_of_sidebands, *freq_wr = malloc_double(ns * ns);
-    // complex128 *a11, *a21, as1, as2, as = malloc_complex128(ns * ns);
-    // unsigned int npts = scheme->octant_orientations;
-    // complex128 as1 = malloc_complex128(npts);
-    // complex128 as2 = malloc_complex128(npts);
-    // int n11, n21, n21p, n11p;
-
-    // a11 = dimensions[0].events[0].event_freq_amplitude;
-    // a21 = dimensions[1].events[1].event_freq_amplitude;
-    // for (n11 = 0; n11 < plan->number_of_sidebands; n11++) {
-    //   for (n21 = 0; n21 < plan->number_of_sidebands; n21++) {
-    //     for (n21p = 0; n21p < plan->number_of_sidebands; n21p++) {
-    //       n11p = n11 - (n21p - n21);
-    //       vm_double_complex_multiply(npts, &a11[n11 * npts], &a11[n11p * npts],
-    //       &as1); vm_double_complex_multiply(npts, &a21[n21 * npts], &a21[n21p *
-    //       npts], &as2); vm_double_complex_multiply(npts, &as1, &as2, &a_s);
-    //     }
-    //   }
-    // }
-    // }
     two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,
                               scheme->exp_I_phase);
     break;

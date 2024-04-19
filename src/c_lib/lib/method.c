@@ -135,7 +135,7 @@ static inline void MRS_set_event(MRS_event *event, double fraction, double durat
  * from
  * @param rotor_frequency_in_Hz A pointer to rotor frequency in Hz per event.
  * @param rotor_angle_in_rad A pointer to rotor angle in rads per event.
- * @param magnetic_flux_density_in_T A pointer to field fluc density in T per event.
+ * @param magnetic_flux_density_in_T A pointer to field flux density in T per event.
  * @param number_of_sidebands The total number of requested sidebands.
  */
 static inline void create_plans_for_events_in_dimension(
@@ -163,6 +163,9 @@ static inline void create_plans_for_events_in_dimension(
 
   for (i = 0; i < n_events; i++) {
     dim->events[i].event_freq_amplitude = malloc_complex128(plan->size);
+    vm_double_ones(plan->size * 2, (double *)dim->events[i].event_freq_amplitude);
+    cblas_dscal(plan->size, 0.0, (double *)dim->events[i].event_freq_amplitude + 1, 2);
+
     // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
     //   dim->events[i].freq_amplitude = malloc_double(plan->size);
     //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);

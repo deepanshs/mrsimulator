@@ -71,7 +71,7 @@ def _czjzek_random_distribution_tensors(sigma, n):
 
 
 def czjzek_random_components(sigma: float, n: int):
-    """Five dimensional random components of a 2nd rank symmetri tensor of size n.
+    """Five dimensional random components of a 2nd rank symmetric tensor of size n.
 
     Args:
         float sigma: The standard deviation of the five-dimensional multi-variate normal
