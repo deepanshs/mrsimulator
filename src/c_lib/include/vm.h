@@ -225,11 +225,13 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
   double *res_ = (double *)res, *x_ = (double *)x, *y_ = (double *)y, s1, s2, s3;
 
   while (count-- > 0) {
-    s1 = *x_ * *y_;                      // ac
-    s3 = (*x_++ + *x_) * (*y_++ + *y_);  // (a + b) * (c + d)
-    s2 = *x_++ * *y_++;                  // bd
-    *res_++ = s1 - s2;                   // real
-    *res_++ = s3 - s1 - s2;              // imag
+    s1 = *x_ * *y_;                              // ac
+    s3 = (*x_ + *(x_ + 1)) * (*y_ + *(y_ + 1));  // (a + b) * (c + d)
+    s2 = *(++x_) * *(++y_);                      // bd
+    x_++;
+    y_++;
+    *res_++ = s1 - s2;       // real
+    *res_++ = s3 - s1 - s2;  // imag
   }
 }
 
