@@ -20,34 +20,25 @@
 static inline void sideband_amplitude(int npts, int n_octant, complex128 *a11,
                                       complex128 *a21, int n1, int n2, int n1_sidebands,
                                       int n2_sidebands, complex128 *res,
-                                      complex128 *res_t) {
+                                      complex128 *res_t, int *fft1_index,
+                                      int *fft2_index, int n_min, int n_max) {
   // array is packed as (sidebands, 1, orientations[npts])
-  int i, n2p, n1p, d_npts = 2 * npts, n_min, n_max, size = npts * n_octant;
-  int n1_ = n1 * size, n2_ = n2 * size, n1p_idx;
-  double *fft1_index, *fft2_index;
+  int i, n1p, size = npts * n_octant;
+  int n1_ = n1 * size, n2_ = n2 * size, n1p_idx, n12f;
 
-  vm_double_zeros(2 * npts, (double *)res);
-  fft1_index = get_FFT_order_freq(n1_sidebands, 1.0);
-  fft2_index = get_FFT_order_freq(n2_sidebands, 1.0);
+  cblas_dscal(2 * npts, 0.0, (double *)res, 1);
+  n12f = fft1_index[n1] + fft2_index[n2];
 
-  n_min = -(int)(n1_sidebands / 2);
-  n_max = (int)((n1_sidebands - 1) / 2);
   for (i = 0; i < n2_sidebands; i++) {
-    n2p = (int)fft2_index[i];
-    n1p = (int)fft1_index[n1] - (n2p - (int)fft2_index[n2]);
+    n1p = n12f - fft2_index[i];
     if (n1p >= n_min && n1p <= n_max) {
       n1p_idx = (n1p >= 0) ? n1p : n1_sidebands + n1p;
-      // printf(
-      //     "sideband amps add n1=%i, n2=%i, n1p=%i, n2p=%i, n1d=%i, n2d=%i, n1pd=%i, "
-      //     "n2pd=%i\n",
-      //     (int)fft1_index[n1], (int)fft2_index[n2], n1p, n2p, n1, n2, n1p_idx, i);
-
-      vm_double_complex_conj_multiply(npts, &a11[n1_], &a11[n1p_idx * size], res_t);
-      vm_double_complex_conj_multiply(npts, res_t, &a21[i * size], res_t);
-      vm_double_complex_multiply(npts, res_t, &a21[n2_], res_t);
-      vm_double_add_inplace(d_npts, (double *)res_t, (double *)res);
+      vm_double_complex_multiply_inplace(npts, &a11[n1p_idx * size], &a21[i * size],
+                                         res);
     }
   }
+  vm_double_complex_multiply(npts, &a11[n1_], &a21[n2_], res_t);
+  vm_double_complex_conj_multiply(npts, res_t, res, res);
   // printf("amps[0]=%.6e %.6e\n", ((double *)res)[0], ((double *)res)[1]);
 }
 
@@ -150,6 +141,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                unsigned int iso_intrp, complex128 *exp_I_phase) {
   unsigned int i, k, j, address, gamma_idx;
   unsigned int npts = scheme->octant_orientations, ptr;
+  int *fft1_index, *fft2_index, n_min, n_max;
 
   MRS_plan *planA, *planB;
   complex128 *freq_ampA, *freq_ampB, *phase_ptr;
@@ -167,6 +159,12 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   offset1 = dimensions[1].R0_offset;
   freq_ampB = dimensions[1].events[0].event_freq_amplitude;
   planB = dimensions[1].events[0].plan;
+
+  fft1_index = get_FFT_index(planA->number_of_sidebands);
+  fft2_index = get_FFT_index(planB->number_of_sidebands);
+
+  n_min = -(int)(planA->number_of_sidebands / 2);
+  n_max = (int)((planA->number_of_sidebands - 1) / 2);
 
   // gamma averaging
   for (gamma_idx = 0; gamma_idx < scheme->n_gamma; gamma_idx++) {
@@ -226,7 +224,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
               sideband_amplitude(npts, planA->n_octants, &freq_ampA[address],
                                  &freq_ampB[address], i, k, planA->number_of_sidebands,
                                  planB->number_of_sidebands, (complex128 *)freq_amp,
-                                 res_t);
+                                 res_t, fft1_index, fft2_index, n_min, n_max);
 
               vm_double_complex_multiply(npts, &phase_ptr[address],
                                          (complex128 *)freq_amp,

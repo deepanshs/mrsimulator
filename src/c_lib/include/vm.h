@@ -241,6 +241,34 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
 }
 
 /**
+ * Multiply the elements of vector x and y and store in res of type double
+ * complex.
+ *    res += x * y
+ */
+static inline void vm_double_complex_multiply_inplace(int count, const void *restrict x,
+                                                      const void *restrict y,
+                                                      void *restrict res) {
+  // x = __builtin_assume_aligned(x, 32);
+  // y = __builtin_assume_aligned(y, 32);
+  // res = __builtin_assume_aligned(res, 32);
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, imag, a, b, c, d;
+
+  while (count-- > 0) {
+    real = *x_++;
+    imag = *x_++;
+    a = real * *y_;    // real real
+    c = imag * *y_++;  // imag real
+    b = imag * *y_;    // imag imag
+    d = real * *y_++;  // real imag
+    *res_++ += a - b;
+    *res_++ += c + d;
+  }
+}
+
+/**
  * Multiply the elements of vector x and conjugate of vector y and store in res of
  * type double complex.
  *    res = x * conj(y)
