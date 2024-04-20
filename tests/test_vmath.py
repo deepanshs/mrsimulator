@@ -45,8 +45,10 @@ def test_complex():
         a = np.random.rand(500) + 1j * np.random.rand(500)
         b = np.random.rand(500) + 1j * np.random.rand(500)
         c = clib.vm_cmult(a, b)
-
         np.testing.assert_allclose(c, a * b)
+
+        c = clib.vm_cmult_conj(a, b)
+        np.testing.assert_allclose(c, a * b.conj())
 
         c = clib.vm_I_exp(a)
         np.testing.assert_almost_equal(c, np.exp(a), decimal=3)

@@ -21,6 +21,7 @@ cdef extern from "vm_test.h":
     void test_vm_double_divide(int count, const double *x, const double *y, double *res)
     void test_vm_double_divide_inplace(int count, const double *x, double *y)
     void test_vm_double_complex_multiply(int count, const void *x, const void *y, void *res)
+    void test_vm_double_complex_conj_multiply(int count, const void *x, const void *y, void *res)
 
     void test_vm_double_square(int count, const double *x, double *res)
     void test_vm_double_square_inplace(int count, double *x)

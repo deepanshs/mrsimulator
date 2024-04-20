@@ -214,16 +214,16 @@ static inline void vm_double_square_root_inplace(int count, double *restrict x) 
  * Multiply the elements of vector x and y and store in res of type double
  * complex.
  *    res = x * y
+ *
+ * res = (a + ib) * (c + id) = (ac - bd) + i(bc + ad)
+ * if s3 = (a + b)(c + d), s1 = ac, and s2 = bd, then
+ * real part = s1 - s2 = (ax - bd)
+ * imag part = s3 - s1 - s2 = ac + ad + bc + bd - ac - bd = (ad + bc)
  */
 static inline void vm_double_complex_multiply(int count, const void *restrict x,
                                               const void *restrict y,
                                               void *restrict res) {
-  // res = (a + ib) * (c + id) = (ac - bd) + i(bc + ad)
-  // if s3 = (a + b)(c + d), s1 = ac, and s2 = bd, then
-  // real part = s1 - s2 = (ax - bd)
-  // imag part = s3 - s1 - s2 = ac + ad + bc + bd - ac - bd = (ad + bc)
   double *res_ = (double *)res, *x_ = (double *)x, *y_ = (double *)y, s1, s2, s3;
-
   while (count-- > 0) {
     s3 = (*x_ + *(x_ + 1)) * (*y_ + *(y_ + 1));  // (a + b) * (c + d)
     s1 = *x_++ * *y_++;                          // ac
@@ -241,23 +241,13 @@ static inline void vm_double_complex_multiply(int count, const void *restrict x,
 static inline void vm_double_complex_multiply_inplace(int count, const void *restrict x,
                                                       const void *restrict y,
                                                       void *restrict res) {
-  // x = __builtin_assume_aligned(x, 32);
-  // y = __builtin_assume_aligned(y, 32);
-  // res = __builtin_assume_aligned(res, 32);
-  double *res_ = (double *)res;
-  double *x_ = (double *)x;
-  double *y_ = (double *)y;
-  double real, imag, a, b, c, d;
-
+  double *res_ = (double *)res, *x_ = (double *)x, *y_ = (double *)y, s1, s2, s3;
   while (count-- > 0) {
-    real = *x_++;
-    imag = *x_++;
-    a = real * *y_;    // real real
-    c = imag * *y_++;  // imag real
-    b = imag * *y_;    // imag imag
-    d = real * *y_++;  // real imag
-    *res_++ += a - b;
-    *res_++ += c + d;
+    s3 = (*x_ + *(x_ + 1)) * (*y_ + *(y_ + 1));  // (a + b) * (c + d)
+    s1 = *x_++ * *y_++;                          // ac
+    s2 = *x_++ * *y_++;                          // bd
+    *res_++ += s1 - s2;                          // real
+    *res_++ += s3 - s1 - s2;                     // imag
   }
 }
 
@@ -269,20 +259,13 @@ static inline void vm_double_complex_multiply_inplace(int count, const void *res
 static inline void vm_double_complex_conj_multiply(int count, const void *restrict x,
                                                    const void *restrict y,
                                                    void *restrict res) {
-  double *res_ = (double *)res;
-  double *x_ = (double *)x;
-  double *y_ = (double *)y;
-  double real, imag, a, b, c, d;
-
+  double *res_ = (double *)res, *x_ = (double *)x, *y_ = (double *)y, s1, s2, s3;
   while (count-- > 0) {
-    real = *x_++;
-    imag = *x_++;
-    a = real * *y_;    // real real
-    c = imag * *y_++;  // imag real
-    b = imag * *y_;    // imag (-imag)
-    d = real * *y_++;  // real (-imag)
-    *res_++ = a + b;
-    *res_++ = c - d;
+    s3 = (*x_ + *(x_ + 1)) * (*y_ - *(y_ + 1));  // (a + b) * (c - d)
+    s1 = *x_++ * *y_++;                          // ac
+    s2 = *x_++ * *y_++;                          // bd
+    *res_++ = s1 + s2;                           // real
+    *res_++ = s3 - s1 + s2;                      // imag
   }
 }
 
