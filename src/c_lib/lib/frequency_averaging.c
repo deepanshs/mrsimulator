@@ -174,6 +174,13 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     freq1 = &dimensions[1].local_frequency[ptr];
     phase_ptr = &exp_I_phase[ptr];
 
+    for (j = 0; j < planA->n_octants; j++) {
+      vm_double_multiply_inplace(npts, planA->norm_amplitudes, 1,
+                                 (double *)(&phase_ptr[j * npts]), 2);
+      vm_double_multiply_inplace(npts, planA->norm_amplitudes, 1,
+                                 (double *)(&phase_ptr[j * npts]) + 1, 2);
+    }
+
     // scale and shear the first dimension.
     if (affine_matrix[0] != 1) {
       cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
@@ -230,7 +237,6 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                          (complex128 *)freq_amp,
                                          (complex128 *)freq_amp);
 
-              vm_double_multiply_inplace(npts, planA->norm_amplitudes, 1, freq_amp, 2);
               // real part
               two_d_averaging(spec, npts, dimensions[0].freq_offset,
                               dimensions[1].freq_offset, freq_amp, 2,
@@ -239,8 +245,6 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                               scheme->integration_density, user_defined, interpolation);
 
               // imaginary part
-              vm_double_multiply_inplace(npts, planA->norm_amplitudes, 1, freq_amp + 1,
-                                         2);
               two_d_averaging(spec + 1, npts, dimensions[0].freq_offset,
                               dimensions[1].freq_offset, freq_amp + 1, 2,
                               scheme->position_size, scheme->positions,
