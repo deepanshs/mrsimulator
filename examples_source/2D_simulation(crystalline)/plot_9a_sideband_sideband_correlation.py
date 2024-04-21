@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-MCl₂.2D₂O, ²H (I=1) Shifting-d echo
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+²H (I=1) 2D sideband-sideband correlation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ²H (I=1) 2D NMR CSA-Quad 1st order sideband correlation spectrum simulation.
 """
@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
+from mrsimulator.simulator.sampling_scheme import zcw_averaging
 
 # sphinx_gallery_thumbnail_number = 1
 
@@ -44,19 +45,20 @@ spin_systems = [
 ]
 
 # %%
-n_sidebands = 48
-rotor_frequency = 2000
-bandwidth = rotor_frequency * n_sidebands
+# Create a sideband-sideband correlation method
 
-shifting_d = Method(
-    name="Shifting-d",
+n_sidebands = 56
+rotor_frequency = 2000
+
+sideband_2d = Method(
+    name="2D sideband correlation",
     channels=["2H"],
     magnetic_flux_density=9.395,  # in T
     rotor_frequency=rotor_frequency,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
-            count=n_sidebands,
-            spectral_width=bandwidth,  # in Hz
+            count=56,
+            spectral_width=rotor_frequency * 56,  # in Hz
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
@@ -67,8 +69,8 @@ shifting_d = Method(
             ],
         ),
         SpectralDimension(
-            count=n_sidebands,
-            spectral_width=bandwidth,  # in Hz
+            count=20,
+            spectral_width=20 * rotor_frequency,  # in Hz
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
@@ -83,26 +85,53 @@ shifting_d = Method(
 # %%
 # Create the Simulator object, add the method and spin system objects, and
 # run the simulation.
-sim = Simulator(spin_systems=spin_systems, methods=[shifting_d])
-sim.config.integration_volume = "hemisphere"
+sim = Simulator(spin_systems=spin_systems, methods=[sideband_2d])
 sim.config.decompose_spectrum = "spin_system"  # simulate spectra per spin system
 sim.config.number_of_sidebands = n_sidebands
+
+# custom sampling scheme
+sim.config.custom_sampling = zcw_averaging(
+    M=13, integration_volume="hemisphere", triangle_mesh=False
+)
+
 sim.run()
+
+
+# %%
+dataset = sim.methods[0].simulation.real
+[dim.to("kHz", "nmr_frequency_ratio") for dim in dataset.dimensions]
+datasets = dataset.split()
+
+plt.figure(figsize=(4.25, 3.0))
+ax = plt.subplot(projection="csdm")
+cb = ax.imshow(
+    datasets[0] / datasets[0].max(),
+    aspect="auto",
+    cmap="gist_ncar_r",
+    interpolation="none",
+)
+plt.title(None)
+plt.colorbar(cb)
+plt.tight_layout()
+plt.show()
 
 # %%
 # Let's plot all the simulated datasets.
-dataset = sim.methods[0].simulation
-[dim.to("kHz", "nmr_frequency_ratio") for dim in dataset.dimensions]
 fig, ax = plt.subplots(
     3, 4, sharex=True, sharey=True, figsize=(12, 9.5), subplot_kw={"projection": "csdm"}
 )
-for j, datum in enumerate(dataset.split()):
+
+vmax = max(dataset.max())
+vmin = min(dataset.min())
+for j, datum in enumerate(datasets):
     row, col = j // 4, j % 4
     ax[row, col].imshow(
-        (datum.T / datum.max()).real,
+        datum.T,
         aspect="auto",
-        cmap="gist_ncar_r",
+        cmap="rainbow",
         interpolation="none",
+        vmax=vmax,
+        vmin=vmin,
     )
     ax[row, col].set_ylim(-14.5, 14.5)
     ax[row, col].invert_xaxis()

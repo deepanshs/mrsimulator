@@ -134,6 +134,8 @@ class ConfigSimulator(Parseable):
             py_dict["weight"] = self.custom_sampling.weight
             if self.custom_sampling.vertex_indexes is not None:
                 py_dict["positions"] = self.custom_sampling.vertex_indexes.ravel()
+            else:
+                py_dict["interpolation"] = False
             py_dict["user_defined"] = True
         return py_dict
 
