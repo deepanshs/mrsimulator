@@ -46,8 +46,6 @@ spin_systems = [
 
 # %%
 # Create a sideband-sideband correlation method
-
-n_sidebands = 56
 rotor_frequency = 2000
 
 sideband_2d = Method(
@@ -57,8 +55,8 @@ sideband_2d = Method(
     rotor_frequency=rotor_frequency,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
-            count=56,
-            spectral_width=rotor_frequency * 56,  # in Hz
+            count=50,
+            spectral_width=rotor_frequency * 50,  # in Hz
             label="Quadrupolar frequency",
             events=[
                 SpectralEvent(
@@ -69,8 +67,8 @@ sideband_2d = Method(
             ],
         ),
         SpectralDimension(
-            count=20,
-            spectral_width=20 * rotor_frequency,  # in Hz
+            count=16,
+            spectral_width=16 * rotor_frequency,  # in Hz
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
@@ -87,7 +85,7 @@ sideband_2d = Method(
 # run the simulation.
 sim = Simulator(spin_systems=spin_systems, methods=[sideband_2d])
 sim.config.decompose_spectrum = "spin_system"  # simulate spectra per spin system
-sim.config.number_of_sidebands = n_sidebands
+sim.config.number_of_sidebands = 56
 
 # custom sampling scheme
 sim.config.custom_sampling = zcw_averaging(
@@ -99,13 +97,13 @@ sim.run()
 
 # %%
 dataset = sim.methods[0].simulation.real
-[dim.to("kHz", "nmr_frequency_ratio") for dim in dataset.dimensions]
+_ = [dim.to("kHz", "nmr_frequency_ratio") for dim in dataset.dimensions]
 datasets = dataset.split()
 
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(
-    datasets[0] / datasets[0].max(),
+    datasets[0].T / datasets[0].max(),
     aspect="auto",
     cmap="gist_ncar_r",
     interpolation="none",
@@ -128,12 +126,11 @@ for j, datum in enumerate(datasets):
     ax[row, col].imshow(
         datum.T,
         aspect="auto",
-        cmap="rainbow",
+        cmap="gist_ncar_r",
         interpolation="none",
         vmax=vmax,
         vmin=vmin,
     )
-    ax[row, col].set_ylim(-14.5, 14.5)
     ax[row, col].invert_xaxis()
     ax[row, col].invert_yaxis()
 
