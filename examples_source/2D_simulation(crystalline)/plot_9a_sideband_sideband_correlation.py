@@ -9,6 +9,7 @@
 # Sideband-sideband NMR correlation simulation of crystalline solid as
 # reported by Aleksis and Pell [#f1]_.
 import matplotlib.pyplot as plt
+import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -55,25 +56,25 @@ sideband_2d = Method(
     rotor_frequency=rotor_frequency,  # in Hz
     spectral_dimensions=[
         SpectralDimension(
-            count=50,
-            spectral_width=rotor_frequency * 50,  # in Hz
-            label="Quadrupolar frequency",
-            events=[
-                SpectralEvent(
-                    transition_queries=[{"ch1": {"P": [-1]}}],
-                    freq_contrib=["Quad1_2"],
-                ),
-                MixingEvent(query="NoMixing"),
-            ],
-        ),
-        SpectralDimension(
             count=16,
-            spectral_width=16 * rotor_frequency,  # in Hz
+            spectral_width=rotor_frequency * 16,  # in Hz
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
+                    transition_queries=[{"ch1": {"P": [1]}}],
+                    freq_contrib=["Shielding1_2"],
+                ),
+                MixingEvent(query={"ch1": {"angle": np.pi}}),
+            ],
+        ),
+        SpectralDimension(
+            count=50,
+            spectral_width=50 * rotor_frequency,  # in Hz
+            label="Quadrupolar + iso frequency",
+            events=[
+                SpectralEvent(
                     transition_queries=[{"ch1": {"P": [-1]}}],
-                    freq_contrib=["Shielding1_0", "Shielding1_2"],
+                    freq_contrib=["Quad1_2", "Shielding1_0"],
                 )
             ],
         ),
@@ -89,7 +90,7 @@ sim.config.number_of_sidebands = 56
 
 # custom sampling scheme
 sim.config.custom_sampling = zcw_averaging(
-    M=13, integration_volume="hemisphere", triangle_mesh=False
+    M=11, integration_volume="hemisphere", triangle_mesh=False
 )
 
 sim.run()
@@ -103,7 +104,7 @@ datasets = dataset.split()
 plt.figure(figsize=(4.25, 3.0))
 ax = plt.subplot(projection="csdm")
 cb = ax.imshow(
-    datasets[0].T / datasets[0].max(),
+    datasets[0] / datasets[0].max(),
     aspect="auto",
     cmap="gist_ncar_r",
     interpolation="none",
@@ -124,7 +125,7 @@ vmin = min(dataset.min())
 for j, datum in enumerate(datasets):
     row, col = j // 4, j % 4
     ax[row, col].imshow(
-        datum.T,
+        datum,
         aspect="auto",
         cmap="gist_ncar_r",
         interpolation="none",
@@ -132,7 +133,6 @@ for j, datum in enumerate(datasets):
         vmin=vmin,
     )
     ax[row, col].invert_xaxis()
-    ax[row, col].invert_yaxis()
 
 plt.tight_layout()
 plt.show()

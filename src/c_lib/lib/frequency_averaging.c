@@ -24,11 +24,13 @@ static inline void sideband_amplitude(int npts, int n_octant, complex128 *a11,
                                       int *fft2_index, int n_min, int n_max) {
   // array is packed as (sidebands, 1, orientations[npts])
   int i, n1p, size = npts * n_octant;
-  int n1_ = n1 * size, n2_ = n2 * size, n1p_idx, n12f;
+  int m_n2 = (n2 == 0) ? n2 : n2_sidebands - n2;
+  int n1_ = n1 * size, n2_ = m_n2 * size, n1p_idx, n12f;
 
   cblas_dscal(2 * npts, 0.0, (double *)res, 1);
-  n12f = fft1_index[n1] + fft2_index[n2];
+  n12f = fft1_index[n1] + fft2_index[m_n2];
 
+  // n1p = n1 - (n2 - n2p)
   for (i = 0; i < n2_sidebands; i++) {
     n1p = n12f - fft2_index[i];
     if (n1p >= n_min && n1p <= n_max) {

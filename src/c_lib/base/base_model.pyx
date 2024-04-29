@@ -202,7 +202,7 @@ def core_simulator(method,
         affine_matrix_c = np.asarray(matrix, dtype=np.float64)
         if affine_matrix_c[2] != 0:
             affine_matrix_c[2] /= affine_matrix_c[0]
-            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
+            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]/affine_matrix_c[0]
 
 # sites _______________________________________________________________________________
     cdef int number_of_sites, number_of_couplings
