@@ -43,24 +43,50 @@ def report_pdf(report):
         report.close()
 
 
-def compile_plots(dim, rep, info, title=None, report=None, label="simpson"):
+def compile_plots(dim, rep, info, dim2=None, title=None, report=None, label="simpson"):
     """Test report plot"""
     if not __GENERATE_REPORT__:
         return
 
-    _, ax = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]})
+    if dim2 is None:
+        fig, ax = plt.subplots(
+            1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]}
+        )
 
-    for i, res in enumerate(rep[:1]):
-        data_mrsimulator, data_source = res
-        ax[i].plot(dim, data_mrsimulator, "k", linewidth=0.75, label="mrsimulator")
-        ax[i].plot(dim, data_source, "--r", linewidth=0.75, label=label)
-        ax[i].set_xlabel("Frequency / ppm")
-        ax[i].legend()
+        for i, res in enumerate(rep[:1]):
+            data_mrsimulator, data_source = res
+            ax[i].plot(dim, data_mrsimulator, "k", linewidth=0.75, label="mrsimulator")
+            ax[i].plot(dim, data_source, "--r", linewidth=0.75, label=label)
+            ax[i].set_xlabel("Frequency / ppm")
+            ax[i].legend()
 
-    ax[0].plot(
-        dim, data_source - data_mrsimulator, "grey", linewidth=0.75, label="residue"
-    )
-    ax[0].legend()
+        ax[0].plot(
+            dim, data_source - data_mrsimulator, "grey", linewidth=0.75, label="residue"
+        )
+        ax[0].legend()
+        axbig = ax[1]
+    else:
+        fig, ax = plt.subplots(
+            2, 2, sharex=True, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]}
+        )
+        extent = [dim[0], dim[-1], dim2[0], dim2[-1]]
+        kwargs = dict(aspect="auto", extent=extent, cmap="gist_ncar_r")
+        for i, res in enumerate(rep[:1]):
+            data_mrsimulator, data_source = res
+            ax[0, 0].imshow(data_mrsimulator, **kwargs)
+            ax[0, 0].set_title("mrsimulator")
+
+            ax[1, 0].imshow(data_source, **kwargs)
+            ax[1, 0].set_title(label)
+
+            ax[1, 0].set_xlabel("Frequency / ppm")
+            ax[0, 0].set_ylabel("Frequency / ppm")
+            ax[1, 0].set_ylabel("Frequency / ppm")
+
+        gs = ax[0, 0].get_gridspec()
+        for ax in ax[:, -1]:
+            ax.remove()
+        axbig = fig.add_subplot(gs[:, -1])
 
     format_kwargs = dict(indent=1, width=100, compact=True, sort_dicts=False)
     str_config = pformat(info["config"], **format_kwargs)
@@ -72,12 +98,12 @@ def compile_plots(dim, rep, info, title=None, report=None, label="simpson"):
     str_method = r"$\bf{sim.methods}$" + "\n" + str_method
 
     text = str_config + str_sys + str_method
-    ax[-1].set_ylim(0, 1)
-    ax[-1].text(
+    axbig.set_ylim(0, 1)
+    axbig.text(
         0, 1, text, fontsize=7.5, verticalalignment="top", horizontalalignment="left"
     )
-    ax[-1].set_title(f"Test series: {title}")
-    ax[-1].axis("off")
+    axbig.set_title(f"Test series: {title}")
+    axbig.axis("off")
     plt.tight_layout()
     if report is not None:
         report.savefig(dpi=150)
@@ -256,6 +282,33 @@ def test_dipolar_coupling_lineshape_simpson(report):
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1.5)
+
+
+def test_2D_sideband_sideband_simpson(report):
+    error_message = (
+        "failed to compare sideband-sideband with simpson simulation from file"
+    )
+    path_ = path.join(SIMPSON_TEST_PATH, "sideband_sideband")
+    for i in range(2):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+
+        res = []
+        # euler angle all zero
+        data_mrsimulator, data_source, info, dim = c_setup(filename=filename)
+        res.append([data_mrsimulator, data_source])
+
+        compile_plots(
+            dim[0],
+            res,
+            info,
+            dim2=dim[1],
+            title="2D sideband-sideband",
+            report=report,
+            label="Simpson",
+        )
+
+        message = f"{error_message} test0{i}.json"
+        check_all_close(res, message, rel_limit=3)
 
 
 # --------------------------------------------------------------------------- #
