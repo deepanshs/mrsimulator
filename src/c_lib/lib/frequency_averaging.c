@@ -184,6 +184,8 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     }
 
     // scale and shear the first dimension.
+    // matrix = [[a, b], [c/a, d - bc/a]]
+    // f0' = a f0 + b * f1
     if (affine_matrix[0] != 1) {
       cblas_dscal(scheme->total_orientations, affine_matrix[0], freq0, 1);
     }
@@ -192,6 +194,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     }
 
     // scale and shear the second dimension.
+    // f1' = (d - bc/a) f1 + c/a f0'
+    //     = d f1 - bc/a f1 + c f0 + bc/a f1
+    //     = c f0 + d f1
     if (affine_matrix[3] != 1) {
       cblas_dscal(scheme->total_orientations, affine_matrix[3], freq1, 1);
     }

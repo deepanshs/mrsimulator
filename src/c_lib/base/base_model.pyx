@@ -200,9 +200,10 @@ def core_simulator(method,
         increment_fraction = [incre/item for item in incre]
         matrix = np.asarray(method.affine_matrix).ravel() * np.asarray(increment_fraction).ravel()
         affine_matrix_c = np.asarray(matrix, dtype=np.float64)
+        # affine matrix = [[a, b], [c, d]] represented as [[a, b], [c/a, d - bc/a]]
         if affine_matrix_c[2] != 0:
             affine_matrix_c[2] /= affine_matrix_c[0]
-            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]/affine_matrix_c[0]
+            affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
     cdef int number_of_sites, number_of_couplings
