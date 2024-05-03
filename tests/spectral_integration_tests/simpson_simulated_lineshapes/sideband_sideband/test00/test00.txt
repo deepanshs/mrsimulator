@@ -14,8 +14,8 @@ par {
   sw               1e6/dw1
   np               np1 * np2
   proton_frequency 400e6
-  start_operator   Inm
-  detect_operator  Inm
+  start_operator   I1m
+  detect_operator  I1p
   method           direct
   gamma_angles     32
   spin_rate        1000
@@ -28,7 +28,7 @@ proc pulseq {} {
   for {set j 0} {$j < $par(np1)} {incr j} {
   reset
   delay [expr $j * $par(dw1)]
-  pulse 0.1 2500 0
+  pulse 0.1 2500000 0
   for {set i 0} {$i < $par(np2)} {incr i} {
     acq
     delay $par(dw2)

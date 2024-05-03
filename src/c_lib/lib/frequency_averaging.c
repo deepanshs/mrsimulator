@@ -11,9 +11,19 @@
 
 /**
  * npts Number of array points
- * a11 complex array of size npts, sideband amplitude event 11
- * a21 complex array of size npts, sideband amplitude event 21
- * res complex array of size npts, result  sideband amplitude.
+ * n_octant Number of octant for powder averaging.
+ * a11 complex array of size npts, sideband amplitude for event 11
+ * a21 complex array of size npts, sideband amplitude for event 21
+ * n1 array index along dimenion 1 where sideband amplitude is evaluated
+ * n2 array index along dimenion 2 where sideband amplitude is evaluated
+ * n1_sidebands Number of sidebands along dimension 1
+ * n2_sidebands Number of sidebands along dimension 2
+ * res complex array of size npts, stored result sideband amplitude for (n1, n2)
+ * res_t temp vector to store intermediate complex array
+ * fft1_index stores the fft sideband order index relative to array index for dim1
+ * fft2_index stores the fft sideband order index relative to array index for dim2
+ * n_min minimum sideband order for dim 1
+ * n_max maximum sideband order for dim 1
  *
  * Evaluates: sum n2p a11(n1) * a11.conj()(n1') * a21(n2) * a21.conj()(n2')
  */
@@ -22,21 +32,25 @@ static inline void sideband_amplitude(int npts, int n_octant, complex128 *a11,
                                       int n2_sidebands, complex128 *res,
                                       complex128 *res_t, int *fft1_index,
                                       int *fft2_index, int n_min, int n_max) {
-  // array is packed as (sidebands, 1, orientations[npts])
-  int i, n1p, size = npts * n_octant;
-  int m_n2 = (n2 == 0) ? n2 : n2_sidebands - n2;
-  int n1_ = n1 * size, n2_ = m_n2 * size, n1p_idx, n12f;
+  // array a11 and a21 are packed as (sidebands, total_orientation) with total
+  // orientation as the leading dimension.
+  int i, n1p, total_orientation = npts * n_octant;
+  int n1_ = n1 * total_orientation, n2_ = n2 * total_orientation, n1p_idx, n12f;
 
+  // zero the result array
   cblas_dscal(2 * npts, 0.0, (double *)res, 1);
-  n12f = fft1_index[n1] + fft2_index[m_n2];
 
-  // n1p = n1 - (n2 - n2p)
+  // calculate n1p = n1 - (n2p - n2) using fft_index (sideband order) for corresponding
+  // dimension
+  n12f = fft1_index[n1] + fft2_index[n2];
+
   for (i = 0; i < n2_sidebands; i++) {
     n1p = n12f - fft2_index[i];
-    if (n1p >= n_min && n1p <= n_max) {
+    if (n1p >= n_min && n1p <= n_max) {  // check is within dim1 sideband order
+      // convert sideband order to array index and compute a11[n1p] * a21[i]
       n1p_idx = (n1p >= 0) ? n1p : n1_sidebands + n1p;
-      vm_double_complex_multiply_inplace(npts, &a11[n1p_idx * size], &a21[i * size],
-                                         res);
+      vm_double_complex_multiply_inplace(npts, &a11[n1p_idx * total_orientation],
+                                         &a21[i * total_orientation], res);
     }
   }
   vm_double_complex_multiply(npts, &a11[n1_], &a21[n2_], res_t);
