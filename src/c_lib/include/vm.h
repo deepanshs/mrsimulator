@@ -279,6 +279,30 @@ static inline void vm_double_complex_conj_multiply(int count, const void *restri
   }
 }
 
+/**
+ * Multiply the elements of vector x and conjugate of vector y and store in res of
+ * type double complex.
+ *    res += x * conj(y)
+ */
+static inline void vm_double_complex_conj_multiply_inplace(int count,
+                                                           const void *restrict x,
+                                                           const void *restrict y,
+                                                           void *restrict res) {
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, a, b, c, d;
+  while (count-- > 0) {
+    real = *x_++;
+    a = real * *y_;    // real real
+    c = *x_ * *y_++;   // imag real
+    b = *x_++ * *y_;   // imag imag
+    d = real * *y_++;  // real imag
+    *res_++ += a + b;
+    *res_++ += c - d;
+  }
+}
+
 // Trigonometry
 
 /**

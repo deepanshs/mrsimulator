@@ -16,7 +16,7 @@ RNMSIM_TEST_PATH = path.join(COMMON_PATH, "rmnsim_lineshapes")
 PYTHON_BRUTE_TEST_PATH = path.join(COMMON_PATH, "python_brute_force_lineshapes")
 VOLUMES = ["sphere", "hemisphere"]
 
-__GENERATE_REPORT__ = False
+__GENERATE_REPORT__ = True
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -289,7 +289,7 @@ def test_2D_sideband_sideband_simpson(report):
         "failed to compare sideband-sideband with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "sideband_sideband")
-    for i in range(2):
+    for i in range(4):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
