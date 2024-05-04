@@ -16,7 +16,7 @@ RNMSIM_TEST_PATH = path.join(COMMON_PATH, "rmnsim_lineshapes")
 PYTHON_BRUTE_TEST_PATH = path.join(COMMON_PATH, "python_brute_force_lineshapes")
 VOLUMES = ["sphere", "hemisphere"]
 
-__GENERATE_REPORT__ = True
+__GENERATE_REPORT__ = False
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -134,8 +134,9 @@ def test_pdf():
 def check_all_close(res, message, rel_limit):
     """Check if the vectos in res are all close within relative limits"""
     for item in res:
-        limit = -np.log10(item[1].max()) + rel_limit
-        np.testing.assert_almost_equal(item[0], item[1], decimal=limit, err_msg=message)
+        item0 = item[0] / item[0].sum()
+        item1 = item[1] / item[1].sum()
+        np.testing.assert_allclose(item0, item1, atol=rel_limit, err_msg=message)
 
 
 # --------------------------------------------------------------------------- #
@@ -165,7 +166,7 @@ def test_pure_shielding_sideband_simpson(report):
         compile_plots(dim, res, info, title="Shielding Sidebands", report=report)
 
         message = f"{error_message} test0{i}.json"
-        check_all_close(res, message, rel_limit=2.5)
+        check_all_close(res, message, rel_limit=1e-3)
 
 
 def test_pure_quadrupolar_sidebands_simpson(report):
@@ -191,7 +192,7 @@ def test_pure_quadrupolar_sidebands_simpson(report):
         compile_plots(dim, res, info, title="Quad Sidebands", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=1.5)
+        check_all_close(res, message, rel_limit=1e-3)
 
 
 def test_csa_plus_quadrupolar_lineshape_simpson(report):
@@ -217,7 +218,7 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
         )
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=0.9)
+        check_all_close(res, message, rel_limit=5e-2)
 
 
 def test_1st_order_quadrupolar_lineshape_simpson(report):
@@ -243,7 +244,7 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
         )
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=1.0)
+        check_all_close(res, message, rel_limit=1e-3)
 
 
 def test_j_coupling_lineshape_simpson(report):
@@ -261,7 +262,7 @@ def test_j_coupling_lineshape_simpson(report):
         compile_plots(dim, res, info, title="J-coupling Spectra", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=1.1)
+        check_all_close(res, message, rel_limit=9e-3)
 
 
 def test_dipolar_coupling_lineshape_simpson(report):
@@ -281,7 +282,7 @@ def test_dipolar_coupling_lineshape_simpson(report):
         compile_plots(dim, res, info, title="Dipolar-coupling Spectra", report=report)
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=1.5)
+        check_all_close(res, message, rel_limit=4e-3)
 
 
 def test_2D_sideband_sideband_simpson(report):
@@ -289,7 +290,7 @@ def test_2D_sideband_sideband_simpson(report):
         "failed to compare sideband-sideband with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "sideband_sideband")
-    for i in range(4):
+    for i in range(5):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
@@ -308,7 +309,7 @@ def test_2D_sideband_sideband_simpson(report):
         )
 
         message = f"{error_message} test0{i}.json"
-        check_all_close(res, message, rel_limit=3)
+        check_all_close(res, message, rel_limit=1e-4)
 
 
 # --------------------------------------------------------------------------- #
@@ -342,7 +343,7 @@ def test_quad_csa_cross_rmnsim(report):
             )
 
             message = f"{error_message} test0{i}.json"
-            check_all_close(res, message, rel_limit=0.3)
+            check_all_close(res, message, rel_limit=8e-2)
 
 
 # --------------------------------------------------------------------------- #
@@ -380,7 +381,7 @@ def test_pure_shielding_static_lineshape_python_brute(report):
         )
 
         message = f"{error_message} test0{i}.json"
-        check_all_close(res, message, rel_limit=2)
+        check_all_close(res, message, rel_limit=1e-3)
 
 
 # --------------------------------------------------------------------------- #
@@ -416,4 +417,4 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
         )
 
         message = f"{error_message} test0{i:02d}.json"
-        check_all_close(res, message, rel_limit=1.5)
+        check_all_close(res, message, rel_limit=1e-3)
