@@ -202,7 +202,7 @@ def test_no_exp_data():
         sim,
     )
 
-    e = r".*No experimental data found for method at index \[0\].*"
+    e = r".*No experimental data found for the method at index \[0\].*"
     with pytest.raises(ValueError, match=e):
         sf.LMFIT_min_function(params, sim)
 
@@ -211,7 +211,7 @@ def test_no_exp_data():
         sim,
     )
 
-    e = r".*No experimental data found for method at index \[0, 1, 2, 3\].*"
+    e = r".*No experimental data found for the method at index \[0, 1, 2, 3\].*"
     with pytest.raises(ValueError, match=e):
         sf.LMFIT_min_function(params, sim)
 

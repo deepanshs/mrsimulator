@@ -27,7 +27,7 @@ def check_triangulation(triangle_mesh: bool, integration_volume: str):
     """Check if triangulation can be applied"""
     if triangle_mesh and integration_volume != "sphere":
         raise NotImplementedError(
-            "Triangulation of non sphere geometry is not implemented."
+            "Triangulation of non-sphere geometry is not implemented."
         )
 
 

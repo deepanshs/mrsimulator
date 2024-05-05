@@ -22,6 +22,27 @@ __integration_volume_octants__ = [1, 4, 8]
 
 
 class CustomSampling(BaseModel):
+    r"""Custom orientational sampling for powder averaging.
+
+    Attributes
+    ----------
+
+    alpha: ndarray
+        An array of size N of :math:`\alpha` angle coordinates in radians.
+
+    beta: ndarray
+        An array of size N of :math:`\beta' angle coordinates in radians.
+
+    weight: ndarray
+        An array of size N of weights corresponding to :math:`(\alpha, \beta)`
+        coordinates.
+
+    vertex_indexes: ndarray (optional)
+        A 2D array of shape (N, 3) with each row listing the three indexes of
+        :math:`(\alpha, \beta)` coordinates that forms a triangular mesh on a unit
+        sphere. The indexes are used in frequency interpolation. The default value
+        is None and corresponds to no interpolation.
+    """
     alpha: Optional[np.ndarray] = None
     beta: Optional[np.ndarray] = None
     weight: Optional[np.ndarray] = None
@@ -35,7 +56,7 @@ class CustomSampling(BaseModel):
 
 
 class ConfigSimulator(Parseable):
-    r"""The configurable attributes for the Simulator class used in simulation.
+    r"""The configurable attributes for the Simulator class used in the simulation.
 
     Attributes
     ----------
@@ -60,7 +81,7 @@ class ConfigSimulator(Parseable):
         The integration/sampling density or equivalently the number of (alpha, beta)
         orientations over which the frequency spatial averaging is performed within the
         given volume. If :math:`n` is the integration_density, then the total number of
-        orientation is given as
+        orientations is given as
 
         .. math::
             n_\text{octants} \frac{(n+1)(n+2)}{2} n_\gamma,
@@ -83,6 +104,10 @@ class ConfigSimulator(Parseable):
 
         - ``linear`` (default): linear interpolation.
         - ``gaussian``:  Gaussian interpolation with `sigma=0.25*bin_width`.
+
+    custom_sampling: CustomSampling
+        A CustomSampling object specifying the coordinates and weights used in powder
+        averaging.
 
     Example
     -------

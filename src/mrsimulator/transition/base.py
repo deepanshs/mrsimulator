@@ -17,9 +17,9 @@ class Transition(Parseable):
             |m_{f,0}, m_{f,1}, ... m_{f,N} \rangle
 
     Arguments:
-        list initial: The initial Zeeman energy state represented as a list of quantum
-            numbers :math:`m_{i,n}`.
-        list final: The final Zeeman energy state represented as a list of quantum
+        list initial: The initial Zeeman energy state is represented as a list of
+            quantum numbers :math:`m_{i,n}`.
+        list final: The final Zeeman energy state is represented as a list of quantum
             numbers :math:`m_{f,n}`.
 
     Example:
@@ -98,7 +98,7 @@ class Transition(Parseable):
 
     def tolist(self) -> list:
         """Convert the transition to a list of quantum numbers where the first N
-        quantum numbers corresponds to the initial energy state, while the last N
+        quantum numbers correspond to the initial energy state, while the last N
         corresponds to the final energy state, where N is the number of sites.
 
         Example:

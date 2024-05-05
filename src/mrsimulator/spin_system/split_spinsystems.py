@@ -7,7 +7,7 @@ __email__ = "mccarthy.677@osu.edu"
 
 
 def new_systems_needed_np(coupling_indexes, n_sites):
-    """Calculates the connect spin system components.
+    """Calculate the connect spin system components.
 
     Args:
         coupling_indexes: A list of coupled site indexes.
@@ -26,7 +26,7 @@ def new_systems_needed_np(coupling_indexes, n_sites):
 
 
 def build_new_systems(spin_system):
-    """Builds a list of irreducible spin systems from a given reducible spin system.
+    """Build a list of irreducible spin systems from a given reducible spin system.
 
     Args:
         spin_system: SpinSystem object.
@@ -38,7 +38,7 @@ def build_new_systems(spin_system):
 
 
 def build_new_system(one_set, spin_system):  # 10-12 lines
-    """Builds an irreducible spin system from connected site indices
+    """Build an irreducible spin system from connected site indices
 
     Args:
         one_set: A set of indexes corresponding to the connected sites.

@@ -41,8 +41,9 @@ class MixedSpectralDimensionTypeError(Exception):
 
     def __init__(self, message=None):
         message = message or (
-            "Both dict and SpectralDimension objects found in spectral dimension list. "
-            "Use either dict representation or SpectralDimension objects."
+            "Both dict and SpectralDimension objects are found in the spectral "
+            "dimension list. Use either dict representation or SpectralDimension "
+            "objects."
         )
         super().__init__(message)
 

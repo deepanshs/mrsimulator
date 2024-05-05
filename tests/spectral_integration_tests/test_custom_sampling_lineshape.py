@@ -121,7 +121,7 @@ def test_internal_external_averaging_spectrum():
 
 
 def test_sampling_triangulation():
-    error = "Triangulation of non sphere geometry is not implemented."
+    error = "Triangulation of non-sphere geometry is not implemented."
     for vol in ["octant", "hemisphere"]:
         with pytest.raises(NotImplementedError, match=error):
             _ = step_averaging(
