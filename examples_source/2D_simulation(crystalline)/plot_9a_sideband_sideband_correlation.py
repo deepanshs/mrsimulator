@@ -9,7 +9,6 @@
 # Sideband-sideband NMR correlation simulation of crystalline solid as
 # reported by Aleksis and Pell [#f1]_.
 import matplotlib.pyplot as plt
-import numpy as np
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -61,10 +60,10 @@ sideband_2d = Method(
             label="Paramagnetic shift",
             events=[
                 SpectralEvent(
-                    transition_queries=[{"ch1": {"P": [1]}}],
+                    transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_2"],
                 ),
-                MixingEvent(query={"ch1": {"angle": np.pi}}),
+                MixingEvent(query="NoMixing"),
             ],
         ),
         SpectralDimension(
