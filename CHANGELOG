@@ -1,20 +1,20 @@
-v0.8.0rc
+v1.0.0rc
 ----------
 
 What's new
 ''''''''''
 
-- Dropped support for python 3.7 and 3.8
-
 **Features**
 
+- New 2D sideband-sideband correlation simulations.
 - Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
 - Support for quadrupolar-shielding cross frequency interactions. `freq_contrib` includes
   new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
 - Support for user-defined isotopes using the ``Isotope.register()`` method. See the simulation gallery for use cases and examples.
 - Shortcuts for frequency contributions, such as ``Shielding``, ``Isotropic``, and ``cross``.
   Sets of contributions can also be excluded by placing an exclamation mark in front of the string, for example ``"!Shielding"`` excludes shielding interactions.
-- New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra. See (TODO: ADD) in the examples gallery for more information.
+- New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra.
+  See the examples gallery for more information.
 - Adds ``DelayEvent`` to the events library.
 - Support for python 3.11 and 3.12
 
@@ -35,6 +35,9 @@ What's new
 - Fixed the bug where the csdm object origin offset was incorrectly set. The origin offset is now `w_ref`.
 - Fix bug when calculating ppm scale for large reference offsets.
 
+**Additional updates**
+
+- Dropped support for python 3.7 and 3.8
 
 
 v0.7.0

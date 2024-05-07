@@ -1,0 +1,167 @@
+{
+  "csdm" : {
+    "dimensions" : [
+      {
+        "period" : "0.05 kHz",
+        "quantity_name" : "frequency",
+        "reciprocal" : {
+          "quantity_name" : "time",
+          "period" : "20000 µs"
+        },
+        "count" : 20,
+        "complex_fft" : true,
+        "type" : "linear",
+        "increment" : "1 kHz"
+      },
+      {
+        "period" : "0.05 kHz",
+        "quantity_name" : "frequency",
+        "reciprocal" : {
+          "quantity_name" : "time",
+          "period" : "20000 µs"
+        },
+        "count" : 20,
+        "complex_fft" : true,
+        "type" : "linear",
+        "increment" : "1 kHz"
+      }
+    ],
+    "timestamp" : "2024-05-04T17:37:30Z",
+    "application" : {
+      "com.physyapps.rmn" : {
+        "focus" : {
+          "mem_offset" : 0,
+          "coordinates" : [
+            "-10 kHz",
+            "-10 kHz"
+          ],
+          "dependent_variable_index" : 0,
+          "response" : "(1.024472E-16+1.695033E-16•I)",
+          "component_index" : 0
+        },
+        "dimension_precedence" : [
+          1,
+          0
+        ],
+        "previous_focus" : {
+          "mem_offset" : 0,
+          "coordinates" : [
+            "-10 kHz",
+            "-10 kHz"
+          ],
+          "dependent_variable_index" : 0,
+          "response" : "(1.024472E-16+1.695033E-16•I)",
+          "component_index" : 0
+        }
+      }
+    },
+    "dependent_variables" : [
+      {
+        "quantity_name" : "dimensionless",
+        "numeric_type" : "complex64",
+        "component_labels" : [
+          "component-0"
+        ],
+        "quantity_type" : "scalar",
+        "components" : [
+          "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"
+        ],
+        "type" : "internal",
+        "application" : {
+          "com.physyapps.rmn" : {
+            "plot" : {
+              "signalImage2DPlotType" : [
+                "0"
+              ],
+              "blueComponentIndex" : 2,
+              "showImagePlot" : true,
+              "argument" : false,
+              "transparent" : false,
+              "responseAxis" : {
+                "majorTicInc" : "2E-08",
+                "maximum" : "6.336184554811553E-08",
+                "index" : -1,
+                "reverse" : false,
+                "bipolar" : true,
+                "numberOfMinorTics" : 9,
+                "minimum" : "-6.336184554811553E-08"
+              },
+              "showStackPlot" : false,
+              "plotAll" : false,
+              "imag" : true,
+              "showContourPlot" : false,
+              "magnitude" : false,
+              "numberOfContourCuts" : 10,
+              "lines" : true,
+              "xAxes" : [
+                {
+                  "majorTicInc" : "4 kHz",
+                  "maximum" : "9 kHz",
+                  "index" : 0,
+                  "reverse" : true,
+                  "bipolar" : false,
+                  "numberOfMinorTics" : 4,
+                  "minimum" : "-10 kHz"
+                },
+                {
+                  "majorTicInc" : "4 kHz",
+                  "maximum" : "9 kHz",
+                  "index" : 1,
+                  "reverse" : true,
+                  "bipolar" : false,
+                  "numberOfMinorTics" : 4,
+                  "minimum" : "-10 kHz"
+                }
+              ],
+              "dimensionsDisplayedCount" : 2,
+              "prevResponseAxis" : {
+                "majorTicInc" : "2E-08",
+                "maximum" : "6.336184554811553E-08",
+                "index" : -1,
+                "reverse" : false,
+                "bipolar" : true,
+                "numberOfMinorTics" : 9,
+                "minimum" : "-6.336184554811553E-08"
+              },
+              "showGrid" : true,
+              "greenComponentIndex" : 1,
+              "contourPlotColoring" : 0,
+              "image2DCombineRGB" : false,
+              "fontSize" : 11,
+              "redComponentIndex" : 0,
+              "stackPlotColoring" : 1,
+              "prevXAxes" : [
+                {
+                  "majorTicInc" : "4 kHz",
+                  "maximum" : "9 kHz",
+                  "index" : 0,
+                  "reverse" : false,
+                  "bipolar" : false,
+                  "numberOfMinorTics" : 4,
+                  "minimum" : "-10 kHz"
+                },
+                {
+                  "majorTicInc" : "4 kHz",
+                  "maximum" : "9 kHz",
+                  "index" : 1,
+                  "reverse" : false,
+                  "bipolar" : false,
+                  "numberOfMinorTics" : 4,
+                  "minimum" : "-10 kHz"
+                }
+              ],
+              "real" : true,
+              "signalColors" : [
+                "Black"
+              ],
+              "hiddenStackPlot" : true
+            }
+          }
+        },
+        "encoding" : "base64",
+        "name" : ""
+      }
+    ],
+    "version" : "1.0"
+  }
+}

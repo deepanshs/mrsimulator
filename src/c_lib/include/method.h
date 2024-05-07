@@ -21,7 +21,7 @@ typedef struct MRS_event {
   double rotor_angle_in_rad;         /**<  The rotor angle in radians. */
   double rotor_frequency_in_Hz;      /**<  The sample rotation frequency in Hz. */
   MRS_plan *plan;                    /**< The plan for every event. */
-  double *event_freq_amplitude;      /**< buffer for event amplitude */
+  complex128 *event_freq_amplitude;  /**< buffer for event amplitude */
 } MRS_event;
 
 typedef struct MRS_dimension {

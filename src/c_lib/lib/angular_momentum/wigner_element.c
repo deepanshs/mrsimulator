@@ -249,7 +249,7 @@ static inline double wigner_two_d_elements(const float m1, const float m2,
       return 1.224744871 * sx * cx;   // d(+0 +1)
     case 2:                           //
       return 0.6123724355 * sx * sx;  // d(+0 +2)
-    }                                 //
+    }
   }
   return 0;
 }

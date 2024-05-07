@@ -130,6 +130,16 @@ void test_vm_double_complex_multiply(int count, const void *restrict x,
   vm_double_complex_multiply(count, x, y, res);
 }
 
+/**
+ * Multiply the elements of vector x and conj(y) and store in res of type double
+ * complex.
+ *    res = x * conj(y)
+ */
+void test_vm_double_complex_conj_multiply(int count, const void *restrict x,
+                                          const void *restrict y, void *restrict res) {
+  vm_double_complex_conj_multiply(count, x, y, res);
+}
+
 // Trignometry
 
 /**

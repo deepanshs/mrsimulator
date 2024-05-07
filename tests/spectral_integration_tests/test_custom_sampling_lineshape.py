@@ -93,26 +93,26 @@ def test_internal_external_averaging_spectrum():
 
     # ZCW binning
     sim.config.custom_sampling = zcw_averaging(M=15)
-    sim.run(interpolation=True)
+    sim.run()
     spec_zcw_interp = sim.methods[0].simulation.y[0].components[0].real
 
     # ZCW interpolation
     sim.config.custom_sampling = zcw_averaging(M=23, triangle_mesh=False)
-    sim.run(interpolation=False)
+    sim.run()
     spec_zcw_bin = sim.methods[0].simulation.y[0].components[0].real
 
     np.testing.assert_almost_equal(spec_zcw_interp, spec_zcw_bin, decimal=2)
 
     # STEP interpolate
     sim.config.custom_sampling = step_averaging(N_alpha=100, N_beta=100)
-    sim.run(interpolation=True)
+    sim.run()
     spec_step_interp = sim.methods[0].simulation.y[0].components[0].real
 
     # STEP binning
     sim.config.custom_sampling = step_averaging(
         N_alpha=1160, N_beta=1160, triangle_mesh=False
     )
-    sim.run(interpolation=False)
+    sim.run()
     spec_step_bin = sim.methods[0].simulation.y[0].components[0].real
 
     np.testing.assert_almost_equal(spec_step_interp, spec_step_bin, decimal=2)

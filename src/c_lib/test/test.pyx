@@ -331,6 +331,13 @@ def vm_cmult(np.ndarray[complex] A, np.ndarray[complex] B):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+def vm_cmult_conj(np.ndarray[complex] A, np.ndarray[complex] B):
+    cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
+    clib.test_vm_double_complex_conj_multiply(A.size, &A[0], &B[0], &res[0])
+    return res
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 def vm_sq(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
     clib.test_vm_double_square(A.size, &A[0], &res[0])

@@ -1,0 +1,62 @@
+{
+  "methods": [{
+    "channels": ["2H"],
+    "magnetic_flux_density": "9.395 T",
+    "rotor_frequency": "2000.0 Hz",
+    "spectral_dimensions": [{
+      "count": 64,
+      "spectral_width": "128000.0 Hz",
+      "origin_offset": "79533368.63277256 Hz",
+      "events": [{
+        "transition_queries": [{
+          "ch1": {
+            "P": [-1]
+          }
+        }]
+      },
+      {
+        "query": {
+          "ch1": {
+            "angle": "1.5707963267948966 rad",
+            "phase": "0.0 rad"
+          }
+        }
+      }]
+    },
+    {
+      "count": 64,
+      "spectral_width": "128000.0 Hz",
+      "origin_offset": "79533368.63277256 Hz",
+      "events": [{
+        "transition_queries": [{
+          "ch1": {
+            "P": [-1]
+          }
+        }]
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "2H",
+      "isotropic_chemical_shift": "0.0 ppm",
+      "shielding_symmetric": {
+        "zeta": "150 ppm",
+        "eta": 0.7
+      },
+      "quadrupolar": {
+        "Cq": "50 kHz",
+        "eta": 0.9
+      }
+    }]
+  }],
+  "config": {
+    "number_of_sidebands": 64
+  },
+  "test_data": {
+    "source": "python",
+    "filename": "test04.csdf",
+    "quantity": "frequency",
+    "type": "csdm"
+  }
+}

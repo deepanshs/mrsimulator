@@ -79,7 +79,7 @@ void __mrsimulator_core(
 
   // openblas_set_num_threads(1);
 
-  // Loop over the dimensionn.
+  // Loop over the dimension.
   for (dim = 0; dim < n_dimension; dim++) {
     // Reset the freqs to zero at the start of each spectral dimension.
     cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
@@ -119,21 +119,14 @@ void __mrsimulator_core(
       freq_contrib += FREQ_CONTRIB_INCREMENT;
 
       /* Get frequencies and amplitudes per octant .................................. */
-      /* IMPORTANT: Always evalute the frequencies before the amplitudes. */
+      /* IMPORTANT: Always evaluate the frequencies before the amplitudes. */
       // NOTE: How to incorporate both "fraction" and "duration" into this function?
       // Possibly calculate normalized frequencies first, then decide if frac or dur
       MRS_get_normalized_frequencies_from_plan(
           scheme, plan, R0, R2, R4, &dimensions[dim], fraction, is_spectral, duration);
-      MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme, 1);
+      MRS_get_amplitudes_from_plan(scheme, plan, fftw_scheme,
+                                   event->event_freq_amplitude, 1);
 
-      /* Copy the amplitudes from the `fftw_scheme->vector` to the
-       * `event->freq_amplitude` for each event within the dimension. If the number of
-       * sidebands is 1, skip, because `fftw_scheme->vector` is not evaluated.*/
-      // if (plan->number_of_sidebands != 1) {
-      //   cblas_dcopy(plan->size, (double *)fftw_scheme->vector, 2,
-      //   event->freq_amplitude,
-      //               1);
-      // }
       if (plan->number_of_sidebands != 1) {
         vm_double_multiply_inplace(plan->size, (double *)fftw_scheme->vector, 2,
                                    dimensions[dim].freq_amplitude, 1);
