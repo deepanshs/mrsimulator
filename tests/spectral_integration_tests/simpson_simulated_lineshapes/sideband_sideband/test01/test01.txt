@@ -1,0 +1,44 @@
+spinsys {
+  channels 29Si
+  nuclei 29Si
+  shift 1 0 -32.8p 0 0 0 0
+}
+
+par {
+  crystal_file     zcw4181
+  variable dw1     50
+  variable dw2     50
+  variable np1     20
+  variable np2     20
+
+  sw               1e6/dw1
+  np               np1 * np2
+  proton_frequency 400e6
+  start_operator   I1p
+  detect_operator  I1p
+  method           direct
+  gamma_angles     32
+  spin_rate        1000
+  verbose          1101
+  rotor_angle      54.7356103172
+}
+
+proc pulseq {} {
+  global par
+  for {set j 0} {$j < $par(np1)} {incr j} {
+  reset
+  delay [expr $j * $par(dw1)]
+  pulse 0.1 2500000 0
+  for {set i 0} {$i < $par(np2)} {incr i} {
+    acq
+    delay $par(dw2)
+  }
+ }
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  fsave $f $par(name)1.fid
+}

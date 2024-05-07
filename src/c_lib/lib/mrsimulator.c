@@ -122,7 +122,7 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 
   plan->size = scheme->total_orientations * plan->number_of_sidebands;
 
-  /** Update the mrsimulator plan with the given rotor frequenccy in Hz. */
+  /** Update the mrsimulator plan with the given rotor frequency in Hz. */
   MRS_plan_update_from_rotor_frequency_in_Hz(plan, rotor_frequency_in_Hz);
 
   /** Update the mrsimulator plan with the given rotor angle in radian. */
@@ -160,7 +160,7 @@ void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
  * Update the MRS plan for the given rotor angle in radians.
  *
  * The method updates the wigner d^l_{m,0}(rotor_angle_in_rad) vectors used in
- * tranforming the l-rank tensors from the rotor frame to lab frame. Here l is either 2
+ * transforming the l-rank tensors from the rotor frame to lab frame. Here l is either 2
  * or 4.
  */
 void MRS_plan_update_from_rotor_angle_in_rad(MRS_plan *plan, double rotor_angle_in_rad,
@@ -270,11 +270,12 @@ MRS_plan *MRS_copy_plan(MRS_plan *plan) {
  * orientation. This is done in two steps.
  * 1) Rotate F2 and F4, given in the crystal or common frame to w2 and w4 in the lab
  *    frame using wigner 2j and 4j rotation matrices, respectively, at all orientations.
- * 2) Evalute the sideband amplitudes using equation [39] of the reference
+ * 2) Evaluate the sideband amplitudes using equation [39] of the reference
  *    https://doi.org/10.1006/jmre.1998.1427.
  */
 void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
-                                  MRS_fftw_scheme *fftw_scheme, bool reset) {
+                                  MRS_fftw_scheme *fftw_scheme,
+                                  complex128 *event_amplitudes, bool reset) {
   /* If the number of sidebands is 1, the sideband amplitude at every sideband order is
    * one. In this case, return null,
    */
@@ -306,7 +307,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    *
    *         res[i, j] = \sum_{m=1}^2 2*imag(w2[i, m] * pre_phase_2[m, j]).         (2)
    *
-   * From Eq(2), we find that evaluting half the calculations is sufficient. Since
+   * From Eq(2), we find that evaluating half the calculations is sufficient. Since
    * pre_phase_2[0, j] is zero, the m=0 term is dropped from Eq. (2). Notice the scaling
    * factor 2 in Eq. (2). For computation efficiency, this factor is added to the
    * `pre_phase_2` term in the one-time computation step.
@@ -343,7 +344,7 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
      *
      *         res[i, j] = \sum_{m=1}^4 2*imag(w4[i, m] * pre_phase_4[m, j]).       (4)
      *
-     * From Eq(2), we find that evaluting half the calculations is sufficient. Since
+     * From Eq(2), we find that evaluating half the calculations is sufficient. Since
      * pre_phase_4[0, j] is zero, the m=0 term is dropped from Eq. (4). Notice the
      * scaling factor 2 in Eq. (4). For computation efficiency, this factor is added to
      * the `pre_phase_4` term in the one-time computation step.
@@ -368,6 +369,20 @@ void MRS_get_amplitudes_from_plan(MRS_averaging_scheme *scheme, MRS_plan *plan,
    * operation again updates the values of the array, `vector`. */
   fftw_execute(fftw_scheme->the_fftw_plan);
 
+  cblas_dcopy(2 * plan->size, (double *)fftw_scheme->vector, 1,
+              (double *)event_amplitudes, 1);
+
+  /** ONLY VALID FOR SINGLE EVENT **/
+  /**
+   * Evaluate the absolute value square of the `vector` array. The absolute value square
+   * is stores as the real part of the `vector` array. The imaginary part is now
+   * garbage. This method avoids creating new arrays. */
+  vm_double_square_inplace(2 * plan->size, (double *)fftw_scheme->vector);
+  cblas_daxpy(plan->size, 1.0, (double *)fftw_scheme->vector + 1, 2,
+              (double *)fftw_scheme->vector, 2);
+}
+
+void MRS_get_sideband_intensity(MRS_plan *plan, MRS_fftw_scheme *fftw_scheme) {
   /** ONLY VALID FOR SINGLE EVENT **/
   /**
    * Evaluate the absolute value square of the `vector` array. The absolute value square

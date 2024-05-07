@@ -1,0 +1,45 @@
+spinsys {
+  channels 2H
+  nuclei 2H
+  shift 1 0 -150.0p 0.7 0 0 0
+  quadrupole 1 1 50e3 0.9 0 0 0
+}
+
+par {
+  crystal_file     zcw4181
+  variable dw1     7.8125
+  variable dw2     7.8125
+  variable np1     64
+  variable np2     64
+
+  sw               1e6/dw1
+  np               np1 * np2
+  proton_frequency 400e6
+  start_operator   I1m
+  detect_operator  I1p
+  method           direct
+  gamma_angles     64
+  spin_rate        2000
+  verbose          1101
+  rotor_angle      54.7356103172
+}
+
+proc pulseq {} {
+  global par
+  for {set j 0} {$j < $par(np1)} {incr j} {
+  reset
+  delay [expr $j * $par(dw1)]
+  pulse 0.01 25000000 0
+  for {set i 0} {$i < $par(np2)} {incr i} {
+    acq
+    delay $par(dw2)
+  }
+ }
+}
+
+proc main {} {
+  global par
+
+  set f [fsimpson]
+  fsave $f $par(name)1.fid
+}

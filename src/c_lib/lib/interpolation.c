@@ -942,29 +942,29 @@ void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
 }
 
 void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
-                     double *freq2, double *amp, const unsigned int position_size,
-                     int32_t *positions, int dimension0_count, int dimension1_count,
-                     unsigned int iso_intrp, const unsigned int nt, bool user_defined,
-                     bool interpolation) {
+                     double *freq2, double *amp, int amp_stride,
+                     const unsigned int position_size, int32_t *positions,
+                     int dimension0_count, int dimension1_count, unsigned int iso_intrp,
+                     const unsigned int nt, bool user_defined, bool interpolation) {
   if (!user_defined) {
     if (interpolation) {
       // Perform tenting on every sideband order over all orientations
-      octahedronInterpolation2D(spec, freq1, freq2, nt, amp, 1, dimension0_count,
-                                dimension1_count, iso_intrp);
+      octahedronInterpolation2D(spec, freq1, freq2, nt, amp, amp_stride,
+                                dimension0_count, dimension1_count, iso_intrp);
     } else {
-      hist2d(spec, freq_size, freq1, freq2, amp, dimension0_count, dimension1_count,
-             nt);
+      hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, dimension0_count,
+             dimension1_count, nt);
     }
   } else {
-    generic_2d_triangle_average(spec, freq_size, freq1, freq2, amp, dimension0_count,
-                                dimension1_count, position_size, positions, nt,
-                                iso_intrp);
+    generic_2d_triangle_average(spec, freq_size, freq1, freq2, amp, amp_stride,
+                                dimension0_count, dimension1_count, position_size,
+                                positions, nt, iso_intrp);
   }
 }
 
 void generic_2d_triangle_interpolation(double *spec, const unsigned int freq_size,
                                        double *freq1, double *freq2, double *amp,
-                                       const unsigned int position_size,
+                                       int amp_stride, const unsigned int position_size,
                                        int32_t *positions, int m0, int m1,
                                        unsigned int iso_intrp) {
   unsigned int pos_size = position_size;
@@ -976,14 +976,14 @@ void generic_2d_triangle_interpolation(double *spec, const unsigned int freq_siz
     p2 = *positions++;
     p3 = *positions++;
     // we do amp_sum because amps are already scaled to account for the factor 3
-    amp_sum = amp[p1] + amp[p2] + amp[p3];
+    amp_sum = amp[amp_stride * p1] + amp[amp_stride * p2] + amp[amp_stride * p3];
     triangle_interpolation2D(&freq1[p1], &freq1[p2], &freq1[p3], &freq2[p1], &freq2[p2],
                              &freq2[p3], &amp_sum, spec, m0, m1, iso_intrp);
   }
 }
 
 void hist2d(double *spec, const unsigned int freq_size, double *freq1, double *freq2,
-            double *amp, int m0, int m1, const unsigned int nt) {
+            double *amp, int amp_stride, int m0, int m1, const unsigned int nt) {
   unsigned int i = 0, ix, iy, hist_index;
   double temp_freq_1, temp_freq_2;
 
@@ -994,21 +994,21 @@ void hist2d(double *spec, const unsigned int freq_size, double *freq1, double *f
       ix = (unsigned int)temp_freq_1;
       iy = (unsigned int)temp_freq_2;
       hist_index = iy + m1 * ix;
-      spec[2 * hist_index] += amp[i];
+      spec[2 * hist_index] += amp[i * amp_stride];
     }
   }
 }
 
 void generic_2d_triangle_average(double *spec, const unsigned int freq_size,
-                                 double *freq1, double *freq2, double *amp, int m0,
-                                 int m1, const unsigned int position_size,
-                                 int32_t *positions, const unsigned int nt,
-                                 unsigned int iso_intrp) {
+                                 double *freq1, double *freq2, double *amp,
+                                 int amp_stride, int m0, int m1,
+                                 const unsigned int position_size, int32_t *positions,
+                                 const unsigned int nt, unsigned int iso_intrp) {
   if (positions == NULL) {
-    hist2d(spec, freq_size, freq1, freq2, amp, m0, m1, nt);
+    hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, m0, m1, nt);
   } else {
-    generic_2d_triangle_interpolation(spec, freq_size, freq1, freq2, amp, position_size,
-                                      positions, m0, m1, iso_intrp);
+    generic_2d_triangle_interpolation(spec, freq_size, freq1, freq2, amp, amp_stride,
+                                      position_size, positions, m0, m1, iso_intrp);
   }
 }
 

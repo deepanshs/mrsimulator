@@ -140,7 +140,9 @@ def simulator_process(sim, data_object):
         )
         sim_dataset = processor.apply_operations(dataset=sim_dataset)
 
-    dimension_coords = sim_dataset.x[0].coordinates.to("ppm").value
+    dimension_coords = [item.coordinates.to("ppm").value for item in sim_dataset.x]
+    if len(dimension_coords) == 1:
+        dimension_coords = dimension_coords[0]
     data_mrsimulator = sim_dataset.y[0].components[0]
     data_mrsimulator /= np.real(data_mrsimulator).mean()
 

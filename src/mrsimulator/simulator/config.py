@@ -1,5 +1,6 @@
 """Base ConfigSimulator class."""
 # from mrsimulator.sandbox import AveragingScheme
+from enum import Enum
 from typing import Optional
 
 import numpy as np
@@ -21,6 +22,11 @@ __integration_volume_enum__ = {"octant": 0, "hemisphere": 1, "sphere": 2}
 __integration_volume_octants__ = [1, 4, 8]
 
 
+class StrType(str, Enum):
+    simpson: str = "simpson"
+    default: str = "default"
+
+
 class CustomSampling(BaseModel):
     alpha: Optional[np.ndarray] = None
     beta: Optional[np.ndarray] = None
@@ -32,6 +38,19 @@ class CustomSampling(BaseModel):
         allow_population_by_field_name = True
         validate_assignment = True
         arbitrary_types_allowed = True
+
+    def save(
+        self, filename: str, target: StrType = StrType.default, units: str = "rad"
+    ):
+        # if units == 'rad':
+        #     fn = rad_to_deg
+        if units == "deg":
+            fn = rad_to_deg
+
+        array = np.array([fn(self.alpha), fn(self.beta), self.weight])
+        header = str(array.shape[1]) if target == StrType.simpson else None
+        np.savetxt(filename, array.T, header=header)
+        print(f"Saved angular coordinates in units of {units} to {filename}")
 
 
 class ConfigSimulator(Parseable):
@@ -134,6 +153,8 @@ class ConfigSimulator(Parseable):
             py_dict["weight"] = self.custom_sampling.weight
             if self.custom_sampling.vertex_indexes is not None:
                 py_dict["positions"] = self.custom_sampling.vertex_indexes.ravel()
+            else:
+                py_dict["interpolation"] = False
             py_dict["user_defined"] = True
         return py_dict
 
@@ -168,3 +189,13 @@ class ConfigSimulator(Parseable):
             __integration_volume_enum__[self.integration_volume]
         ]
         return int(vol * (n + 1) * (n + 2) / 2) * self.number_of_gamma_angles
+
+
+def rad_to_deg(vec):
+    """onvert radians to degrees"""
+    return vec * 180.0 / np.pi
+
+
+def deg_to_rad(vec):
+    """Convert degrees to radians"""
+    return vec * np.pi / 180.0

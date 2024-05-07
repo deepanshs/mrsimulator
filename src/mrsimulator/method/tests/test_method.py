@@ -211,7 +211,7 @@ def test_rotor_frequency():
     )
 
     # Bad method, should throw error for multiple finite speeds
-    error = "Sideband-sideband correlation is not yet supported in mrsimulator."
+    error = "Multi-event sideband-sideband correlation is not yet supported"
     for cls in [Method]:
         with pytest.raises(NotImplementedError, match=error):
             cls(
@@ -226,24 +226,24 @@ def test_rotor_frequency():
                 ],
             )
 
-    with pytest.raises(NotImplementedError, match=error):
-        Method(
-            channels=["1H"],
-            spectral_dimensions=[
-                SpectralDimension(
-                    events=[
-                        SpectralEvent(fraction=0.5, rotor_frequency=123),
-                        SpectralEvent(fraction=0.5, rotor_frequency=np.inf),
-                    ]
-                ),
-                SpectralDimension(
-                    events=[
-                        SpectralEvent(fraction=0.5, rotor_frequency=0),
-                        SpectralEvent(fraction=0.5, rotor_frequency=456),
-                    ]
-                ),
-            ],
-        )
+    # Another acceptable method
+    Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                events=[
+                    SpectralEvent(fraction=0.5, rotor_frequency=123),
+                    SpectralEvent(fraction=0.5, rotor_frequency=np.inf),
+                ]
+            ),
+            SpectralDimension(
+                events=[
+                    SpectralEvent(fraction=0.5, rotor_frequency=0),
+                    SpectralEvent(fraction=0.5, rotor_frequency=456),
+                ]
+            ),
+        ],
+    )
 
     with pytest.raises(NotImplementedError, match=error):
         # Both events should take 10000 Hz rotor_frequency
