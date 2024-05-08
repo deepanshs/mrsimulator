@@ -134,4 +134,4 @@ extern void __batch_wigner_rotation(const unsigned int octant_orientations,
  * The result is stored in exp_Im_angle as m x n matrix where m = [-4,-3,-2,-1]
  */
 extern void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
-                             void *exp_Im_angle);
+                             void *exp_Im_angle, double delta_alpha);

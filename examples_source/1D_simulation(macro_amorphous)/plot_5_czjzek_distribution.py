@@ -33,7 +33,8 @@ from mrsimulator.method import SpectralDimension
 # The range of zeta and eta coordinates over which the distribution is sampled.
 z_range = np.arange(100) - 50  # in ppm
 e_range = np.arange(21) / 20
-z_dist, e_dist, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
+z_dist, e_dist = np.meshgrid(z_range, e_range)
+_, _, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
 
 # %%
 # Here ``z_range`` and ``e_range`` are the coordinates along the :math:`\zeta` and
@@ -94,7 +95,8 @@ plt.show()
 # The range of Cq and eta coordinates over which the distribution is sampled.
 cq_range = np.arange(100) * 0.6 - 30  # in MHz
 e_range = np.arange(21) / 20
-cq_dist, e_dist, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
+cq_dist, e_dist = np.meshgrid(cq_range, e_range)
+_, _, amp = CzjzekDistribution(sigma=2.3).pdf(pos=[cq_range, e_range])
 
 # The following is the contour plot of the Czjzek distribution.
 plt.figure(figsize=(4.25, 3.0))

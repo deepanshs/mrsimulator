@@ -1,13 +1,13 @@
 {
   "methods": [{
     "channels": ["23Na"],
+    "magnetic_flux_density": "4.697 T",
+    "rotor_frequency": "12.5 kHz",
+    "rotor_angle": "70.12 deg",
     "spectral_dimensions": [{
       "count": 1024,
       "spectral_width": "70 kHz",
       "events": [{
-        "magnetic_flux_density": "4.697 T",
-        "rotor_frequency": "12.5 kHz",
-        "rotor_angle": "70.12 deg",
         "transition_queries": [{
           "ch1": {
             "P": [-1],

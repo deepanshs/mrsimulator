@@ -1,0 +1,60 @@
+{
+  "methods": [{
+    "channels": ["59Co"],
+    "magnetic_flux_density": "4.684 T",
+    "rotor_angle": "0.9553166181245 rad",
+    "rotor_frequency": "16 kHz",
+    "spectral_dimensions": [{
+      "count": 2048,
+      "spectral_width": "16 kHz",
+      "events": [{
+        "transition_queries": [{
+          "ch1": {
+            "P": [1],
+            "D": [2]
+          }
+        }]
+      }]
+    }]
+  }],
+  "spin_systems": [{
+    "sites": [{
+      "isotope": "59Co",
+      "isotropic_chemical_shift": "0.0 ppm",
+      "shielding_symmetric": {
+        "zeta": "-1750.0 ppm",
+        "eta": 1.0,
+        "alpha": "1.5707963267948966 rad",
+        "beta": "0.0 rad",
+        "gamma": "0.0 rad"
+      },
+      "quadrupolar": {
+        "Cq": "-3.1 MHz",
+        "eta": 1.0,
+        "alpha": "3.141592653589793 rad",
+        "beta": "1.5707963267948966 rad",
+        "gamma": "0.0 rad"
+      }
+    }]
+  }],
+  "operations": [{
+    "dim_index": 0,
+    "function": "IFFT"
+  },
+  {
+    "dim_index": 0,
+    "FWHM": "10.0 Hz",
+    "function": "apodization",
+    "type": "Exponential"
+  },
+  {
+    "dim_index": 0,
+    "function": "FFT"
+  }],
+  "test_data": {
+    "source": "python",
+    "filename": "testIp34.csdf",
+    "quantity": "frequency",
+    "type": "csdm"
+  }
+}

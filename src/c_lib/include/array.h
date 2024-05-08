@@ -14,3 +14,4 @@
 #define malloc_complex64(m) (complex64 *)malloc(m * sizeof(complex64))
 #define malloc_float(m) (float *)malloc(m * sizeof(float))
 #define malloc_double(m) (double *)malloc(m * sizeof(double))
+#define malloc_int(m) (int *)malloc(m * sizeof(int))

@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 import mrsimulator.method.lib as NamedMethods
 import pytest
@@ -93,30 +94,31 @@ def test_read_write_methods():
 
         # save test
         sim = Simulator(spin_systems=[sys], methods=[fn1])
+        sim.run()
+        sim_back = deepcopy(sim)
 
         # save/load with units
-        sim.run()
         sim.save("test.mrsim")
         sim2 = Simulator.load("test.mrsim")
         check_sim_save(sim, sim2, "with units")
 
         # save/load with out units
-        sim.run()
+        sim = deepcopy(sim_back)
         sim.save("test.mrsim", with_units=False)
         sim2 = Simulator.load("test.mrsim", parse_units=False)
         check_sim_save(sim, sim2, "without units")
 
         # save/load methods
-        sim.run()
+        sim = deepcopy(sim_back)
         sim.export_methods("test.mrmtd")
-        sim2 = sim.copy()
+        sim2 = deepcopy(sim_back)
         sim2.load_methods("test.mrmtd")
         check_methods_save_load(sim, sim2)
 
         # save/load spin systems
-        sim.run()
+        sim = deepcopy(sim_back)
         sim.export_spin_systems("test.mrsys")
-        sim2 = sim.copy()
+        sim2 = deepcopy(sim)
         sim2.load_spin_systems("test.mrsys")
         assert sim.spin_systems == sim2.spin_systems
 

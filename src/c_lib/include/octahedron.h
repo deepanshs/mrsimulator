@@ -27,4 +27,4 @@ extern void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
 void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum);
 
 extern void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta,
-                            double *amp);
+                            double *amp, bool interpolation);

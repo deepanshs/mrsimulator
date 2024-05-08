@@ -198,18 +198,20 @@ class Method(Parseable):
         ]
         # Check for only one event with 0 < rotor_freq < infinity
         speeds = [
-            ev.rotor_frequency
+            [
+                ev.rotor_frequency
+                for ev in sd.events
+                if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+            ]
             for sd in self.spectral_dimensions
-            for ev in sd.events
-            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
         ]
-        speeds = [sp for sp in speeds if 0 < sp < 1e12]
-        if len(speeds) > 1:
+        speeds = [len([sp for sp in speed if 0 < sp < 1e12]) for speed in speeds]
+        if np.any(np.array(speeds) > 1):
             raise NotImplementedError(
-                f"Sideband-sideband correlation is not yet supported in mrsimulator. "
-                f"Only one event with non-zero and finite `rotor_frequency` is allowed "
-                f"in a method. Found {len(speeds)} events with rotor frequencies "
-                f"{speeds}."
+                f"Multi-event sideband-sideband correlation is not yet supported in "
+                "mrsimulator. Only one event pre spectral dimensions with non-zero "
+                "and finite `rotor_frequency` is allowed in a method. "
+                f"Found {len(speeds)} events with rotor frequencies {speeds}."
             )
 
     @classmethod
@@ -321,9 +323,6 @@ class Method(Parseable):
         """
         mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [
-            item.json(units=units) for item in self.spectral_dimensions
-        ]
 
         # add global parameters
         global_ = (
@@ -332,6 +331,9 @@ class Method(Parseable):
             else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # remove event objects with global values.
         _ = [

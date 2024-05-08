@@ -112,15 +112,16 @@ class BaseEvent(Parseable):
             if isinstance(item, FrequencyEnum):
                 additive.add(item.value)
 
-            # Item is a string of a recognized freq contrib string
-            elif item in FREQ_LIST_ALL:
-                additive.add(item)
+            function = subtractive if item.startswith("!") else additive
+            item_enum = item[1:] if item.startswith("!") else item
 
-            # String is a Frequency Contribution shortcut (set of strings)
-            elif item[0] == "!":
-                subtractive.update(FREQ_ENUM_SHORTCUT[item[1:]])
-            else:
-                additive.update(FREQ_ENUM_SHORTCUT[item])
+            # Item is a string of a recognized freq contrib string
+            if item_enum in FREQ_LIST_ALL:
+                function.add(item_enum)
+
+            # Item is a string of a recognized freq contrib shortcut
+            if item_enum in FREQ_ENUM_SHORTCUT:
+                function.update(FREQ_ENUM_SHORTCUT[item_enum])
 
         # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive

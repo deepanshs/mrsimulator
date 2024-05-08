@@ -43,7 +43,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -72,14 +72,14 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.1.0
+        uses: codecov/codecov-action@v4.2.0
 
   testing_mac:
     needs: [code_lint]
     runs-on: "macos-latest"
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -106,14 +106,14 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.1.0
+        uses: codecov/codecov-action@v4.2.0
 
   testing_windows:
     needs: [code_lint]
     runs-on: "windows-latest"
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
+        python-version: [3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -142,4 +142,4 @@ jobs:
         shell: pwsh
         run: pytest --cov=./ --cov-report=xml
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.1.0
+        uses: codecov/codecov-action@v4.2.0

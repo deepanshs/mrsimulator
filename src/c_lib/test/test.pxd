@@ -21,6 +21,7 @@ cdef extern from "vm_test.h":
     void test_vm_double_divide(int count, const double *x, const double *y, double *res)
     void test_vm_double_divide_inplace(int count, const double *x, double *y)
     void test_vm_double_complex_multiply(int count, const void *x, const void *y, void *res)
+    void test_vm_double_complex_conj_multiply(int count, const void *x, const void *y, void *res)
 
     void test_vm_double_square(int count, const double *x, double *res)
     void test_vm_double_square_inplace(int count, double *x)
@@ -64,7 +65,7 @@ cdef extern from "angular_momentum/wigner_matrix.h":
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
     void get_exp_Im_angle(const unsigned int octant_orientations,
-                            const bool_t allow_4th_rank, void *exp_Im_angle)
+                          const bool_t allow_4th_rank, void *exp_Im_angle, double delta_alpha)
 
     void __batch_wigner_rotation(const unsigned int octant_orientations,
                             const unsigned int n_octants, double *wigner_2j_matrices, void *R2,
@@ -77,7 +78,8 @@ cdef extern from "octahedron.h":
         int nt,
         double complex *exp_I_alpha,
         double complex *exp_I_beta,
-        double *amp)
+        double *amp,
+        bool_t interpolation)
 
 cdef extern from "interpolation.h":
     void triangle_interpolation1D(
@@ -206,7 +208,6 @@ cdef extern from "simulation.h":
         double *transition,
         int integration_density,
         unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
-        bool_t interpolation
         )
 
 cdef extern from "frequency/spatial_orientation_tensor_components.h":

@@ -3,8 +3,8 @@ from os import path
 import numpy as np
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models import ExtCzjzekDistribution
-from mrsimulator.models.utils import x_y_from_zeta_eta
 from mrsimulator.models.utils import x_y_to_zeta_eta
+from mrsimulator.models.utils import zeta_eta_to_x_y
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -29,7 +29,7 @@ def test_extended_czjzek_eta_distribution_1():
 def test_extended_czjzek_polar():
     S0 = {"zeta": 1, "eta": 0.1}
     x, y = ExtCzjzekDistribution(S0, eps=0.05, polar=True).rvs(size=COUNT)
-    x1, y1 = x_y_from_zeta_eta(*x_y_to_zeta_eta(x, y))
+    x1, y1 = zeta_eta_to_x_y(*x_y_to_zeta_eta(x, y))
     np.testing.assert_almost_equal(x, x1)
     np.testing.assert_almost_equal(y, y1)
 
@@ -78,10 +78,10 @@ def test_czjzek_distribution():
     z_range = (ran_z[1:] + ran_z[:-1]) / 2
 
     # czjzek distribution from analytical formula
-    _, _, res = CzjzekDistribution(sigma).pdf(pos=[z_range, e_range])
+    res = CzjzekDistribution(sigma).pdf(pos=[z_range, e_range], pack_as_csdm=True)
 
-    eta_pro = res.sum(axis=1)
-    zeta_pro = res.sum(axis=0)
+    eta_pro = res.sum(axis=0).y[0].components[0]
+    zeta_pro = res.sum(axis=1).y[0].components[0]
 
     # eta test
     message = "failed to compare eta projection for Czjzek distribution"
@@ -137,6 +137,6 @@ def test_czjzek_pdf_sub_eta():
 
 def test_czjzek_polar():
     x, y = CzjzekDistribution(sigma=0.5, polar=True).rvs(size=COUNT)
-    x1, y1 = x_y_from_zeta_eta(*x_y_to_zeta_eta(x, y))
+    x1, y1 = zeta_eta_to_x_y(*x_y_to_zeta_eta(x, y))
     np.testing.assert_almost_equal(x, x1)
     np.testing.assert_almost_equal(y, y1)
