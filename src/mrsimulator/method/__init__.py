@@ -19,7 +19,7 @@ from pydantic import PrivateAttr
 from pydantic import validator
 
 from .event import DelayEvent  # noqa: F401
-from .event import MixingEvent  # noqa: F401
+from .event import MixingEventA  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
@@ -201,7 +201,7 @@ class Method(Parseable):
             [
                 ev.rotor_frequency
                 for ev in sd.events
-                if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+                if ev.__class__.__name__ not in ["MixingEventA", "ConstantTimeEvent"]
             ]
             for sd in self.spectral_dimensions
         ]
@@ -301,7 +301,8 @@ class Method(Parseable):
             for ev in dim["events"]:
                 shared_keys = set(ev.keys()).intersection(glb_keys)
                 for k in glb:
-                    if k not in shared_keys and "query" not in ev:  # Skip MixingEvent
+                    is_mixing = np.any([f"ch{i}" in ev for i in range(1, 4)])
+                    if k not in shared_keys and not is_mixing:  # Skip MixingEventA
                         ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
@@ -482,7 +483,7 @@ class Method(Parseable):
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
-            if evt.__class__.__name__ != "MixingEvent"
+            if evt.__class__.__name__ != "MixingEventA"
         ]
         if all([sg.size == 0 for sg in segments]):  # List of empty segments
             return np.asarray([])
@@ -597,7 +598,7 @@ class Method(Parseable):
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
         """Helper method for the summary to reduce complexity"""
-        # Iterate through property and valid Event subclass for property
+        # Iterate through the property and valid Event subclass for property
         for prop, valid in prop_dict.items():
             lst = [
                 getattr(ev, prop) if ev.__class__.__name__ in valid else np.nan
@@ -633,7 +634,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingQuery) query: MixingQuery object of the MixingEvent
+            - (MixingEventA) query: MixingEventA object of the MixingEventA
             - (float) magnetic_flux_density: Magnetic flux density during an event (T)
             - (float) rotor_frequency: Rotor frequency during an event (Hz)
             - (float) rotor_angle: Rotor angle during an event converted to Degrees
@@ -662,7 +663,7 @@ class Method(Parseable):
         """
         CD = "DelayEvent"
         SP = "SpectralEvent"
-        MX = "MixingEvent"
+        MX = "MixingEventA"
 
         # Columns required to be present
         required = [
@@ -670,7 +671,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            "query",
+            # "query",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -683,7 +684,7 @@ class Method(Parseable):
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            "query": MX,
+            # "query": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),

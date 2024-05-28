@@ -62,7 +62,7 @@ What's new
 
 **Method**
 
-- New Event classes---``SpectralEvent`` and ``MixingEvent``. The MixingEvent controls the transition
+- New Event classes---``SpectralEvent`` and ``MixingEventA``. The MixingEventA controls the transition
   amplitude mixing in a multi-event method.
 - New ``TotalMixing`` and ``NoMixing`` mixing query enumerations for quick scripting of common mixing
   events.

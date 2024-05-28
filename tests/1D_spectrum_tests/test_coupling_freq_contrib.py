@@ -4,7 +4,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEvent
+from mrsimulator.method import MixingEventA
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -39,7 +39,7 @@ def hahn_method():
                 spectral_width=2e4,  # in Hz
                 events=[
                     SpectralEvent(fraction=0.5, transition_queries=positive_sq_tq),
-                    MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
+                    MixingEventA(ch1={"angle": np.pi, "phase": 0}),
                     SpectralEvent(fraction=0.5, transition_queries=negative_sq_tq),
                 ],
             )

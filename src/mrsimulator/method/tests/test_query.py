@@ -1,6 +1,6 @@
 import numpy as np
+from mrsimulator.method import MixingEventA
 from mrsimulator.method.query import MixingEnum
-from mrsimulator.method.query import MixingQuery
 from mrsimulator.method.query import RotationQuery
 from mrsimulator.method.query import SymmetryQuery
 from mrsimulator.method.query import TransitionQuery
@@ -74,13 +74,13 @@ def test_RotationQuery():
     assert rf_obj.json(units=True) == {"angle": "0.0 rad", "phase": "0.0 rad"}
 
 
-def test_MixingQuery():
+def test_MixingEventA():
     # parse units
     test1 = {
         "ch1": {"angle": "2.12 rad", "phase": "-176 deg"},
         "ch2": {"angle": "0.12 rad", "phase": "176 deg"},
     }
-    obj1 = MixingQuery.parse_dict_with_units(test1)
+    obj1 = MixingEventA.parse_dict_with_units(test1)
     rf1 = RotationQuery(angle=2.12, phase=-176 * np.pi / 180)
     rf2 = RotationQuery(angle=0.12, phase=176 * np.pi / 180)
     assert obj1.name is None
@@ -92,8 +92,8 @@ def test_MixingQuery():
     assert obj1.channels == [rf1, rf2, None]
 
     # direct initialization
-    test2 = {"ch2": {"angle": 1.101, "phase": 1.61}}
-    obj2 = MixingQuery(**test2)
+    test2 = {"ch1": None, "ch2": {"angle": 1.101, "phase": 1.61}}
+    obj2 = MixingEventA(**test2)
     assert obj2.name is None
     assert obj2.description is None
     assert obj2.label is None
@@ -103,7 +103,7 @@ def test_MixingQuery():
 
     # JSON tests
     test3 = {"ch1": {"angle": 1.23, "phase": 1.23}}
-    obj3 = MixingQuery(**test3)
+    obj3 = MixingEventA(**test3)
     assert obj3.json(units=False) == test3
     assert obj3.json(units=True) == {"ch1": {"angle": "1.23 rad", "phase": "1.23 rad"}}
 
@@ -115,7 +115,7 @@ def test_MixingEnum():
     assert total_mix.json(units=False) == "TotalMixing"
 
     no_mix = MixingEnum["NoMixing"]
-    assert no_mix.value == MixingQuery(
+    assert no_mix.value == MixingEventA(
         ch1={"angle": 0, "phase": 0},
         ch2={"angle": 0, "phase": 0},
         ch3={"angle": 0, "phase": 0},

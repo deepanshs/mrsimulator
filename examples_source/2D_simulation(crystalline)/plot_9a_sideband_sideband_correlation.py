@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEventA
 from mrsimulator.simulator.sampling_scheme import zcw_averaging
 
 # sphinx_gallery_thumbnail_number = 1
@@ -63,7 +63,7 @@ sideband_2d = Method(
                     transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_2"],
                 ),
-                MixingEvent(query="NoMixing"),
+                MixingEventA(),
             ],
         ),
         SpectralDimension(

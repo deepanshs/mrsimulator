@@ -9,7 +9,7 @@ from mrsimulator.utils.error import NamedMethodError
 
 def test_BaseNamedMethod1D_spectral_dimension_count():
     e = "Method requires exactly 1 spectral dimensions, given 2."
-    # test for SpectralDimension passed as dictionary
+    # test for SpectralDimension passed as a dictionary
     with pytest.raises(ValueError, match=f".*{e}.*"):
         BaseNamedMethod1D(spectral_dimensions=[{}, {}])
     # test for SpectralDimension passed as object
@@ -36,7 +36,7 @@ def test_BaseNamedMethod1D_setting_name():
 
 def test_BaseNamedMethod2D_spectral_dimension_count():
     e = "Method requires exactly 2 spectral dimensions, given 1."
-    # test for SpectralDimension passed as dictionary
+    # test for SpectralDimension passed as a dictionary
     with pytest.raises(ValueError, match=f".*{e}.*"):
         BaseNamedMethod2D(channels=["1H"], spectral_dimensions=[{}])
     # test for SpectralDimension passed as object

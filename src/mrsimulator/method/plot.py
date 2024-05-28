@@ -24,7 +24,7 @@ MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, alwa
 COLORS = {
     "DelayEvent": "orange",
     "SpectralEvent": "g",
-    "MixingEvent": "b",
+    "MixingEventA": "b",
     "inf_speed": "y",
     "undef": "k",
 }
@@ -65,7 +65,7 @@ class CustomAxes(plt.Axes):
         Maximum x value in x_data. Used to set xlim to (0, xmax)
 
     mix_ev:
-        True where an event is MixingEvent, false otherwise
+        True where an event is MixingEventA, false otherwise
 
     """
 
@@ -415,7 +415,7 @@ class SequenceDiagram(CustomAxes):
                     x_idx += 1
                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                     x0 = x_data[x_idx]
-                    if df["type"][df_idx + j] == "MixingEvent":
+                    if df["type"][df_idx + j] == "MixingEventA":
                         x0 += sum(df["angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
                     spec_dim_idx += 1
@@ -523,7 +523,7 @@ def _add_angle_and_phase(df):
         [
             query.channels
             for query in df["query"]
-            if query.__class__.__name__ == "MixingQuery"
+            if query.__class__.__name__ == "MixingEventA"
         ]
     )
 
@@ -667,7 +667,7 @@ def _add_legend(fig):
 
 
 def _calculate_n_channels(df):
-    """Calculates the number of channels present in the method DataFrame"""
+    """Calculate the number of channels present in the method DataFrame"""
     if "MixingEvent" not in list(df["type"]):
         return 1
 

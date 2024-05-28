@@ -87,7 +87,7 @@ sequence. In each SpectralDimension object is an ordered list of :ref:`event_api
 objects assigned to the attribute ``events``; Event objects are divided
 into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.DelayEvent`, and (3)
-:py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list of Event objects
+:py:meth:`~mrsimulator.method.MixingEventA`.  This ordered list of Event objects
 is used to select the desired transition pathways and determine their average
 frequency and complex amplitude in the SpectralDimension.
 
@@ -139,10 +139,10 @@ object by the initial and final eigenstate quantum numbers of each transition.
 Between adjacent SpectralEvent or DelayEvent objects, **mrsimulator** defaults
 to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
-explicit MixingEvent object between such events. Inside MixingEvent
-objects is a :py:meth:`~mrsimulator.method.query.MixingQuery` object, which
+explicit  object between such events. Inside MixingEventA
+objects is a :py:meth:`~mrsimulator.method.query.MixingEventA` object, which
 determines the coherence transfer amplitude between transitions. A
-MixingQuery object holds
+MixingEventA object holds
 :py:meth:`~mrsimulator.method.query.RotationQuery` objects acting on specific
 isotopes in the spin system. As before, the isotope upon which the
 RotationQuery objects act is determined by the ``channels`` attribute in the
@@ -153,7 +153,7 @@ of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This
 review is necessary for understanding (1) how transitions are selected during
 spectral and delay events and (2) how average signal frequencies and amplitudes
 in each spectral dimension are determined. We outline the procedures for
-designing and creating TransitionQuery and MixingQuery objects for single- and
+designing and creating TransitionQuery and MixingEventA objects for single- and
 multi-spin transitions and how to use them to select the transition pathways
 with the desired frequency and amplitudes in each spectral dimension of your
 custom Method object. In multi-dimensional spectra, we illustrate how the
@@ -1774,13 +1774,13 @@ below.
 .. plot::
     :context: close-figs
 
-    from mrsimulator.method import MixingEvent
+    from mrsimulator.method import MixingEventA
 
     events = [
         SpectralEvent(fraction=9 / 16, transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]),
-        MixingEvent(query="TotalMixing"),
+        MixingEventA(ch1="TotalMixing"),
         SpectralEvent(fraction=7 / 16, transition_queries=[{"ch1": {"P": [-1], "D": [0]}}]),
-        MixingEvent(query="TotalMixing"),
+        MixingEventA(ch1="TotalMixing"),
     ]
 
 Since only one transition was selected in each SpectralEvent, the expected (and
@@ -1792,7 +1792,7 @@ However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-``"TotalMixing"`` event by inserting MixingEvent object with a certain rotation
+``"TotalMixing"`` event by inserting MixingEventA object with a certain rotation
 query.
 
 Rotation Query
@@ -1852,9 +1852,9 @@ event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
 .. plot::
     :context: close-figs
 
-    MixingEvent(query="NoMixing")
+    MixingEventA(ch1="NoMixing")
 
-The MixingEvent object holds the rotation details in a MixingQuery object as
+The MixingEventA object holds the rotation details in a MixingEventA object as
 a RotationQuery object associated with a ``channels`` attribute.  This is
 illustrated in the sample code below.
 
@@ -1865,9 +1865,9 @@ illustrated in the sample code below.
     from mrsimulator.method.query import RotationQuery
     rot_query_90 = RotationQuery(angle=np.pi/2, phase=0)
     rot_query_180 = RotationQuery(angle=np.pi, phase=0)
-    rot_mixing = MixingEvent(query={
-            "ch1": rot_query_90,
-            "ch2": rot_query_180
+    rot_mixing = MixingEventA(
+            ch1=rot_query_90,
+            ch2=rot_query_180
         }
     )
 
@@ -1921,7 +1921,7 @@ Below are two custom Method objects for simulating the Hahn and Solid Echo
 experiments. There is only one SpectralDimension object in each method, and
 the average frequency during each spectral dimension is derived from equal
 fractions of two SpectralEvent objects.  Between these two SpectralEvent
-objects is a MixingEvent with a RotationQuery object. The
+objects is a MixingEventA with a RotationQuery object. The
 RotationQuery object is created with a :math:`\pi` rotation in the Hahn Echo
 method, and a :math:`\pi/2` rotation in the Solid Echo method.
 
@@ -1938,7 +1938,7 @@ We use the deuterium Site defined earlier in this document.
 .. plot::
     :context: close-figs
 
-    from mrsimulator.method import MixingEvent
+    from mrsimulator.method import MixingEventA
 
     deuterium = Site(
         isotope="2H",
@@ -1964,7 +1964,7 @@ We use the deuterium Site defined earlier in this document.
                             {"ch1": {"P": [1], "D": [-1]}},
                         ],
                     ),
-                    MixingEvent(query={"ch1": {"angle": 3.141592, "phase": 0}}),
+                    MixingEventA(ch1={"angle": 3.141592, "phase": 0}),
                     SpectralEvent(
                         fraction=0.5,
                         transition_queries=[
@@ -1993,7 +1993,7 @@ We use the deuterium Site defined earlier in this document.
                             {"ch1": {"P": [-1], "D": [-1]}},
                         ],
                     ),
-                    MixingEvent(query={"ch1": {"angle": 3.141592 / 2, "phase": 0}}),
+                    MixingEventA(ch1={"angle": 3.141592 / 2, "phase": 0}),
                     SpectralEvent(
                         fraction=0.5,
                         transition_queries=[
@@ -2344,7 +2344,7 @@ Attribute Summaries
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_mixing_event:
-.. list-table:: The attributes of a MixingEvent object
+.. list-table:: The attributes of a MixingEventA object
   :widths: 20 15 65
   :header-rows: 1
 
@@ -2353,8 +2353,8 @@ Attribute Summaries
     - Description
 
   * - query
-    - ``dict`` or :py:class:`~mrsimulator.method.MixingQuery`
-    - A :py:class:`~mrsimulator.method.MixingQuery` object, or its ``dict`` representation,
+    - ``dict`` or :py:class:`~mrsimulator.method.MixingEventA`
+    - A :py:class:`~mrsimulator.method.MixingEventA` object, or its ``dict`` representation,
       determines the complex amplitude of mixing between transitions in adjacent spectral
       or delay events.
 

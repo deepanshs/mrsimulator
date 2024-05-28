@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
 
 import numpy as np
@@ -13,11 +14,12 @@ from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import FREQ_ENUM_SHORTCUT
 from .frequency_contrib import FREQ_LIST_ALL
 from .frequency_contrib import FrequencyEnum
-from .query import MixingEnum
-from .query import MixingQuery
+from .query import RotationQuery
 from .query import TransitionQuery
 from .utils import D_symmetry_indexes
 from .utils import P_symmetry_indexes
+
+# from .query import MixingEnum
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -31,13 +33,13 @@ def parse_dict_to_ev_class(py_dict: dict):
         (dict) py_dict: JSON representation of the Event class as a dictionary
 
     Returns:
-        Either a SpectralEvent, DelayEvent, or MixingEvent object
+        Either a SpectralEvent, DelayEvent, or MixingEventA object
     """
     if "duration" in py_dict:
         return DelayEvent.parse_dict_with_units(py_dict)
 
-    if "query" in py_dict:
-        return MixingEvent.parse_dict_with_units(py_dict)
+    if "ch1" in py_dict or "ch2" in py_dict or "ch3" in py_dict:
+        return MixingEventA.parse_dict_with_units(py_dict)
 
     return SpectralEvent.parse_dict_with_units(py_dict)
 
@@ -276,60 +278,88 @@ class DelayEvent(BaseEvent):
         validate_assignment = True
 
 
-class MixingEvent(Parseable):  # TransitionMixingEvent
-    """Transition mixing class
+class MixingEventA(Parseable):
+    """MixingEventA class for querying transition mixing between events.
 
     Attributes
     ----------
 
-    query:
-        The transition mixing query.
+    ch1:
+        An optional RotationQuery object for the channel at index 0 of the method's
+        channels list."
+
+    ch2:
+        An optional RotationQuery object for the channel at index 1 of the method's
+        channels list."
+
+    ch3:
+        An optional RotationQuery object for the channel at index 2 of the method's
+        channels list."
+
+    Example
+    -------
+
+        >>> query = MixingEventA(ch1={"angle": 1.570796, "phase": 3.141593})
+
     """
 
-    query: Union[MixingQuery, MixingEnum]
-
-    test_vars: ClassVar[Dict] = {"query": {}}
+    ch1: Optional[RotationQuery] = Field(
+        title="ch1",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    # ch1: Union[RotationQuery, None]
+    ch2: Optional[RotationQuery] = Field(
+        title="ch2",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch3: Optional[RotationQuery] = Field(
+        title="ch3",
+        default=None,
+        description=(
+            "An optional RotationQuery object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
 
     class Config:
-        extra = "forbid"
         validate_assignment = True
-
-    @validator("query", pre=True, always=True)
-    def validate_query(cls, v, **kwargs):
-        """Validator which tries to convert the query to a MixingEnum if the query is
-        a string"""
-        if isinstance(v, str):
-            if v in MixingEnum.allowed_enums():
-                v = MixingEnum[v]
-            else:
-                raise ValueError(
-                    f"Unrecognized MixingEnum name '{v}'. "
-                    f"The allowed types are {MixingEnum.allowed_enums()}"
-                )
-        return v
+        extra = "forbid"
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantity from a dictionary representation of the MixingEvent
+        Parse the physical quantity from a dictionary representation of the Method
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
         Args:
-            dict py_dict: A Python dict representation of the MixingEvent object.
+            dict py_dict: A Python dict representation of the Method object.
 
         Returns:
-            A MixingEvent.
+            A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        if isinstance(py_dict_copy["query"], dict):
-            py_dict_copy["query"] = MixingQuery.parse_dict_with_units(
-                py_dict_copy["query"]
-            )
+        obj = {
+            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
+        }
+        py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
+
+    @property
+    def channels(self) -> List[RotationQuery]:
+        """Returns an ordered list of all channels"""
+        return [self.ch1, self.ch2, self.ch3]
 
 
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, DelayEvent, SpectralEvent]
+    event: Union[DelayEvent, SpectralEvent, MixingEventA]

@@ -1,4 +1,4 @@
-from copy import deepcopy
+# from copy import deepcopy
 from enum import Enum
 from itertools import permutations
 from typing import ClassVar
@@ -286,86 +286,6 @@ class RotationQuery(Parseable):
         )
 
 
-class MixingQuery(Parseable):
-    """MixingQuery class for querying transition mixing between events.
-
-    Attributes
-    ----------
-
-    ch1:
-        An optional RotationQuery object for the channel at index 0 of the method's
-        channels list."
-
-    ch2:
-        An optional RotationQuery object for the channel at index 1 of the method's
-        channels list."
-
-    ch3:
-        An optional RotationQuery object for the channel at index 2 of the method's
-        channels list."
-
-    Example
-    -------
-
-        >>> query = MixingQuery(ch1={"angle": 1.570796, "phase": 3.141593})
-
-    """
-
-    ch1: Optional[RotationQuery] = Field(
-        title="ch1",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
-    ch2: Optional[RotationQuery] = Field(
-        title="ch2",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
-    ch3: Optional[RotationQuery] = Field(
-        title="ch3",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
-
-    class Config:
-        validate_assignment = True
-        extra = "forbid"
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Method
-        object, where the physical quantity is expressed as a string with a number and
-        a unit.
-
-        Args:
-            dict py_dict: A Python dict representation of the Method object.
-
-        Returns:
-            A :ref:`method_api` object.
-        """
-        py_dict_copy = deepcopy(py_dict)
-        obj = {
-            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
-        }
-        py_dict_copy.update(obj)
-        return super().parse_dict_with_units(py_dict_copy)
-
-    @property
-    def channels(self) -> List[RotationQuery]:
-        """Returns an ordered list of all channels"""
-        return [self.ch1, self.ch2, self.ch3]
-
-
 class MixingEnum(Enum):
     """Enumerations for defining common mixing queries. The enumerations are as follows:
 
@@ -385,17 +305,17 @@ class MixingEnum(Enum):
     Example
     -------
 
-    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent` can be
+    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEventA` can be
     set to the Enum itself or a string representing the Enum.
 
-    >>> from mrsimulator.method import MixingEvent
+    >>> from mrsimulator.method import MixingEvenA
     >>> from mrsimulator.method.query import MixingEnum
     >>> # From Enum object
-    >>> total_mix = MixingEvent(query=MixingEnum.TotalMixing)
-    >>> no_mix = MixingEvent(query=MixingEnum.NoMixing)
+    >>> total_mix = MixingEventA(ch1=MixingEnum.TotalMixing)
+    >>> no_mix = MixingEventA(ch1=MixingEnum.NoMixing)
     >>> # From string representing Enum
-    >>> total_mix = MixingEvent(query="TotalMixing")
-    >>> no_mix = MixingEvent(query="NoMixing")
+    >>> total_mix = MixingEventA(ch1="TotalMixing")
+    >>> no_mix = MixingEventA(ch1="NoMixing")
     """
 
     @classmethod
@@ -408,8 +328,4 @@ class MixingEnum(Enum):
         return self.value if isinstance(self.value, str) else self.value.json(**kwargs)
 
     TotalMixing: str = "TotalMixing"
-    NoMixing: MixingQuery = MixingQuery(
-        ch1={"angle": 0, "phase": 0},
-        ch2={"angle": 0, "phase": 0},
-        ch3={"angle": 0, "phase": 0},
-    )
+    NoMixing: RotationQuery = RotationQuery(angle=0, phase=0)

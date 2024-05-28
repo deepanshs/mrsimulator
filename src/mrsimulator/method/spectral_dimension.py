@@ -15,7 +15,7 @@ from pydantic import validator
 
 from .event import DelayEvent
 from .event import Event
-from .event import MixingEvent
+from .event import MixingEventA
 from .event import parse_dict_to_ev_class
 from .event import SpectralEvent
 from .utils import cartesian_product
@@ -76,7 +76,7 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[MixingEvent, DelayEvent, SpectralEvent]] = []
+    events: List[Union[MixingEventA, DelayEvent, SpectralEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency"],
@@ -109,7 +109,7 @@ class SpectralDimension(Parseable):
 
     @validator("events", pre=True, always=True)
     def validate_events(v, **kwargs):
-        """Ensure at least one spectralEvent and warn is the sum of fraction in
+        """Ensure at least one spectralEvent and warn is the sum of fractions in
         SpectralEvents is not 1."""
         if v != []:
             new_v = [

@@ -4,7 +4,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEvent
+from mrsimulator.method import MixingEventA
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.method.lib import BlochDecaySpectrum
@@ -151,12 +151,12 @@ def test_complex_pathway_weight():
                     spectral_width=1.5e4,  # 15 kHz
                     reference_offset=-2500,
                     events=[
-                        # NOTE: Error thrown when a MixingEvent not sandwiched between
+                        # NOTE: Error thrown when a MixingEventA not sandwiched between
                         # SpectralEvent objects. Should this be addressed?
                         SpectralEvent(
                             transition_queries=[{"ch1": {"P": [+1]}}], fraction=0
                         ),  # Dummy spectral event
-                        MixingEvent(query={"ch1": {"angle": np.pi, "phase": ph}}),
+                        MixingEventA(ch1={"angle": np.pi, "phase": ph}),
                         SpectralEvent(
                             transition_queries=[{"ch1": {"P": [-1]}}], fraction=1
                         ),

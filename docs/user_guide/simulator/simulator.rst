@@ -224,7 +224,7 @@ use a large number of gamma angles for the simulation to converge.
     :caption: Incorrect simulation from an insufficient number of gamma angle averaging.
 
     from mrsimulator.method import Method
-    from mrsimulator.method.event import SpectralEvent, MixingEvent
+    from mrsimulator.method.event import SpectralEvent, MixingEventA
 
     site = Site(isotope="29Si", shielding_symmetric={"zeta": 100, "eta": 0.2})
     spin_system = SpinSystem(sites=[site])
@@ -239,7 +239,7 @@ use a large number of gamma angles for the simulation to converge.
                 spectral_width=25000,
                 events=[
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2}}),
+                    MixingEventA(ch1={"angle": np.pi / 2}),
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
                 ]
         )],
