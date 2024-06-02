@@ -17,7 +17,7 @@ Query objects
 
 .. _mixing_query_api:
 
-.. autoclass:: MixingEventA
+.. autoclass:: MixingEvent
     :show-inheritance:
     :members:
     :inherited-members: BaseModel

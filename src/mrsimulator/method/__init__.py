@@ -19,7 +19,7 @@ from pydantic import PrivateAttr
 from pydantic import validator
 
 from .event import DelayEvent  # noqa: F401
-from .event import MixingEventA  # noqa: F401
+from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
@@ -201,7 +201,7 @@ class Method(Parseable):
             [
                 ev.rotor_frequency
                 for ev in sd.events
-                if ev.__class__.__name__ not in ["MixingEventA", "ConstantTimeEvent"]
+                if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
             ]
             for sd in self.spectral_dimensions
         ]
@@ -302,7 +302,7 @@ class Method(Parseable):
                 shared_keys = set(ev.keys()).intersection(glb_keys)
                 for k in glb:
                     is_mixing = np.any([f"ch{i}" in ev for i in range(1, 4)])
-                    if k not in shared_keys and not is_mixing:  # Skip MixingEventA
+                    if k not in shared_keys and not is_mixing:  # Skip MixingEvent
                         ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
@@ -483,7 +483,7 @@ class Method(Parseable):
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
-            if evt.__class__.__name__ != "MixingEventA"
+            if evt.__class__.__name__ != "MixingEvent"
         ]
         if all([sg.size == 0 for sg in segments]):  # List of empty segments
             return np.asarray([])
@@ -634,7 +634,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingEventA) query: MixingEventA object of the MixingEventA
+            - (MixingEvent) query: MixingEvent object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during an event (T)
             - (float) rotor_frequency: Rotor frequency during an event (Hz)
             - (float) rotor_angle: Rotor angle during an event converted to Degrees
@@ -663,7 +663,7 @@ class Method(Parseable):
         """
         CD = "DelayEvent"
         SP = "SpectralEvent"
-        MX = "MixingEventA"
+        MX = "MixingEvent"
 
         # Columns required to be present
         required = [

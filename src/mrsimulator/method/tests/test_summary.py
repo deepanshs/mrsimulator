@@ -7,7 +7,7 @@ __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
-ME = "MixingEventA"
+ME = "MixingEvent"
 CDE = "DelayEvent"
 SE = "SpectralEvent"
 REQUIRED = [

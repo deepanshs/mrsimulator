@@ -7,7 +7,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import DelayEvent
-from mrsimulator.method import MixingEventA
+from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 
@@ -34,7 +34,7 @@ def setup_simulator_inadequate():
                         freq_contrib=["J"],
                         transition_queries=[{"ch1": {"P": [-1]}}],
                     ),
-                    MixingEventA(ch1={"angle": np.pi / 2, "phase": 0.0}),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": 0.0}),
                     SpectralEvent(
                         fraction=1.0, transition_queries=[{"ch1": {"P": [-1, -1]}}]
                     ),
@@ -46,7 +46,7 @@ def setup_simulator_inadequate():
                 reference_offset=0,
                 label="1Q frequency",
                 events=[
-                    MixingEventA(ch1={"angle": np.pi / 2, "phase": np.pi / 2}),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": np.pi / 2}),
                     SpectralEvent(
                         fraction=1.0, transition_queries=[{"ch1": {"P": [-1]}}]
                     ),

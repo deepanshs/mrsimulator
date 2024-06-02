@@ -112,7 +112,7 @@ def core_simulator(method,
         n_ev = 0
         track = []
         for event in dim.events:
-            if event.__class__.__name__ != "MixingEventA":
+            if event.__class__.__name__ != "MixingEvent":
                 freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
 
                 if event.rotor_frequency < 1.0e-3:

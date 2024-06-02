@@ -4,7 +4,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEventA
+from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.method.lib import BlochDecaySpectrum
@@ -90,7 +90,7 @@ def test_2D():
                             transition_queries=[{"ch1": {"P": [-1]}}],
                             freq_contrib=["Quad1_2"],
                         ),
-                        MixingEventA(),
+                        MixingEvent(),
                     ],
                 ),
                 SpectralDimension(

@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator, SpinSystem, Site, Coupling
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEventA
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
 from pprint import pprint
 
@@ -41,7 +41,7 @@ spin_system_2 = SpinSystem(sites=[S1, S2], couplings=[S12], label="Coupled syste
 # For in-depth description, please refer to the :ref:`method_documentation`
 # documentation.
 #
-# In this example, we use two types of Event objects---SpectralEvent and MixingEventA
+# In this example, we use two types of Event objects---SpectralEvent and MixingEvent
 # to create a one-dimensional Hahn echo method.
 hahn_echo = Method(
     channels=["1H"],
@@ -54,7 +54,7 @@ hahn_echo = Method(
             spectral_width=2e4,  # in Hz
             events=[
                 SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [1]}}]),
-                MixingEventA(ch1={"angle": np.pi, "phase": 0}),
+                MixingEvent(ch1={"angle": np.pi, "phase": 0}),
                 SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
             ],
         )
@@ -73,8 +73,8 @@ hahn_echo = Method(
 # this momentarily by simulating a Hahn echo spectrum from single and two-site spin
 # systems.
 #
-# Besides the SpectralEvent, you may also notice a MixingEventA sandwiched in-between
-# the two SpectralEvent. A MixingEventA does not directly contribute to the frequencies.
+# Besides the SpectralEvent, you may also notice a MixingEvent sandwiched in-between
+# the two SpectralEvent. A MixingEvent does not directly contribute to the frequencies.
 # As the name suggests, a mixing event is used for the mixing of transitions in a
 # multi-event method such as HahnEcho. In the above code, we define a mixing query
 # on channel-1 by setting the attributes ``angle`` and ``phase`` to :math:`\pi` and

@@ -3,7 +3,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEventA
+from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.spin_system.tensors import SymmetricTensor
@@ -46,7 +46,7 @@ def coaster_simulation():
                 label="$\\omega_1$ (CSA)",
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [3], "D": [0]}}]),
-                    MixingEventA(ch1={"angle": np.pi * 109.5 / 180}),
+                    MixingEvent(ch1={"angle": np.pi * 109.5 / 180}),
                 ],
             ),
             SpectralDimension(
@@ -104,7 +104,7 @@ def quad_1D_projection():
                         freq_contrib=["Quad2_0"],
                         transition_queries=[{"ch1": {"P": [3], "D": [0]}}],
                     ),
-                    MixingEventA(ch1={"angle": np.pi * 109.5 / 180, "phase": 0}),
+                    MixingEvent(ch1={"angle": np.pi * 109.5 / 180, "phase": 0}),
                     SpectralEvent(
                         fraction=3 / 4,
                         freq_contrib=["Quad2_0", "Quad2_2"],

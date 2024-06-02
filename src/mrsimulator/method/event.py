@@ -33,13 +33,13 @@ def parse_dict_to_ev_class(py_dict: dict):
         (dict) py_dict: JSON representation of the Event class as a dictionary
 
     Returns:
-        Either a SpectralEvent, DelayEvent, or MixingEventA object
+        Either a SpectralEvent, DelayEvent, or MixingEvent object
     """
     if "duration" in py_dict:
         return DelayEvent.parse_dict_with_units(py_dict)
 
     if "ch1" in py_dict or "ch2" in py_dict or "ch3" in py_dict:
-        return MixingEventA.parse_dict_with_units(py_dict)
+        return MixingEvent.parse_dict_with_units(py_dict)
 
     return SpectralEvent.parse_dict_with_units(py_dict)
 
@@ -278,8 +278,8 @@ class DelayEvent(BaseEvent):
         validate_assignment = True
 
 
-class MixingEventA(Parseable):
-    """MixingEventA class for querying transition mixing between events.
+class MixingEvent(Parseable):
+    """MixingEvent class for querying transition mixing between events.
 
     Attributes
     ----------
@@ -299,7 +299,7 @@ class MixingEventA(Parseable):
     Example
     -------
 
-        >>> query = MixingEventA(ch1={"angle": 1.570796, "phase": 3.141593})
+        >>> query = MixingEvent(ch1={"angle": 1.570796, "phase": 3.141593})
 
     """
 
@@ -361,4 +361,4 @@ class MixingEventA(Parseable):
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[DelayEvent, SpectralEvent, MixingEventA]
+    event: Union[DelayEvent, SpectralEvent, MixingEvent]

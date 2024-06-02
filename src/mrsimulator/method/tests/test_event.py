@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import DelayEvent
-from mrsimulator.method.event import MixingEventA
+from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import parse_dict_to_ev_class
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
@@ -237,14 +237,14 @@ def basic_mixing_event_tests(the_event):
 
 def test_Mixing_event():
     mix_event_dict = {"ch1": {"angle": "90 degree", "phase": "0 rad"}}
-    the_event = MixingEventA.parse_dict_with_units(mix_event_dict)
+    the_event = MixingEvent.parse_dict_with_units(mix_event_dict)
     basic_mixing_event_tests(the_event)
 
     # Queries of MixingEvents, like the transition_queries of the SpectralEvent, need
     # to be defined in a channel-wise dict. Check to make sure error is raised when
     # P and D symmetries are supplied at the base level
     with pytest.raises(ValidationError):
-        MixingEventA(query={"P": [1], "D": [0]})
+        MixingEvent(query={"P": [1], "D": [0]})
 
 
 # def test_total_and_no_mixing():
@@ -256,20 +256,10 @@ def test_Mixing_event():
 #         assert mix_ev.query.value.ch3.angle == 0
 #         assert mix_ev.query.value.ch3.phase == 0
 
-#     no_mix = MixingEventA(ch1=MixingEnum.NoMixing)
+#     no_mix = MixingEvent(ch1=MixingEnum.NoMixing)
 #     assert_all_zero(no_mix)
 
-#     no_mix = MixingEventA(ch1="NoMixing")
-#     assert_all_zero(no_mix)
-#     assert no_mix.json() == {
-#         "query": {
-#             "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
-#             "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
-#             "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
-#         }
-#     }
-
-#     no_mix = MixingEventA.parse_dict_with_units({"ch1": "NoMixing"})
+#     no_mix = MixingEvent(ch1="NoMixing")
 #     assert_all_zero(no_mix)
 #     assert no_mix.json() == {
 #         "query": {
@@ -279,19 +269,29 @@ def test_Mixing_event():
 #         }
 #     }
 
-#     total_mix = MixingEventA(ch1=MixingEnum.TotalMixing)
+#     no_mix = MixingEvent.parse_dict_with_units({"ch1": "NoMixing"})
+#     assert_all_zero(no_mix)
+#     assert no_mix.json() == {
+#         "query": {
+#             "ch1": {"angle": "0.0 rad", "phase": "0.0 rad"},
+#             "ch2": {"angle": "0.0 rad", "phase": "0.0 rad"},
+#             "ch3": {"angle": "0.0 rad", "phase": "0.0 rad"},
+#         }
+#     }
+
+#     total_mix = MixingEvent(ch1=MixingEnum.TotalMixing)
 #     assert total_mix.ch1.value == "TotalMixing"
 
-#     total_mix = MixingEventA(ch1="TotalMixing")
+#     total_mix = MixingEvent(ch1="TotalMixing")
 #     assert total_mix.ch1.value == "TotalMixing"
 
-#     total_mix = MixingEventA.parse_dict_with_units({"ch1": "TotalMixing"})
+#     total_mix = MixingEvent.parse_dict_with_units({"ch1": "TotalMixing"})
 #     assert total_mix.ch1.value == "TotalMixing"
 
 #     # Check for exception when unknown mixing enum passed
 #     e = ".*Unrecognized MixingEnum name 'some-str'. The allowed types are.*"
 #     with pytest.raises(ValidationError, match=e):
-#         MixingEventA(ch1="some-str")
+#         MixingEvent(ch1="some-str")
 
 
 def check_equal(query, isotopes, channels, res):
@@ -335,7 +335,7 @@ def test_parse_dict_to_ev_class():
 
     assert isinstance(parse_dict_to_ev_class(json_dict), DelayEvent)
 
-    # MixingEventA parse
+    # MixingEvent parse
     json_dict = {"ch1": {"angle": "0.0 rad", "phase": "0.0 rad"}}
 
-    assert isinstance(parse_dict_to_ev_class(json_dict), MixingEventA)
+    assert isinstance(parse_dict_to_ev_class(json_dict), MixingEvent)

@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from mrsimulator import Simulator
 from mrsimulator import signal_processor as sp
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEventA
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -46,13 +46,13 @@ das = Method(
                     rotor_angle=37.38 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
-                MixingEventA(),
+                MixingEvent(),
                 SpectralEvent(
                     fraction=0.5,
                     rotor_angle=79.19 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
-                MixingEventA(),
+                MixingEvent(),
             ],
         ),
         # The last spectral dimension block is the direct-dimension

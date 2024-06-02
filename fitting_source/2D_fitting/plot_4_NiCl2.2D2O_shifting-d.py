@@ -19,7 +19,7 @@ from mrsimulator import signal_processor as sp
 from mrsimulator.utils import spectral_fitting as sf
 from mrsimulator.utils import get_spectral_dimensions
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEventA
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 4
 
@@ -120,7 +120,7 @@ shifting_d = Method(
                     transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 ),
-                MixingEventA(),
+                MixingEvent(),
             ],
         ),
         SpectralDimension(

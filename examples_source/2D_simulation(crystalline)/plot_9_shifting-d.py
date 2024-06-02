@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEventA
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -109,7 +109,7 @@ spin_systems = [
 # respectively. See :ref:`freq_contrib_api` for details.
 #
 # Like the previous example, we stipulate no mixing between the two spectral events
-# using a `MixingEventA` with ``NoMixing`` as the query. Since all spin systems in this
+# using a `MixingEvent` with ``NoMixing`` as the query. Since all spin systems in this
 # example have a single site, defining no mixing between the two spectral events is
 # superfluous. We include it such that the method is applicable with multi-site spin
 # systems.
@@ -129,7 +129,7 @@ shifting_d = Method(
                     transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 ),
-                MixingEventA(),
+                MixingEvent(),
             ],
         ),
         SpectralDimension(

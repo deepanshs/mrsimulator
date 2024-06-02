@@ -99,8 +99,8 @@ def get_mixing_query(spectral_dimensions, index):
         n_events = len(spectral_dimensions[sp].events)
     mixing = spectral_dimensions[sp].events[index]
 
-    # Return the query, if is a MixingEventA, otherwise the value of the MixingEnum
-    return mixing if mixing.__class__.__name__ == "MixingEventA" else mixing.value
+    # Return the query, if is a MixingEvent, otherwise the value of the MixingEnum
+    return mixing if mixing.__class__.__name__ == "MixingEvent" else mixing.value
 
 
 def map_mix_query_attr_to_ch(mixing_query):
@@ -124,7 +124,7 @@ def map_mix_query_attr_to_ch(mixing_query):
 
 # def angle_and_phase_list(symbol, channels, mixing_query):
 #     """Return a list of angles and phases of size equal to the number of sites within
-#     the spin system, corresponding to a mixing_query from a MixingEventA.
+#     the spin system, corresponding to a mixing_query from a MixingEvent.
 
 #     If the site matches the channel, append the angle and phase of the corresponding
 #     channel to the list, otherwise append 0.
@@ -132,7 +132,7 @@ def map_mix_query_attr_to_ch(mixing_query):
 #     Args:
 #         symbols: List of site symbols.
 #         channels: List of method channel symbols.
-#         mixing_query: Mixing query object of the MixingEventA.
+#         mixing_query: Mixing query object of the MixingEvent.
 #     """
 #     angle_phase_mappable = map_mix_query_attr_to_ch(mixing_query)
 #     angle_ = [
@@ -171,7 +171,7 @@ def to_euler_list(symbol, channels, mixing_queries):
 
 
 def get_grouped_mixing_queries(spec_dims, event_names):
-    """Returns a dictionary where each key is the index of the first MixingEventA in a
+    """Returns a dictionary where each key is the index of the first MixingEvent in a
     group of sequential MixingEvents and the key is the set of angles and phases for
     those mixing queries in the mixing events.
 
@@ -183,20 +183,20 @@ def get_grouped_mixing_queries(spec_dims, event_names):
     mixing_query_sets = {}
     previous_event_mix = False
     for i, name in enumerate(event_names):
-        if name != "MixingEventA":
+        if name != "MixingEvent":
             previous_event_mix = False
 
         # Skip this event if the previous event mixing or if this event TotalMixing
         elif previous_event_mix or get_mixing_query(spec_dims, i) == "TotalMixing":
             continue
 
-        # Add this MixingEventA query and the queries from the next contiguous
-        # MixingEventA to a list. Only run for the first MixingEventA in a sequence
+        # Add this MixingEvent query and the queries from the next contiguous
+        # MixingEvent to a list. Only run for the first MixingEvent in a sequence
         else:
             previous_event_mix = True
             mixing_query_sets[i] = []
             j = i
-            while j < len(event_names) and event_names[j] == "MixingEventA":
+            while j < len(event_names) and event_names[j] == "MixingEvent":
                 # Only add query if the query is not the string TotalMixing
                 query = get_mixing_query(spec_dims, j)
                 mixing_query_sets[i] += [query] if query != "TotalMixing" else []
@@ -207,7 +207,7 @@ def get_grouped_mixing_queries(spec_dims, event_names):
 
 def mixing_query_connect_map(spectral_dimensions):
     """Return a list of mappables corresponding to each mixing event. The mappable
-    corresponds to queries described by adjacent mixing events and the index of next
+    correspond to queries described by adjacent mixing events and the index of the next
     and previous nearest transition indexes.
 
     Args:
@@ -217,7 +217,7 @@ def mixing_query_connect_map(spectral_dimensions):
         evt.__class__.__name__ for dim in spectral_dimensions for evt in dim.events
     ]
     grouped_mix_map = get_grouped_mixing_queries(spectral_dimensions, event_names)
-    non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEventA"]
+    non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEvent"]
     non_mix_index_map = {index: i for i, index in enumerate(non_mix_index)}
 
     return [
@@ -302,10 +302,10 @@ def combine_mixing_queries(queries: list):
     """Takes in a list of mixing queries combining them into a single mixing query
 
     Args:
-        queries: List of dicts each representing a MixingEventA object
+        queries: List of dicts each representing a MixingEvent object
 
     Returns:
-        Dictionary with angle and phase of combined MixingEventA objects
+        Dictionary with angle and phase of combined MixingEvent objects
     """
     if len(queries) < 1:
         raise ValueError(f"List length must be at least 1. Got length {len(queries)}.")

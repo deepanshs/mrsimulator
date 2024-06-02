@@ -15,7 +15,7 @@ from pydantic import validator
 
 from .event import DelayEvent
 from .event import Event
-from .event import MixingEventA
+from .event import MixingEvent
 from .event import parse_dict_to_ev_class
 from .event import SpectralEvent
 from .utils import cartesian_product
@@ -76,7 +76,7 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[SpectralEvent, MixingEventA, DelayEvent]] = []
+    events: List[Union[SpectralEvent, MixingEvent, DelayEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency"],

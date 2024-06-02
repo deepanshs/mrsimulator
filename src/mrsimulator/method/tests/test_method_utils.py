@@ -3,7 +3,7 @@ import pytest
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEventA
+from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.utils import combine_mixing_queries
 from mrsimulator.method.utils import mixing_query_connect_map
@@ -35,7 +35,7 @@ def test_warnings():
     assert m.get_transition_pathways(s) == []
 
 
-ME = "MixingEventA"
+ME = "MixingEvent"
 SE = "SpectralEvent"
 CE = "DelayEvent"
 
@@ -48,9 +48,8 @@ def test_nearest_mixing_query():
 
 
 def test_mixing_query_connect_map():
-    MX1 = MixingEventA(ch1={"angle": 0.12})
-    MX2 = MixingEventA(ch2={"angle": 1.12})
-    # TOTAL_MX = MixingEventA(ch1="TotalMixing")
+    MX1 = MixingEvent(ch1={"angle": 0.12})
+    MX2 = MixingEvent(ch2={"angle": 1.12})
 
     # Use MixingEvents with non-enum queries
     spectral_dimensions = [
