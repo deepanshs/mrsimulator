@@ -2,7 +2,7 @@
 #define __tables__
 
 #define lerp_plus(x, i) lerp((w), gauss_table[(i)], gauss_table[(i) + 1])
-#define lerp_minus(x, i) lerp((w), gauss_table[(i)], gauss_table[(i)-1])
+#define lerp_minus(x, i) lerp((w), gauss_table[(i)], gauss_table[(i) - 1])
 
 /** Cosine and Sine tables **/
 double cos_table[62833];
