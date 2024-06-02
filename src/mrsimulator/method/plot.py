@@ -544,7 +544,7 @@ def _add_angle_and_phase(df):
     # Keep queries where at least one RotationQuery is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
-    # TODO: Need to ensure at least one channel, maybe check if queries is empty
+    # Need to ensure at least one channel, maybe check if queries is empty
     ch_keys = [f"ch{i+1}" for i in range(len(queries[0]))]
 
     angles = [
