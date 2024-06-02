@@ -50,7 +50,7 @@ def test_nearest_mixing_query():
 def test_mixing_query_connect_map():
     MX1 = MixingEventA(ch1={"angle": 0.12})
     MX2 = MixingEventA(ch2={"angle": 1.12})
-    TOTAL_MX = MixingEventA(ch1="TotalMixing")
+    # TOTAL_MX = MixingEventA(ch1="TotalMixing")
 
     # Use MixingEvents with non-enum queries
     spectral_dimensions = [
@@ -77,10 +77,10 @@ def test_mixing_query_connect_map():
     ]
     res = mixing_query_connect_map(spectral_dimensions)
     assert res == [
-        {"mixing_query_list": [MX1.query], "near_index": [0, 1]},
-        {"mixing_query_list": [MX2.query], "near_index": [2, 3]},
-        {"mixing_query_list": [MX1.query, MX2.query], "near_index": [3, 4]},
-        {"mixing_query_list": [MX2.query], "near_index": [4, 5]},
+        {"mixing_query_list": [MX1], "near_index": [0, 1]},
+        {"mixing_query_list": [MX2], "near_index": [2, 3]},
+        {"mixing_query_list": [MX1, MX2], "near_index": [3, 4]},
+        {"mixing_query_list": [MX2], "near_index": [4, 5]},
     ]
 
     # Combination of MixingEvents with dict queries and enum queries (total mixing)
@@ -89,11 +89,9 @@ def test_mixing_query_connect_map():
             events=[
                 # Connect all, should return no list
                 {"fraction": 0.5},  # 0
-                TOTAL_MX,
                 {"duration": 0.5},  # 1
                 # Just MX1
                 {"fraction": 0.5},  # 2
-                TOTAL_MX,
                 MX1,
                 {"duration": 0.5},  # 3
             ]
@@ -103,25 +101,22 @@ def test_mixing_query_connect_map():
                 # MX1 and MX2
                 {"fraction": 0.5},  # 4
                 MX1,
-                TOTAL_MX,
                 MX2,
                 {"duration": 0.5},  # 5
                 # MX1, MX2, MX1
                 {"fraction": 0.5},  # 6
                 MX1,
-                TOTAL_MX,
                 MX2,
                 MX1,
-                TOTAL_MX,
                 {"duration": 0.5},  # 7
             ]
         ),
     ]
     res = mixing_query_connect_map(spectral_dimensions)
     assert res == [
-        {"mixing_query_list": [MX1.query], "near_index": [2, 3]},
-        {"mixing_query_list": [MX1.query, MX2.query], "near_index": [4, 5]},
-        {"mixing_query_list": [MX1.query, MX2.query, MX1.query], "near_index": [6, 7]},
+        {"mixing_query_list": [MX1], "near_index": [2, 3]},
+        {"mixing_query_list": [MX1, MX2], "near_index": [4, 5]},
+        {"mixing_query_list": [MX1, MX2, MX1], "near_index": [6, 7]},
     ]
 
     error = "SpectralDimension requires at least one SpectralEvent"

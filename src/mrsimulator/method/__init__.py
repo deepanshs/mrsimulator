@@ -653,7 +653,7 @@ class Method(Parseable):
              'label',
              'duration',
              'fraction',
-             'query',
+             'channels',
              'magnetic_flux_density',
              'rotor_frequency',
              'rotor_angle',
@@ -671,7 +671,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            # "query",
+            "channels",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -684,7 +684,7 @@ class Method(Parseable):
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            # "query": MX,
+            "channels": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),
@@ -729,7 +729,7 @@ class Method(Parseable):
         return df
 
     def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
-        """Creates a diagram representing the method. By default, only parameters that
+        """Create a diagram representing the method. By default, only parameters that
         vary throughout the method are plotted. The figure can be finely adjusted using
         the matplotlib rcParams.
 

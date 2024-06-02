@@ -76,7 +76,7 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[MixingEventA, DelayEvent, SpectralEvent]] = []
+    events: List[Union[SpectralEvent, MixingEventA, DelayEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency"],

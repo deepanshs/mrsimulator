@@ -305,13 +305,12 @@ class MixingEventA(Parseable):
 
     ch1: Optional[RotationQuery] = Field(
         title="ch1",
-        default=None,
+        default=RotationQuery(),
         description=(
             "An optional RotationQuery object for imposing a rotation on "
             "channel index 0 of the method's channels array."
         ),
     )
-    # ch1: Union[RotationQuery, None]
     ch2: Optional[RotationQuery] = Field(
         title="ch2",
         default=None,

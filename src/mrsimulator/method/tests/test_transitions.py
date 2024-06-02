@@ -174,7 +174,6 @@ def test_total_mixing():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEventA(ch1={}),
                 ]
             ),
             SpectralDimension(
@@ -208,7 +207,7 @@ def test_no_mixing():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEventA(ch1={}),
+                    MixingEventA(),
                 ]
             ),
             SpectralDimension(

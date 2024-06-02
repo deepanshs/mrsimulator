@@ -1,9 +1,10 @@
 import numpy as np
 from mrsimulator.method import MixingEventA
-from mrsimulator.method.query import MixingEnum
 from mrsimulator.method.query import RotationQuery
 from mrsimulator.method.query import SymmetryQuery
 from mrsimulator.method.query import TransitionQuery
+
+# from mrsimulator.method.query import MixingEnum
 
 
 def test_SymmetryQuery():
@@ -108,28 +109,28 @@ def test_MixingEventA():
     assert obj3.json(units=True) == {"ch1": {"angle": "1.23 rad", "phase": "1.23 rad"}}
 
 
-def test_MixingEnum():
-    total_mix = MixingEnum["TotalMixing"]
-    assert total_mix.value == "TotalMixing"
-    assert total_mix.json(units=True) == "TotalMixing"
-    assert total_mix.json(units=False) == "TotalMixing"
+# def test_MixingEnum():
+#     total_mix = MixingEnum["TotalMixing"]
+#     assert total_mix.value == "TotalMixing"
+#     assert total_mix.json(units=True) == "TotalMixing"
+#     assert total_mix.json(units=False) == "TotalMixing"
 
-    no_mix = MixingEnum["NoMixing"]
-    assert no_mix.value == MixingEventA(
-        ch1={"angle": 0, "phase": 0},
-        ch2={"angle": 0, "phase": 0},
-        ch3={"angle": 0, "phase": 0},
-    )
-    assert no_mix.json(units=False) == dict(
-        ch1={"angle": 0, "phase": 0},
-        ch2={"angle": 0, "phase": 0},
-        ch3={"angle": 0, "phase": 0},
-    )
-    assert no_mix.json(units=True) == dict(
-        ch1={"angle": "0.0 rad", "phase": "0.0 rad"},
-        ch2={"angle": "0.0 rad", "phase": "0.0 rad"},
-        ch3={"angle": "0.0 rad", "phase": "0.0 rad"},
-    )
+#     no_mix = MixingEnum["NoMixing"]
+#     assert no_mix.value == MixingEventA(
+#         ch1={"angle": 0, "phase": 0},
+#         ch2={"angle": 0, "phase": 0},
+#         ch3={"angle": 0, "phase": 0},
+#     )
+#     assert no_mix.json(units=False) == dict(
+#         ch1={"angle": 0, "phase": 0},
+#         ch2={"angle": 0, "phase": 0},
+#         ch3={"angle": 0, "phase": 0},
+#     )
+#     assert no_mix.json(units=True) == dict(
+#         ch1={"angle": "0.0 rad", "phase": "0.0 rad"},
+#         ch2={"angle": "0.0 rad", "phase": "0.0 rad"},
+#         ch3={"angle": "0.0 rad", "phase": "0.0 rad"},
+#     )
 
-    # NOTE: This test will need to be updated as more enumerations are added
-    assert set(MixingEnum.allowed_enums()) == {"TotalMixing", "NoMixing"}
+#     # NOTE: This test will need to be updated as more enumerations are added
+#     assert set(MixingEnum.allowed_enums()) == {"TotalMixing", "NoMixing"}

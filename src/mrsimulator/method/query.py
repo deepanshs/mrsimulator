@@ -1,5 +1,5 @@
 # from copy import deepcopy
-from enum import Enum
+# from enum import Enum
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -286,46 +286,49 @@ class RotationQuery(Parseable):
         )
 
 
-class MixingEnum(Enum):
-    """Enumerations for defining common mixing queries. The enumerations are as follows:
+# class MixingEnum(Enum):
+#     """Enumeration for defining common mixing queries. The
+# enumerations are as follows:
 
-    Attributes
-    ----------
+#     Attributes
+#     ----------
 
-    TotalMixing:
-        Setting the query attribute to TotalMixing causes all transitions from the
-        previous spectral/delay event to connect to all transitions in the next
-        spectral/delay event. This is the default behavior when no mixing is defined
-        between events.
+#     TotalMixing:
+#         Setting the query attribute to TotalMixing causes all transitions from the
+#         previous spectral/delay event to connect to all transitions in the next
+#         spectral/delay event. This is the default behavior when no mixing is defined
+#         between events.
 
-    NoMixing:
-        Defines a query where transition mixing is not allowed between connecting
-        events.
+#     NoMixing:
+#         Defines a query where transition mixing is not allowed between connecting
+#         events.
 
-    Example
-    -------
+#     Example
+#     -------
 
-    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEventA` can be
-    set to the Enum itself or a string representing the Enum.
+#     The query attribute of the :py:class:`~mrsimulator.method.event.MixingEventA`
+# can be
+#     set to the Enum itself or a string representing the Enum.
 
-    >>> from mrsimulator.method import MixingEvenA
-    >>> from mrsimulator.method.query import MixingEnum
-    >>> # From Enum object
-    >>> total_mix = MixingEventA(ch1=MixingEnum.TotalMixing)
-    >>> no_mix = MixingEventA(ch1=MixingEnum.NoMixing)
-    >>> # From string representing Enum
-    >>> total_mix = MixingEventA(ch1="TotalMixing")
-    >>> no_mix = MixingEventA(ch1="NoMixing")
-    """
+#     >>> from mrsimulator.method import MixingEvenA
+#     >>> from mrsimulator.method.query import MixingEnum
+#     >>> # From Enum object
+#     >>> total_mix = MixingEventA(ch1=MixingEnum.TotalMixing)
+#     >>> no_mix = MixingEventA(ch1=MixingEnum.NoMixing)
+#     >>> # From string representing Enum
+#     >>> total_mix = MixingEventA(ch1="TotalMixing")
+#     >>> no_mix = MixingEventA(ch1="NoMixing")
+#     """
 
-    @classmethod
-    def allowed_enums(cls):
-        """Returns list of str corresponding to all valid enumerations"""
-        return [e.name for e in cls]
+#     @classmethod
+#     def allowed_enums(cls):
+#         """Returns list of str corresponding to all valid enumerations"""
+#         return [e.name for e in cls]
 
-    def json(self, **kwargs):
-        """Return a JSON-compliant serialization of the enumeration"""
-        return self.value if isinstance(self.value, str) else self.value.json(**kwargs)
+#     def json(self, **kwargs):
+#         """Return a JSON-compliant serialization of enumeration"""
+#         temp = self.value.json(**kwargs)
+#         return self.value if isinstance(self.value, str) else temp
 
-    TotalMixing: str = "TotalMixing"
-    NoMixing: RotationQuery = RotationQuery(angle=0, phase=0)
+#     TotalMixing: str = "TotalMixing"
+#     NoMixing: RotationQuery = RotationQuery(angle=0, phase=0)

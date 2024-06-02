@@ -1778,9 +1778,7 @@ below.
 
     events = [
         SpectralEvent(fraction=9 / 16, transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]),
-        MixingEventA(ch1="TotalMixing"),
         SpectralEvent(fraction=7 / 16, transition_queries=[{"ch1": {"P": [-1], "D": [0]}}]),
-        MixingEventA(ch1="TotalMixing"),
     ]
 
 Since only one transition was selected in each SpectralEvent, the expected (and
@@ -1852,7 +1850,7 @@ event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
 .. plot::
     :context: close-figs
 
-    MixingEventA(ch1="NoMixing")
+    MixingEventA()
 
 The MixingEventA object holds the rotation details in a MixingEventA object as
 a RotationQuery object associated with a ``channels`` attribute.  This is
@@ -1868,8 +1866,7 @@ illustrated in the sample code below.
     rot_mixing = MixingEventA(
             ch1=rot_query_90,
             ch2=rot_query_180
-        }
-    )
+        )
 
 
 p and d Echoes on Deuterium

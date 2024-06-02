@@ -18,7 +18,7 @@ def test_SSB_rotor_freq():
 
 def test_SSB_affine():
     mth = SSB2D(channels=["13C"], rotor_frequency=1200)
-    np.allclose(mth.affine_matrix, [1, -1, 0, 0])
+    assert np.allclose(mth.affine_matrix, [1, -1, 0, 1])
     assert SSB2D.parse_dict_with_units(mth.json()) == mth
 
 

@@ -76,7 +76,7 @@ class Cosy(BaseNamedMethod2D):
     def update(self, **kwargs):
         event_0 = [
             {"transition_queries": [{"ch1": {"P": [-1]}}]},
-            {"query": {"ch1": {"angle": np.pi / 2}}},
+            {"ch1": {"angle": np.pi / 2}},
         ]
         event_1 = [{"transition_queries": [{"ch1": {"P": [-1]}}]}]
 
