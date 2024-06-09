@@ -254,8 +254,8 @@ class TransitionQuery(Parseable):
         return all_combinations
 
 
-class RotationQuery(Parseable):
-    """Base RotationQuery class.
+class Rotation(Parseable):
+    """Base Rotation class.
 
     Attributes
     ----------
@@ -331,4 +331,4 @@ class RotationQuery(Parseable):
 #         return self.value if isinstance(self.value, str) else temp
 
 #     TotalMixing: str = "TotalMixing"
-#     NoMixing: RotationQuery = RotationQuery(angle=0, phase=0)
+#     NoMixing: Rotation = Rotation(angle=0, phase=0)

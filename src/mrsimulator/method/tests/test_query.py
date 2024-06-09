@@ -1,6 +1,6 @@
 import numpy as np
 from mrsimulator.method import MixingEvent
-from mrsimulator.method.query import RotationQuery
+from mrsimulator.method.query import Rotation
 from mrsimulator.method.query import SymmetryQuery
 from mrsimulator.method.query import TransitionQuery
 
@@ -50,27 +50,27 @@ def test_TransitionQuery():
     assert obj3.ch3 is None, "TransitionQuery ch3 not equal."
 
 
-def test_RotationQuery():
+def test_Rotation():
     # parse units
     test = {"angle": "90 deg", "phase": "5 deg"}
-    rf_obj = RotationQuery.parse_dict_with_units(test)
+    rf_obj = Rotation.parse_dict_with_units(test)
     assert rf_obj.name is None
     assert rf_obj.description is None
     assert rf_obj.label is None
-    assert rf_obj.angle == np.pi / 2.0, "RotationQuery angle not equal."
-    assert rf_obj.phase == 5 * np.pi / 180, "RotationQuery phase not equal."
+    assert rf_obj.angle == np.pi / 2.0, "Rotation angle not equal."
+    assert rf_obj.phase == 5 * np.pi / 180, "Rotation phase not equal."
     # ensure the default value is rad
     assert rf_obj.property_units["angle"] == "rad"
     assert rf_obj.property_units["phase"] == "rad"
 
     # direct initialization
     test = {"angle": 3.1415, "phase": 1.212}
-    rf_obj = RotationQuery(**test)
-    assert rf_obj.angle == 3.1415, "RotationQuery angle not equal."
-    assert rf_obj.phase == 1.212, "RotationQuery phase not equal."
+    rf_obj = Rotation(**test)
+    assert rf_obj.angle == 3.1415, "Rotation angle not equal."
+    assert rf_obj.phase == 1.212, "Rotation phase not equal."
 
     # Always serialize angle and phase
-    rf_obj = RotationQuery(angle=0, phase=0)
+    rf_obj = Rotation(angle=0, phase=0)
     assert rf_obj.json(units=False) == {"angle": 0, "phase": 0}
     assert rf_obj.json(units=True) == {"angle": "0.0 rad", "phase": "0.0 rad"}
 
@@ -82,8 +82,8 @@ def test_MixingEventA():
         "ch2": {"angle": "0.12 rad", "phase": "176 deg"},
     }
     obj1 = MixingEvent.parse_dict_with_units(test1)
-    rf1 = RotationQuery(angle=2.12, phase=-176 * np.pi / 180)
-    rf2 = RotationQuery(angle=0.12, phase=176 * np.pi / 180)
+    rf1 = Rotation(angle=2.12, phase=-176 * np.pi / 180)
+    rf2 = Rotation(angle=0.12, phase=176 * np.pi / 180)
     assert obj1.name is None
     assert obj1.description is None
     assert obj1.label is None
@@ -99,7 +99,7 @@ def test_MixingEventA():
     assert obj2.description is None
     assert obj2.label is None
     assert obj2.ch1 is None
-    assert obj2.ch2 == RotationQuery(angle=1.101, phase=1.61)
+    assert obj2.ch2 == Rotation(angle=1.101, phase=1.61)
     assert obj2.ch3 is None
 
     # JSON tests

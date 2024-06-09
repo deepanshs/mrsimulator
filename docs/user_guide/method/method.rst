@@ -143,9 +143,9 @@ explicit  object between such events. Inside MixingEvent
 objects is a :py:meth:`~mrsimulator.method.query.MixingEvent` object, which
 determines the coherence transfer amplitude between transitions. A
 MixingEvent object holds
-:py:meth:`~mrsimulator.method.query.RotationQuery` objects acting on specific
+:py:meth:`~mrsimulator.method.query.Rotation` objects acting on specific
 isotopes in the spin system. As before, the isotope upon which the
-RotationQuery objects act is determined by the ``channels`` attribute in the
+Rotation objects act is determined by the ``channels`` attribute in the
 Method object.
 
 In this guide to designing custom Method objects, we begin with a brief review
@@ -1853,16 +1853,16 @@ event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
     MixingEvent()
 
 The MixingEvent object holds the rotation details in a MixingEvent object as
-a RotationQuery object associated with a ``channels`` attribute.  This is
+a Rotation object associated with a ``channels`` attribute.  This is
 illustrated in the sample code below.
 
 .. plot::
     :context: close-figs
 
     import numpy as np
-    from mrsimulator.method.query import RotationQuery
-    rot_query_90 = RotationQuery(angle=np.pi/2, phase=0)
-    rot_query_180 = RotationQuery(angle=np.pi, phase=0)
+    from mrsimulator.method.query import Rotation
+    rot_query_90 = Rotation(angle=np.pi/2, phase=0)
+    rot_query_180 = Rotation(angle=np.pi, phase=0)
     rot_mixing = MixingEvent(
             ch1=rot_query_90,
             ch2=rot_query_180
@@ -1878,7 +1878,7 @@ contributions can be eliminated or separated based on their dependence on
 different transition symmetry functions.
 
 First, we implement two Method objects that follow the design of two
-experimental pulse sequences. In this effort, we use RotationQuery objects to
+experimental pulse sequences. In this effort, we use Rotation objects to
 select the desired transition pathways and obtain spectra with the desired
 average frequencies. Then, we implement two simpler Method objects that
 produce identical spectra and illustrate how :ref:`frequency
@@ -1918,8 +1918,8 @@ Below are two custom Method objects for simulating the Hahn and Solid Echo
 experiments. There is only one SpectralDimension object in each method, and
 the average frequency during each spectral dimension is derived from equal
 fractions of two SpectralEvent objects.  Between these two SpectralEvent
-objects is a MixingEvent with a RotationQuery object. The
-RotationQuery object is created with a :math:`\pi` rotation in the Hahn Echo
+objects is a MixingEvent with a Rotation object. The
+Rotation object is created with a :math:`\pi` rotation in the Hahn Echo
 method, and a :math:`\pi/2` rotation in the Solid Echo method.
 
 .. note ::

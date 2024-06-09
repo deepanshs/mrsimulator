@@ -14,7 +14,7 @@ from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import FREQ_ENUM_SHORTCUT
 from .frequency_contrib import FREQ_LIST_ALL
 from .frequency_contrib import FrequencyEnum
-from .query import RotationQuery
+from .query import Rotation
 from .query import TransitionQuery
 from .utils import D_symmetry_indexes
 from .utils import P_symmetry_indexes
@@ -285,15 +285,15 @@ class MixingEvent(Parseable):
     ----------
 
     ch1:
-        An optional RotationQuery object for the channel at index 0 of the method's
+        An optional Rotation object for the channel at index 0 of the method's
         channels list."
 
     ch2:
-        An optional RotationQuery object for the channel at index 1 of the method's
+        An optional Rotation object for the channel at index 1 of the method's
         channels list."
 
     ch3:
-        An optional RotationQuery object for the channel at index 2 of the method's
+        An optional Rotation object for the channel at index 2 of the method's
         channels list."
 
     Example
@@ -303,27 +303,27 @@ class MixingEvent(Parseable):
 
     """
 
-    ch1: Optional[RotationQuery] = Field(
+    ch1: Optional[Rotation] = Field(
         title="ch1",
-        default=RotationQuery(),
+        default=Rotation(),
         description=(
-            "An optional RotationQuery object for imposing a rotation on "
+            "An optional Rotation object for imposing a rotation on "
             "channel index 0 of the method's channels array."
         ),
     )
-    ch2: Optional[RotationQuery] = Field(
+    ch2: Optional[Rotation] = Field(
         title="ch2",
         default=None,
         description=(
-            "An optional RotationQuery object for imposing a rotation on "
+            "An optional Rotation object for imposing a rotation on "
             "channel index 0 of the method's channels array."
         ),
     )
-    ch3: Optional[RotationQuery] = Field(
+    ch3: Optional[Rotation] = Field(
         title="ch3",
         default=None,
         description=(
-            "An optional RotationQuery object for imposing a rotation on "
+            "An optional Rotation object for imposing a rotation on "
             "channel index 0 of the method's channels array."
         ),
     )
@@ -346,14 +346,12 @@ class MixingEvent(Parseable):
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = {
-            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
-        }
+        obj = {k: Rotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
 
     @property
-    def channels(self) -> List[RotationQuery]:
+    def channels(self) -> List[Rotation]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]
 
