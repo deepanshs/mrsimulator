@@ -16,7 +16,7 @@ Introduction sections :ref:`getting_started`,
 
 .. note::
 
-    Before writing your own custom Method, check if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
+    Before writing a custom Method, check if any of our pre-built methods in the :ref:`methods_library_documentation` can serve your needs.
 
 
 Overview
@@ -90,10 +90,6 @@ into three types: (1) :py:meth:`~mrsimulator.method.SpectralEvent`, (2)
 :py:meth:`~mrsimulator.method.MixingEvent`.  This ordered list of Event objects
 is used to select the desired transition pathways and determine their average
 frequency and complex amplitude in the SpectralDimension.
-
-.. warning::
-
-  DelayEvent objects are not available in version 0.7 of **mrsimulator**.
 
 SpectralEvent and DelayEvent objects define which transitions are
 observed during the event and under which transition-dependent frequency
@@ -270,7 +266,7 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :align: center
 
     Energy level diagrams of a spin :math:`I=1` nucleus  (left) and spin
-    :math:`I=3/2` nucleus (right). Arrows beginning at the initial state and end
+    :math:`I=3/2` nucleus (right). Arrows beginning at the initial state and ending
     at the final state represent transitions.   Transitions are labeled with
     their corresponding :math:`\text{p}_I` and :math:`\text{d}_I` transition
     symmetry function values.
@@ -280,13 +276,13 @@ that :math:`\text{d}_I = 0` for all transitions in a :math:`I=1/2` nucleus.
     :alt: figure
     :align: center
 
-    Energy level diagram of a spin :math:`I=5/2` nucleus. Arrows beginning at the initial state and end at the final state represent transitions.   Transitions are labeled with their corresponding :math:`\text{p}_I` and :math:`\text{d}_I` spin transition symmetry function values.
+    Energy level diagram of a spin :math:`I=5/2` nucleus. Arrows beginning at the initial state and ending at the final state represent transitions.   Transitions are labeled with their corresponding :math:`\text{p}_I` and :math:`\text{d}_I` spin transition symmetry function values.
 
 ----
 
 .. only:: html
 
-    For a summary on spin transition symmetry functions in NMR, click on the disclosure button below.
+    For a summary of spin transition symmetry functions in NMR, click on the disclosure button below.
 
 .. only::  not html
 
@@ -325,7 +321,7 @@ as defined in the code below.
 .. note::
     Python dictionaries can also be used to create and initialize **mrsimulator** objects.
     To do this, the dictionary must use the object's attribute names as the key strings and be
-    passed to a higher level object. Since a SpectralEvent object holds a list of
+    passed to a higher-level object. Since a SpectralEvent object holds a list of
     TransitionQuery objects, the above code could have been written as
 
     .. plot::
@@ -361,7 +357,7 @@ below.
     import matplotlib.pyplot as plt
     import numpy as np
 
-    # Create single Site and Spin System
+    # Create a single Site and Spin System
     deuterium = Site(
         isotope="2H",
         isotropic_chemical_shift=10,  # in ppm
@@ -408,7 +404,7 @@ below.
             )
         ],
     )
-    # Simulate spectra for all three method with spin system
+    # Simulate spectra for all three methods with spin system
     sim = Simulator(
         spin_systems=[deuterium_system],
         methods=[method_both_transitions, method_transition1, method_transition2],
@@ -582,8 +578,6 @@ in a given spin system using the function
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     [SymmetryPathway(
@@ -596,16 +590,16 @@ in a given spin system using the function
     )]
 
 
-.. Method also has a related function :py:meth:`~mrsimulator.Method.plot` for generating a symmetry
-.. pathway diagram of the method.
-..
-.. .. skip: next
-..
-.. .. plot::
-..     :context: close-figs
-..
-..     pathway_diagram = my_mqmas.plot()
-..     pathway_diagram.show()
+The method also has a related function :py:meth:`~mrsimulator.Method.plot` for generating a symmetry
+pathway diagram of the method.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    pathway_diagram = my_mqmas.plot()
+    pathway_diagram.show()
 
 
 Similarly, you can view the transition pathway that will be selected by your custom method in a given
@@ -619,8 +613,6 @@ below.
     pprint(my_mqmas.get_transition_pathways(SpinSystem(sites=[site1])))
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -651,7 +643,7 @@ selection rule for observable transitions is
     \right\}
     \text{ Detection Selection Rules.}
 
-These corresponds to the *single-spin
+These correspond to the *single-spin
 single-quantum transitions* labeled :math:`\hat{A}_1`,
 :math:`\hat{A}_2`, :math:`\hat{A}_3`, :math:`\hat{A}_4`, :math:`\hat{M}_1`,
 :math:`\hat{M}_2`, :math:`\hat{M}_3`, :math:`\hat{M}_4`, :math:`\hat{X}_1`,
@@ -664,7 +656,7 @@ in the energy level diagram below.
     :align: center
 
     Energy level diagram for three coupled spin :math:`I=1/2` nuclei. Arrows
-    beginning at the initial state and end at the final state represent the
+    beginning at the initial state and ending at the final state represents the
     single-spin single-quantum transitions.   Transitions are labeled with their
     corresponding single-spin :math:`\text{p}_i` transition symmetry function
     values.
@@ -777,8 +769,6 @@ in terms of the initial and final Zeeman eigenstate quantum numbers.
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     [|-0.5, -0.5, -0.5⟩⟨-0.5, -0.5, 0.5|, weight=(1+0j),
@@ -803,7 +793,7 @@ weakly coupled proton sites.
 Two-Spin Double-Quantum Transitions
 '''''''''''''''''''''''''''''''''''
 
-In this spin system there are six *two-spin double-quantum transitions* where
+In this spin system, there are six *two-spin double-quantum transitions* where
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = -2` and
 another six *two-spin double-quantum transitions* where
 :math:`\text{p}_{AMX} = \text{p}_{A} + \text{p}_{M} + \text{p}_{X} = +2`.  The
@@ -864,7 +854,7 @@ The assignment of transitions in the spectrum above are, from left to right, are
 
 As before, when this generic TransitionQuery is combined with the three-site
 SpinSystem object, the SymmetryQuery is expanded into an intermediate set of
-spin-system-specific symmetry queries illustrated in the table below.
+spin-system-specific symmetry queries are illustrated in the table below.
 
 .. list-table::
    :widths: 25 25 25 25
@@ -899,8 +889,6 @@ from each spin-system-specific symmetry query.
     pprint(method.get_transition_pathways(proton_system))
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -1007,8 +995,6 @@ the table below.
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     [|0.5, -0.5, -0.5⟩⟨-0.5, 0.5, 0.5|, weight=(1+0j),
@@ -1016,7 +1002,7 @@ the table below.
     |-0.5, -0.5, 0.5⟩⟨0.5, 0.5, -0.5|, weight=(1+0j)]
 
 As you can surmise from the examples, the attributes of SymmetryQuery, ``P`` and
-``D``, hold a list of single-spin transition symmetry function values, and the
+``D``, holds a list of single-spin transition symmetry function values, and the
 length of the list is the desired number of spins that are involved in the
 transition.
 
@@ -1663,8 +1649,6 @@ be obtained through the use of multiple SpectralEvent objects in  the
 SpectralDimension associated with the isotropic dimension, as shown in the
 code below.
 
-.. skip: next
-
 .. plot::
     :context: close-figs
 
@@ -1725,8 +1709,8 @@ previous discussion, you will find that the required value for the
 
 ``affine_matrix=[[1,0],[-8/25, 17/25]]``
 
-Mixing Queries
---------------
+MixingEvent
+-----------
 
 The amplitude of a transition pathway signal derives from the product
 of mixing amplitudes associated with each transfer between transitions in a
@@ -1753,7 +1737,7 @@ selected transitions in adjacent SpectralEvent objects. This is because, as
 default behavior, **mrsimulator** does a *total mixing*, i.e., connects all
 selected transitions in the two adjacent spectral or delay events. In other
 words, if the first of two adjacent SpectralEvent objects has three selected
-transitions, and the second has two selected transitions, then **mrsimulator**
+transitions and the second has two selected transitions, then **mrsimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
 passing from the first to second SpectralEvent objects.
 
@@ -1790,11 +1774,11 @@ However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-``"TotalMixing"`` event by inserting MixingEvent object with a certain rotation
-query.
+``"TotalMixing"`` event by inserting the MixingEvent object with rotation
+objects.
 
-Rotation Query
-''''''''''''''
+Rotation
+''''''''
 
 A rotation of :math:`\theta` about an axis defined by :math:`\phi`  in the
 :math:`x`-:math:`y` plane on a selected transition, :math:`\ketbra{I, m_f}{I,
@@ -1844,17 +1828,17 @@ Finally, another useful result is
 
 While it's not surprising that a rotation through an angle of zero does nothing
 to the transition, this turns out to help act as the opposite of a total mixing
-event, i.e., a ``"NoMixing"`` event. As a convenience, this is defined as a
-``"NoMixing"`` query and can be implemented with the code below.
+event, i.e., a no mixing event. This can be implemented with the code below.
 
 .. plot::
     :context: close-figs
 
-    MixingEvent()
+    MixingEvent()  # empty object defaults to a zero rotation on all channels.
 
 The MixingEvent object holds the rotation details in a MixingEvent object as
 a Rotation object associated with a ``channels`` attribute.  This is
 illustrated in the sample code below.
+
 
 .. plot::
     :context: close-figs
@@ -1903,7 +1887,7 @@ respectively.
 The Hahn Echo sequence, with :math:`\pi/2-\tau-\pi-t\rightarrow`, leads to the formation
 of a :math:`\text{p}_I` echo at :math:`t = \tau`.  The two transition pathways
 created by this experiment on a deuterium nucleus are illustrated beneath the
-sequence. Remember that a :math:`\pi` rotation is a special because it connects
+sequence. Remember that a :math:`\pi` rotation is special because it connects
 transitions with equal but opposite signs of :math:`\text{p}_I` while
 :math:`\text{d}_I` remains invariant.
 
@@ -1922,7 +1906,7 @@ objects is a MixingEvent with a Rotation object. The
 Rotation object is created with a :math:`\pi` rotation in the Hahn Echo
 method, and a :math:`\pi/2` rotation in the Solid Echo method.
 
-.. note ::
+.. note::
 
     The ``transition_queries`` attribute of SpectralEvent holds a list of
     TransitionQuery objects. Each TransitionQuery in the list applies to
@@ -2014,8 +1998,6 @@ code below for the ``hahn_echo`` method,
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     [|1.0⟩⟨0.0| ⟶ |-1.0⟩⟨0.0|, weight=(1+0j)
@@ -2029,8 +2011,6 @@ and for the ``solid_echo`` method with the code below.
     pprint(solid_echo.get_transition_pathways(deuterium_system))
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -2046,7 +2026,7 @@ solid-echo method prevents the undesired transition pathways with :math:`\Delta
 spectral event to undesired transitions in the second spectral event, which are
 eliminated by its symmetry query.
 
-Next, we simulate both methods, and perform a Gaussian line shape convolution on
+Next, we simulate both methods and perform a Gaussian line shape convolution on
 each output spectrum, and plot the datasets.
 
 .. plot::
@@ -2306,7 +2286,7 @@ Attribute Summaries
   * - magnetic_flux_density
     - ``float``
     - An *optional* float describing the macroscopic magnetic flux density of the applied
-      external magnetic field in tesla. For example, ``18.8`` tesla. The default value is
+      external magnetic field in Tesla. For example, ``18.8`` Tesla. The default value is
       ``None`` and takes the global magnetic flux density defined by the method's
       :attr:`~mrsimulator.Method.magnetic_flux_density` attribute.
 
@@ -2349,11 +2329,11 @@ Attribute Summaries
     - Type
     - Description
 
-  * - query
-    - ``dict`` or :py:class:`~mrsimulator.method.MixingEvent`
-    - A :py:class:`~mrsimulator.method.MixingEvent` object, or its ``dict`` representation,
+  * - :math:`\text{ch}i`
+    - ``dict`` or :py:class:`~mrsimulator.method.query.Rotation`
+    - A :py:class:`~mrsimulator.method.query.Rotation` object, or its ``dict`` representation,
       determines the complex amplitude of mixing between transitions in adjacent spectral
-      or delay events.
+      or delay events for the :math:`i^\text{th}` channel, where :math:`i \in [1, 2, 3]`.
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``
