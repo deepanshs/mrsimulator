@@ -135,14 +135,11 @@ object by the initial and final eigenstate quantum numbers of each transition.
 Between adjacent SpectralEvent or DelayEvent objects, **mrsimulator** defaults
 to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
-explicit  object between such events. Inside MixingEvent
-objects is a :py:meth:`~mrsimulator.method.query.MixingEvent` object, which
-determines the coherence transfer amplitude between transitions. A
-MixingEvent object holds
-:py:meth:`~mrsimulator.method.query.Rotation` objects acting on specific
-isotopes in the spin system. As before, the isotope upon which the
-Rotation objects act is determined by the ``channels`` attribute in the
-Method object.
+explicit :py:meth:`~mrsimulator.method.query.MixingEvent` object between such events.
+MixingEvent object holds :py:meth:`~mrsimulator.method.query.Rotation` objects in
+the attributes ``ch1``, ``ch2``, or ``ch3``, which act on specific isotopes defined
+by the ``channels`` attribute in Method. A Rotation object determines the coherence
+transfer amplitude between transitions.
 
 In this guide to designing custom Method objects, we begin with a brief review
 of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This

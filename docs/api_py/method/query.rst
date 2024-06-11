@@ -15,19 +15,7 @@ Query objects
     :members:
     :inherited-members: BaseModel
 
-.. _mixing_query_api:
-
-.. autoclass:: MixingEvent
-    :show-inheritance:
-    :members:
-    :inherited-members: BaseModel
-
 .. autoclass:: Rotation
-    :show-inheritance:
-    :members:
-    :inherited-members: BaseModel
-
-.. autoclass:: MixingEnum
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
