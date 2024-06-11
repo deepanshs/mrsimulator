@@ -65,7 +65,7 @@ class CustomAxes(plt.Axes):
         Maximum x value in x_data. Used to set xlim to (0, xmax)
 
     mix_ev:
-        True where event is MixingEvent, false otherwise
+        True where an event is MixingEvent, false otherwise
 
     """
 
@@ -536,7 +536,7 @@ def _add_angle_and_phase(df):
     # Keep queries where at least one RotationQuery is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
-    # TODO: Need to ensure at least one channel, maybe check if queries is empty
+    # Need to ensure at least one channel, maybe check if queries is empty
     ch_keys = [f"ch{i+1}" for i in range(len(queries[0]))]
 
     angles = [
@@ -594,7 +594,7 @@ def _offset_x_data(df, x_data):
 
     ev_groups = [(_type, sum(1 for _ in group)) for _type, group in groupby(df["type"])]
 
-    # Remove MixingEvents from end of sequence
+    # Remove MixingEvents from the end of a sequence
     if ev_groups[-1][0] == "MixingEvent":
         ev_groups.pop()
 
@@ -610,7 +610,7 @@ def _offset_x_data(df, x_data):
             offset = sum(item[ch] for item in df["angle"][0:gp__])
             offset = offset / 360.0 * MIXING_WIDTH
             offset_x[1] += offset
-            # Increment event indexer by number of MixingEvents in first group
+            # Increment event indexer by the number of MixingEvents in the first group
             df_idx += gp__
             ev_gp_copy.pop(0)  # popping shits on everything
 
@@ -628,7 +628,7 @@ def _offset_x_data(df, x_data):
                 if offset_x[x_idx] == offset_x[x_idx + 1]:
                     x_idx += 1
                 x_idx += (num * 2) - 1
-            # Increment event indexer by number of Events in group
+            # Increment event indexer by the number of Events in the group
             df_idx += num
 
         offset_x_per_channel[ch] = offset_x

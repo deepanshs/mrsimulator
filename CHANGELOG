@@ -6,7 +6,9 @@ What's new
 
 **Features**
 
-- New 2D sideband-sideband correlation simulations.
+- New feature supporting 2D sideband-sideband correlation simulations.
+- New feature supporting user defined two-angle orientations for powder averaging, with
+  added support of ASG triangular mesh integration.
 - Support for gamma angle averaging. `sim.config` now holds a new ``number_of_gamma_angles`` attribute.
 - Support for quadrupolar-shielding cross frequency interactions. `freq_contrib` includes
   new ``Quad_Shielding_cross_0``, ``Quad_Shielding_cross_2``, ``Quad_Shielding_cross_4`` literals.
@@ -15,8 +17,8 @@ What's new
   Sets of contributions can also be excluded by placing an exclamation mark in front of the string, for example ``"!Shielding"`` excludes shielding interactions.
 - New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra.
   See the examples gallery for more information.
-- Adds ``DelayEvent`` to the events library.
-- Support for python 3.11
+- A new ``DelayEvent`` added to the events library.
+- Support for python 3.11 and 3.12
 
 **Simulator**
 
@@ -37,7 +39,7 @@ What's new
 
 **Additional updates**
 
-- Dropped support for python 3.7
+- Dropped support for python 3.7 and 3.8
 
 
 v0.7.0

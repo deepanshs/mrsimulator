@@ -17,17 +17,16 @@ def generate_custom_sampling(alpha, beta, weight, triangle_mesh=False):
     hull = ConvexHull(points.T)
     vertex_indexes = hull.simplices
 
-    sampling = CustomSampling(
+    return CustomSampling(
         alpha=alpha, beta=beta, weight=weight, vertex_indexes=vertex_indexes
     )
-    return sampling
 
 
 def check_triangulation(triangle_mesh: bool, integration_volume: str):
     """Check if triangulation can be applied"""
     if triangle_mesh and integration_volume != "sphere":
         raise NotImplementedError(
-            "Triangulation of non sphere geometry is not implemented."
+            "Triangulation of non-sphere geometry is not implemented."
         )
 
 
@@ -111,11 +110,11 @@ def zcw_averaging(M: int, triangle_mesh=True, integration_volume="sphere"):
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
 
 
-# if __name__ == "__main__":
-#     sampling = zcw_averaging(M=21)
-#     rad2deg = 180.0 / np.pi
-#     nd_array = np.array(
-#         [sampling.alpha * rad2deg, sampling.beta * rad2deg, sampling.weight]
-#     ).T
-#     size = sampling.alpha.size
-#     np.savetxt(f"zcw{size}.cry", nd_array, header=str(size), fmt="%.6e")
+if __name__ == "__main__":
+    sampling = zcw_averaging(M=10, integration_volume="hemisphere", triangle_mesh=False)
+    # rad2deg = 180.0 / np.pi
+    nd_array = np.array([sampling.alpha, sampling.beta, sampling.weight]).T
+    size = sampling.alpha.size
+    np.savetxt(f"zcw_h_{size}.txt", nd_array, header=str(size), fmt="%.6e")
+
+    a, b, w = np.loadtxt(f"zcw_h_{size}.txt", skiprows=1, unpack=True)

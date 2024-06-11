@@ -19,7 +19,7 @@ def run_benchmark(args):
 
 
 def run_full_simulator(args):
-    """Read, run, and save output of .mrsim file"""
+    """Read, run, and save the output of .mrsim file"""
     sim, signal_processor, _ = load(args.input)
     sim.run(n_jobs=args.n_jobs)
     proc_data = []

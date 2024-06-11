@@ -260,7 +260,7 @@ class Method(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the Method object.
+            dict py_dict: A Python dict representation of the Method object.
 
         Returns:
             A :ref:`method_api` object.
@@ -313,7 +313,7 @@ class Method(Parseable):
         return mth
 
     def json(self, units=True) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object.
+        """Parse the class object to a JSON-compliant Python dictionary object.
 
         Args:
             units: If true, the attribute value is a physical quantity expressed as a
@@ -360,7 +360,7 @@ class Method(Parseable):
         """Return a list of symmetry pathways of the method.
 
         Args:
-            str symmetry_element: The  symmetry element, 'P' or 'D'.
+            str symmetry_element: The symmetry element, 'P' or 'D'.
 
         Returns:
             A list of :ref:`symmetry_pathway_api` objects.
@@ -522,11 +522,11 @@ class Method(Parseable):
         Args:
             trans1: ndarray of shape (2, n_sites) representing the starting transition,
                 where `n_sites` is the number of sites within the spin system. The two
-                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                entries at axis 0 correspond to initial (index 0) and final (index 1)
                 Zeeman energy states.
             trans2: ndarray of shape (2, n_sites) representing the target transition,
                 where `n_sites` is the number of sites within the spin system. The two
-                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                entries at axis 0 correspond to initial (index 0) and final (index 1)
                 Zeeman energy states.
             spins: ndarray of spin quantum numbers of the sites.
             theta: ndarray of rotation angle per site from the mixing event.
@@ -596,7 +596,7 @@ class Method(Parseable):
         ]
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
-        """Helper method for summary to reduce complexity"""
+        """Helper method for the summary to reduce complexity"""
         # Iterate through property and valid Event subclass for property
         for prop, valid in prop_dict.items():
             lst = [
@@ -614,12 +614,12 @@ class Method(Parseable):
     def summary(self, drop_constant_columns=True) -> pd.DataFrame:
         """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
-        can also ask to leave out attributes which remain constant throughout the
+        can also ask to leave out attributes that remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
 
         Args:
             (bool) drop_constant_columns:
-                Removes constant properties if True. Default is True.
+                Removes constant properties if True. The default is True.
 
         Returns:
             pd.DataFrame df:
@@ -634,9 +634,9 @@ class Method(Parseable):
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
             - (MixingQuery) query: MixingQuery object of the MixingEvent
-            - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
-            - (float) rotor_frequency: Rotor frequency during event in Hz
-            - (float) rotor_angle: Rotor angle during event converted to Degrees
+            - (float) magnetic_flux_density: Magnetic flux density during an event (T)
+            - (float) rotor_frequency: Rotor frequency during an event (Hz)
+            - (float) rotor_angle: Rotor angle during an event converted to Degrees
             - (FrequencyEnum) freq_contrib: Frequency
 
         Example:
@@ -678,7 +678,7 @@ class Method(Parseable):
             "d",
         ]
 
-        # Properties which can accessed by getattr()
+        # Properties that can accessed by getattr()
         prop_dict = {
             "label": (CD, SP, MX),
             "duration": CD,
@@ -693,7 +693,7 @@ class Method(Parseable):
         # Create the DataFrame
         df = pd.DataFrame()
 
-        # Populate columns which cannot be calculated from iteration
+        # Populate columns that cannot be calculated from iteration
         df["type"] = [
             ev.__class__.__name__
             for dim in self.spectral_dimensions
@@ -728,20 +728,20 @@ class Method(Parseable):
         return df
 
     def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
-        """Creates a diagram representing the method. By default, only parameters which
-        vary throughout the method are plotted. Figure can be finley adjusted using
-        matplotlib rcParams.
+        """Creates a diagram representing the method. By default, only parameters that
+        vary throughout the method are plotted. The figure can be finely adjusted using
+        the matplotlib rcParams.
 
         Args:
             DataFrame df:
-                DataFrame to plot data from. By default DataFrame is calculated from
-                summary() and will show only parameters which vary throughout the
+                DataFrame to plot data from. By default, DataFrame is calculated from
+                summary() and will show only parameters that vary throughout the
                 method plus 'p' symmetry pathway and 'd' symmetry pathway if it is not
                 none or defined
 
             bool include_legend:
-                Optional argument to include a key for event colors. Default is False
-                and no key will be included in figure
+                Optional argument to include a key for event colors. The default is
+                False and no key will be included in the figure
 
         Returns:
             matplotlib.pyplot.figure

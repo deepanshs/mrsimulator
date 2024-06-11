@@ -18,7 +18,7 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 ON_FAIL_MESSAGE = (
-    "The length of the transition query symmetry elements cannot exceed than the "
+    "The length of the transition query symmetry elements cannot exceed the "
     "number of channels."
 )
 
@@ -77,7 +77,7 @@ class SymmetryQuery(Parseable):
         validate_assignment = True
 
     def query_combination(self, symmetry, n_site_at_channel_id):
-        """Combination of symmetry query based on the number of sites in given channel.
+        """Combination of symmetry query based on the number of sites in a channel.
 
         Args:
             (str) symmetry: The symmetry element, 'P' or 'D'.
@@ -111,15 +111,15 @@ class TransitionQuery(Parseable):
     ----------
 
     ch1:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 0 of the method's channels array."
 
     ch2:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 1 of the method's channels array."
 
     ch3:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 2 of the method's channels array."
 
     Example
@@ -174,8 +174,8 @@ class TransitionQuery(Parseable):
         """Combinations of TransitionQuery based on the number of sites per channel.
 
         Args:
-            (list) isotopes: List of isotope symbols, ['29Si , '13C', '13C', '1H'].
-            (int) channels: List of method channels, ['29Si , '13C'].
+            (list) isotopes: List of isotope symbols, ['29Si, '13C', '13C', '1H'].
+            (int) channels: List of method channels, ['29Si, '13C'].
         """
         iso_dict = get_iso_dict(channels=channels, isotopes=isotopes)
         sites_per_channel = [
@@ -235,7 +235,7 @@ class TransitionQuery(Parseable):
 
         all_combinations = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
 
-        # set missing channel isotope query to nan for non P query
+        # set missing channel isotope query to nan for non-P query
         value = 0 if symmetry == "P" else np.nan
         missing_ch = self._get_missing_channel_isotope(isotopes, channels)
         for ch in missing_ch:
@@ -293,13 +293,16 @@ class MixingQuery(Parseable):
     ----------
 
     ch1:
-        An optional RotationQuery object for channel at index 0 of method's channels."
+        An optional RotationQuery object for the channel at index 0 of the method's
+        channels list."
 
     ch2:
-        An optional RotationQuery object for channel at index 1 of method's channels."
+        An optional RotationQuery object for the channel at index 1 of the method's
+        channels list."
 
     ch3:
-        An optional RotationQuery object for channel at index 2 of method's channels."
+        An optional RotationQuery object for the channel at index 2 of the method's
+        channels list."
 
     Example
     -------
@@ -345,7 +348,7 @@ class MixingQuery(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the Method object.
+            dict py_dict: A Python dict representation of the Method object.
 
         Returns:
             A :ref:`method_api` object.
@@ -370,12 +373,14 @@ class MixingEnum(Enum):
     ----------
 
     TotalMixing:
-        Setting query attribute to TotalMixing causes all transitions in one spectral
-        event to all other transitions. This is the same behavior when no MixingEvent
-        is defined between SpectralEvents.
+        Setting the query attribute to TotalMixing causes all transitions from the
+        previous spectral/delay event to connect to all transitions in the next
+        spectral/delay event. This is the default behavior when no mixing is defined
+        between events.
 
     NoMixing:
-        Defines mixing query where no pathways connect
+        Defines a query where transition mixing is not allowed between connecting
+        events.
 
     Example
     -------

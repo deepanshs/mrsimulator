@@ -129,7 +129,7 @@ class BaseEvent(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """Parse the physical quantities of an Event object from a python dictionary
+        """Parse the physical quantities of an Event object from a Python dictionary
         object.
 
         Args:
@@ -139,7 +139,7 @@ class BaseEvent(Parseable):
         return super().parse_dict_with_units(py_dict_copy)
 
     def dict(self, **kwargs) -> dict:
-        """Return a JSON compliant dictionary of the instance of the event."""
+        """Return a JSON-compliant dictionary of the instance of the event."""
         py_dict = super().dict()
         py_dict["freq_contrib"] = [
             fq.value if isinstance(fq, FrequencyEnum) else fq
@@ -225,7 +225,7 @@ class SpectralEvent(BaseEvent):
 class DelayEvent(BaseEvent):
     r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
-    event contribute to the spectrum as complex amplitude modulations.
+    event contributes to the spectrum as complex amplitude modulations.
 
     Attributes
     ----------
@@ -296,7 +296,8 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
 
     @validator("query", pre=True, always=True)
     def validate_query(cls, v, **kwargs):
-        """Validator which tries to convert query to a MixingEnum if query is string"""
+        """Validator which tries to convert the query to a MixingEnum if the query is
+        a string"""
         if isinstance(v, str):
             if v in MixingEnum.allowed_enums():
                 v = MixingEnum[v]
@@ -315,7 +316,7 @@ class MixingEvent(Parseable):  # TransitionMixingEvent
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the MixingEvent object.
+            dict py_dict: A Python dict representation of the MixingEvent object.
 
         Returns:
             A MixingEvent.

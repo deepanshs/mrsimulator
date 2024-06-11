@@ -56,7 +56,7 @@ class Simulator(Parseable):
 
     methods: A list of :ref:`method_api` or equivalent dict objects (optional).
         A list of :ref:`method_api`  or equivalent dict objects representing an NMR
-        methods. The default value is an empty list.
+        method. The default value is an empty list.
 
         Example
         -------
@@ -146,7 +146,7 @@ class Simulator(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A required python dict object.
+            dict py_dict: A required Python dict object.
 
         Returns:
             A :ref:`simulator_api` object.
@@ -212,7 +212,7 @@ class Simulator(Parseable):
         isotopes is returned instead.
 
         Args:
-            float spin_I: An optional spin quantum number. The valid input are the
+            float spin_I: An optional spin quantum number. The valid input is the
                 multiples of 0.5.
             bool symbol: If true, return a list of str with isotope symbols.
 
@@ -364,7 +364,7 @@ class Simulator(Parseable):
             method_index: An integer or a list of integers. If provided, only the
                 simulations corresponding to the methods at the given index/indexes
                 will be computed. The default is None, `i.e.`, the simulation for
-                all method will be computed.
+                all methods will be computed.
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
                 otherwise, as a `ndarray
@@ -480,7 +480,7 @@ class Simulator(Parseable):
 
         Args:
             dict py_dict: Dictionary object.
-            bool parse_units: If true, parse quantity from string.
+            bool parse_units: If true, parse quantity from a string.
         """
         return (
             Simulator.parse_dict_with_units(py_dict)

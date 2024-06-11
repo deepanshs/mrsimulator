@@ -18,7 +18,7 @@ def wrap_between_pi(a: float) -> float:
 
 def combine_euler_angles(euler_angles: list) -> tuple:
     """Takes a list of Euler angles as (alpha, beta, gamma) tuples and converts all
-    sequential rotations to a single set of Euler angles. Uses ZYZ convention.
+    sequential rotations to a single set of Euler angles. Uses the ZYZ convention.
 
     Arguments:
         (list) euler_angles: List of Euler angles as (alpha, beta, gamma) tuples
@@ -36,7 +36,7 @@ def combine_euler_angles(euler_angles: list) -> tuple:
 
 
 def _angle_phase_to_euler_angles(angle: float, phase: float) -> tuple:
-    """Takes angle and phase of a mixing query and converts to a set of euler angles in
+    """Convert the angle and phase of a mixing query to a set of Euler angles in
     the ZYZ convention. The returned angles will be constrained between (-pi, pi]
 
     Args:
@@ -53,9 +53,9 @@ def _angle_phase_to_euler_angles(angle: float, phase: float) -> tuple:
 
 
 def _euler_angles_to_angle_phase(alpha: float, beta: float, gamma: float) -> tuple:
-    """Takes a set of euler angles in the ZYZ convention and converts them to a
+    """Takes a set of Euler angles in the ZYZ convention and converts them to a
     mixing angle and phase. Provided alpha and gamma should be opposite of each other,
-    otherwise a ValueError is raised since the rotation vector does not lie in the XY
+    otherwise, a ValueError is raised since the rotation vector does not lie in the XY
     plane.
 
     Args:
@@ -83,7 +83,7 @@ def _add_two_euler_angles(
     a1: float, b1: float, g1: float, a2: float, b2: float, g2: float
 ) -> tuple:
     """Adds two sets of euler angles -- (a1, b1, g1) and (a2, b2, g2) -- together.
-    Also checks for edge cases where gimbal lock would occur.
+    Also, check for edge cases where a gimbal lock would occur.
 
     If the result is the identity matrix, then beta = 0 and alpha, gamma are unbounded.
     As an arbitrary choice, alpha of pi/2 and gamma of -pi/2 are chosen.

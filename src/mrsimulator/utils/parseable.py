@@ -106,8 +106,8 @@ class Parseable(BaseModel):
 
     def reduced_dict(self, exclude={}) -> dict:
         """Returns a reduced dictionary representation of the class object by removing
-        all key-value pair corresponding to keys listed in the `exclude` argument, and
-        keys with value as None.
+        all key-value pairs corresponding to keys listed in the `exclude` argument, and
+        keys with a value of None.
 
         Args:
             exclude: A list of keys to exclude from the dictionary.
@@ -120,7 +120,7 @@ class Parseable(BaseModel):
         return self.json(exclude, units=False)
 
     def json(self, exclude={}, units=True) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object.
+        """Parse the class object to a JSON compliant Python dictionary object.
 
         Args:
             exclude: Set of keys that will be excluded from the result.

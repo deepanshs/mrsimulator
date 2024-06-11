@@ -145,7 +145,7 @@ def _traverse_dictionaries(instance, parent="spin_systems"):
 
 
 def _make_params_single_processor(params, process, index):
-    """Creates a LMFIT Parameters object for SignalProcessor operations involved in
+    """Creates an LMFIT Parameters object for SignalProcessor operations involved in
     spectrum fitting.
 
     Args:
@@ -171,7 +171,7 @@ def make_signal_processor_params(processors: list):
     """Parse the list of SignalProcessor objects for a list of LMFIT parameters.
 
     Args:
-        processors: List of SignalProcessor objects. The order of the list mush match
+        processors: List of SignalProcessor objects. The order of the list must match
             the order of the methods in the Simulator object.
     """
     processors = processors if isinstance(processors, list) else [processors]
@@ -324,15 +324,15 @@ def make_LMFIT_params(
         Simulator sim: Simulator object.
         list processors: List of SignalProcessor objects. The order must match the order
             of methods within the simulator object.
-        set include: set of keywords from the method object to include as a fitting
+        set include: Set of keywords from the method object to include as a fitting
             parameter. Default is {}.
 
-    The parameter name associated with the spin system within Simulator object is
+    The parameter name associated with the spin system within the Simulator object is
     generated using the following nomenclature- *sys_i_site_j_attribute1_attribute2*
     for attribute with signature ``sim.spin_systems[i].sites[j].attribute1.attribute2``
 
     Here, *sys_i* refers to the spin system at index *i*, *site_j* refers to the site at
-    index *j* with in the :math:i^\text{th} spin system, and *attribute1* and
+    index *j* within the :math:i^\text{th} spin system, and *attribute1* and
     *attribute2* are the site attributes.
 
     **For examples:**
@@ -391,7 +391,7 @@ def _update_simulator_from_LMFIT_params(params, sim: Simulator):
 
 
 def _update_processors_from_LMFIT_params(params, processors: list):
-    """Updates SignalProcessor operation arguments from a LMFIT Parameters object.
+    """Updates SignalProcessor operation arguments from an LMFIT Parameters object.
 
     Args:
         params: LMFIT Parameters object.
@@ -413,7 +413,7 @@ def _update_processors_from_LMFIT_params(params, processors: list):
 
 
 def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None):
-    """Update the mrsimulator Simulator and SignalProcessor objects from the lmfit
+    """Update the mrsimulator Simulator and SignalProcessor objects from the LMFIT
     Parameters obj
 
     Args:
@@ -438,8 +438,8 @@ def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None
 
 
 def _check_for_experiment_data(methods_list: list):
-    """Ensures all Method object in the passed list contain experimental data, otherwise
-    an ValueError is raised.
+    """Ensures all Method objects in the passed list contain experimental data,
+    otherwise, a ValueError is raised.
 
     Args:
         (list) methods_list: A list of Method objects
@@ -452,7 +452,7 @@ def _check_for_experiment_data(methods_list: list):
 
     if no_exp:  # At least one item in the list
         raise ValueError(
-            f"No experimental data found for method at index {no_exp}. "
+            f"No experimental data found for the method at index {no_exp}. "
             "Attach an experimental dataset to each method before fitting."
         )
 
@@ -506,7 +506,7 @@ def LMFIT_min_function(
 
 
 def bestfit(sim: Simulator, processors: list = None):
-    """Return a list of best fit spectrum ordered relative to the methods in the
+    """Return a list of best-fit spectrum ordered relative to the methods in the
     simulator object.
 
     Args:
@@ -532,7 +532,7 @@ def add_csdm_dvs(data):
 
 
 def residuals(sim: Simulator, processors: list = None):
-    """Return a list of residuals corresponding to the best fit spectrum. The list is
+    """Return a list of residuals corresponding to the best-fit spectrum. The list is
     based on the order of methods in the simulator object.
 
     Args:
@@ -595,8 +595,8 @@ def _generate_distribution_spectrum(
     processor: sp.SignalProcessor = None,
 ) -> cp.CSDM:
     """Helper function for generating a spectrum from a set of LMfit Parameters and
-    and arguments for defining the grid, kernel, etc. The other functions used in least-
-    squares minimization use this function to reduce code overlap.
+    and arguments for defining the grid, kernel, etc. The other functions used in the
+    least-squares minimization uses this function to reduce code overlap.
 
     Arguments:
         (Parameters) params: The LMfit parameters object holding parameters used during

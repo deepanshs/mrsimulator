@@ -28,7 +28,7 @@ class Isotope(BaseModel):
     ----------
 
     symbol: str (required)
-        The isotope symbol given as the atomic number followed by the atomic symbol.
+        The isotope symbol is given as the atomic number followed by the atomic symbol.
 
     Example
     -------
@@ -94,7 +94,7 @@ class Isotope(BaseModel):
                 f"Cannot copy from unrecognized isotope symbol `{copy_from}`"
             )
 
-        # Grab copied isotope attributes if copy from, otherwise default attributes
+        # Grab copied isotope attributes if copy_from, otherwise default attributes
         kwargs_new = (
             get_isotope_dict(copy_from)
             if copy_from is not None
@@ -102,7 +102,7 @@ class Isotope(BaseModel):
         )
         kwargs_new.update(kwargs)
 
-        # Validate the new isotope attributes, then add to lookup dictionary
+        # Validate the new isotope attributes, then add them to the lookup dictionary
         _validate_isotope_kwargs(kwargs_new)
         cls.custom_isotope_data[symbol] = kwargs_new
 
@@ -166,7 +166,7 @@ class Isotope(BaseModel):
             float B0: magnetic field strength in T
 
         Returns:
-            float: larmor frequency in MHz
+            float: Larmor frequency in MHz
 
         Example
         -------
@@ -178,7 +178,8 @@ class Isotope(BaseModel):
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:
-    """Get the intrinsic properties of isotope with symbol isotope_symbol as a dict"""
+    """Get the intrinsic properties of the isotope with symbol isotope_symbol as a
+    dict"""
     if isotope_symbol not in get_all_isotope_symbols():
         raise Exception(f"Isotope symbol `{isotope_symbol}` not recognized.")
 
@@ -201,7 +202,7 @@ def get_all_isotope_symbols() -> list:
 
 def _validate_isotope_kwargs(iso_dict: dict) -> None:
     """Ensure the attributes in the passed dictionary are within allowed bounds"""
-    # Check for spin integer or half integer
+    # Check for spin integer or half-integer
     sm = iso_dict["spin_multiplicity"]
     if not isinstance(sm, int) or sm <= 1:
         raise ValueError(
