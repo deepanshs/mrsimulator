@@ -340,7 +340,7 @@ class MixingEvent(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A Python dict representation of the Method object.
+            dict py_dict: A Python dict representation of the MixingEvent object.
 
         Returns:
             A :ref:`method_api` object.

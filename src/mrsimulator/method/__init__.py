@@ -598,7 +598,7 @@ class Method(Parseable):
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
         """Helper method for the summary to reduce complexity"""
-        # Iterate through the property and valid Event subclass for property
+        # Iterate through property and valid Event subclass for property
         for prop, valid in prop_dict.items():
             lst = [
                 getattr(ev, prop) if ev.__class__.__name__ in valid else np.nan
@@ -634,7 +634,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingEvent) query: MixingEvent object of the MixingEvent
+            - (Rtotaion) channels: Rotation object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during an event (T)
             - (float) rotor_frequency: Rotor frequency during an event (Hz)
             - (float) rotor_angle: Rotor angle during an event converted to Degrees
@@ -729,7 +729,7 @@ class Method(Parseable):
         return df
 
     def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
-        """Create a diagram representing the method. By default, only parameters that
+        """Creates a diagram representing the method. By default, only parameters that
         vary throughout the method are plotted. The figure can be finely adjusted using
         the matplotlib rcParams.
 

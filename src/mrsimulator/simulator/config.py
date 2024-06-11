@@ -63,15 +63,15 @@ class CustomSampling(BaseModel):
     def save(
         self, filename: str, target: StrType = StrType.default, units: str = "rad"
     ):
-        # if units == 'rad':
-        #     fn = rad_to_deg
+        if units == "rad":
+            array = np.array([self.alpha, self.beta, self.weight])
         if units == "deg":
             fn = rad_to_deg
-
-        array = np.array([fn(self.alpha), fn(self.beta), self.weight])
-        header = str(array.shape[1]) if target == StrType.simpson else None
+            array = np.array([fn(self.alpha), fn(self.beta), self.weight])
+        header = (
+            str(array.shape[1]) if target == StrType.simpson else "alpha beta gamma"
+        )
         np.savetxt(filename, array.T, header=header)
-        print(f"Saved angular coordinates in units of {units} to {filename}")
 
 
 class ConfigSimulator(Parseable):
