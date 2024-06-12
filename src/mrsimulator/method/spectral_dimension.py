@@ -76,7 +76,7 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[MixingEvent, DelayEvent, SpectralEvent]] = []
+    events: List[Union[SpectralEvent, MixingEvent, DelayEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency"],
@@ -109,7 +109,7 @@ class SpectralDimension(Parseable):
 
     @validator("events", pre=True, always=True)
     def validate_events(v, **kwargs):
-        """Ensure at least one spectralEvent and warn is the sum of fraction in
+        """Ensure at least one spectralEvent and warn is the sum of fractions in
         SpectralEvents is not 1."""
         if v != []:
             new_v = [

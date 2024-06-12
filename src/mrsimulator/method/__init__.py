@@ -301,7 +301,8 @@ class Method(Parseable):
             for ev in dim["events"]:
                 shared_keys = set(ev.keys()).intersection(glb_keys)
                 for k in glb:
-                    if k not in shared_keys and "query" not in ev:  # Skip MixingEvent
+                    is_mixing = np.any([f"ch{i}" in ev for i in range(1, 4)])
+                    if k not in shared_keys and not is_mixing:  # Skip MixingEvent
                         ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
@@ -633,7 +634,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingQuery) query: MixingQuery object of the MixingEvent
+            - (Rtotaion) channels: Rotation object of the MixingEvent
             - (float) magnetic_flux_density: Magnetic flux density during an event (T)
             - (float) rotor_frequency: Rotor frequency during an event (Hz)
             - (float) rotor_angle: Rotor angle during an event converted to Degrees
@@ -652,7 +653,7 @@ class Method(Parseable):
              'label',
              'duration',
              'fraction',
-             'query',
+             'channels',
              'magnetic_flux_density',
              'rotor_frequency',
              'rotor_angle',
@@ -670,7 +671,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            "query",
+            "channels",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -683,7 +684,7 @@ class Method(Parseable):
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            "query": MX,
+            "channels": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),

@@ -217,7 +217,7 @@ class ConfigSimulator(Parseable):
 
 
 def rad_to_deg(vec):
-    """onvert radians to degrees"""
+    """Convert radians to degrees"""
     return vec * 180.0 / np.pi
 
 

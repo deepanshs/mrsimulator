@@ -27,9 +27,9 @@ def build_2Q_method_full(delay):
                 reference_offset=0,
                 events=[
                     DelayEvent(duration=delay, transition_queries=[tq_plus_one]),
-                    MixingEvent(query={"ch1": {"angle": np.pi, "phase": 0}}),
+                    MixingEvent(ch1={"angle": np.pi, "phase": 0}),
                     DelayEvent(duration=delay, transition_queries=[tq_minus_one]),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2, "phase": 0}}),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": 0}),
                     SpectralEvent(fraction=1.0, transition_queries=[tq_2Q]),
                 ],
             )
@@ -54,7 +54,7 @@ def build_2Q_method_simplified(delay):
                         transition_queries=[tq_minus_one],
                         freq_contrib=["J"],
                     ),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2, "phase": 0}}),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": 0}),
                     SpectralEvent(fraction=1.0, transition_queries=[tq_2Q]),
                 ],
             )

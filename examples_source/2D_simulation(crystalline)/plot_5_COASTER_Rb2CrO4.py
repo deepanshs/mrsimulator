@@ -59,7 +59,7 @@ coaster = Method(
             label="$\\omega_1$ (CSA)",
             events=[
                 SpectralEvent(transition_queries=[{"ch1": {"P": [3], "D": [0]}}]),
-                MixingEvent(query={"ch1": {"angle": np.pi * 109.5 / 180, "phase": 0}}),
+                MixingEvent(ch1={"angle": np.pi * 109.5 / 180, "phase": 0}),
             ],
         ),
         # The last spectral dimension block is the direct-dimension

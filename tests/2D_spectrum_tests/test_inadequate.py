@@ -34,7 +34,7 @@ def setup_simulator_inadequate():
                         freq_contrib=["J"],
                         transition_queries=[{"ch1": {"P": [-1]}}],
                     ),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2, "phase": 0.0}}),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": 0.0}),
                     SpectralEvent(
                         fraction=1.0, transition_queries=[{"ch1": {"P": [-1, -1]}}]
                     ),
@@ -46,9 +46,7 @@ def setup_simulator_inadequate():
                 reference_offset=0,
                 label="1Q frequency",
                 events=[
-                    MixingEvent(
-                        query={"ch1": {"angle": np.pi / 2, "phase": np.pi / 2}}
-                    ),
+                    MixingEvent(ch1={"angle": np.pi / 2, "phase": np.pi / 2}),
                     SpectralEvent(
                         fraction=1.0, transition_queries=[{"ch1": {"P": [-1]}}]
                     ),

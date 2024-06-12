@@ -120,7 +120,7 @@ shifting_d = Method(
                     transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Quad1_2"],
                 ),
-                MixingEvent(query="NoMixing"),
+                MixingEvent(),
             ],
         ),
         SpectralDimension(

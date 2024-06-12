@@ -9,7 +9,8 @@ from matplotlib.patches import Rectangle
 from matplotlib.ticker import FixedLocator
 from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import NullLocator
-from mrsimulator.method.query import MixingEnum
+
+# from mrsimulator.method.query import MixingEnum
 
 __author__ = "Matthew D. Giammar"
 __email__ = "giammar.7@buckeyemail.osu.edu"
@@ -18,7 +19,8 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 # NOTE: Matplotlib should automatically generate new colors when none specified
 DURATION_WIDTH = 0.5  # Width of one DelayEvent
 SPECTRAL_MULTIPLIER = 0.8  # Width multiplier for all SpectralEvents
-MIXING_WIDTH = 0.25  # angle of 360 degrees
+MIXING_WIDTH = 0.175  # angle of 360 degrees
+MIN_WIDTH = 0.0005
 DEFAULT_FONT_SIZE = 9
 MAX_SYMMETRY_TICKS = 5  # Maximum number of ticks allowed on symmetry plot, always odd
 COLORS = {
@@ -233,12 +235,14 @@ class CustomAxes(plt.Axes):
         self.margins(y=ymargin)
         self.tick_params(axis="both", labelsize=DEFAULT_FONT_SIZE)
 
-    def _add_rect_with_label(self, x0, x1, label, rect_kwargs, anno_kwargs={}):
+    def _add_rect_with_label(
+        self, x0, x1, label, rect_kwargs, anno_kwargs={}, height_ratio=1.0
+    ):
         """Add a rectangle between x0 and x1 on ax representing event"""
         # [height, color, alpha] required in rect_kwargs
         bottom, top = self.get_ylim()
         if "height" not in rect_kwargs:
-            rect_kwargs["height"] = top - bottom
+            rect_kwargs["height"] = (top - bottom) * height_ratio
 
         if "alpha" not in rect_kwargs:
             rect_kwargs["alpha"] = 0.2
@@ -396,7 +400,7 @@ class SequenceDiagram(CustomAxes):
         # Format to one decimal place if float, otherwise no decimal places
         angle = "{1:0.{0}f}".format(int(not float(ta).is_integer()), ta)
         phase = "{1:0.{0}f}".format(int(not float(p).is_integer()), p)
-        return (f"({angle}, {phase})", ta / 360 * MIXING_WIDTH)
+        return f"({angle}, {phase})", max(ta / 360 * MIXING_WIDTH, MIN_WIDTH)
 
     def _plot_spec_dim_lines(self, df, ev_groups):
         """Adds lines and labels denoting spectral dimensions"""
@@ -416,7 +420,9 @@ class SequenceDiagram(CustomAxes):
                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                     x0 = x_data[x_idx]
                     if df["type"][df_idx + j] == "MixingEvent":
-                        x0 += sum(df["angle"][df_idx:j]) / 360.0 * MIXING_WIDTH
+                        x0 += max(
+                            sum(df["angle"][df_idx:j]) / 360.0 * MIXING_WIDTH, MIN_WIDTH
+                        )
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
                     spec_dim_idx += 1
                 x_idx += 1
@@ -436,7 +442,7 @@ class SequenceDiagram(CustomAxes):
             # Total angle / 360 * MIXING_WIDTH
             # Get last 'n_end_mix' events
             offset = sum(item[self.channel] for item in df["angle"][-n_end_mix:])
-            offset = offset / 360 * MIXING_WIDTH
+            offset = max(offset / 360 * MIXING_WIDTH, MIN_WIDTH)
             self.x_data[-2] -= offset
 
         self._plot_spec_dim_lines(df=df, ev_groups=ev_groups)
@@ -481,6 +487,7 @@ class SequenceDiagram(CustomAxes):
                         x0=self.x_data[x_idx],
                         x1=self.x_data[x_idx + 1],
                         label=df["label"][df_idx + j],
+                        height_ratio=0.6,
                         rect_kwargs=dict(
                             color=COLORS[df["type"][df_idx]],
                             alpha=0.2,
@@ -502,7 +509,7 @@ def _check_columns(df):
         "spec_dim_label",
         "duration",
         "fraction",
-        "query",
+        "channels",
         "p",
     ]
 
@@ -519,13 +526,14 @@ def _check_columns(df):
 
 def _add_angle_and_phase(df):
     """Add angle and phase columns to dataframe from mixing query"""
-    queries = np.array(
-        [
-            query.channels
-            for query in df["query"]
-            if query.__class__.__name__ == "MixingQuery"
-        ]
-    )
+    # queries = np.array(
+    #     [
+    #         item
+    #         for item in df["channels"]
+    #         if item.__class__.__name__ == "MixingEvent"
+    #     ]
+    # )
+    queries = np.array([item for item in df["channels"] if isinstance(item, list)])
 
     # No mixing events in method
     if queries.size == 0:
@@ -533,7 +541,7 @@ def _add_angle_and_phase(df):
         df["phase"] = [None] * len(df["type"])
         return
 
-    # Keep queries where at least one RotationQuery is not None
+    # Keep queries where at least one Rotation is not None
     # cannot use `is not None` in numpy arguments below
     queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
     # Need to ensure at least one channel, maybe check if queries is empty
@@ -608,7 +616,7 @@ def _offset_x_data(df, x_data):
         if ev_gp_copy[0][0] == "MixingEvent":
             gp__ = ev_gp_copy[0][1]
             offset = sum(item[ch] for item in df["angle"][0:gp__])
-            offset = offset / 360.0 * MIXING_WIDTH
+            offset = max(offset / 360.0 * MIXING_WIDTH, MIN_WIDTH)
             offset_x[1] += offset
             # Increment event indexer by the number of MixingEvents in the first group
             df_idx += gp__
@@ -620,7 +628,7 @@ def _offset_x_data(df, x_data):
             if _type == "MixingEvent":
                 up_lim_ = df_idx + num
                 offset = sum(item[ch] for item in df["angle"][df_idx:up_lim_])
-                offset = offset / 360.0 * MIXING_WIDTH
+                offset = max(offset / 360.0 * MIXING_WIDTH, MIN_WIDTH)
                 offset_x[x_idx] -= offset / 2
                 offset_x[x_idx + 1] += offset / 2
                 x_idx += 1
@@ -637,7 +645,7 @@ def _offset_x_data(df, x_data):
 
 
 def _make_normal_and_offset_x_data(df):
-    """Calculates proper x_data and returns normal and offset x_data"""
+    """Calculate proper x_data and returns normal and offset x_data"""
     x_data = _make_x_data(df)
 
     if len(x_data) == 0:
@@ -667,7 +675,7 @@ def _add_legend(fig):
 
 
 def _calculate_n_channels(df):
-    """Calculates the number of channels present in the method DataFrame"""
+    """Calculate the number of channels present in the method DataFrame"""
     if "MixingEvent" not in list(df["type"]):
         return 1
 
@@ -681,9 +689,9 @@ def plot(fig, df, channels, include_legend) -> plt.figure:
     # Remove all mixing enumeration mixing events from the dataframe
     # NOTE: This should be updated in v0.7.1 or v0.8 to include enumerations in the
     # plot
-    df = df.drop(
-        index=[i for i, q in enumerate(df["query"]) if isinstance(q, MixingEnum)]
-    )
+    # df = df.drop(
+    #     index=[i for i, q in enumerate(df["query"]) if isinstance(q, MixingEnum)]
+    # )
     df = df.reset_index(drop=True)
 
     mix_ev = np.array(df["type"] == "MixingEvent")

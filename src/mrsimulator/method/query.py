@@ -1,5 +1,5 @@
-from copy import deepcopy
-from enum import Enum
+# from copy import deepcopy
+# from enum import Enum
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -254,8 +254,8 @@ class TransitionQuery(Parseable):
         return all_combinations
 
 
-class RotationQuery(Parseable):
-    """Base RotationQuery class.
+class Rotation(Parseable):
+    """Base Rotation class.
 
     Attributes
     ----------
@@ -286,130 +286,49 @@ class RotationQuery(Parseable):
         )
 
 
-class MixingQuery(Parseable):
-    """MixingQuery class for querying transition mixing between events.
+# class MixingEnum(Enum):
+#     """Enumeration for defining common mixing queries. The
+# enumerations are as follows:
 
-    Attributes
-    ----------
+#     Attributes
+#     ----------
 
-    ch1:
-        An optional RotationQuery object for the channel at index 0 of the method's
-        channels list."
+#     TotalMixing:
+#         Setting the query attribute to TotalMixing causes all transitions from the
+#         previous spectral/delay event to connect to all transitions in the next
+#         spectral/delay event. This is the default behavior when no mixing is defined
+#         between events.
 
-    ch2:
-        An optional RotationQuery object for the channel at index 1 of the method's
-        channels list."
+#     NoMixing:
+#         Defines a query where transition mixing is not allowed between connecting
+#         events.
 
-    ch3:
-        An optional RotationQuery object for the channel at index 2 of the method's
-        channels list."
+#     Example
+#     -------
 
-    Example
-    -------
+#     The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent`
+# can be
+#     set to the Enum itself or a string representing the Enum.
 
-        >>> query = MixingQuery(ch1={"angle": 1.570796, "phase": 3.141593})
+#     >>> from mrsimulator.method import MixingEvenA
+#     >>> from mrsimulator.method.query import MixingEnum
+#     >>> # From Enum object
+#     >>> total_mix = MixingEvent(ch1=MixingEnum.TotalMixing)
+#     >>> no_mix = MixingEvent(ch1=MixingEnum.NoMixing)
+#     >>> # From string representing Enum
+#     >>> total_mix = MixingEvent(ch1="TotalMixing")
+#     >>> no_mix = MixingEvent(ch1="NoMixing")
+#     """
 
-    """
+#     @classmethod
+#     def allowed_enums(cls):
+#         """Returns list of str corresponding to all valid enumerations"""
+#         return [e.name for e in cls]
 
-    ch1: Optional[RotationQuery] = Field(
-        title="ch1",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
-    ch2: Optional[RotationQuery] = Field(
-        title="ch2",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
-    ch3: Optional[RotationQuery] = Field(
-        title="ch3",
-        default=None,
-        description=(
-            "An optional RotationQuery object for imposing a rotation on "
-            "channel index 0 of the method's channels array."
-        ),
-    )
+#     def json(self, **kwargs):
+#         """Return a JSON-compliant serialization of enumeration"""
+#         temp = self.value.json(**kwargs)
+#         return self.value if isinstance(self.value, str) else temp
 
-    class Config:
-        validate_assignment = True
-        extra = "forbid"
-
-    @classmethod
-    def parse_dict_with_units(cls, py_dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Method
-        object, where the physical quantity is expressed as a string with a number and
-        a unit.
-
-        Args:
-            dict py_dict: A Python dict representation of the Method object.
-
-        Returns:
-            A :ref:`method_api` object.
-        """
-        py_dict_copy = deepcopy(py_dict)
-        obj = {
-            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
-        }
-        py_dict_copy.update(obj)
-        return super().parse_dict_with_units(py_dict_copy)
-
-    @property
-    def channels(self) -> List[RotationQuery]:
-        """Returns an ordered list of all channels"""
-        return [self.ch1, self.ch2, self.ch3]
-
-
-class MixingEnum(Enum):
-    """Enumerations for defining common mixing queries. The enumerations are as follows:
-
-    Attributes
-    ----------
-
-    TotalMixing:
-        Setting the query attribute to TotalMixing causes all transitions from the
-        previous spectral/delay event to connect to all transitions in the next
-        spectral/delay event. This is the default behavior when no mixing is defined
-        between events.
-
-    NoMixing:
-        Defines a query where transition mixing is not allowed between connecting
-        events.
-
-    Example
-    -------
-
-    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent` can be
-    set to the Enum itself or a string representing the Enum.
-
-    >>> from mrsimulator.method import MixingEvent
-    >>> from mrsimulator.method.query import MixingEnum
-    >>> # From Enum object
-    >>> total_mix = MixingEvent(query=MixingEnum.TotalMixing)
-    >>> no_mix = MixingEvent(query=MixingEnum.NoMixing)
-    >>> # From string representing Enum
-    >>> total_mix = MixingEvent(query="TotalMixing")
-    >>> no_mix = MixingEvent(query="NoMixing")
-    """
-
-    @classmethod
-    def allowed_enums(cls):
-        """Returns list of str corresponding to all valid enumerations"""
-        return [e.name for e in cls]
-
-    def json(self, **kwargs):
-        """Return a JSON-compliant serialization of the enumeration"""
-        return self.value if isinstance(self.value, str) else self.value.json(**kwargs)
-
-    TotalMixing: str = "TotalMixing"
-    NoMixing: MixingQuery = MixingQuery(
-        ch1={"angle": 0, "phase": 0},
-        ch2={"angle": 0, "phase": 0},
-        ch3={"angle": 0, "phase": 0},
-    )
+#     TotalMixing: str = "TotalMixing"
+#     NoMixing: Rotation = Rotation(angle=0, phase=0)

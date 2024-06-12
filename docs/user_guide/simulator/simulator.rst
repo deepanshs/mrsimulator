@@ -287,7 +287,7 @@ number of gamma angles.
                 spectral_width=25000,
                 events=[
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query={"ch1": {"angle": np.pi / 2}}),
+                    MixingEvent(ch1={"angle": np.pi / 2}),
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
                 ]
         )],

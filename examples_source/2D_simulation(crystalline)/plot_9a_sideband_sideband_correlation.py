@@ -63,7 +63,7 @@ sideband_2d = Method(
                     transition_queries=[{"ch1": {"P": [-1]}}],
                     freq_contrib=["Shielding1_2"],
                 ),
-                MixingEvent(query="NoMixing"),
+                MixingEvent(),
             ],
         ),
         SpectralDimension(

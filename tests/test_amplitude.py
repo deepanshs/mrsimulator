@@ -156,7 +156,7 @@ def test_complex_pathway_weight():
                         SpectralEvent(
                             transition_queries=[{"ch1": {"P": [+1]}}], fraction=0
                         ),  # Dummy spectral event
-                        MixingEvent(query={"ch1": {"angle": np.pi, "phase": ph}}),
+                        MixingEvent(ch1={"angle": np.pi, "phase": ph}),
                         SpectralEvent(
                             transition_queries=[{"ch1": {"P": [-1]}}], fraction=1
                         ),
