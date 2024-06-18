@@ -243,7 +243,7 @@ class Simulator(Parseable):
         st = []
         for sys in self.spin_systems:
             st += sys.get_isotopes(spin_I, symbol=True)
-        st = np.unique(st)
+        st = np.unique(st).tolist()
         if not symbol:
             return [Isotope(symbol=item) for item in st]
         return list(st)

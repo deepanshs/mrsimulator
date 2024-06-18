@@ -12,7 +12,7 @@ def broadcast_dict_values(d, n_sites=None):
     Example:
     >>> d = {"foo": 1, "bar": [6, 7, 8, 9]}
     >>> broadcast_dict_values(d, 4)
-    {'foo': array([1, 1, 1, 1]), 'bar': array([6, 7, 8, 9])}
+    {'foo': [1, 1, 1, 1], 'bar': [6, 7, 8, 9]}
     """
     n_sites_dict = _check_dict_value_lengths(d)
     if n_sites is None:
@@ -21,9 +21,9 @@ def broadcast_dict_values(d, n_sites=None):
         raise ValueError("Length of lists in passed dict did not match `n_sites`")
 
     return {
-        key: np.ravel(np.asarray(val))
+        key: np.ravel(np.asarray(val)).tolist()
         if isinstance(val, (list, np.ndarray))
-        else np.full((n_sites), val)
+        else np.full((n_sites), val).tolist()
         for key, val in d.items()
     }
 
