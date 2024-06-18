@@ -58,7 +58,7 @@ class Transition(Parseable):
             >>> t1.p
             -1.0
         """
-        return self.P.sum()
+        return float(self.P.sum())
 
     @property
     def delta_m(self):
