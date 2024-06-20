@@ -4,7 +4,7 @@ on:
   push:
     branches: ['rc*']
   pull_request:
-    branches: ['rc*', 'mac*']
+    branches: ['rc*']
   release:
     types: [published]
 
@@ -83,7 +83,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      MACOSX_DEPLOYMENT_TARGET: "10.9"
+      MACOSX_DEPLOYMENT_TARGET: "11.1"
       CIBW_BUILD_VERBOSITY: "1"
       CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
@@ -120,7 +120,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-13
+          - os: macos-12
             name: mac 64-bit x86_64
             cibw:
               build: "cp3*"
@@ -177,12 +177,12 @@ jobs:
           python-version: "3.10"
           architecture: ${{ matrix.architecture }}
 
-      - name: customize mac-arm-64
-        if: contains(matrix.os, 'macos') && matrix.cibw.arch
-        run: |
-          sudo xcode-select -switch /Applications/Xcode_13.1.app
-          echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
+      # - name: customize mac-arm-64
+      #   if: contains(matrix.os, 'macos') && matrix.cibw.arch
+      #   run: |
+      #     sudo xcode-select -switch /Applications/Xcode_13.1.app
+      #     echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
+      #     echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
