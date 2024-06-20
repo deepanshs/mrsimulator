@@ -134,7 +134,7 @@ class TransitionPathway(TransitionList):
             >>> path.tolist()
             [0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5]
         """
-        return list(np.asarray([item.tolist() for item in self._list]).ravel())
+        return np.asarray([item.tolist() for item in self._list]).ravel().tolist()
 
 
 class SymmetryPathway(BaseModel):

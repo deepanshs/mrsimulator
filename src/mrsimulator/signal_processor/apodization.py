@@ -291,8 +291,8 @@ class TopHat(Apodization):
     >>> operation7= sp.apodization.TopHat(rising_edge = "-1 s", falling_edge = "1 s")
     """
 
-    rising_edge: Union[float, str, None] = -np.Inf
-    falling_edge: Union[float, str, None] = np.Inf
+    rising_edge: Union[float, str, None] = -np.inf
+    falling_edge: Union[float, str, None] = np.inf
     property_units: Dict = {"rising_edge": CONST, "falling_edge": CONST}
 
     @validator("rising_edge")
