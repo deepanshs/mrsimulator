@@ -83,7 +83,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      # MACOSX_DEPLOYMENT_TARGET: "11.1"
+      MACOSX_DEPLOYMENT_TARGET: "12.0"
       CIBW_BUILD_VERBOSITY: "1"
       CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
@@ -125,7 +125,7 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-14
+          - os: macos-latest
             name: mac 64-bit arm64
             cibw:
               arch: arm64
