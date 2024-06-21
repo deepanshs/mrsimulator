@@ -125,17 +125,17 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-13
+          - os: macos-latest
             name: mac 64-bit arm64
             cibw:
               arch: arm64
               build: "cp3*"
 
-          - os: ubuntu-latest
-            name: linux 64-bit x86_64
-            cibw:
-              build: "cp3*manylinux_x86_64"
-              manylinux_image: manylinux2014
+          # - os: ubuntu-latest
+          #   name: linux 64-bit x86_64
+          #   cibw:
+          #     build: "cp3*manylinux_x86_64"
+          #     manylinux_image: manylinux2014
 
           # - os: ubuntu-latest
           #   name: linux 32-bit i686
@@ -162,10 +162,10 @@ jobs:
           #   cibw:
           #     build: "pp*win32"
 
-          - os: windows-latest
-            name: windows 64-bit AMD64
-            cibw:
-              build: "cp3*win_amd64"
+          # - os: windows-latest
+          #   name: windows 64-bit AMD64
+          #   cibw:
+          #     build: "cp3*win_amd64"
 
     steps:
       - name: Checkout
@@ -200,23 +200,23 @@ jobs:
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
-          python -m pip install delocate
+          python -m pip install --upgrade delocate
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          python -m pip install auditwheel
+          python -m pip install --upgrade auditwheel
 
       - name: Install windows Dependencies
         if: startsWith(matrix.os, 'windows')
         run: |
-          python -m pip install delvewheel
+          python -m pip install --upgrade delvewheel
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade setuptools pip wheel cython
-          python -m pip install cibuildwheel
+          python -m pip install --upgrade cibuildwheel
 
       - name: show environment
         run: |
