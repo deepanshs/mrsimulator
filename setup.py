@@ -405,5 +405,6 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Topic :: Education",
         "Topic :: Scientific/Engineering :: Chemistry",
+        "Topic :: Scientific/Engineering :: Physics",
     ],
 )
