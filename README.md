@@ -134,7 +134,10 @@ If you use mrsimulator in your publication, please consider citing the following
 
 - Please use the GitHub citation tool to cite this repository. The tool in located in the About section under the `Cite this repository` category.
 
-- Srivastava D.J. and Grandinetti P.J. (2024) Rapid simulation of two-dimensional spectra with correlated anisotropic dimension. *J. Chem. Phys*. 160, 134104, https://doi.org/10.1063/5.0200042
+- Srivastava D.J. and Grandinetti P.J. (2024) Simulating multipulse NMR spectra of polycrystalline solids in the frequency domain. *J. Chem. Phys*. 160, 234110, https://doi.org/10.1063/5.0209887
+
+- Srivastava D.J., Baltisberger J.H and Grandinetti P.J. (2024) Rapid simulation of two-dimensional spectra with correlated anisotropic dimension. *J. Chem. Phys*. 160, 134104, https://doi.org/10.1063/5.0200042
+
 - Srivastava D.J., Vosegaard T, Massiot D, Grandinetti P.J. (2020) Core Scientific Dataset Model: A lightweight and portable model and file format for multi-dimensional scientific dataset. *PLOS ONE* 15(1): e0225953. https://doi.org/10.1371/journal.pone.0225953
 
 _Additionally, if you use lmfit for least-squares fitting, consider citing the lmfit package._ Zenodo. https://doi.org/10.5281/zenodo.4516651
