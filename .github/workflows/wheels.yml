@@ -125,7 +125,7 @@ jobs:
             cibw:
               build: "cp3*"
 
-          - os: macos-13
+          - os: macos-14
             name: mac 64-bit arm64
             cibw:
               arch: arm64
@@ -177,9 +177,10 @@ jobs:
           python-version: "3.10"
           architecture: ${{ matrix.architecture }}
 
-      # - name: customize mac-arm-64
-      #   if: contains(matrix.os, 'macos') && matrix.cibw.arch
-      #   run: |
+      - name: customize mac-arm-64
+        if: contains(matrix.os, 'macos') && matrix.cibw.arch
+        run: |
+          echo 'MACOSX_DEPLOYMENT_TARGET=14' >> "$GITHUB_ENV"
       #     sudo xcode-select -switch /Applications/Xcode_13.1.app
       #     echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
       #     echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
