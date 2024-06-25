@@ -27,7 +27,7 @@ def process_spectrum(method):
     sim.run()
 
     n_dim = len(method.spectral_dimensions)
-    unit = f"1 / Hz{n_dim}" is n_dim > 1 else "1 / Hz"
+    unit = f"1 / Hz{n_dim}" if n_dim > 1 else "1 / Hz"
     assert str(sim.methods[0].simulation.y[0].unit) == unit
 
     data = sim.methods[0].simulation.y[0].components[0]
