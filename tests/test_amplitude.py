@@ -26,7 +26,7 @@ def test_static_spinning_integral_amplitude():
     sim = pre_setup()
     sim.run()
     y_static = sim.methods[0].simulation.y[0].components[0].sum()
-    assert str(sim.methods[0].simulation.y[0].unit) == "Hz^-1"
+    assert str(sim.methods[0].simulation.y[0].unit) == "1 / Hz"
 
     sim.methods[0].spectral_dimensions[0].events[0].rotor_frequency = 1000  # in Hz
     sim.run()
