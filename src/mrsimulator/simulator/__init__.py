@@ -521,11 +521,13 @@ class Simulator(Parseable):
             if item.origin_offset != 0
         ]
 
+        n_dims = len(dim)
         dv = [
             {
                 "type": "internal",
                 "quantity_type": "scalar",
                 "numeric_type": "complex128",
+                "unit": f"Hz^-{n_dims}",
                 "components": [datum],
                 **self._get_dv_metadata(index),
             }
