@@ -1,7 +1,7 @@
 
 **Install conda**
 
-Skip this step if you already have miniconda or anaconda for python>=3.7 installed on
+Skip this step if you already have miniconda or anaconda for python >= |PY_VERSION| installed on
 your system.
 Download the latest version of conda on your operating system from either
 `miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ or
@@ -23,4 +23,4 @@ anaconda prompt, type the following to install the package dependencies.
 Because the core of the **mrsimulator** package is written in C, you will require a
 C-compiler to build and install the package. Download and install the Microsoft
 Visual C++ compiler from
-`Build Tools for Visual Studio <https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019>`_.
+`Build Tools for Visual Studio <https://visualstudio.microsoft.com/visual-cpp-build-tools/>`_.

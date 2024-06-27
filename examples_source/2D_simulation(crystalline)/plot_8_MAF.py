@@ -67,7 +67,7 @@ maf = Method(
                     rotor_angle=90 * np.pi / 180,  # in rads
                     transition_queries=[{"ch1": {"P": [-1], "D": [0]}}],
                 ),
-                MixingEvent(query="NoMixing"),
+                MixingEvent(),
             ],
         ),
         SpectralDimension(

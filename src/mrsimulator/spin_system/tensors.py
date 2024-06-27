@@ -19,7 +19,7 @@ class SymmetricTensor(Parseable):
     ----------
 
     zeta: float (optional).
-        The anisotropy parameter of the nuclear shielding tensor, in ppm, expressed
+        The anisotropy parameter of the nuclear shielding tensor, in ppm, is expressed
         using the Haeberlen convention. The default value is None.
 
         Example
@@ -29,7 +29,7 @@ class SymmetricTensor(Parseable):
         >>> shielding.zeta = 10
 
     Cq: float (optional).
-        The quadrupolar coupling constant, in Hz, derived from the electric field
+        The quadrupolar coupling constant, in Hz, is derived from the electric field
         gradient tensor. The default value is None.
 
         Example
@@ -39,7 +39,7 @@ class SymmetricTensor(Parseable):
         >>> efg.Cq = 10e6
 
     eta: float (optional).
-        The asymmetry parameter of the SymmetricTensor expressed using the Haeberlen
+        The asymmetry parameter of the SymmetricTensor is expressed using the Haeberlen
         convention. The default value is None.
 
         Example
@@ -134,7 +134,8 @@ class SymmetricTensor(Parseable):
         >>> angles = [(3.1415, 0, -3.1415), (1.5701, 1.5701, 1.5701)]
         >>> tensor.rotate(angles)
         """
-        # If tensor (alpha, beta, gamma) all initialized to None, then assume all zero
+        # If the tensor (alpha, beta, gamma) is all initialized to None, then assume
+        # all zero
         initial_angles = (
             self.alpha if self.alpha is not None else 0,
             self.beta if self.beta is not None else 0,
@@ -146,27 +147,6 @@ class SymmetricTensor(Parseable):
         self.alpha = alpha
         self.beta = beta
         self.gamma = gamma
-
-    # Deprecated
-    # def to_freq_dict(self, larmor_frequency: float) -> dict:
-    #     """
-    #     Serialize the SymmetricTensor object to a JSON compliant python dictionary
-    #     where the attribute values are numbers expressed in default units. The default
-    #     unit for attributes with respective dimensionalities are:
-    #     - frequency: `Hz`
-    #     - angle: `rad`
-
-    #     Args:
-    #         float larmor_frequency: The larmor frequency in MHz.
-
-    #     Return:
-    #         A python dict
-    #     """
-    #     temp_dict = self.dict()
-    #     if temp_dict["zeta"] is not None:
-    #         temp_dict["zeta"] *= larmor_frequency
-    #     temp_dict.pop("property_units")
-    #     return temp_dict
 
 
 class AntisymmetricTensor(Parseable):
@@ -198,24 +178,3 @@ class AntisymmetricTensor(Parseable):
 
     class Config:
         extra = "forbid"
-
-    # Deprecated
-    # def to_freq_dict(self, larmor_frequency: float) -> dict:
-    #     """
-    #     Serialize the AntisymmetricTensor object to a JSON compliant python dictionary
-    #     where the attribute values are numbers expressed in default units. The default
-    #     unit for attributes with respective dimensionalities are:
-    #     - frequency: `Hz`
-    #     - angle: `rad`
-
-    #     Args:
-    #         float larmor_frequency: The larmor frequency in MHz.
-
-    #     Return:
-    #         Python dict
-    #     """
-    #     temp_dict = self.dict()
-    #     if temp_dict["zeta"] is not None:
-    #         temp_dict["zeta"] *= larmor_frequency
-    #     temp_dict.pop("property_units")
-    #     return temp_dict

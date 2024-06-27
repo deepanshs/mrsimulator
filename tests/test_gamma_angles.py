@@ -90,7 +90,7 @@ def test_2D():
                             transition_queries=[{"ch1": {"P": [-1]}}],
                             freq_contrib=["Quad1_2"],
                         ),
-                        MixingEvent(query="NoMixing"),
+                        MixingEvent(),
                     ],
                 ),
                 SpectralDimension(

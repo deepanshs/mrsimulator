@@ -23,7 +23,7 @@ __credits__ = ["Deepansh J. Srivastava"]
 __license__ = "BSD License"
 __maintainer__ = "Deepansh J. Srivastava"
 __status__ = "Beta"
-__version__ = "0.8.0.dev0"
+__version__ = "0.8.0rc1"
 
 import os
 
@@ -62,9 +62,9 @@ class Mrsimulator(Parseable):
 
     signal_processor: A list of :ref:`signal_processor_api` objects.
 
-    version: The current version of the library represented by a string. This attribute
-        is not meant to be modified and serialization will only reflect the current
-        version.
+    version: The current version of the library is represented by a string. This
+        attribute is not meant to be modified and serialization will only reflect the
+        current version.
 
     application: An optional dictionary holding metadata.
     """
@@ -85,7 +85,7 @@ class Mrsimulator(Parseable):
         number and a unit
 
         Args:
-            Dict py_dict: A required python dictionary object.
+            Dict py_dict: A required Python dictionary object.
 
         Returns:
             A :ref:`mrsimulator_api` object.
@@ -216,13 +216,13 @@ class Mrsimulator(Parseable):
         return Mrsimulator.parse(contents, with_units)
 
     def save(self, filename: str, with_units: bool = True):
-        """Serialize the Mrsimulator object to a JSON compliant file
+        """Serialize the Mrsimulator object to a JSON-compliant file
 
         Args:
             bool with_units: If true, the attribute values are serialized as physical
                 quantities expressed as a string with a value and a unit. If false, the
                 attribute values are serialized as floats. The parameters object is
-                serialized to a LMFIT compliant string (add reference).
+                serialized to an LMFIT-compliant string (add reference).
             str filename: The filename for the serialized file.
 
         Example
@@ -243,11 +243,11 @@ class Mrsimulator(Parseable):
             )
 
     def json(self, with_units: bool = True):
-        """Export the Mrsimulator object to a python dictionary.
+        """Export the Mrsimulator object to a Python dictionary.
 
         Args:
-            bool with_units: If true, physical quantities are represented as string with
-                units. The default is True.
+            bool with_units: If true, physical quantities are represented as strings
+                with units. The default is True.
 
         Returns:
             Python dictionary
@@ -283,10 +283,10 @@ def save(
         str filename: The data is serialized to this file.
         sim: Simulator object.
         signal_processors: A list of PostSimulator objects corresponding to the methods
-            in the Simulator object. Default is None.
+            in the Simulator object. The default is None.
         application: Dictionary holding metadata to serialize in the file. The
             dictionary will be held in the application key.
-        bool with_units: If true, physical quantities are represented as string with
+        bool with_units: If true, physical quantities are represented as strings with
             units. The default is True.
     """
     Mrsimulator(
@@ -303,16 +303,16 @@ def dict(
     with_units: bool = True,
 ):
     """Export the Simulator, list of SignalProcessor, and an application dict
-    to a python dictionary. Creates a Mrsimulator object with given arguments and calls
+    to a Python dictionary. Creates a Mrsimulator object with given arguments and calls
     json from the Mrsimulator object.
 
     Args:
         sim: Simulator object.
         signal_processors: A list of PostSimulator objects corresponding to the methods
-            in the Simulator object. Default is None.
+            in the Simulator object. The default is None.
         application: Dictionary holding metadata to serialize in the dict. The
             dictionary will be held under the application key.
-        bool with_units: If true, physical quantities are represented as string with
+        bool with_units: If true, physical quantities are represented as strings with
             units. The default is True.
 
     Returns:
@@ -330,7 +330,7 @@ def load(filename: str, parse_units: bool = True):
     serialized file of a :py:class:`~mrsimulator.Mrsimulator` object.
 
     Args:
-        str filename: The location to the .mrsim file.
+        str filename: The location of the .mrsim file.
         bool parse_units: If true, parse the dictionary for units. The default is True.
 
     Return:
@@ -343,13 +343,13 @@ def load(filename: str, parse_units: bool = True):
 def parse(py_dict, parse_units: bool = True):
     """Parse a dictionary object to the respective Simulator object, list of
     SignalProcessor objects, and the metadata dictionary. If no signal processors are
-    provided a list of default SignalProcessor objects with length equal to number of
-    methods will be returned.
+    provided a list of default SignalProcessor objects with lengths equal to the number
+    of methods will be returned.
 
     Args:
         Dict py_dict: Python dictionary representation of a
             :py:class:`~mrsimulator.Mrsimulator` object.
-        bool parse_units: If true, parse the dictionary for units. Default is True.
+        bool parse_units: If true, parse the dictionary for units. The default is True.
 
     Return:
         Ordered List: Simulator, List[SignalProcessor], Dict.

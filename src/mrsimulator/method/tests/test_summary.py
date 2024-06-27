@@ -8,14 +8,14 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 
 
 ME = "MixingEvent"
-CDE = "ConstantDurationEvent"
+CDE = "DelayEvent"
 SE = "SpectralEvent"
 REQUIRED = [
     "type",
     "label",
     "duration",
     "fraction",
-    "query",
+    "channels",
     "spec_dim_index",
     "spec_dim_label",
     "p",
@@ -28,7 +28,7 @@ ALL_PARAMS = [
     "label",
     "duration",
     "fraction",
-    "query",
+    "channels",
     "magnetic_flux_density",
     "rotor_frequency",
     "rotor_angle",
@@ -62,10 +62,10 @@ def basic_summary_tests(the_method):
 
     df = the_method.summary(drop_constant_columns=False)
 
-    # Check correct return type
+    # Check the correct return type
     assert isinstance(df, pd.DataFrame)
 
-    # Check for correct number of event and properties (df.shape)
+    # Check for the correct number of events and properties (df.shape)
     assert df.shape[0] == 6
     assert df.shape[1] == len(ALL_PARAMS)
 
@@ -114,7 +114,7 @@ def basic_summary_tests(the_method):
     ]
     assert check_col_equal(df["rotor_angle"], temp)
 
-    assert "query" in df.columns
+    # assert "query" in df.columns
     assert "freq_contrib" in df.columns
 
 
@@ -157,7 +157,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "query": {"ch1": {"angle": np.pi / 4, "phase": np.pi / 2}},
+                    "ch1": {"angle": np.pi / 4, "phase": np.pi / 2},
                 },
                 {
                     "label": "Dur0",
@@ -181,7 +181,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
+                    "ch1": {"angle": np.pi / 2, "phase": np.pi},
                 },
                 {
                     "label": "Dur1",
@@ -208,7 +208,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix0",
-                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
+                    "ch1": {"angle": np.pi / 2, "phase": np.pi},
                 },
                 {
                     "label": "Dur0",
@@ -230,7 +230,7 @@ def test_summary():
             "events": [
                 {
                     "label": "Mix1",
-                    "query": {"ch1": {"angle": np.pi / 2, "phase": np.pi}},
+                    "ch1": {"angle": np.pi / 2, "phase": np.pi},
                 },
                 {
                     "label": "Dur1",

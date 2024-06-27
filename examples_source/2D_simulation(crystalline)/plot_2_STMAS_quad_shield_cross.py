@@ -26,7 +26,7 @@ Co_sites = [
         isotope="59Co",  # 59Co
         isotropic_chemical_shift=0,  # in ppm
         shielding_symmetric=SymmetricTensor(zeta=-1750, eta=1),
-        quadrupolar=SymmetricTensor(Cq=3.1e6, eta=0.2),  # Cq is in Hz
+        quadrupolar=SymmetricTensor(Cq=3.1e6, eta=1),  # Cq is in Hz
         name="$\\alpha=\\beta=\\gamma=0$",
     ),
     Site(
@@ -71,7 +71,6 @@ method = ST1_VAS(
         SpectralDimension(
             count=256,
             spectral_width=1e3,  # in Hz
-            # reference_offset=-1e3,  # in Hz
             label="Isotropic dimension",
         ),
         SpectralDimension(

@@ -1,6 +1,7 @@
 """Base Simulator class."""
 import json
 from copy import deepcopy
+from typing import Any
 from typing import List
 
 import csdmpy as cp
@@ -55,7 +56,7 @@ class Simulator(Parseable):
 
     methods: A list of :ref:`method_api` or equivalent dict objects (optional).
         A list of :ref:`method_api`  or equivalent dict objects representing an NMR
-        methods. The default value is an empty list.
+        method. The default value is an empty list.
 
         Example
         -------
@@ -130,6 +131,7 @@ class Simulator(Parseable):
     """
 
     spin_systems: List[SpinSystem] = []
+    spin_system_models: List[Any] = []
     methods: List[Method] = []
     config: ConfigSimulator = ConfigSimulator()
 
@@ -144,7 +146,7 @@ class Simulator(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A required python dict object.
+            dict py_dict: A required Python dict object.
 
         Returns:
             A :ref:`simulator_api` object.
@@ -210,7 +212,7 @@ class Simulator(Parseable):
         isotopes is returned instead.
 
         Args:
-            float spin_I: An optional spin quantum number. The valid input are the
+            float spin_I: An optional spin quantum number. The valid input is the
                 multiples of 0.5.
             bool symbol: If true, return a list of str with isotope symbols.
 
@@ -241,7 +243,7 @@ class Simulator(Parseable):
         st = []
         for sys in self.spin_systems:
             st += sys.get_isotopes(spin_I, symbol=True)
-        st = np.unique(st)
+        st = np.unique(st).tolist()
         if not symbol:
             return [Isotope(symbol=item) for item in st]
         return list(st)
@@ -362,7 +364,7 @@ class Simulator(Parseable):
             method_index: An integer or a list of integers. If provided, only the
                 simulations corresponding to the methods at the given index/indexes
                 will be computed. The default is None, `i.e.`, the simulation for
-                all method will be computed.
+                all methods will be computed.
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
                 otherwise, as a `ndarray
@@ -419,9 +421,9 @@ class Simulator(Parseable):
 
             gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
-            larmor_freq = np.abs(B0 * gyromagnetic_ratio * 1e6)
+            w_ref = np.abs(B0 * gyromagnetic_ratio * 1e6)
             for seq in method.spectral_dimensions:
-                seq.origin_offset = larmor_freq + seq.reference_offset
+                seq.origin_offset = w_ref
 
             self._package_amp_after_simulation(
                 method=method, amp=amp, pack_as_csdm=pack_as_csdm
@@ -478,7 +480,7 @@ class Simulator(Parseable):
 
         Args:
             dict py_dict: Dictionary object.
-            bool parse_units: If true, parse quantity from string.
+            bool parse_units: If true, parse quantity from a string.
         """
         return (
             Simulator.parse_dict_with_units(py_dict)

@@ -18,6 +18,7 @@ from pydantic import Field
 from pydantic import PrivateAttr
 from pydantic import validator
 
+from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
@@ -32,11 +33,14 @@ from .utils import to_euler_list
 
 # from .utils import convert_transition_query
 
-# from .event import ConstantDurationEvent  # noqa: F401
+# from .event import DelayEvent  # noqa: F401
 
 
 __author__ = ["Deepansh J. Srivastava", "Matthew D. Giammar"]
 __email__ = ["srivastava.89@osu.edu", "giammar.7@buckeyemail.osu.edu"]
+
+
+DEFAULT_EVENT = {}
 
 
 class Method(Parseable):
@@ -134,7 +138,7 @@ class Method(Parseable):
         >>> print(method.affine_matrix)
         [[1, -1], [0, 1]]
     """
-    channels: List[str]
+    channels: List[Union[str, dict, Isotope]]
     spectral_dimensions: List[SpectralDimension] = [SpectralDimension()]
     affine_matrix: List = None
     simulation: Union[cp.CSDM, np.ndarray] = None
@@ -175,7 +179,11 @@ class Method(Parseable):
 
     @validator("channels", always=True)
     def validate_channels(cls, v, *, values, **kwargs):
-        return [Isotope(symbol=_) for _ in v]
+        return [Isotope.parse(_v) for _v in v]
+
+    @validator("rotor_frequency", always=True, pre=True)
+    def validate_rotor_frequency(cls, v, **kwargs):
+        return 1e12 if np.isinf(v) else v
 
     def __init__(self, **kwargs):
         Method.check(kwargs)
@@ -190,18 +198,20 @@ class Method(Parseable):
         ]
         # Check for only one event with 0 < rotor_freq < infinity
         speeds = [
-            ev.rotor_frequency
+            [
+                ev.rotor_frequency
+                for ev in sd.events
+                if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+            ]
             for sd in self.spectral_dimensions
-            for ev in sd.events
-            if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
         ]
-        speeds = [sp for sp in speeds if 0 < sp < 1e12]
-        if len(speeds) > 1:
+        speeds = [len([sp for sp in speed if 0 < sp < 1e12]) for speed in speeds]
+        if np.any(np.array(speeds) > 1):
             raise NotImplementedError(
-                f"Sideband-sideband correlation is not yet supported in mrsimulator. "
-                f"Only one event with non-zero and finite `rotor_frequency` is allowed "
-                f"in a method. Found {len(speeds)} events with rotor frequencies "
-                f"{speeds}."
+                f"Multi-event sideband-sideband correlation is not yet supported in "
+                "mrsimulator. Only one event pre spectral dimensions with non-zero "
+                "and finite `rotor_frequency` is allowed in a method. "
+                f"Found {len(speeds)} events with rotor frequencies {speeds}."
             )
 
     @classmethod
@@ -250,7 +260,7 @@ class Method(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the Method object.
+            dict py_dict: A Python dict representation of the Method object.
 
         Returns:
             A :ref:`method_api` object.
@@ -283,18 +293,17 @@ class Method(Parseable):
         ]
         glb_keys = set(glb.keys())
 
-        _ = [
-            (
-                None if "events" in dim else dim.update({"events": [{}]}),
-                [
-                    ev.update({k: glb[k]})
-                    for ev in dim["events"]
-                    for k in glb
-                    if k not in set(ev.keys()).intersection(glb_keys)
-                ],
-            )
-            for dim in py_dict["spectral_dimensions"]
-        ]
+        for dim in py_dict["spectral_dimensions"]:
+            if "events" not in dim:
+                dim.update({"events": [DEFAULT_EVENT.copy()]})  # Set default if empty
+
+            # Iterate over Events and update to global attributes, if necessary
+            for ev in dim["events"]:
+                shared_keys = set(ev.keys()).intersection(glb_keys)
+                for k in glb:
+                    is_mixing = np.any([f"ch{i}" in ev for i in range(1, 4)])
+                    if k not in shared_keys and not is_mixing:  # Skip MixingEvent
+                        ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
         mth = super().dict(**kwargs)
@@ -305,7 +314,7 @@ class Method(Parseable):
         return mth
 
     def json(self, units=True) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object.
+        """Parse the class object to a JSON-compliant Python dictionary object.
 
         Args:
             units: If true, the attribute value is a physical quantity expressed as a
@@ -315,9 +324,6 @@ class Method(Parseable):
         """
         mth = {k: getattr(self, k) for k in ["name", "label", "description"]}
         mth["channels"] = [item.json() for item in self.channels]
-        mth["spectral_dimensions"] = [
-            item.json(units=units) for item in self.spectral_dimensions
-        ]
 
         # add global parameters
         global_ = (
@@ -326,6 +332,9 @@ class Method(Parseable):
             else {k: getattr(self, k) for k in self.property_units}
         )
         mth.update(global_)
+        mth["spectral_dimensions"] = [
+            item.json(units=units) for item in self.spectral_dimensions
+        ]
 
         # remove event objects with global values.
         _ = [
@@ -352,7 +361,7 @@ class Method(Parseable):
         """Return a list of symmetry pathways of the method.
 
         Args:
-            str symmetry_element: The  symmetry element, 'P' or 'D'.
+            str symmetry_element: The symmetry element, 'P' or 'D'.
 
         Returns:
             A list of :ref:`symmetry_pathway_api` objects.
@@ -514,11 +523,11 @@ class Method(Parseable):
         Args:
             trans1: ndarray of shape (2, n_sites) representing the starting transition,
                 where `n_sites` is the number of sites within the spin system. The two
-                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                entries at axis 0 correspond to initial (index 0) and final (index 1)
                 Zeeman energy states.
             trans2: ndarray of shape (2, n_sites) representing the target transition,
                 where `n_sites` is the number of sites within the spin system. The two
-                entries at axis 0 corresponds to initial (index 0) and final (index 1)
+                entries at axis 0 correspond to initial (index 0) and final (index 1)
                 Zeeman energy states.
             spins: ndarray of spin quantum numbers of the sites.
             theta: ndarray of rotation angle per site from the mixing event.
@@ -588,7 +597,7 @@ class Method(Parseable):
         ]
 
     def _add_simple_props_to_df(self, df, prop_dict, required, drop_constant_columns):
-        """Helper method for summary to reduce complexity"""
+        """Helper method for the summary to reduce complexity"""
         # Iterate through property and valid Event subclass for property
         for prop, valid in prop_dict.items():
             lst = [
@@ -606,12 +615,12 @@ class Method(Parseable):
     def summary(self, drop_constant_columns=True) -> pd.DataFrame:
         """Returns a DataFrame giving a summary of the Method. A user can specify
         optional attributes to include which appear as columns in the DataFrame. A user
-        can also ask to leave out attributes which remain constant throughout the
+        can also ask to leave out attributes that remain constant throughout the
         method. Invalid attributes for an Event will be replaced with NAN.
 
         Args:
             (bool) drop_constant_columns:
-                Removes constant properties if True. Default is True.
+                Removes constant properties if True. The default is True.
 
         Returns:
             pd.DataFrame df:
@@ -623,12 +632,12 @@ class Method(Parseable):
             - (str) type: Event type
             - (int) spec_dim_index: Index of spectral dimension which event belongs to
             - (str) label: Event label
-            - (float) duration: Duration of the ConstantDurationEvent
+            - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (MixingQuery) query: MixingQuery object of the MixingEvent
-            - (float) magnetic_flux_density: Magnetic flux density during event in Tesla
-            - (float) rotor_frequency: Rotor frequency during event in Hz
-            - (float) rotor_angle: Rotor angle during event converted to Degrees
+            - (Rtotaion) channels: Rotation object of the MixingEvent
+            - (float) magnetic_flux_density: Magnetic flux density during an event (T)
+            - (float) rotor_frequency: Rotor frequency during an event (Hz)
+            - (float) rotor_angle: Rotor angle during an event converted to Degrees
             - (FrequencyEnum) freq_contrib: Frequency
 
         Example:
@@ -644,7 +653,7 @@ class Method(Parseable):
              'label',
              'duration',
              'fraction',
-             'query',
+             'channels',
              'magnetic_flux_density',
              'rotor_frequency',
              'rotor_angle',
@@ -652,7 +661,7 @@ class Method(Parseable):
              'p',
              'd']
         """
-        CD = "ConstantDurationEvent"
+        CD = "DelayEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
 
@@ -662,7 +671,7 @@ class Method(Parseable):
             "label",
             "duration",
             "fraction",
-            "query",
+            "channels",
             "spec_dim_index",
             "spec_dim_label",
             "freq_contrib",
@@ -670,12 +679,12 @@ class Method(Parseable):
             "d",
         ]
 
-        # Properties which can accessed by getattr()
+        # Properties that can accessed by getattr()
         prop_dict = {
             "label": (CD, SP, MX),
             "duration": CD,
             "fraction": SP,
-            "query": MX,
+            "channels": MX,
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),
@@ -685,7 +694,7 @@ class Method(Parseable):
         # Create the DataFrame
         df = pd.DataFrame()
 
-        # Populate columns which cannot be calculated from iteration
+        # Populate columns that cannot be calculated from iteration
         df["type"] = [
             ev.__class__.__name__
             for dim in self.spectral_dimensions
@@ -720,20 +729,20 @@ class Method(Parseable):
         return df
 
     def plot(self, df=None, include_legend=False) -> mpl.pyplot.figure:
-        """Creates a diagram representing the method. By default, only parameters which
-        vary throughout the method are plotted. Figure can be finley adjusted using
-        matplotlib rcParams.
+        """Creates a diagram representing the method. By default, only parameters that
+        vary throughout the method are plotted. The figure can be finely adjusted using
+        the matplotlib rcParams.
 
         Args:
             DataFrame df:
-                DataFrame to plot data from. By default DataFrame is calculated from
-                summary() and will show only parameters which vary throughout the
+                DataFrame to plot data from. By default, DataFrame is calculated from
+                summary() and will show only parameters that vary throughout the
                 method plus 'p' symmetry pathway and 'd' symmetry pathway if it is not
                 none or defined
 
             bool include_legend:
-                Optional argument to include a key for event colors. Default is False
-                and no key will be included in figure
+                Optional argument to include a key for event colors. The default is
+                False and no key will be included in the figure
 
         Returns:
             matplotlib.pyplot.figure

@@ -114,7 +114,7 @@ class TransitionPathway(TransitionList):
         return path + f", weight={self.weight}"
 
     def json(self, **kwargs) -> dict:
-        """Parse the class object to a JSON compliant python dictionary object.
+        """Parse the class object to a JSON compliant Python dictionary object.
 
         Example:
             >>> pprint(path.json())
@@ -134,7 +134,7 @@ class TransitionPathway(TransitionList):
             >>> path.tolist()
             [0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5]
         """
-        return list(np.asarray([item.tolist() for item in self._list]).ravel())
+        return np.asarray([item.tolist() for item in self._list]).ravel().tolist()
 
 
 class SymmetryPathway(BaseModel):
@@ -144,11 +144,11 @@ class SymmetryPathway(BaseModel):
         channels:
             The list of channels
         ch1:
-            The symmetry pathway for channel at index 0.
+            The symmetry pathway for the channel at index 0.
         ch2:
-            The symmetry pathway for channel at index 1.
+            The symmetry pathway for the channel at index 1.
         ch3:
-            The symmetry pathway for channel at index 2.
+            The symmetry pathway for the channel at index 2.
         total:
             The total symmetry pathway.
     """

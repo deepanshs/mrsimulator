@@ -11,8 +11,12 @@
 
 #include "config.h"
 
+#ifndef __vmath__
+#define __vmath__
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+// absolute double value
 static inline double absd(double a) {
   *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
   return a;
@@ -89,13 +93,14 @@ static inline void vm_double_subtract_inplace(int count, const double *restrict 
  *      res = x * y
  */
 static inline void vm_double_multiply(int count, const double *restrict x,
-                                      const double *restrict y, double *restrict res) {
+                                      const int stride_x, const double *restrict y,
+                                      double *restrict res) {
   // x = __builtin_assume_aligned(x, 32);
   // y = __builtin_assume_aligned(y, 32);
   // res = __builtin_assume_aligned(res, 32);
   while (count-- > 0) {
-    *res++ = *x++ * *y++;
-    // x += stride_x;
+    *res++ = *x * *y++;
+    x += stride_x;
     // y += stride_y;
     // res += stride_res;
   }
@@ -213,29 +218,92 @@ static inline void vm_double_square_root_inplace(int count, double *restrict x) 
 static inline void vm_double_complex_multiply(int count, const void *restrict x,
                                               const void *restrict y,
                                               void *restrict res) {
-  // x = __builtin_assume_aligned(x, 32);
-  // y = __builtin_assume_aligned(y, 32);
-  // res = __builtin_assume_aligned(res, 32);
   double *res_ = (double *)res;
   double *x_ = (double *)x;
   double *y_ = (double *)y;
-  double real, imag, a, b, c, d;
-
+  double real, a, b, c, d;
   while (count-- > 0) {
     real = *x_++;
-    imag = *x_++;
     a = real * *y_;    // real real
-    c = imag * *y_++;  // imag real
-    b = imag * *y_;    // imag imag
+    c = *x_ * *y_++;   // imag real
+    b = *x_++ * *y_;   // imag imag
     d = real * *y_++;  // real imag
     *res_++ = a - b;
     *res_++ = c + d;
-
-    // *res++ = *x++ * *y++;
   }
 }
 
-// Trignometry
+/**
+ * Multiply the elements of vector x and y and store in res of type double
+ * complex.
+ *    res += x * y
+ */
+static inline void vm_double_complex_multiply_inplace(int count, const void *restrict x,
+                                                      const void *restrict y,
+                                                      void *restrict res) {
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, a, b, c, d;
+  while (count-- > 0) {
+    real = *x_++;
+    a = real * *y_;    // real real
+    c = *x_ * *y_++;   // imag real
+    b = *x_++ * *y_;   // imag imag
+    d = real * *y_++;  // real imag
+    *res_++ += a - b;
+    *res_++ += c + d;
+  }
+}
+
+/**
+ * Multiply the elements of vector x and conjugate of vector y and store in res of
+ * type double complex.
+ *    res = x * conj(y)
+ */
+static inline void vm_double_complex_conj_multiply(int count, const void *restrict x,
+                                                   const void *restrict y,
+                                                   void *restrict res) {
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, a, b, c, d;
+  while (count-- > 0) {
+    real = *x_++;
+    a = real * *y_;    // real real
+    c = *x_ * *y_++;   // imag real
+    b = *x_++ * *y_;   // imag imag
+    d = real * *y_++;  // real imag
+    *res_++ = a + b;
+    *res_++ = c - d;
+  }
+}
+
+/**
+ * Multiply the elements of vector x and conjugate of vector y and store in res of
+ * type double complex.
+ *    res += x * conj(y)
+ */
+static inline void vm_double_complex_conj_multiply_inplace(int count,
+                                                           const void *restrict x,
+                                                           const void *restrict y,
+                                                           void *restrict res) {
+  double *res_ = (double *)res;
+  double *x_ = (double *)x;
+  double *y_ = (double *)y;
+  double real, a, b, c, d;
+  while (count-- > 0) {
+    real = *x_++;
+    a = real * *y_;    // real real
+    c = *x_ * *y_++;   // imag real
+    b = *x_++ * *y_;   // imag imag
+    d = real * *y_++;  // real imag
+    *res_++ += a + b;
+    *res_++ += c - d;
+  }
+}
+
+// Trigonometry
 
 /**
  * Cosine of the elements of vector x stored in res of type double.
@@ -264,12 +332,13 @@ static inline void vm_double_cosine(int count, const double *restrict x,
  *      res = sin(x)
  */
 static inline double get_sin_from_table(double x) {
-  x = absd(x);
-  x = modd(x, CONST_2PI);
-  double res = x * trig_table_precision_inverse;
+  double res;
+  res = absd(x);
+  res = modd(res, CONST_2PI);
+  res *= trig_table_precision_inverse;
   int index = (int)res;
   res = lerp(res - index, sin_table[index], sin_table[index + 1]);
-  res *= sign(x);
+  res *= (double)sign(x);
   return res;
 }
 
@@ -288,14 +357,15 @@ static inline void vm_double_sine(int count, const double *restrict x,
  * complex128 type. res = cos(x) + I sin(x)
  */
 static inline void get_cos_sin_from_table(double x, double *restrict res_) {
-  x = absd(x);
-  x = modd(x, CONST_2PI);
-  x *= trig_table_precision_inverse;
-  int i = (int)x;
-  double wt = x - i;
+  double wt;
+  wt = absd(x);
+  wt = modd(wt, CONST_2PI);
+  wt *= trig_table_precision_inverse;
+  int i = (int)wt;
+  wt -= (double)i;
   *res_++ = lerp(wt, cos_table[i], cos_table[i + 1]);
   *res_ = lerp(wt, sin_table[i], sin_table[i + 1]);
-  *res_ *= sign(x);
+  *res_ *= (double)sign(x);
 }
 
 static inline void vm_cosine_I_sine(int count, const double *restrict x,
@@ -507,3 +577,5 @@ static inline void catlas_daxpby(int count, const double a, const double *restri
 #endif /* __blas_activate */
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+#endif /* __vmath__ */

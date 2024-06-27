@@ -30,8 +30,6 @@ have the same length, otherwise an error will be thrown. For example,
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
     Traceback (most recent call last):

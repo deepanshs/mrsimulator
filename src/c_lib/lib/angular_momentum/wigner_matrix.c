@@ -511,17 +511,17 @@ void __wigner_rotation_2(const int l, const int n, const double *wigner,
   // Y_{l, m} = (-1)^m Y_{l,-m}(conj)           (1)
   //
   // The following uses the above symmetry to reduce the number of calcuation steps in
-  // Y_{l,-m} * exp(-m I alpha) pair product for m=-l to l.
+  // Y_{l,m} * exp(-m I alpha) pair product for m=-l to l.
   //
   // Consider the product pairs involving +/-m, as shown below.
   //
-  //    Y_{l,-m} * exp(-m I alpha) = (a + ib) * (c + id)
-  //                               = (ac - bd) + i(ad + bc)
+  //    Y_{l,-m} * exp(m I alpha) = (a + ib) * (c + id)
+  //                              = (ac - bd) + i(ad + bc)
   //
   // The symmetrically opposite product is then,
-  //    Y_{l, m} * exp(m I alpha) = (-1)^m (a - ib) * (c - id)
+  //    Y_{l,m} * exp(-m I alpha) = (-1)^m (a - ib) * (c - id)
   //                              = (-1)^m (ac - bd) - i(ad + bc)
-  //                              = (-1)^m Y_{l,-m} (conj)
+  //                              = (-1)^m (Y_{l,-m} * exp(m I alpha)) (conj)
   for (orientation = 0; orientation < n; orientation++) {
     temp_initial_vector[two_l] = R_in_[two_l];
     temp_initial_vector[two_l + 1] = R_in_[two_l + 1];
@@ -603,6 +603,8 @@ void wigner_dm0_vector(const int l, const double beta, double *R_out) {
 /** ✅ Performs a rank l wigner rotation of the coefficients from the l rank
  * spherical tensors.
  *
+ * R_out =  exp(-I m0 gamma) sum_m d^l_{m0, m} * exp(-I m alpha)
+ *
  * @param l The rank of the tensor.
  * @param euler_angles A pointer to the array of three euler angles.
  * @param R_in A pointer to the array of coefficients from the l rank tensors of
@@ -638,7 +640,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
 
   // scale the temp initial vector with exp[-I m alpha]
   for (m = 2; m <= two_l; m += 2) {
-    // temp_initial_vector[l - m] *= temp;
+    // temp_initial_vector[l - m] *= exp(I m alpha); negative m
     a = R_in_[two_l - m] * real;
     b = R_in_[two_l - m + 1] * imag;
     c = R_in_[two_l - m] * imag;
@@ -646,7 +648,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
     temp_initial_vector[two_l - m] = a - b;
     temp_initial_vector[two_l - m + 1] = c + d;
 
-    // temp_initial_vector[l + m] *= conj(temp);
+    // temp_initial_vector[l + m] *= exp(I m alpha); positive m
     a = R_in_[two_l + m] * real;
     b = R_in_[two_l + m + 1] * imag;
     c = R_in_[two_l + m] * imag;
@@ -684,6 +686,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
   copy_real = real;
   copy_imag = imag;
   for (m = 2; m <= two_l; m += 2) {
+    // R_out_[l - m] *= exp(I m gamma); negative m
     a = R_out_[two_l - m] * real;
     b = R_out_[two_l - m + 1] * imag;
     c = R_out_[two_l - m] * imag;
@@ -691,6 +694,7 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
     R_out_[two_l - m] = a - b;
     R_out_[two_l - m + 1] = c + d;
 
+    // R_out_[l + m] *= exp(-I m gamma); positive m
     a = R_out_[two_l + m] * real;
     b = R_out_[two_l + m + 1] * imag;
     c = R_out_[two_l + m] * imag;
@@ -741,33 +745,39 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
                              const unsigned int n_octants, double *wigner_2j_matrices,
                              complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, wigner_2j_inc, wigner_4j_inc = 0, w2_increment, w4_increment = 0;
+  unsigned int j, max_iter, wigner_2j_inc, wigner_4j_inc = 0;
+  unsigned int w2_increment, w4_increment = 0, alpha_inc;
+  double *exp_Im_alpha_ = (double *)exp_Im_alpha;
 
   w2_increment = 3 * octant_orientations;
   wigner_2j_inc = 5 * w2_increment;  // equal to 5 x 3 x octant_orientations;
+  // 8 corresponds to m=-[-4, -3, -2, -1] times real and imag
+  alpha_inc = 8 * octant_orientations;
+
   if (w4 != NULL) {
     w4_increment = 5 * octant_orientations;
     wigner_4j_inc = 9 * w4_increment;  // equal to 9 x 5 x octant_orientations;
   }
 
-  for (j = 0; j < n_octants; j++) {
+  max_iter = (n_octants <= 4) ? n_octants : 4;
+  for (j = 0; j < max_iter; j++) {
     /* Second-rank Wigner rotation from crystal/common frame to rotor frame. */
-    __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices, exp_Im_alpha, R2,
+    __wigner_rotation_2(2, octant_orientations, wigner_2j_matrices, exp_Im_alpha_, R2,
                         w2);
     w2 += w2_increment;
     if (n_octants == 8) {
       __wigner_rotation_2(2, octant_orientations, &wigner_2j_matrices[wigner_2j_inc],
-                          exp_Im_alpha, R2, w2);
+                          &exp_Im_alpha_[alpha_inc], R2, w2);
       w2 += w2_increment;
     }
     if (w4 != NULL) {
       /* Fourth-rank Wigner rotation from crystal/common frame to rotor frame. */
-      __wigner_rotation_2(4, octant_orientations, wigner_4j_matrices, exp_Im_alpha, R4,
+      __wigner_rotation_2(4, octant_orientations, wigner_4j_matrices, exp_Im_alpha_, R4,
                           w4);
       w4 += w4_increment;
       if (n_octants == 8) {
         __wigner_rotation_2(4, octant_orientations, &wigner_4j_matrices[wigner_4j_inc],
-                            exp_Im_alpha, R4, w4);
+                            &exp_Im_alpha_[alpha_inc], R4, w4);
         w4 += w4_increment;
       }
     }
@@ -797,41 +807,90 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
      * After four iterations, exp_Im_alpha restores to its original value.
      */
     if (n_octants != 1) {
+      // m=-1
       cblas_zscal(octant_orientations, (double *)NEGATIVE_IOTA,
-                  &(((double *)exp_Im_alpha)[6 * octant_orientations]), 1);
-      cblas_zdscal(octant_orientations, -1,
-                   &(((double *)exp_Im_alpha)[4 * octant_orientations]), 1);
+                  &(exp_Im_alpha_[6 * octant_orientations]), 1);
+      // m=-2
+      cblas_zdscal(octant_orientations, -1, &(exp_Im_alpha_[4 * octant_orientations]),
+                   1);
       if (w4 != NULL) {
+        // m=-3 and m=-4 rotates onto itself for octants.
         cblas_zscal(octant_orientations, (double *)IOTA,
-                    &(((double *)exp_Im_alpha)[2 * octant_orientations]), 1);
+                    &(exp_Im_alpha_[2 * octant_orientations]), 1);
+      }
+      if (n_octants == 8) {
+        // m=-1
+        cblas_zscal(octant_orientations, (double *)NEGATIVE_IOTA,
+                    &(exp_Im_alpha_[14 * octant_orientations]), 1);
+        // m=-2
+        cblas_zdscal(octant_orientations, -1,
+                     &(exp_Im_alpha_[12 * octant_orientations]), 1);
+        if (w4 != NULL) {
+          // m=-3 and m=-4 rotates onto itself for octants.
+          cblas_zscal(octant_orientations, (double *)IOTA,
+                      &(exp_Im_alpha_[10 * octant_orientations]), 1);
+        }
       }
     }
   }
 }
 
 /**
- * ✅ Calculates exp(-Im alpha), where alpha is an array of size n.
- * The function accepts cos_alpha = cos(alpha)
- * The result is stored in exp_Im_alpha as m x n matrix, where m = [-4,-3,-2,-1]
+ * ✅ Calculates exp(-Im angle), where angle is an array of size n.
+ * The function accepts cos_angle = cos(angle)
+ * The result is stored in exp_Im_angle as m x n matrix, where m = [-4,-3,-2,-1]
+ * Since only negative m's are computed, the following computes exp(Im angle)
  */
-void get_exp_Im_alpha(const unsigned int n, const bool allow_4th_rank,
-                      void *exp_Im_alpha) {
-  double *exp_Im_alpha_ = (double *)exp_Im_alpha;
+void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
+                      void *exp_Im_angle, double delta_alpha) {
+  double *exp_Im_angle_ = (double *)exp_Im_angle;
 
   // The complex array is interpreted as alternating real and imag double array.
   // The index s_i = i*n of complex array is now at index 2*i*n.
-  unsigned int s_1 = 2 * n, s_2 = 4 * n, s_3 = 6 * n;
+  unsigned int m_3 = 2 * n, m_2 = 4 * n, m_1 = 6 * n;  // m_4 is 0
 
-  // exp(-2 I alpha)
-  vm_double_complex_multiply(n, &exp_Im_alpha_[s_3], &exp_Im_alpha_[s_3],
-                             &exp_Im_alpha_[s_2]);
+  // exp(-2 I angle)
+  vm_double_complex_multiply(n, &exp_Im_angle_[m_1], &exp_Im_angle_[m_1],
+                             &exp_Im_angle_[m_2]);
 
   if (allow_4th_rank) {
-    // exp(-3 I alpha)
-    vm_double_complex_multiply(n, &exp_Im_alpha_[s_2], &exp_Im_alpha_[s_3],
-                               &exp_Im_alpha_[s_1]);
-    // exp(-4 I alpha)
-    vm_double_complex_multiply(n, &exp_Im_alpha_[s_1], &exp_Im_alpha_[s_3],
-                               exp_Im_alpha_);
+    // exp(-3 I angle)
+    vm_double_complex_multiply(n, &exp_Im_angle_[m_2], &exp_Im_angle_[m_1],
+                               &exp_Im_angle_[m_3]);
+    // exp(-4 I angle)
+    vm_double_complex_multiply(n, &exp_Im_angle_[m_3], &exp_Im_angle_[m_1],
+                               exp_Im_angle_);
+  }
+
+  if (delta_alpha != 0.0) {
+    double *exp_da = malloc_double(8);
+    unsigned int m_4p = 8 * n, m_3p = 10 * n, m_2p = 12 * n, m_1p = 14 * n;
+
+    exp_da[0] = cos(delta_alpha);
+    exp_da[1] = sin(delta_alpha);
+    exp_da[2] = cos(2.0 * delta_alpha);
+    exp_da[3] = sin(2.0 * delta_alpha);
+    exp_da[4] = cos(3.0 * delta_alpha);
+    exp_da[5] = sin(3.0 * delta_alpha);
+    exp_da[6] = cos(4.0 * delta_alpha);
+    exp_da[7] = sin(4.0 * delta_alpha);
+
+    // exp(-I angle) * exp(-I delta angle)
+    cblas_zcopy(n, &exp_Im_angle_[m_1], 1, &exp_Im_angle_[m_1p], 1);
+    cblas_zscal(n, exp_da, &exp_Im_angle_[m_1p], 1);
+
+    // exp(-2I angle) * exp(-2I delta angle)
+    cblas_zcopy(n, &exp_Im_angle_[m_2], 1, &exp_Im_angle_[m_2p], 1);
+    cblas_zscal(n, &exp_da[2], &exp_Im_angle_[m_2p], 1);
+
+    if (allow_4th_rank) {
+      // exp(-3I angle) * exp(-3I delta angle)
+      cblas_zcopy(n, &exp_Im_angle_[m_3], 1, &exp_Im_angle_[m_3p], 1);
+      cblas_zscal(n, &exp_da[4], &exp_Im_angle_[m_3p], 1);
+
+      // exp(-4I angle) * exp(-4I delta angle)
+      cblas_zcopy(n, exp_Im_angle_, 1, &exp_Im_angle_[m_4p], 1);
+      cblas_zscal(n, &exp_da[6], &exp_Im_angle_[m_4p], 1);
+    }
   }
 }

@@ -1,5 +1,5 @@
-from copy import deepcopy
-from enum import Enum
+# from copy import deepcopy
+# from enum import Enum
 from itertools import permutations
 from typing import ClassVar
 from typing import Dict
@@ -18,7 +18,7 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 ON_FAIL_MESSAGE = (
-    "The length of the transition query symmetry elements cannot exceed than the "
+    "The length of the transition query symmetry elements cannot exceed the "
     "number of channels."
 )
 
@@ -77,7 +77,7 @@ class SymmetryQuery(Parseable):
         validate_assignment = True
 
     def query_combination(self, symmetry, n_site_at_channel_id):
-        """Combination of symmetry query based on the number of sites in given channel.
+        """Combination of symmetry query based on the number of sites in a channel.
 
         Args:
             (str) symmetry: The symmetry element, 'P' or 'D'.
@@ -111,15 +111,15 @@ class TransitionQuery(Parseable):
     ----------
 
     ch1:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 0 of the method's channels array."
 
     ch2:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 1 of the method's channels array."
 
     ch3:
-        An optional SymmetryQuery object for querying symmetry functions at channel
+        An optional SymmetryQuery object for querying symmetry functions at the channel
         index 2 of the method's channels array."
 
     Example
@@ -174,8 +174,8 @@ class TransitionQuery(Parseable):
         """Combinations of TransitionQuery based on the number of sites per channel.
 
         Args:
-            (list) isotopes: List of isotope symbols, ['29Si , '13C', '13C', '1H'].
-            (int) channels: List of method channels, ['29Si , '13C'].
+            (list) isotopes: List of isotope symbols, ['29Si, '13C', '13C', '1H'].
+            (int) channels: List of method channels, ['29Si, '13C'].
         """
         iso_dict = get_iso_dict(channels=channels, isotopes=isotopes)
         sites_per_channel = [
@@ -235,7 +235,7 @@ class TransitionQuery(Parseable):
 
         all_combinations = np.zeros((symmetry_expanded.shape[0], len(isotopes)))
 
-        # set missing channel isotope query to nan for non P query
+        # set missing channel isotope query to nan for non-P query
         value = 0 if symmetry == "P" else np.nan
         missing_ch = self._get_missing_channel_isotope(isotopes, channels)
         for ch in missing_ch:
@@ -254,8 +254,8 @@ class TransitionQuery(Parseable):
         return all_combinations
 
 
-class RotationQuery(Parseable):
-    """Base RotationQuery class.
+class Rotation(Parseable):
+    """Base Rotation class.
 
     Attributes
     ----------
@@ -276,102 +276,59 @@ class RotationQuery(Parseable):
 
     class Config:
         validate_assignment = True
-
-
-class MixingQuery(Parseable):
-    """MixingQuery class for querying transition mixing between events.
-
-    Attributes
-    ----------
-
-    ch1:
-        An optional RotationQuery object for channel at index 0 of method's channels."
-
-    ch2:
-        An optional RotationQuery object for channel at index 1 of method's channels."
-
-    ch3:
-        An optional RotationQuery object for channel at index 2 of method's channels."
-
-    Example
-    -------
-
-        >>> query = MixingQuery(ch1={"angle": 1.570796, "phase": 3.141593})
-
-    """
-
-    ch1: Optional[RotationQuery] = None
-    ch2: Optional[RotationQuery] = None
-    ch3: Optional[RotationQuery] = None
-
-    class Config:
-        validate_assignment = True
         extra = "forbid"
 
-    @classmethod
-    def parse_dict_with_units(cls, py_dict):
-        """
-        Parse the physical quantity from a dictionary representation of the Method
-        object, where the physical quantity is expressed as a string with a number and
-        a unit.
-
-        Args:
-            dict py_dict: A python dict representation of the Method object.
-
-        Returns:
-            A :ref:`method_api` object.
-        """
-        py_dict_copy = deepcopy(py_dict)
-        obj = {
-            k: RotationQuery.parse_dict_with_units(v) for k, v in py_dict_copy.items()
-        }
-        py_dict_copy.update(obj)
-        return super().parse_dict_with_units(py_dict_copy)
-
-    @property
-    def channels(self) -> List[RotationQuery]:
-        """Returns an ordered list of all channels"""
-        return [self.ch1, self.ch2, self.ch3]
+    def json(self, units=True, **kwargs):
+        return (
+            {k: f"{getattr(self, k)} {u}" for k, u in self.property_units.items()}
+            if units
+            else {k: getattr(self, k) for k in self.property_units}
+        )
 
 
-class MixingEnum(Enum):
-    """Enumerations for defining common mixing queries. The enumerations are as follows:
+# class MixingEnum(Enum):
+#     """Enumeration for defining common mixing queries. The
+# enumerations are as follows:
 
-    Attributes
-    ----------
+#     Attributes
+#     ----------
 
-    TotalMixing:
-        Setting query attribute to TotalMixing causes all transitions in one spectral
-        event to all other transitions. This is the same behavior when no MixingEvent
-        is defined between SpectralEvents.
+#     TotalMixing:
+#         Setting the query attribute to TotalMixing causes all transitions from the
+#         previous spectral/delay event to connect to all transitions in the next
+#         spectral/delay event. This is the default behavior when no mixing is defined
+#         between events.
 
-    NoMixing:
-        Defines mixing query where no pathways connect
+#     NoMixing:
+#         Defines a query where transition mixing is not allowed between connecting
+#         events.
 
-    Example
-    -------
+#     Example
+#     -------
 
-    The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent` can be
-    set to the Enum itself or a string representing the Enum.
+#     The query attribute of the :py:class:`~mrsimulator.method.event.MixingEvent`
+# can be
+#     set to the Enum itself or a string representing the Enum.
 
-    >>> from mrsimulator.method import MixingEvent
-    >>> from mrsimulator.method.query import MixingEnum
-    >>> # From Enum object
-    >>> total_mix = MixingEvent(query=MixingEnum.TotalMixing)
-    >>> no_mix = MixingEvent(query=MixingEnum.NoMixing)
-    >>> # From string representing Enum
-    >>> total_mix = MixingEvent(query="TotalMixing")
-    >>> no_mix = MixingEvent(query="NoMixing")
-    """
+#     >>> from mrsimulator.method import MixingEvenA
+#     >>> from mrsimulator.method.query import MixingEnum
+#     >>> # From Enum object
+#     >>> total_mix = MixingEvent(ch1=MixingEnum.TotalMixing)
+#     >>> no_mix = MixingEvent(ch1=MixingEnum.NoMixing)
+#     >>> # From string representing Enum
+#     >>> total_mix = MixingEvent(ch1="TotalMixing")
+#     >>> no_mix = MixingEvent(ch1="NoMixing")
+#     """
 
-    @classmethod
-    def allowed_enums(cls):
-        """Returns list of str corresponding to all valid enumerations"""
-        return [e.name for e in cls]
+#     @classmethod
+#     def allowed_enums(cls):
+#         """Returns list of str corresponding to all valid enumerations"""
+#         return [e.name for e in cls]
 
-    TotalMixing: str = "TotalMixing"
-    NoMixing: MixingQuery = MixingQuery(
-        ch1={"angle": 0, "phase": 0},
-        ch2={"angle": 0, "phase": 0},
-        ch3={"angle": 0, "phase": 0},
-    )
+#     def json(self, **kwargs):
+#         """Return a JSON-compliant serialization of enumeration"""
+#         temp = self.value.json(**kwargs)
+#         return self.value if isinstance(self.value, str) else temp
+
+#     TotalMixing: str = "TotalMixing"
+#     NoMixing: Rotation = Rotation(angle=0, phase=0)

@@ -14,11 +14,14 @@
 
 typedef struct MRS_event {
   double fraction; /**< The weighted frequency contribution from the event. */
+  double duration; /**< The duration of a delay event in µs */
+  unsigned char
+      is_spectral; /**< True if created from SpectralEvent, False if a DelayEvent */
   double magnetic_flux_density_in_T; /**<  The magnetic flux density in T. */
   double rotor_angle_in_rad;         /**<  The rotor angle in radians. */
   double rotor_frequency_in_Hz;      /**<  The sample rotation frequency in Hz. */
   MRS_plan *plan;                    /**< The plan for every event. */
-  double *freq_amplitude;            // buffer for event amplitude
+  complex128 *event_freq_amplitude;  /**< buffer for event amplitude */
 } MRS_event;
 
 typedef struct MRS_dimension {
@@ -32,6 +35,7 @@ typedef struct MRS_dimension {
   double R0_offset;  // holds the isotropic offset. This is used in determining if or
                      // not to bin the frequencies, especially for sideband order.
   double *local_frequency;  // buffer for local frequencies.
+  double *local_phase;
   double *freq_offset;      // buffer for local + sideband frequencies.
   double normalize_offset;  // fixed value = 0.5 - coordinate_offset/increment
   double inverse_increment;
@@ -62,9 +66,10 @@ void MRS_free_event(MRS_event *the_event);
  */
 MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
-    double *increment, double *fractions, double *magnetic_flux_density_in_T,
-    double *rotor_frequency_in_Hz, double *rotor_angle_in_rad, int *n_events,
-    unsigned int n_dim, unsigned int *number_of_sidebands);
+    double *increment, double *fractions, double *durations, unsigned char *is_spectral,
+    double *magnetic_flux_density_in_T, double *rotor_frequency_in_Hz,
+    double *rotor_angle_in_rad, int *n_events, unsigned int n_dim,
+    unsigned int *number_of_sidebands);
 
 /**
  * @brief Free the memory allocation for the MRS dimensions.

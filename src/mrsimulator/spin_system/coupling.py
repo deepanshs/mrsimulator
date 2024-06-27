@@ -63,7 +63,7 @@ class Coupling(Parseable):
         The allowed attributes of the :ref:`asy_api` class for `j_antisymmetric` are
         ``zeta``, ``alpha``, and ``beta``, where ``zeta`` is the anisotropy parameter
         of the anti-symmetric first-rank tensor given in Hz. The angles ``alpha`` and
-        ``beta`` are in radians.
+        ``beta``is in radians.
 
         Example
         -------
@@ -196,7 +196,7 @@ class Coupling(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A required python dict object.
+            dict py_dict: A required Python dict object.
 
         Returns:
             :ref:`site_api` object.
@@ -233,7 +233,7 @@ class Coupling(Parseable):
 
         Arguments:
             (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
-                to rotate through each tensor through.
+                to rotate through each tensor.
         """
         if self.j_symmetric:  # not None
             self.j_symmetric.rotate(euler_angles)

@@ -16,7 +16,8 @@ def cartesian_product(*arrays):
     arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
     for i, a in enumerate(np.ix_(*arrays)):
         arr[..., i] = a
-    return arr.reshape(-1, la)
+    arr.shape = (-1, la)
+    return arr
 
 
 def get_symmetry_indexes(fn, list_of_sym):
@@ -64,13 +65,13 @@ def get_iso_dict(channels, isotopes):
 
 def nearest_nonmixing_event(event_name, i):
     """Return the indexes of the nearest non mixing events (SpectralEvent and
-    ConstantDurationEvent) about a mixing event at index `i`.
+    DelayEvent) about a mixing event at index `i`.
 
     Args:
         event_name: List of event class names.
         i: Int index of the mixing event.
     """
-    options = ["SpectralEvent", "ConstantDurationEvent"]
+    options = ["SpectralEvent", "DelayEvent"]
     low_range = event_name[:i]
     high_range = event_name[i:]
     upper = [high_range.index(item) for item in options if item in high_range]
@@ -84,11 +85,11 @@ def nearest_nonmixing_event(event_name, i):
 
 def get_mixing_query(spectral_dimensions, index):
     """Return the mixing query object corresponding to the event at index `index`. The
-    indexing is over flattened list of events from all spectral dimensions.
+    indexing is over a flattened list of events from all spectral dimensions.
 
     Args:
         spectral_dimension: A list SpectralDimension objects.
-        index: The index of the event from a flatten event list.
+        index: The index of the event from a flattened event list.
     """
     n_events = len(spectral_dimensions[0].events)
     sp = 0
@@ -96,10 +97,10 @@ def get_mixing_query(spectral_dimensions, index):
         index -= n_events
         sp += 1
         n_events = len(spectral_dimensions[sp].events)
-    query = spectral_dimensions[sp].events[index].query
+    mixing = spectral_dimensions[sp].events[index]
 
-    # Return the query, if is a MixingQuery, otherwise the value of the MixingEnum
-    return query if query.__class__.__name__ == "MixingQuery" else query.value
+    # Return the query, if is a MixingEvent, otherwise the value of the MixingEnum
+    return mixing if mixing.__class__.__name__ == "MixingEvent" else mixing.value
 
 
 def map_mix_query_attr_to_ch(mixing_query):
@@ -122,7 +123,7 @@ def map_mix_query_attr_to_ch(mixing_query):
 
 
 # def angle_and_phase_list(symbol, channels, mixing_query):
-#     """Return a list of angles and phase of size equal to the number of sites within
+#     """Return a list of angles and phases of size equal to the number of sites within
 #     the spin system, corresponding to a mixing_query from a MixingEvent.
 
 #     If the site matches the channel, append the angle and phase of the corresponding
@@ -185,7 +186,7 @@ def get_grouped_mixing_queries(spec_dims, event_names):
         if name != "MixingEvent":
             previous_event_mix = False
 
-        # Skip this event if previous event mixing or if this event TotalMixing
+        # Skip this event if the previous event mixing or if this event TotalMixing
         elif previous_event_mix or get_mixing_query(spec_dims, i) == "TotalMixing":
             continue
 
@@ -206,7 +207,7 @@ def get_grouped_mixing_queries(spec_dims, event_names):
 
 def mixing_query_connect_map(spectral_dimensions):
     """Return a list of mappables corresponding to each mixing event. The mappable
-    corresponds to queries described by adjacent mixing events and the index of next
+    correspond to queries described by adjacent mixing events and the index of the next
     and previous nearest transition indexes.
 
     Args:
@@ -301,10 +302,10 @@ def combine_mixing_queries(queries: list):
     """Takes in a list of mixing queries combining them into a single mixing query
 
     Args:
-        queries: List of dicts each representing a MixingQuery object
+        queries: List of dicts each representing a MixingEvent object
 
     Returns:
-        Dictionary with angle and phase of combined MixingQuery objects
+        Dictionary with angle and phase of combined MixingEvent objects
     """
     if len(queries) < 1:
         raise ValueError(f"List length must be at least 1. Got length {len(queries)}.")

@@ -83,5 +83,5 @@ If Python is already installed on your system but is out of date, we recommend `
 multiple versions of Python to run on one computer without interfering with each-other.
 
 However, if Anaconda can't be used, newer versions of Python can be installed from `python.org
-<https://www.python.org/downloads/>`__. Python 3.7 or greater is required to run mrsimulator,
+<https://www.python.org/downloads/>`__. Python |PY_VERSION| or greater is required to run mrsimulator,
 but we encourage using the latest compatible version of Python.

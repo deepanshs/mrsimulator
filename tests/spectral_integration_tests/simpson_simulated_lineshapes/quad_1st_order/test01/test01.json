@@ -1,13 +1,13 @@
 {
   "methods": [{
     "channels": ["14N"],
+    "magnetic_flux_density": "9.4 T",
+    "rotor_frequency": "0 kHz",
+    "rotor_angle": "0 deg",
     "spectral_dimensions": [{
       "count": 1024,
       "spectral_width": "25 kHz",
       "events": [{
-        "magnetic_flux_density": "9.4 T",
-        "rotor_frequency": "0 kHz",
-        "rotor_angle": "0 deg",
         "transition_queries": [{
           "ch1": {
             "P": [-1]

@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -37,7 +37,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4.5.0
 
   source-distribution:
     needs: [build-test]
@@ -45,12 +45,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -63,7 +63,7 @@ jobs:
           python setup.py sdist
 
       - name: upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sdist
           path: "dist/*.tar.gz"
@@ -83,13 +83,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      MACOSX_DEPLOYMENT_TARGET: "10.9"
+      MACOSX_DEPLOYMENT_TARGET: "12.0"
       CIBW_BUILD_VERBOSITY: "1"
       CIBW_BEFORE_ALL_MACOS: "brew install fftw openblas"
       CIBW_BEFORE_ALL_LINUX: "yum -y install openblas-devel fftw-devel"
 
       CIBW_BUILD: "${{ matrix.cibw.build || '*' }}"
-      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36*' }}"
+      CIBW_SKIP: "${{ matrix.cibw.skip || 'cp36* cp37* cp38*' }}"
       CIBW_MANYLINUX_X86_64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_I686_IMAGE: "${{ matrix.cibw.manylinux_image }}"
       CIBW_MANYLINUX_AARCH64_IMAGE: "${{ matrix.cibw.manylinux_image }}"
@@ -120,16 +120,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
+          - os: macos-12
             name: mac 64-bit x86_64
             cibw:
               build: "cp3*"
 
-          # - os: macos-latest
-          #   name: mac 64-bit arm64
-          #   cibw:
-          #     arch: arm64
-          #     build: "cp3*"
+          - os: macos-14
+            name: mac 64-bit arm64
+            cibw:
+              arch: arm64
+              build: "cp3*"
 
           - os: ubuntu-latest
             name: linux 64-bit x86_64
@@ -169,24 +169,25 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.10"
           architecture: ${{ matrix.architecture }}
 
       - name: customize mac-arm-64
         if: contains(matrix.os, 'macos') && matrix.cibw.arch
         run: |
-          sudo xcode-select -switch /Applications/Xcode_13.1.app
-          echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
-          echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
+          echo 'MACOSX_DEPLOYMENT_TARGET=14' >> "$GITHUB_ENV"
+      #     sudo xcode-select -switch /Applications/Xcode_13.1.app
+      #     echo 'SDKROOT=/Applications/Xcode_13.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk' >> "$GITHUB_ENV"
+      #     echo 'MACOSX_DEPLOYMENT_TARGET=11.1' >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64
 
@@ -200,23 +201,23 @@ jobs:
       - name: Install mac-os Dependencies
         if: startsWith(matrix.os, 'mac')
         run: |
-          python -m pip install delocate
+          python -m pip install --upgrade delocate
 
       - name: Install linux Dependencies
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          python -m pip install auditwheel
+          python -m pip install --upgrade auditwheel
 
       - name: Install windows Dependencies
         if: startsWith(matrix.os, 'windows')
         run: |
-          python -m pip install delvewheel
+          python -m pip install --upgrade delvewheel
           C:\Miniconda\Scripts\conda install -c conda-forge openblas fftw
 
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade setuptools pip wheel cython
-          python -m pip install cibuildwheel
+          python -m pip install --upgrade cibuildwheel
 
       - name: show environment
         run: |
@@ -230,7 +231,7 @@ jobs:
         run: |
           python -m cibuildwheel .
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.name }}
           path: "wheelhouse/*"

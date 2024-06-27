@@ -46,13 +46,12 @@ Each signal processor object holds a list of operations under the *operations* a
         sp.Scale(factor=120),
     ]
 
-First, an inverse Fourier transform is applied to the dataset. Then,
-a Gaussian apodization with a full-width-at-half-maximum of 50 Hz
-in the frequency domain is applied. The unit used for the ``FWHM``
-attribute corresponds to the dimensionality of the dataset. By
-choosing Hz, we imply the dataset is in units of frequency.
-Finally, a forward Fourier transform is applied to the apodized
-dataset, and all points are scaled up by 120 times.
+First, an inverse Fourier transform is applied to the dataset, converting
+it to the time domain. Then, a Gaussian apodization, parameterized using a
+full-width-at-half-maximum  (FWHM) of 50 Hz, is applied. Note, the
+dimensionality of the ``FWHM`` attribute has the inverse dimensionality
+of the dataset domain. Finally, a forward Fourier transform is applied to
+the apodized dataset, and all points are scaled up by 120 times.
 
 .. note::
 

@@ -14,14 +14,15 @@ dependencies:
   - pip
   - pip:
       - monty>=2.0.4
-      - csdmpy>=0.4.1
-      - pydantic>=1.9
+      - csdmpy>=0.6
+      - astropy>=5.1
+      - pydantic<2
       - typing-extensions>=3.7
       - lmfit>=1.0.2
       - psutil>=5.4.8
       - joblib>=1.0.0
       # building docs
-      - sphinx>=2.0
+      - sphinx<=6.0
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10

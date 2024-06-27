@@ -316,7 +316,7 @@ def _flatten_item(item):
 
 
 def _check_lengths_of_args(*args):
-    """Raises error when not all lists are same length. Returns length on success"""
+    """Raise error when not all lists are the same length. Returns length on success"""
     args = [arg for arg in args if arg is not None]
     dicts = [
         list(args.pop(i).values())

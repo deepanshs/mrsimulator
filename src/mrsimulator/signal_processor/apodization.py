@@ -126,7 +126,11 @@ class Gaussian(Apodization):
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        return 1.0 if self.FWHM == 0.0 else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
+        return (
+            np.ones_like(x)
+            if self.FWHM == 0.0
+            else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
+        )
 
 
 class Exponential(Apodization):
@@ -175,7 +179,11 @@ class Exponential(Apodization):
 
     def fn(self, x):
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        return 1.0 if self.FWHM == 0.0 else np.exp(-self.FWHM * np.pi * np.abs(x))
+        return (
+            np.ones_like(x)
+            if self.FWHM == 0.0
+            else np.exp(-self.FWHM * np.pi * np.abs(x))
+        )
 
 
 class SkewedGaussian(Apodization):
@@ -240,7 +248,7 @@ class SkewedGaussian(Apodization):
         prob_func = [np.exp(-(0.5) * (sigma * j) ** 2) for j in x]
         cum_prob_func = [0.5 + 0.5 * erf(self.skew * j / np.sqrt(2)) for j in x]
         sg = np.asarray([a * b for a, b in zip(prob_func, cum_prob_func)])
-        return 1.0 if self.skew == 0.0 else sg
+        return np.ones_like(x) if self.FWHM == 0.0 else sg
 
 
 class TopHat(Apodization):
@@ -283,8 +291,8 @@ class TopHat(Apodization):
     >>> operation7= sp.apodization.TopHat(rising_edge = "-1 s", falling_edge = "1 s")
     """
 
-    rising_edge: Union[float, str, None] = -np.Inf
-    falling_edge: Union[float, str, None] = np.Inf
+    rising_edge: Union[float, str, None] = -np.inf
+    falling_edge: Union[float, str, None] = np.inf
     property_units: Dict = {"rising_edge": CONST, "falling_edge": CONST}
 
     @validator("rising_edge")

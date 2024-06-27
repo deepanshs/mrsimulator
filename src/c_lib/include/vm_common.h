@@ -43,8 +43,21 @@ static inline void vm_double_add_offset(int count, const double *restrict x,
 }
 
 /**
+ * Add an offset to a vector1 of type double and update vector2.
+ *      res += x + offset
+ */
+static inline void vm_double_add_vector_offset_inplace(int count,
+                                                       const double *restrict x,
+                                                       const double offset,
+                                                       double *restrict res) {
+  // x = __builtin_assume_aligned(x, 32);
+  // res = __builtin_assume_aligned(res, 32);
+  while (count-- > 0) *res++ += *x++ + offset;
+}
+
+/**
  * Add an offset to a vector inplace of type double.
- *      x += offset
+ *      res += offset
  */
 static inline void vm_double_add_offset_inplace(int count, const double offset,
                                                 double *restrict res) {
@@ -95,7 +108,7 @@ static inline void vm_double_ones(int count, double *restrict res) {
  */
 static inline double *get_FFT_order_freq(int n, double increment) {
   double *vr_freq = malloc_double(n);
-  int i = 0, m, positive_limit, negative_limit;
+  int m, positive_limit, negative_limit;
 
   if (n % 2 == 0) {
     negative_limit = (int)(-n / 2);
@@ -105,13 +118,30 @@ static inline double *get_FFT_order_freq(int n, double increment) {
     positive_limit = -negative_limit;
   }
 
-  for (m = 0; m <= positive_limit; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
+  for (m = 0; m <= positive_limit; m++) *vr_freq++ = (double)m * increment;
+  for (m = negative_limit; m < 0; m++) *vr_freq++ = (double)m * increment;
+  return vr_freq - n;
+};
+
+/**
+ * @brief Return a vector ordered according to the fft output order.
+ *
+ * @param n The number of points.
+ * @returns values A pointer to the fft output order vector of size @p n.
+ */
+static inline int *get_FFT_index(int n) {
+  int *freq_index = malloc_int(n);
+  int m, positive_limit, negative_limit;
+
+  if (n % 2 == 0) {
+    negative_limit = (int)(-n / 2);
+    positive_limit = -negative_limit - 1;
+  } else {
+    negative_limit = (int)(-(n - 1) / 2);
+    positive_limit = -negative_limit;
   }
-  for (m = negative_limit; m < 0; m++) {
-    vr_freq[i] = (double)m * increment;
-    i++;
-  }
-  return vr_freq;
+
+  for (m = 0; m <= positive_limit; m++) *freq_index++ = m;
+  for (m = negative_limit; m < 0; m++) *freq_index++ = m;
+  return freq_index - n;
 };

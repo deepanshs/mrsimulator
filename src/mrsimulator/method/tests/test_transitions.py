@@ -5,8 +5,9 @@ from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
-from mrsimulator.method.query import MixingEnum
 from mrsimulator.transition import TransitionPathway
+
+# from mrsimulator.method.query import MixingEnum
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -98,7 +99,7 @@ def test_hahn():
             {
                 "events": [
                     {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [1]}}]},
-                    {"query": {"ch1": {"angle": np.pi, "phase": 0}}},
+                    {"ch1": {"angle": np.pi, "phase": 0}},
                     {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
                 ]
             },
@@ -126,7 +127,7 @@ def test_cosy():
             {
                 "events": [
                     {"fraction": 1, "transition_queries": [{"ch1": {"P": [-1]}}]},
-                    {"query": {"ch1": {"angle": np.pi / 2, "phase": 0}}},
+                    {"ch1": {"angle": np.pi / 2, "phase": 0}},
                 ],
             },
             {
@@ -173,7 +174,6 @@ def test_total_mixing():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query=MixingEnum.TotalMixing),
                 ]
             ),
             SpectralDimension(
@@ -207,7 +207,7 @@ def test_no_mixing():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(query=MixingEnum.NoMixing),
+                    MixingEvent(),
                 ]
             ),
             SpectralDimension(
@@ -270,7 +270,7 @@ def test_no_zero_transition_weights():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [1]}}]),
-                    MixingEvent(query={"ch1": {"angle": np.pi}}),
+                    MixingEvent(ch1={"angle": np.pi}),
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
                 ]
             )

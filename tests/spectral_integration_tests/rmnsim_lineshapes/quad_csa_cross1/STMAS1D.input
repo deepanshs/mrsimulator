@@ -1,0 +1,89 @@
+# RMNSim input file
+# All frequencies in Hz, all times in seconds.
+
+# Name of the folder into which all the results will be saved.
+projectFolder = STMAS1DExact(0,0,0).output
+
+# Select the file containing the angles for the powder average.
+# Choices are ZCW3_6044, ZCW3_3722, ZCW3_1154, ZCW3_538, ZCW3_300, ZCW3_200, ZCW3_144, ZCW3_100, ZCW3_50
+
+powderAverageAngles = linear3Hemisphere
+nBeta = 180
+nGamma = 360
+powderAverageAngles = kh3_131072.txt
+
+# nthreads is the number of threads used in performing the powder average.
+# Best to set to the number of processors available for the calculation.
+nthreads = 7
+
+# Parameters describing nucleus for simulation.
+nucleus = Co59
+isotropicChemShift = 0.
+deltaCS = -1750.
+etaCS = 1
+# Euler angles (in degrees) between PAS of CSA and Crystal Frame
+alpha_CS = 0
+beta_CS = 0
+gamma_CS = 0
+
+Cq = -3.1e6
+etaq = 1
+# Euler angles (in degrees) between PAS of Quadrupolar interaction and Crystal Frame
+alpha_q = 0.
+beta_q = 0.
+gamma_q = 0.
+
+# Select the experiment...
+experiment = NoPulse
+# The STMAS experiment has four evolution periods.
+# The 1st evolution period is of duration pw1
+# The 2nd evolution period is of duration npt1*dw1
+# The 3rd evolution period is of duration pw2
+# The 4th evolution period is of duration tau
+# The 5th evolution period is of duration pw3
+# The 6th evolution period is of duration npt2*dw2
+
+# During the all evolution periods the following conditions are imposed ...
+#############################################################################
+# harmonic that will be excited and detected in this experiment.
+# harmonic = 1 (fundamental), 2 (1st overtone), 3 (2nd overtone), ...
+harmonic = 1
+# static magnetic field strength in Tesla used in simulation
+Bo = 4.684
+# spectrometer frequency in Hz used for transmitter and receiver
+sfreq = 47.20099e6
+
+# theoryLevel determines the approximation level used in determining rotating frame
+# in which the calculation will be performed.
+# FirstEigValZerothEigVec    = first-order eigenvalues    + zeroth order eigenvectors
+# SecondEigValZerothEigVec    = second-order eigenvalues    + zeroth order eigenvectors
+# SecondEigValFirstEigVec    = second-order eigenvalues    + first order eigenvectors
+# SecondEigValFirstEigVecGP    = second-order eigenvalues    + first order eigenvectors    + Geometric Phase Correction
+# ExactEigValZerothEigVec    = exact eigenvalues            + zeroth order eigenvectors
+# ExactEigValExactEigVec    = exact eigenvalues            + exact eigenvectors
+# ExactEigValExactEigVecGP    = exact eigenvalues            + exact eigenvectors        + Geometric Phase Correction
+
+# Unless you're interested in subtle amplitude changes or overtone experiments, it's best to use zeroth order eigenvectors
+theoryLevel = SecondEigValFirstEigVec
+theoryLevel = ExactEigValZerothEigVec
+
+# Give details about sample rotation...
+# Sample Rotation choices are OFF, MAS, VAS, DOR, and TIR.
+sampleRotation = MAS
+# with this choice, we need to further specify...
+# MAS Speeds in Hz
+vr = 16000
+
+# Specify the initial density operator.   Default is EQUILBRIUM if not specified.
+densityOperator = Ix
+
+# Angle between long axis of transmitter coil and Bo.
+transmitterCoilAngle = 90.
+# Angle between long axis of receiver coil and Bo
+receiverCoilAngle = 54.73561031724535
+
+# Give details about acquisition...
+# number of points in acquisition dimension
+npts = 2048
+# dwell time in seconds for t2 dimension
+dw = 62.5e-6

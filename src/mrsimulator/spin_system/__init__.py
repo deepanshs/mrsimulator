@@ -15,7 +15,8 @@ from pydantic import Field
 from pydantic import validator
 
 from .coupling import Coupling
-from .isotope import ISOTOPE_DATA
+from .isotope import get_all_isotope_data
+from .isotope import get_all_isotope_symbols
 from .site import Site
 from .split_spinsystems import build_new_systems
 from .zeemanstate import ZeemanState
@@ -48,7 +49,7 @@ class SpinSystem(Parseable):
 
     couplings: list of :ref:`coupling_api` or equivalent dict objects (optional)
         A list of :ref:`coupling_api` or equivalent dict objects within the spin
-        system. Each coupling object represents two-site spin interaction (J-coupling
+        system. Each coupling object represents a two-site spin interaction (J-coupling
         and Dipolar) tensor parameters. The default value is an empty list.
 
         Example
@@ -75,7 +76,7 @@ class SpinSystem(Parseable):
         >>> sys1.abundance = 10
 
     name: str (optional).
-        The value is the name or id of the spin system. The default value is None.
+        The value is the name or ID of the spin system. The default value is None.
 
         Example
         -------
@@ -285,7 +286,7 @@ class SpinSystem(Parseable):
         ]
 
     def _zeeman_energy_states(self) -> np.ndarray:
-        """Return the energy states as a Numpy array where the axis 0 is the number of
+        """Return the energy states as a Numpy array where axis 0 is the number of
         energy states, and axis 1 is the spin quantum numbers. The spin quantum numbers
         are ordered based on the order of the sites within the spin system.
         """
@@ -369,7 +370,7 @@ class SpinSystem(Parseable):
         a unit.
 
         Args:
-            dict py_dict: A required python dict object.
+            dict py_dict: A required Python dict object.
 
         Returns:
             :ref:`spin_sys_api` object.
@@ -409,7 +410,7 @@ class SpinSystem(Parseable):
 
         Arguments:
             (list) euler_angles: An ordered list of angle tuples (alpha, beta, gamma)
-                to rotate through each tensor through.
+                to rotate through each tensor.
 
         Example
         -------
@@ -423,50 +424,6 @@ class SpinSystem(Parseable):
         """
         _ = [s.rotate(euler_angles) for s in self.sites]
         _ = [c.rotate(euler_angles) for c in self.couplings]
-
-    # Deprecated
-    # def to_freq_dict(self, B0: float) -> dict:
-    #     """
-    #     Serialize the SpinSystem object to a JSON compliant python dictionary object,
-    #     where the attribute value is a numbers expressed in the attribute's default
-    #     unit. The default unit for the attributes with respective dimensionalities
-    #     are:
-
-    #     - frequency: `Hz`
-    #     - angle: `rad`
-
-    #     Args:
-    #         float B0: A required macroscopic magnetic flux density in units of T.
-
-    #     Return:
-    #         A python dict
-
-    #     Example
-    #     -------
-
-    #     >>> pprint(spin_system_1.to_freq_dict(B0=9.4))
-    #     {"abundance": 100,
-    #      "description": None,
-    #      "label": None,
-    #      "name": None,
-    #      "sites": [{"description": None,
-    #                 "isotope": "13C",
-    #                 "isotropic_chemical_shift": -2013.1791999999998,
-    #                 "label": None,
-    #                 "name": None,
-    #                 "quadrupolar": None,
-    #                 "shielding_antisymmetric": None,
-    #                 "shielding_symmetric": {"alpha": None,
-    #                                         "beta": None,
-    #                                         "eta": 0.5,
-    #                                         "gamma": None,
-    #                                         "zeta": -1006.5895999999999}}],
-    #      "transition_pathways": None}
-    #     """
-    #     temp_dict = self.dict()
-    #     temp_dict["sites"] = [site.to_freq_dict(B0) for site in self.sites]
-    #     temp_dict.pop("property_units")
-    #     return temp_dict
 
 
 def allowed_isotopes(spin_I: float = None) -> list:
@@ -482,11 +439,11 @@ def allowed_isotopes(spin_I: float = None) -> list:
         allowed isotopes is returned instead.
     """
     if spin_I is None:
-        return list(ISOTOPE_DATA.keys())
+        return get_all_isotope_symbols()
     return list(
         {
             isotope
-            for isotope, data in ISOTOPE_DATA.items()
+            for isotope, data in get_all_isotope_data().items()
             if data["spin_multiplicity"] == int(2 * spin_I + 1)  # 2S+1
         }
     )

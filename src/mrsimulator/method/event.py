@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
 
 import numpy as np
@@ -13,14 +14,34 @@ from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import FREQ_ENUM_SHORTCUT
 from .frequency_contrib import FREQ_LIST_ALL
 from .frequency_contrib import FrequencyEnum
-from .query import MixingEnum
-from .query import MixingQuery
+from .query import Rotation
 from .query import TransitionQuery
 from .utils import D_symmetry_indexes
 from .utils import P_symmetry_indexes
 
+# from .query import MixingEnum
+
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
+
+
+def parse_dict_to_ev_class(py_dict: dict):
+    """Takes in a JSON representation of some Event class and parses it to an object of
+    the correct Event class
+
+    Arguments:
+        (dict) py_dict: JSON representation of the Event class as a dictionary
+
+    Returns:
+        Either a SpectralEvent, DelayEvent, or MixingEvent object
+    """
+    if "duration" in py_dict:
+        return DelayEvent.parse_dict_with_units(py_dict)
+
+    if "ch1" in py_dict or "ch2" in py_dict or "ch3" in py_dict:
+        return MixingEvent.parse_dict_with_units(py_dict)
+
+    return SpectralEvent.parse_dict_with_units(py_dict)
 
 
 class BaseEvent(Parseable):
@@ -93,15 +114,16 @@ class BaseEvent(Parseable):
             if isinstance(item, FrequencyEnum):
                 additive.add(item.value)
 
-            # Item is a string of a recognized freq contrib string
-            elif item in FREQ_LIST_ALL:
-                additive.add(item)
+            function = subtractive if item.startswith("!") else additive
+            item_enum = item[1:] if item.startswith("!") else item
 
-            # String is a Frequency Contribution shortcut (set of strings)
-            elif item[0] == "!":
-                subtractive.update(FREQ_ENUM_SHORTCUT[item[1:]])
-            else:
-                additive.update(FREQ_ENUM_SHORTCUT[item])
+            # Item is a string of a recognized freq contrib string
+            if item_enum in FREQ_LIST_ALL:
+                function.add(item_enum)
+
+            # Item is a string of a recognized freq contrib shortcut
+            if item_enum in FREQ_ENUM_SHORTCUT:
+                function.update(FREQ_ENUM_SHORTCUT[item_enum])
 
         # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive
@@ -109,7 +131,7 @@ class BaseEvent(Parseable):
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):
-        """Parse the physical quantities of an Event object from a python dictionary
+        """Parse the physical quantities of an Event object from a Python dictionary
         object.
 
         Args:
@@ -119,7 +141,7 @@ class BaseEvent(Parseable):
         return super().parse_dict_with_units(py_dict_copy)
 
     def dict(self, **kwargs) -> dict:
-        """Return a JSON compliant dictionary of the instance of the event."""
+        """Return a JSON-compliant dictionary of the instance of the event."""
         py_dict = super().dict()
         py_dict["freq_contrib"] = [
             fq.value if isinstance(fq, FrequencyEnum) else fq
@@ -202,16 +224,16 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
-    r"""Base ConstantDurationEvent class defines the spin environment and the
+class DelayEvent(BaseEvent):
+    r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
-    event contribute to the spectrum as amplitudes.
+    event contributes to the spectrum as complex amplitude modulations.
 
     Attributes
     ----------
 
     duration:
-        The duration of the event in units of µs. The default is 0.
+        The duration of the event in units of s. The default is 0.
 
     magnetic_flux_density:
         The macroscopic magnetic flux density, :math:`H_0`, of the applied external
@@ -241,11 +263,11 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
         **BaseEvent.property_unit_types,
     }
     property_default_units: ClassVar[Dict] = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent.property_default_units,
     }
     property_units: Dict = {
-        "duration": "µs",
+        "duration": "s",
         **BaseEvent().property_default_units,
     }
 
@@ -256,59 +278,85 @@ class ConstantDurationEvent(BaseEvent):  # TransitionModulationEvent
         validate_assignment = True
 
 
-class MixingEvent(Parseable):  # TransitionMixingEvent
-    """Transition mixing class
+class MixingEvent(Parseable):
+    """MixingEvent class for querying transition mixing between events.
 
     Attributes
     ----------
 
-    query:
-        The transition mixing query.
+    ch1:
+        An optional Rotation object for the channel at index 0 of the method's
+        channels list."
+
+    ch2:
+        An optional Rotation object for the channel at index 1 of the method's
+        channels list."
+
+    ch3:
+        An optional Rotation object for the channel at index 2 of the method's
+        channels list."
+
+    Example
+    -------
+
+        >>> query = MixingEvent(ch1={"angle": 1.570796, "phase": 3.141593})
+
     """
 
-    query: Union[MixingQuery, MixingEnum]
-
-    test_vars: ClassVar[Dict] = {"query": {}}
+    ch1: Optional[Rotation] = Field(
+        title="ch1",
+        default=Rotation(),
+        description=(
+            "An optional Rotation object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch2: Optional[Rotation] = Field(
+        title="ch2",
+        default=None,
+        description=(
+            "An optional Rotation object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
+    ch3: Optional[Rotation] = Field(
+        title="ch3",
+        default=None,
+        description=(
+            "An optional Rotation object for imposing a rotation on "
+            "channel index 0 of the method's channels array."
+        ),
+    )
 
     class Config:
-        extra = "forbid"
         validate_assignment = True
-
-    @validator("query", pre=True, always=True)
-    def validate_query(cls, v, **kwargs):
-        """Validator which tries to convert query to a MixingEnum if query is string"""
-        if isinstance(v, str):
-            if v in MixingEnum.allowed_enums():
-                v = MixingEnum[v]
-            else:
-                raise ValueError(
-                    f"Unrecognized MixingEnum name '{v}'. "
-                    f"The allowed types are {MixingEnum.allowed_enums()}"
-                )
-        return v
+        extra = "forbid"
 
     @classmethod
     def parse_dict_with_units(cls, py_dict):
         """
-        Parse the physical quantity from a dictionary representation of the MixingEvent
+        Parse the physical quantity from a dictionary representation of the Method
         object, where the physical quantity is expressed as a string with a number and
         a unit.
 
         Args:
-            dict py_dict: A python dict representation of the MixingEvent object.
+            dict py_dict: A Python dict representation of the MixingEvent object.
 
         Returns:
-            A MixingEvent.
+            A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        if isinstance(py_dict_copy["query"], dict):
-            py_dict_copy["query"] = MixingQuery.parse_dict_with_units(
-                py_dict_copy["query"]
-            )
+        obj = {k: Rotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
+        py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
+
+    @property
+    def channels(self) -> List[Rotation]:
+        """Returns an ordered list of all channels"""
+        return [self.ch1, self.ch2, self.ch3]
 
 
 class Event(Parseable):
     """Event class Object"""
 
-    event: Union[MixingEvent, ConstantDurationEvent, SpectralEvent]
+    event: Union[DelayEvent, SpectralEvent, MixingEvent]
