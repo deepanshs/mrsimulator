@@ -4,7 +4,7 @@ from typing import Dict
 from typing import List
 
 from mrsimulator.utils.parseable import Parseable
-from pydantic import validator
+from pydantic.v1 import validator
 
 from .tensors import AntisymmetricTensor
 from .tensors import SymmetricTensor

@@ -2,7 +2,7 @@
 import pytest
 from mrsimulator import Site
 from mrsimulator.spin_system.isotope import Isotope
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"

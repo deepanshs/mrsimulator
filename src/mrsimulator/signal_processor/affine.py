@@ -4,7 +4,7 @@ from typing import Dict
 from typing import Union
 
 import numpy as np
-from pydantic import validator
+from pydantic.v1 import validator
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape

@@ -8,7 +8,7 @@ from mrsimulator import Simulator
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method.lib import BlochDecaySpectrum
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 
 
 __author__ = "Matthew D. Giammar"

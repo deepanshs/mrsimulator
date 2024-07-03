@@ -5,9 +5,9 @@ from mrsimulator.method import Method
 from mrsimulator.method import SpectralDimension
 from mrsimulator.utils.error import ImmutableEventError
 from mrsimulator.utils.error import NamedMethodError
-from pydantic import Field
-from pydantic import PrivateAttr
-from pydantic import validator
+from pydantic.v1 import Field
+from pydantic.v1 import PrivateAttr
+from pydantic.v1 import validator
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

@@ -4,8 +4,8 @@ from typing import ClassVar
 from typing import Dict
 
 from monty.serialization import loadfn
-from pydantic import BaseModel
-from pydantic import validator
+from pydantic.v1 import BaseModel
+from pydantic.v1 import validator
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
