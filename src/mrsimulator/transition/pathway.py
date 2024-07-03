@@ -1,6 +1,6 @@
 import numpy as np
 from mrsimulator.utils.abstract_list import AbstractList
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 from . import Transition
 

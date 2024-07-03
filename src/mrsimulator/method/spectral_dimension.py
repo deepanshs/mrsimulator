@@ -10,8 +10,8 @@ import csdmpy as cp
 import numpy as np
 from mrsimulator.utils.error import MissingSpectralEventError
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Field
-from pydantic import validator
+from pydantic.v1 import Field
+from pydantic.v1 import validator
 
 from .event import DelayEvent
 from .event import Event

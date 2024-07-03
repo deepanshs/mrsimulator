@@ -6,7 +6,7 @@ from typing import ClassVar
 from typing import Dict
 
 from csdmpy.units import string_to_quantity
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 
 __author__ = "Shyam Dwaraknath"

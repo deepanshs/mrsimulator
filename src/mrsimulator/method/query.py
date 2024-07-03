@@ -9,7 +9,7 @@ from typing import Optional
 import numpy as np
 from mrsimulator.transition import Transition
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Field
+from pydantic.v1 import Field
 
 from .utils import cartesian_product
 from .utils import get_iso_dict
