@@ -8,7 +8,7 @@ __author__ = "Philip Grandinetti"
 __email__ = "grandinetti.1@osu.edu"
 
 
-def tensor_to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
     # Calculate the eigenvalues and eigenvectors of the traceless tensor
     eigenvalues, L = np.linalg.eigh(tensor)
@@ -25,7 +25,7 @@ def tensor_to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.nda
     return euler_angles, eigenvalues
 
 
-def mehring_parameters_to_tensor(
+def from_mehring_parameters(
     euler_angles: List[float], eigenvalues: List[float]
 ) -> np.ndarray:
     # Assuming alpha_s, beta_s, gamma_s are your Euler angles
@@ -37,7 +37,7 @@ def mehring_parameters_to_tensor(
     return tensor
 
 
-def tensor_to_haeberlen_parameters(
+def to_haeberlen_parameters(
     tensor: np.ndarray,
 ) -> Tuple[np.ndarray, float, float, float]:
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
@@ -64,7 +64,7 @@ def tensor_to_haeberlen_parameters(
     return euler_angles, zeta_sigma, eta_sigma, isotropic_component
 
 
-def haeberlen_parameters_to_tensor(
+def from_haeberlen_parameters(
     euler_angles: List[float],
     zeta_sigma: float,
     eta_sigma: float,
@@ -116,19 +116,17 @@ def maryland_to_haeberlen_parameters(
         zeta_sigma,
         eta_sigma,
         isotropic_component,
-    ) = tensor_to_haeberlen_parameters(lambdas)
+    ) = to_haeberlen_parameters(lambdas)
     return zeta_sigma, eta_sigma, isotropic_component
 
 
 def haeberlen_parameters_to_maryland(
     zeta_sigma: float, eta_sigma: float, isotropic_component: float
 ) -> Tuple[float, float, float]:
-    tensor = haeberlen_parameters_to_tensor(
+    tensor = from_haeberlen_parameters(
         np.array([0, 0, 0]), zeta_sigma, eta_sigma, isotropic_component
     )
-    return mehring_principal_components_to_maryland(
-        tensor_to_mehring_parameters(tensor)
-    )
+    return mehring_principal_components_to_maryland(to_mehring_parameters(tensor))
 
 
 def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
