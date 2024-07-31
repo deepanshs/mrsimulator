@@ -25,6 +25,7 @@ def to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 
     return euler_angles, eigenvalues
 
+
 def from_mehring_parameters(
     euler_angles: List[float], eigenvalues: List[float]
 ) -> np.ndarray:
@@ -162,17 +163,20 @@ def calculate_D_tensor(r1: list, r2: list):
     r_magnitude = np.sqrt(x**2 + y**2 + z**2)
     r_squared = r_magnitude**2
     r_cubed = r_magnitude**3
-    
+
     # Initialize the D tensor
     D = np.zeros((3, 3))
     r_components = np.array([x, y, z])
-    
+
     # Compute the components of the D tensor
     for i in range(3):
         for k in range(3):
-            D[i, k] = (1 / r_cubed) * (3 * r_components[i] * r_components[k] / r_squared - (1 if i == k else 0))
-    
+            D[i, k] = (1 / r_cubed) * (
+                3 * r_components[i] * r_components[k] / r_squared - (1 if i == k else 0)
+            )
+
     return D
+
 
 def dipolar_tensor_parameters(site_1: list, site_2: list):
     isotope_1 = Isotope(symbol=site_1[0]).gyromagnetic_ratio
@@ -180,5 +184,5 @@ def dipolar_tensor_parameters(site_1: list, site_2: list):
     D_tensor = calculate_D_tensor(site_1[1], site_2[2])
     euler_angles, zeta_d, _, _ = to_haeberlen_parameters(D_tensor)
     #   𝜁 = 2/R^3
-    D = -66.2607015 * isotope_1 * isotope_2 * zeta_d/2
+    D = -66.2607015 * isotope_1 * isotope_2 * zeta_d / 2
     return euler_angles, D
