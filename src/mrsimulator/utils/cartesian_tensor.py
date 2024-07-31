@@ -2,6 +2,7 @@ from typing import List
 from typing import Tuple
 
 import numpy as np
+from mrsimulator.spin_system.isotope import Isotope
 from scipy.spatial.transform import Rotation as R
 
 __author__ = "Philip Grandinetti"
@@ -139,3 +140,17 @@ def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
     x = r * np.cos(theta)
     y = r * np.sin(theta)
     return x, y
+
+
+# Dipolar coupling constant is given by:
+# D = -𝛾_1 𝛾_2 µ_0 ℏ/(8*π^2 r^3) in Hz
+# where r is distance in m.
+# Here, we use
+# D = -𝛾_1' * 𝛾_2' * µ_0*ℏ*1E12*1E30/(2*R^3) in Hz
+# where 𝛾_1' and 𝛾_2' are the reduced gyromagnetic ratios
+# of the two isotopes in MHz/T, and R is the distance in Å.
+# -µ_0*ℏ*1E12*1E30/2 = -66.2607015 m^3•kg^2/(s^3•A^2)
+def dipolar_coupling_constant(isotope_symbol_1, isotope_symbol_2, distance: float):
+    isotope_1 = Isotope(symbol=isotope_symbol_1).gyromagnetic_ratio
+    isotope_2 = Isotope(symbol=isotope_symbol_2).gyromagnetic_ratio
+    return -66.2607015 * isotope_1 * isotope_2 / (distance) ** 3

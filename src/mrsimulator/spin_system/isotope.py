@@ -149,7 +149,7 @@ class Isotope(BaseModel):
 
     @property
     def quadrupole_moment(self):
-        """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
+        """Quadrupole moment of the nucleus given in units of b (barn)."""
         isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["quadrupole_moment"]
 
