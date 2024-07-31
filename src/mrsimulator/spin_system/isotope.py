@@ -43,7 +43,7 @@ class Isotope(BaseModel):
     10.708398861439887
     >>> carbon.atomic_number
     6
-    >>> carbon.quadrupole_moment  # in eB
+    >>> carbon.quadrupole_moment  # in b
     0.0
     """
 
