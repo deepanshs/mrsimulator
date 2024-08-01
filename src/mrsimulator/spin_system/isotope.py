@@ -154,6 +154,12 @@ class Isotope(BaseModel):
         return isotope_data["quadrupole_moment"]
 
     @property
+    def efg_to_Cq(self):
+        """Factor for converting EFG to quadrupolar coupling constant, Cq, in Hz."""
+        isotope_data = get_isotope_dict(self.symbol)
+        return isotope_data["quadrupole_moment"] * 234.9647776390215e6
+
+    @property
     def atomic_number(self):
         """Atomic number of the isotope."""
         isotope_data = get_isotope_dict(self.symbol)

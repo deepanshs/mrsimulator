@@ -9,7 +9,7 @@ __author__ = "Philip Grandinetti"
 __email__ = "grandinetti.1@osu.edu"
 
 
-def to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def to_mehring_params(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
     # Calculate the eigenvalues and eigenvectors of the traceless tensor
     eigenvalues, L = np.linalg.eigh(tensor)
@@ -26,7 +26,7 @@ def to_mehring_parameters(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     return euler_angles, eigenvalues
 
 
-def from_mehring_parameters(
+def from_mehring_params(
     euler_angles: List[float], eigenvalues: List[float]
 ) -> np.ndarray:
     # Assuming alpha_s, beta_s, gamma_s are your Euler angles
@@ -38,7 +38,7 @@ def from_mehring_parameters(
     return tensor
 
 
-def to_haeberlen_parameters(
+def to_haeberlen_params(
     tensor: np.ndarray,
 ) -> Tuple[np.ndarray, float, float, float]:
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
@@ -65,7 +65,7 @@ def to_haeberlen_parameters(
     return euler_angles, zeta_sigma, eta_sigma, isotropic_component
 
 
-def from_haeberlen_parameters(
+def from_haeberlen_params(
     euler_angles: List[float],
     zeta_sigma: float,
     eta_sigma: float,
@@ -108,7 +108,7 @@ def maryland_to_mehring_principal_components(
     return np.array([lambda1, lambda2, lambda3])
 
 
-def maryland_to_haeberlen_parameters(
+def maryland_to_haeberlen_params(
     isotropic: float, span: float, skew: float
 ) -> Tuple[float, float, float]:
     lambdas = maryland_to_mehring_principal_components(isotropic, span, skew)
@@ -117,17 +117,17 @@ def maryland_to_haeberlen_parameters(
         zeta_sigma,
         eta_sigma,
         isotropic_component,
-    ) = to_haeberlen_parameters(lambdas)
+    ) = to_haeberlen_params(lambdas)
     return zeta_sigma, eta_sigma, isotropic_component
 
 
-def haeberlen_parameters_to_maryland(
+def haeberlen_params_to_maryland(
     zeta_sigma: float, eta_sigma: float, isotropic_component: float
 ) -> Tuple[float, float, float]:
-    tensor = from_haeberlen_parameters(
+    tensor = from_haeberlen_params(
         np.array([0, 0, 0]), zeta_sigma, eta_sigma, isotropic_component
     )
-    return mehring_principal_components_to_maryland(to_mehring_parameters(tensor))
+    return mehring_principal_components_to_maryland(to_mehring_params(tensor))
 
 
 def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
@@ -178,11 +178,11 @@ def calculate_D_tensor(r1: list, r2: list):
     return D
 
 
-def dipolar_tensor_parameters(site_1: list, site_2: list):
+def dipolar_tensor_params(site_1: list, site_2: list):
     isotope_1 = Isotope(symbol=site_1[0]).gyromagnetic_ratio
     isotope_2 = Isotope(symbol=site_2[0]).gyromagnetic_ratio
-    D_tensor = calculate_D_tensor(site_1[1], site_2[2])
-    euler_angles, zeta_d, _, _ = to_haeberlen_parameters(D_tensor)
+    D_tensor = calculate_D_tensor(site_1[1], site_2[1])
+    euler_angles, zeta_d, _, _ = to_haeberlen_params(D_tensor)
     #   𝜁 = 2/R^3
     D = -66.2607015 * isotope_1 * isotope_2 * zeta_d / 2
     return euler_angles, D
