@@ -3,10 +3,109 @@ from typing import Tuple
 
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.tensors import SymmetricTensor
+from pydantic import BaseModel
 from scipy.spatial.transform import Rotation as R
+from typing_extensions import Literal
 
 __author__ = "Philip Grandinetti"
 __email__ = "grandinetti.1@osu.edu"
+
+
+class BaseParams(BaseModel):
+    """Base class"""
+
+    type: Literal["shielding", "quadrupolar", "dipolar", "j_coupling"] = "shielding"
+
+    class Config:
+        extra = "forbid"
+        validate_assignment = True
+        arbitrary_types_allowed = True
+
+
+class HaeberlenParams(BaseParams):
+    """Haeberlen parameter base class"""
+
+    isotropic: float
+    zeta: float
+    eta: float
+    euler_angles: list
+
+    def to_cartesian(self):
+        """Convert Haeberlen parameter to Cartesian tensor"""
+        tensor = from_haeberlen_params(
+            euler_angles=self.euler_angles,
+            zeta_sigma=self.zeta,
+            eta_sigma=self.eta,
+            isotropic_component=self.isotropic,
+        )
+        return CartesianTensor(tensor=tensor, type=self.type)
+
+    @property
+    def symmetric_tensor(self):
+        """Convert to a SymmetricTensor object"""
+        base = dict(zeta=None, Cq=None, D=None)
+        if self.type == "quadrupolar":
+            base["Cq"] = self.zeta
+        elif self.type == "dipolar":
+            base["D"] = self.zeta
+        else:
+            base["zeta"] = self.zeta
+
+        return SymmetricTensor(
+            eta=self.eta,
+            alpha=self.euler_angles[0],
+            beta=self.euler_angles[1],
+            gamma=self.euler_angles[2],
+            **base,
+        )
+
+
+class MehringParams(BaseParams):
+    """Mehring parameter base class"""
+
+    eigenvalues: list
+    euler_angles: list
+
+    def to_cartesian(self):
+        """Convert Mehring parameters to Cartesian tensor"""
+        tensor = from_mehring_params(
+            euler_angles=self.euler_angles, eigenvalues=self.eigenvalues
+        )
+        return CartesianTensor(tensor=tensor, type=self.type)
+
+    def to_maryland_params(self):
+        """Convert to maryland params"""
+        return mehring_principal_components_to_maryland(lambdas=self.eigenvalues)
+
+
+class CartesianTensor(BaseParams):
+    """Cartesian tensor base class.
+
+    Attributes
+    ----------
+    tensor: 3x3 np.ndarray
+    """
+
+    tensor: np.ndarray
+
+    def to_haeberlen_params(self):
+        """Convert to HaeberlenParams object"""
+        euler_angles, zeta, eta, isotropic = to_haeberlen_params(self.tensor)
+        return HaeberlenParams(
+            isotropic=isotropic,
+            zeta=zeta,
+            eta=eta,
+            euler_angles=euler_angles,
+            type=self.type,
+        )
+
+    def to_mehring_params(self):
+        """Return Mehring parameters."""
+        euler_angles, eigenvalues = to_mehring_params(self.tensor)
+        return MehringParams(
+            eigenvalues=eigenvalues, euler_angles=euler_angles, type=self.type
+        )
 
 
 def to_mehring_params(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
