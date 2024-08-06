@@ -178,11 +178,9 @@ def calculate_D_tensor(r1: list, r2: list):
     return D
 
 
-def dipolar_tensor_params(site_1: list, site_2: list):
+def dipolar_tensor(site_1: list, site_2: list):
     isotope_1 = Isotope(symbol=site_1[0]).gyromagnetic_ratio
     isotope_2 = Isotope(symbol=site_2[0]).gyromagnetic_ratio
     D_tensor = calculate_D_tensor(site_1[1], site_2[1])
-    euler_angles, zeta_d, _, _ = to_haeberlen_params(D_tensor)
-    #   𝜁 = 2/R^3
-    D = -66.2607015 * isotope_1 * isotope_2 * zeta_d / 2
-    return euler_angles, D
+    D_tensor *= -66.2607015 * isotope_1 * isotope_2 / 2
+    return D_tensor
