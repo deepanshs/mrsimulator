@@ -43,7 +43,7 @@ class IsotopeReferences:
 
 class IsotopeReference:
     def __init__(self, symbol, data):
-        self.ratio = data.get("ratio")
+        self.ratio = data.get("ratio") / 100
         self.compound = data.get("compound")
         self.solvent = data.get("solvent")
         self.concentration = data.get("concentration")
@@ -245,7 +245,7 @@ class Isotope(BaseModel):
         >>> B0 = H1.ref_freq_to_B0(ref_freq = 400)
         """
         isotope_data = isotope_reference(self.symbol)
-        return 0.02348731439404777 * ref_freq / (isotope_data.ratio / 100)
+        return 0.02348731439404777 * ref_freq / isotope_data.ratio
 
     def B0_to_ref_freq(self, B0=9.4):
         """Return the primary reference frequency given the magnetic field strength B0.
@@ -263,7 +263,7 @@ class Isotope(BaseModel):
         >>> B0 = H1.B0_to_ref_freq(B0 = 9.4)
         """
         isotope_data = isotope_reference(self.symbol)
-        return B0 * (isotope_data.ratio / 100) / 0.02348731439404777
+        return B0 * isotope_data.ratio / 0.02348731439404777
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:
