@@ -1,4 +1,5 @@
 """Base Isotope class."""
+import json
 from os import path
 from typing import ClassVar
 from typing import Dict
@@ -11,7 +12,9 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
+
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
+REFERENCE_DATA = loadfn(path.join(MODULE_DIR, "references.json"))
 DEFAULT_ISOTOPE = {
     "spin_multiplicity": 2,
     "gyromagnetic_ratio": 0,
@@ -19,6 +22,50 @@ DEFAULT_ISOTOPE = {
     "natural_abundance": 100,
     "atomic_number": 0,
 }
+
+
+class IsotopeReferences:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, "initialized"):  # Ensure __init__ is only called once
+            self.initialized = True
+            self.isotopes_data = REFERENCE_DATA
+
+    def get_isotope_data(self, symbol: str):
+        return self.isotopes_data.get(symbol, None)
+
+
+class IsotopeReference:
+    def __init__(self, symbol, data):
+        self.ratio = data.get("ratio")
+        self.compound = data.get("compound")
+        self.solvent = data.get("solvent")
+        self.concentration = data.get("concentration")
+
+    def __repr__(self):
+        return json.dumps(
+            {
+                "ratio": self.ratio,
+                "compound": self.compound,
+                "solvent": self.solvent,
+                "concentration": self.concentration,
+            },
+            indent=4,
+        )
+
+
+def isotope_reference(symbol):
+    isotopes_instance = IsotopeReferences()
+    data = isotopes_instance.get_isotope_data(symbol)
+    if data:
+        return IsotopeReference(symbol, data)
+    return None
 
 
 class Isotope(BaseModel):
@@ -181,6 +228,42 @@ class Isotope(BaseModel):
         >>> freq = silicon.larmor_freq(B0 = 9.4)
         """
         return -self.gyromagnetic_ratio * B0
+
+    def ref_freq_to_B0(self, ref_freq=400):
+        """Return the magnetic field strength B0 given the primary reference frequency.
+
+        Args:
+            float ref_freq: primary reference frequency in MHz
+
+        Returns:
+            float: magnetic flux density in T
+
+        Example
+        -------
+
+        >>> H1 = Isotope(symbol="1H")
+        >>> B0 = H1.ref_freq_to_B0(ref_freq = 400)
+        """
+        isotope_data = isotope_reference(self.symbol)
+        return 0.02348731439404777 * ref_freq / (isotope_data.ratio / 100)
+
+    def B0_to_ref_freq(self, B0=9.4):
+        """Return the primary reference frequency given the magnetic field strength B0.
+
+        Args:
+            float B0: magnetic flux density in T
+
+        Returns:
+            float: primary reference frequency in MHz
+
+        Example
+        -------
+
+        >>> H1 = Isotope(symbol="1H")
+        >>> B0 = H1.B0_to_ref_freq(B0 = 9.4)
+        """
+        isotope_data = isotope_reference(self.symbol)
+        return B0 * (isotope_data.ratio / 100) / 0.02348731439404777
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:

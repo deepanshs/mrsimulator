@@ -3,6 +3,7 @@ from typing import Tuple
 
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.spin_system.tensors import SymmetricTensor
 from scipy.spatial.transform import Rotation as R
 
 __author__ = "Philip Grandinetti"
@@ -184,3 +185,34 @@ def dipolar_tensor(site_1: list, site_2: list):
     D_tensor = calculate_D_tensor(site_1[1], site_2[1])
     D_tensor *= -66.2607015 * isotope_1 * isotope_2 / 2
     return D_tensor
+
+
+def to_symmetric_tensor(tensor: np.ndarray, type: str = "shielding") -> SymmetricTensor:
+    euler_angles, zeta, eta, isotropic = to_haeberlen_params(tensor)
+
+    if type == "shielding" or type == "j_coupling":
+        return SymmetricTensor(
+            zeta=zeta,
+            eta=eta,
+            alpha=euler_angles[0],
+            beta=euler_angles[1],
+            gamma=euler_angles[2],
+        )
+    elif type == "quadrupolar":
+        return SymmetricTensor(
+            Cq=zeta,
+            eta=eta,
+            alpha=euler_angles[0],
+            beta=euler_angles[1],
+            gamma=euler_angles[2],
+        )
+    elif type == "dipolar":
+        return SymmetricTensor(
+            D=zeta,
+            eta=eta,
+            alpha=euler_angles[0],
+            beta=euler_angles[1],
+            gamma=euler_angles[2],
+        )
+    else:
+        raise ValueError(f"Unknown tensor type: {type}")
