@@ -1,5 +1,6 @@
 from typing import List
 from typing import Tuple
+from typing import Union
 
 import numpy as np
 from mrsimulator.spin_system.isotope import Isotope
@@ -11,6 +12,19 @@ __email__ = "grandinetti.1@osu.edu"
 
 
 def to_mehring_params(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Cartesian 3x3 tensor to Mehring parameters. Note, for non-symmetric
+    tensors, the conversion is applied by first symmetrizing the tensor
+    using (tensor + tensor.T) / 2.
+
+    Args:
+        tensor:
+            A 3x3 np.ndarray Cartesian tensor.
+    Returns:
+        A tuple of (euler_angles, eigenvalues) where ``euler_angles`` is an
+        ndarray  of three Euler angles [``alpha``, ``beta``, ``gamma``] using
+        the  "zyz" convention, and ``eigenvalues`` are the corresponding
+        ndarray of three Eigenvalues.
+    """
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
     # Calculate the eigenvalues and eigenvectors of the traceless tensor
     eigenvalues, L = np.linalg.eigh(tensor)
@@ -30,6 +44,18 @@ def to_mehring_params(tensor: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
 def from_mehring_params(
     euler_angles: List[float], eigenvalues: List[float]
 ) -> np.ndarray:
+    """Mehring parameters to a 3x3 symmetric Cartesian tensor.
+
+    Args:
+        euler_angles:
+            An ndarray of three Euler angles [``alpha``, ``beta``, ``gamma``]
+            using the  "zyz" convention.
+        eigenvalues:
+            The corresponding ndarray of three Eigenvalues.
+
+    Returns:
+        tensor: A 3x3 np.ndarray of symmetric Cartesian tensor.
+    """
     # Assuming alpha_s, beta_s, gamma_s are your Euler angles
     r = R.from_euler("zyz", euler_angles)
     L = r.as_matrix()
@@ -157,8 +183,10 @@ def dipolar_coupling_constant(isotope_symbol_1, isotope_symbol_2, distance: floa
     return -66.2607015 * isotope_1 * isotope_2 / (distance) ** 3
 
 
-def calculate_D_tensor(r1: list, r2: list):
+def calculate_D_tensor(r1: Union[list, np.ndarray], r2: Union[list, np.ndarray]):
     # Compute the vector r
+    r1 = np.array(r1)
+    r2 = np.array(r2)
     r = r1 - r2
     x, y, z = r
     r_magnitude = np.sqrt(x**2 + y**2 + z**2)
@@ -179,7 +207,32 @@ def calculate_D_tensor(r1: list, r2: list):
     return D
 
 
-def dipolar_tensor(site_1: list, site_2: list):
+def dipolar_tensor(site_1: list, site_2: list) -> np.ndarray:
+    """Generates a 3x3 symmetric cartesian tensor from isotope site coordinates.
+
+    Args:
+        site_1:
+            A list of (isotope_symbol, site_coordiantes) for site 1, where
+            ``isotope_symbol`` is a string of any of the mrsimulator allowed
+            isotopes and ``site_coordiantes`` is a list or ndarray of
+            (x, y, z) site coordinates in units of Angstrom.
+        site_2:
+            A list of (isotope_symbol, site_coordiantes) for site 2, where
+            ``isotope_symbol`` is a string of any of the mrsimulator allowed
+            isotopes and ``site_coordiantes`` is a list or ndarray of
+            (x, y, z) site coordinates in units of Angstrom.
+
+    Returns:
+        A 3x3 ndarray of symmetric dipolar Cartesian tensor in units of Hz.
+
+    Example:
+        >>> site1_coords = [2.1, 3.1, 1.3]  # coords for 1H in A
+        >>> site2_coords = [0, 0, 1.2]  # coords for 13C in A
+        >>> dipole_tensor = dipolar_tensor(
+        ...     site_1=['1H', site1_coords],
+        ...     site_2=['13C', site2_coords]
+        ... )
+    """
     isotope_1 = Isotope(symbol=site_1[0]).gyromagnetic_ratio
     isotope_2 = Isotope(symbol=site_2[0]).gyromagnetic_ratio
     D_tensor = calculate_D_tensor(site_1[1], site_2[1])
@@ -188,7 +241,28 @@ def dipolar_tensor(site_1: list, site_2: list):
 
 
 def to_symmetric_tensor(tensor: np.ndarray, type: str = "shielding") -> SymmetricTensor:
-    euler_angles, zeta, eta, isotropic = to_haeberlen_params(tensor)
+    """Cartesian 3x3 tensor to mrsimulator SymmetricTensor object. Note that
+    only the traceless symmetric part of the tensor is converted to the
+    SymmetricTensor object.
+
+    Args:
+        tensor:
+            A 3x3 np.ndarray Cartesian tensor
+        type:
+            String with any one of the allowed listings. [``"shielding"``,
+            ``"j_coupling"``, ``"quadrupolar"``, ``"dipolar"``]
+    Returns:
+        A :ref:`sy_api` object
+
+    Example:
+    >>> tensor = np.array([
+    ...     [-8.05713333, -1.4523, 35.7252],
+    ...     [-5.5725, 26.38916667, -5.2804],
+    ...     [33.1405, -0.6241, -18.33203333],
+    ... ])
+    >>> symmetric_tensor = to_symmetric_tensor(tensor, type="shielding")
+    """
+    euler_angles, zeta, eta, _ = to_haeberlen_params(tensor)
 
     if type == "shielding" or type == "j_coupling":
         return SymmetricTensor(
