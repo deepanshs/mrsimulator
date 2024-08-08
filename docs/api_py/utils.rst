@@ -13,3 +13,8 @@ Utility functions
 .. currentmodule:: mrsimulator.utils
 
 .. autofunction:: get_spectral_dimensions
+
+
+.. toctree::
+
+    utils/cartesian_tensor

@@ -10,6 +10,7 @@ recursive-include src/c_lib/lib *.c
 
 include src/mrsimulator/method/tests/lib_tests/test_data.json
 include src/mrsimulator/spin_system/isotope_data.json
+include src/mrsimulator/spin_system/references.json
 
 include src/c_lib/base/base_model.*
 include src/c_lib/test/test.*
