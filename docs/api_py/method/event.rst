@@ -21,8 +21,3 @@ Events
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
-
-
-.. autoclass::
-    :show-inheritance:
-    :members:

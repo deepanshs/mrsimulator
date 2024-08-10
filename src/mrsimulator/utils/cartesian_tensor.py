@@ -49,7 +49,7 @@ def from_mehring_params(
     Args:
         euler_angles:
             An ndarray of three Euler angles [``alpha``, ``beta``, ``gamma``]
-            using the  "zyz" convention.
+            using the "zyz" convention.
         eigenvalues:
             The corresponding ndarray of three Eigenvalues.
 
@@ -68,6 +68,21 @@ def from_mehring_params(
 def to_haeberlen_params(
     tensor: np.ndarray,
 ) -> Tuple[np.ndarray, float, float, float]:
+    """Cartesian 3x3 tensor to Haeberlen parameters. Note, for non-symmetric
+    tensors, the conversion is applied by first symmetrizing the tensor
+    using (tensor + tensor.T) / 2.
+
+    Args:
+        tensor:
+            A 3x3 np.ndarray Cartesian tensor.
+    Returns:
+        A tuple of (euler_angles, zeta_sigma, eta_sigma, isotropic_component)
+        where ``euler_angles`` is an ndarray  of three the Euler angles
+        [``alpha``, ``beta``, ``gamma``] using the  "zyz" convention,
+        ``zeta_sigma``, ``eta_sigma``, and ``isotropic_component`` are the
+        corresponding Haeberlen anisotropy, asymmetry, and isotropic
+        parameters.
+    """
     tensor = (tensor + tensor.T) / 2  # Make sure the tensor is symmetric
     isotropic_component = np.trace(tensor) / 3
     traceless_tensor = tensor - isotropic_component * np.eye(3)
@@ -98,6 +113,22 @@ def from_haeberlen_params(
     eta_sigma: float,
     isotropic_component: float,
 ) -> np.ndarray:
+    """Haeberlen parameters to a 3x3 symmetric Cartesian tensor.
+
+    Args:
+        euler_angles:
+            An ndarray of three Euler angles [``alpha``, ``beta``, ``gamma``]
+            using the "zyz" convention.
+        zeta_sigma:
+            Anisotropy parameter.
+        eta_sigma:
+            Asymmetry parameter
+        isotropic_component:
+            Isotropic parameter
+
+    Returns:
+        tensor: A 3x3 np.ndarray of symmetric Cartesian tensor.
+    """
     eigenvalues = np.array(
         [
             -zeta_sigma * (1 + eta_sigma) / 2,
@@ -120,6 +151,17 @@ def from_haeberlen_params(
 def mehring_principal_components_to_maryland(
     lambdas: List[float],
 ) -> Tuple[float, float, float]:
+    """Mehring principal components to  Maryland.
+
+    Args:
+        lambdas:
+            Eigenvalues from Mehring convention.
+
+    Returns:
+        A tuple of (span, skew, isotropic) in Maryland convention where
+        ``span`` is the width, ``skew`` is the asymmetry, and ``isotropic``
+        is the isotropic components.
+    """
     isotropic = np.mean(lambdas)
     span = lambdas[2] - lambdas[0]
     skew = 3 * (isotropic - lambdas[1]) / span
@@ -129,6 +171,19 @@ def mehring_principal_components_to_maryland(
 def maryland_to_mehring_principal_components(
     isotropic: float, span: float, skew: float
 ) -> np.ndarray:
+    """Maryland components to Mehring principal components.
+
+    Args:
+        span:
+            Maryland anisotropy component.
+        skew:
+            Maryland asymmetry component.
+        isotropic:
+            Maryland isotropic component.
+
+    Returns:
+        A ndarray of Mehring Eigenvalues.
+    """
     lambda1 = isotropic - span
     lambda2 = isotropic - skew * span / 3
     lambda3 = (span + 2 * isotropic + skew * span / 3) / 2
@@ -171,7 +226,7 @@ def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
 
 # Dipolar coupling constant is given by:
 # D = -𝛾_1 𝛾_2 µ_0 ℏ/(8*π^2 r^3) in Hz
-# where r is distance in m.
+# where r is the distance in m.
 # Here, we use
 # D = -𝛾_1' * 𝛾_2' * µ_0*ℏ*1E12*1E30/(2*R^3) in Hz
 # where 𝛾_1' and 𝛾_2' are the reduced gyromagnetic ratios
@@ -251,16 +306,17 @@ def to_symmetric_tensor(tensor: np.ndarray, type: str = "shielding") -> Symmetri
         type:
             String with any one of the allowed listings. [``"shielding"``,
             ``"j_coupling"``, ``"quadrupolar"``, ``"dipolar"``]
+
     Returns:
-        A :ref:`sy_api` object
+        A :ref:`sy_api` object.
 
     Example:
-    >>> tensor = np.array([
-    ...     [-8.05713333, -1.4523, 35.7252],
-    ...     [-5.5725, 26.38916667, -5.2804],
-    ...     [33.1405, -0.6241, -18.33203333],
-    ... ])
-    >>> symmetric_tensor = to_symmetric_tensor(tensor, type="shielding")
+        >>> tensor = np.array([
+        ...     [-8.05713333, -1.4523, 35.7252],
+        ...     [-5.5725, 26.38916667, -5.2804],
+        ...     [33.1405, -0.6241, -18.33203333],
+        ... ])
+        >>> symmetric_tensor = to_symmetric_tensor(tensor, type="shielding")
     """
     euler_angles, zeta, eta, _ = to_haeberlen_params(tensor)
 
