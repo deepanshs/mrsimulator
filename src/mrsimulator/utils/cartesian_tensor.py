@@ -232,7 +232,22 @@ def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
 # where 𝛾_1' and 𝛾_2' are the reduced gyromagnetic ratios
 # of the two isotopes in MHz/T, and R is the distance in Å.
 # -µ_0*ℏ*1E12*1E30/2 = -66.2607015 m^3•kg^2/(s^3•A^2)
-def dipolar_coupling_constant(isotope_symbol_1, isotope_symbol_2, distance: float):
+def dipolar_coupling_constant(
+    isotope_symbol_1: str, isotope_symbol_2: str, distance: float
+):
+    """Dipolar coupling constant between two isotopes a distance apart
+
+    Args:
+        isotope_symbol_1:
+            A string of any of the mrsimulator allowed isotopes for isotope 1.
+        isotope_symbol_2
+            A string of any of the mrsimulator allowed isotopes for isotope 2.
+        distance:
+            Distance between the isotopes in units of Angstrom.
+
+    Return:
+        Dipolar coupling constant in units of Hz.
+    """
     isotope_1 = Isotope(symbol=isotope_symbol_1).gyromagnetic_ratio
     isotope_2 = Isotope(symbol=isotope_symbol_2).gyromagnetic_ratio
     return -66.2607015 * isotope_1 * isotope_2 / (distance) ** 3

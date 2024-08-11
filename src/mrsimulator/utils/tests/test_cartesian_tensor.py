@@ -77,3 +77,13 @@ def test_generate_dipole():
     assert np.allclose(sy_tensor.alpha, euler_angle[0])
     assert np.allclose(sy_tensor.beta, euler_angle[1])
     assert np.allclose(sy_tensor.gamma, euler_angle[2])
+
+    # check dipolar coupling
+    distance = np.linalg.norm(np.array(site1_coords) - np.array(site2_coords))
+    dipolar_coupling = ct.dipolar_coupling_constant(
+        isotope_symbol_1="1H",
+        isotope_symbol_2="13C",
+        distance=distance,
+    )
+
+    assert np.allclose(zeta, dipolar_coupling)

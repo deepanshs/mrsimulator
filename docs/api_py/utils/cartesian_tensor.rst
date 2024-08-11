@@ -16,3 +16,5 @@ Cartesian Tensor utils
 .. autofunction:: maryland_to_haeberlen_params
 .. autofunction:: haeberlen_params_to_maryland
 .. autofunction:: zeta_and_eta_to_xy
+
+.. autofunction:: dipolar_coupling_constant
