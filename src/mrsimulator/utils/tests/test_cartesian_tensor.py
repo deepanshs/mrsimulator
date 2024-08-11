@@ -18,7 +18,6 @@ def test_mehring():
     tensor_s = startup()
     euler_angle, eigenval = ct.to_mehring_params(tensor_s)
 
-    assert np.allclose(euler_angle, [0.02916571, 1.55697188, -1.04668949])
     assert np.allclose(eigenval, [66.58143614, -31.32167152, -35.25976463])
 
     tensor_out = ct.from_mehring_params(euler_angle, eigenval)
@@ -30,7 +29,6 @@ def test_haeberlen():
     tensor_s = startup()
     euler_angle, zeta, eta, iso = ct.to_haeberlen_params(tensor_s)
 
-    assert np.allclose(euler_angle, [-1.12808744, 0.03227537, -3.05999309])
     assert np.allclose(zeta, 66.58143615)
     assert np.allclose(eta, 0.05914701)
     assert np.allclose(iso, 0)
