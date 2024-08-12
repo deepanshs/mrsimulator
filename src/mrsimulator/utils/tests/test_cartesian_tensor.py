@@ -85,3 +85,31 @@ def test_generate_dipole():
     )
 
     assert np.allclose(zeta, dipolar_coupling)
+
+
+def test_mehring_maryland():
+    principal_components = [66.58143614, -31.32167152, -35.25976463]
+    span, skew, isotropic = ct.mehring_principal_components_to_maryland(
+        principal_components
+    )
+
+    assert np.allclose(span, -101.84120077)
+    assert np.allclose(skew, -0.92266208)
+    assert np.allclose(isotropic, 0)
+
+    lambdas = ct.maryland_to_mehring_principal_components(isotropic, span, skew)
+    assert np.allclose(lambdas, principal_components)
+
+
+def test_maryland_haeberlen():
+    iso_in = 0
+    skew = -0.92266208
+    span = -101.84120077
+    zeta, eta, iso_out = ct.maryland_to_haeberlen_params(iso_in, span, skew)
+
+    assert np.allclose(zeta, 66.58143607)
+    assert np.allclose(eta, 0.05914702)
+    assert np.allclose(iso_out, 0)
+
+    lambdas = ct.haeberlen_params_to_maryland(zeta, eta, iso_out)
+    np.allclose(lambdas, [span, skew, iso_in])

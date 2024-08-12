@@ -184,9 +184,9 @@ def maryland_to_mehring_principal_components(
     Returns:
         A ndarray of Mehring Eigenvalues.
     """
-    lambda1 = isotropic - span
     lambda2 = isotropic - skew * span / 3
     lambda3 = (span + 2 * isotropic + skew * span / 3) / 2
+    lambda1 = lambda3 - span
     return np.array([lambda1, lambda2, lambda3])
 
 
@@ -199,7 +199,7 @@ def maryland_to_haeberlen_params(
         zeta_sigma,
         eta_sigma,
         isotropic_component,
-    ) = to_haeberlen_params(lambdas)
+    ) = to_haeberlen_params(np.diag(lambdas))
     return zeta_sigma, eta_sigma, isotropic_component
 
 
@@ -209,19 +209,20 @@ def haeberlen_params_to_maryland(
     tensor = from_haeberlen_params(
         np.array([0, 0, 0]), zeta_sigma, eta_sigma, isotropic_component
     )
-    return mehring_principal_components_to_maryland(to_mehring_params(tensor))
+    mehring_eigenvals = to_mehring_params(tensor)[1]
+    return mehring_principal_components_to_maryland(mehring_eigenvals)
 
 
-def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
-    r = abs(zeta)
-    if zeta <= 0:
-        theta = np.pi / 4 * eta
-    else:
-        theta = np.pi / 2 * (1 - eta / 2)
+# def zeta_and_eta_to_xy(zeta: float, eta: float) -> Tuple[float, float]:
+#     r = abs(zeta)
+#     if zeta <= 0:
+#         theta = np.pi / 4 * eta
+#     else:
+#         theta = np.pi / 2 * (1 - eta / 2)
 
-    x = r * np.cos(theta)
-    y = r * np.sin(theta)
-    return x, y
+#     x = r * np.cos(theta)
+#     y = r * np.sin(theta)
+#     return x, y
 
 
 # Dipolar coupling constant is given by:
