@@ -11,8 +11,8 @@ from mrsimulator.transition import Transition
 from mrsimulator.transition.pathway import TransitionList
 from mrsimulator.transition.pathway import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Field
-from pydantic import validator
+from pydantic.v1 import Field
+from pydantic.v1 import validator
 
 from .coupling import Coupling
 from .isotope import get_all_isotope_data

@@ -3,7 +3,7 @@ import pytest
 from mrsimulator.method import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
 from mrsimulator.method.spectral_dimension import SpectralDimension
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 
 __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"

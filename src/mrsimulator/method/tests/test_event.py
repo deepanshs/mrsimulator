@@ -7,7 +7,7 @@ from mrsimulator.method.event import parse_dict_to_ev_class
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 
 # from mrsimulator.method.query import MixingEnum
 

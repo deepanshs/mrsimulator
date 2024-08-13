@@ -14,9 +14,9 @@ from mrsimulator.transition import SymmetryPathway
 from mrsimulator.transition import Transition
 from mrsimulator.transition import TransitionPathway
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Field
-from pydantic import PrivateAttr
-from pydantic import validator
+from pydantic.v1 import Field
+from pydantic.v1 import PrivateAttr
+from pydantic.v1 import validator
 
 from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401

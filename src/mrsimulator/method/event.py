@@ -7,8 +7,8 @@ from typing import Union
 
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
-from pydantic import Field
-from pydantic import validator
+from pydantic.v1 import Field
+from pydantic.v1 import validator
 
 from .frequency_contrib import default_freq_contrib
 from .frequency_contrib import FREQ_ENUM_SHORTCUT

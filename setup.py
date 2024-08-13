@@ -372,7 +372,7 @@ setup(
     install_requires=[
         "numpy>=1.20",
         "csdmpy>=0.6",
-        "pydantic<2",
+        "pydantic>=2.8",
         "monty>=2.0.4",
         "typing-extensions>=3.7",
         "psutil>=5.4.8",

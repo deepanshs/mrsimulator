@@ -5,7 +5,7 @@ from typing import List
 from typing import Union
 
 import numpy as np
-from pydantic import validator
+from pydantic.v1 import validator
 from scipy.special import erf
 
 from ._base import ModuleOperation

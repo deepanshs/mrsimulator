@@ -5,8 +5,8 @@ from typing import Optional
 
 import numpy as np
 from mrsimulator.utils.parseable import Parseable
-from pydantic import BaseModel
-from pydantic import Field
+from pydantic.v1 import BaseModel
+from pydantic.v1 import Field
 from typing_extensions import Literal
 
 

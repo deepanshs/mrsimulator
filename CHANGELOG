@@ -32,7 +32,7 @@ What's new
 
 - Fixed bug where ``MixingEnum`` class had no attribute ``json`` (Issue [#260](https://github.com/deepanshs/mrsimulator/issues/260))
 - Fixed 0Hz crash issue in apodization.
-- Fix bug related to pydantic v2.0 validation. The library is restricted to pydantic<v2.0
+- Fix bug related to pydantic v2.0 validation.
 - Fix latex build error in pdf docs.
 - Fixed the bug where the csdm object origin offset was incorrectly set. The origin offset is now `w_ref`.
 - Fix bug when calculating ppm scale for large reference offsets.
