@@ -1,5 +1,4 @@
 """Base Isotope class."""
-import json
 from os import path
 from typing import ClassVar
 from typing import Dict
@@ -24,48 +23,32 @@ DEFAULT_ISOTOPE = {
 }
 
 
-class IsotopeReferences:
-    _instance = None
+class IsotopeReference(BaseModel):
+    """Isotope reference class.
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
+    Attributes
+    ----------
 
-    def __init__(self):
-        if not hasattr(self, "initialized"):  # Ensure __init__ is only called once
-            self.initialized = True
-            self.isotopes_data = REFERENCE_DATA
+    ratio: float
+        Frequency ratio of NMR reference compound.
 
-    def get_isotope_data(self, symbol: str):
-        return self.isotopes_data.get(symbol, None)
+    compound: str
+        The reference compound formula name.
 
+    solvent: str
+        The solvent used in the reference mixture.
 
-class IsotopeReference:
-    def __init__(self, symbol, data):
-        self.ratio = data.get("ratio") / 100
-        self.compound = data.get("compound")
-        self.solvent = data.get("solvent")
-        self.concentration = data.get("concentration")
+    concentration: str
+        The concentration of the reference mixture.
+    """
 
-    def __repr__(self):
-        return json.dumps(
-            {
-                "ratio": self.ratio,
-                "compound": self.compound,
-                "solvent": self.solvent,
-                "concentration": self.concentration,
-            },
-            indent=4,
-        )
+    ratio: float
+    compound: str
+    solvent: str
+    concentration: str
 
-
-def isotope_reference(symbol):
-    isotopes_instance = IsotopeReferences()
-    data = isotopes_instance.get_isotope_data(symbol)
-    if data:
-        return IsotopeReference(symbol, data)
-    return None
+    class Config:
+        allow_mutation = False
 
 
 class Isotope(BaseModel):
@@ -212,6 +195,12 @@ class Isotope(BaseModel):
         isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["atomic_number"]
 
+    @property
+    def reference(self):
+        """Reference compound database"""
+        data = REFERENCE_DATA.get(self.symbol)
+        return IsotopeReference(**data)
+
     def larmor_freq(self, B0=9.4):
         """Return the Larmor frequency of the isotope at a magnetic field strength B0.
 
@@ -244,8 +233,8 @@ class Isotope(BaseModel):
         >>> H1 = Isotope(symbol="1H")
         >>> B0 = H1.ref_freq_to_B0(ref_freq = 400)
         """
-        isotope_data = isotope_reference(self.symbol)
-        return 0.02348731439404777 * ref_freq / isotope_data.ratio
+        ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
+        return 0.02348731439404777 * ref_freq / ref_ratio
 
     def B0_to_ref_freq(self, B0=9.4):
         """Return the primary reference frequency given the magnetic field strength B0.
@@ -262,8 +251,8 @@ class Isotope(BaseModel):
         >>> H1 = Isotope(symbol="1H")
         >>> B0 = H1.B0_to_ref_freq(B0 = 9.4)
         """
-        isotope_data = isotope_reference(self.symbol)
-        return B0 * isotope_data.ratio / 0.02348731439404777
+        ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
+        return B0 * ref_ratio / 0.02348731439404777
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:
