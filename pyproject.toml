@@ -5,6 +5,87 @@ requires = [
     "numpy",
     "cython>=0.29"
 ]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "mrsimulator"
+description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
+readme = "README.md"
+dynamic = ["version"]
+license = {file = "LICENSE"}
+requires-python = ">= 3.8"
+keywords = [
+    "spectrum", "material", "simulation", "SAS", "NMR",  "PASS", "CSA",
+    "spectral-analysis", "MAT", "lineshape", "nuclear-shielding", "SSNMR",
+    "spinning-sidebands", "quadrupole", "czjzek", "extended-czjzek",
+    "glass-nmr", "MQMAS", "STMAS"
+]
+
+dependencies = [
+    "numpy>=1.20",
+    "csdmpy>=0.6",
+    "pydantic>=2.8",
+    "monty>=2.0.4",
+    "typing-extensions>=3.7",
+    "astropy",
+    "psutil>=5.4.8",
+    "joblib>=1.0.0",
+    "pandas>=1.1.3",
+    "lmfit>=1.0.2",
+    "matplotlib>=3.3.4",
+]
+
+authors = [
+  {name = "Deepansh J. Srivastava"},
+  {name = "Tzu-Ping Chung"},
+  {name = "Another person"},
+  {email = "different.person@example.com"},
+]
+
+maintainers = [
+  {name = "Deepansh J. Srivastava"}
+]
+
+classifiers = [
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 4 - Beta",
+
+  # Indicate who your project is intended for
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Education",
+  "Intended Audience :: Developers",
+
+  "Operating System :: OS Independent",
+
+  "Topic :: Education",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Physics",
+
+  # Pick your license as you wish (see also "license" above)
+  "License :: OSI Approved :: BSD License",
+
+  # Specify the Python versions you support here.
+  "Programming Language :: C",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Documentation = "https://mrsimulator.readthedocs.io/en/stable/"
+Repository = "https://github.com/deepanshs/mrsimulator.git"
+Issues = "https://github.com/deepanshs/mrsimulator/issues"
+
+[project.scripts]
+mrsimulator = "mrsimulator.__main__:run"
+
 
 [tool.pylint.messages_control]
 extension-pkg-whitelist = ["pydantic", "mrsimulator"]
