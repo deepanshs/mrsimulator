@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from mrsimulator.utils import cartesian_tensor as ct
 
 
@@ -45,6 +46,13 @@ def test_haeberlen():
     assert np.allclose(sy_tensor.alpha, euler_angle[0])
     assert np.allclose(sy_tensor.beta, euler_angle[1])
     assert np.allclose(sy_tensor.gamma, euler_angle[2])
+
+    sy_tensor = ct.to_symmetric_tensor(tensor_s, type="quadrupolar")
+    assert sy_tensor.zeta is None
+    assert np.allclose(sy_tensor.Cq, zeta)
+
+    with pytest.raises(ValueError, match="Unknown tensor type"):
+        _ = ct.to_symmetric_tensor(tensor_s, type="acqua_man")
 
 
 def test_generate_dipole():
