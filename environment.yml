@@ -10,7 +10,7 @@ dependencies:
   - setuptools>=27.3
   - pip
   - pip:
-      - numpy>=1.20
+      - numpy<2.0
       - cython>=0.29
       - matplotlib>=3.3.4
       - joblib>=1.0.0

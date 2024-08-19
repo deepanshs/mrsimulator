@@ -5,7 +5,7 @@ channels:
 dependencies:
   - fftw>=3.3.9
   - openblas
-  - numpy>=1.20
+  - numpy<2.0
   - nomkl
   - setuptools>=27.3
   - cython>=0.29
