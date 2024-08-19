@@ -105,7 +105,7 @@
         "ratio": 26.056859,
         "compound": "Al(NO3)3",
         "solvent": "D2O",
-        "concentration": "1.1 mol/L"
+        "concentration": "1.1 mol/kg"
     },
     "29Si": {
         "ratio": 19.867187,
