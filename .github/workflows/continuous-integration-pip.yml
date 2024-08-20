@@ -100,7 +100,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build and install package from source
-        run: python setup.py develop
+        run: CC=gcc python setup.py develop
 
       - name: Test with pytest
         run: pytest --cov=./ --cov-report=xml
@@ -134,7 +134,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Build and install package from source
-        run: python setup.py develop
+        run: CC=gcc python setup.py develop
 
       - name: Test with pytest
         run: pytest --cov=./ --cov-report=xml
