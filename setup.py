@@ -178,7 +178,7 @@ class MacOSSetup(Setup):
     def __init__(self):
         super().__init__()
         self.extra_compile_args = [
-            # "-O3",
+            "-O2",
             "-ffast-math",
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
