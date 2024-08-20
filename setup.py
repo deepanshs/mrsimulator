@@ -178,14 +178,14 @@ class MacOSSetup(Setup):
     def __init__(self):
         super().__init__()
         self.extra_compile_args = [
-            "-O2",
+            "-O1",
             "-ffast-math",
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
             # "-fvectorize",
             "-fcommon",
-            "-Wno-incompatible-pointer-types",
+            # "-Wno-incompatible-pointer-types",
         ]
         self.extra_link_args += ["-lm"]
 
