@@ -179,7 +179,7 @@ class MacOSSetup(Setup):
         super().__init__()
         self.extra_compile_args = [
             "-O1",
-            "-ffast-math",
+            # "-ffast-math",
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
