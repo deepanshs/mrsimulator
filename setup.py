@@ -183,8 +183,9 @@ class MacOSSetup(Setup):
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
-            "-fvectorize",
+            # "-fvectorize",
             "-fcommon",
+            "-Wno-incompatible-pointer-types",
         ]
         self.extra_link_args += ["-lm"]
 
