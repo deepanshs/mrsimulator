@@ -178,14 +178,13 @@ class MacOSSetup(Setup):
     def __init__(self):
         super().__init__()
         self.extra_compile_args = [
-            "-O1",
-            # "-ffast-math",
+            "-O3",
+            "-ffast-math",
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
             # "-fvectorize",
             "-fcommon",
-            "-Wno-incompatible-pointer-types",
         ]
         self.extra_link_args += ["-lm"]
 
@@ -369,9 +368,9 @@ setup(
     url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy<2.0"],
+    setup_requires=["numpy>=1.20"],
     install_requires=[
-        "numpy<2.0",
+        "numpy>=1.20",
         "csdmpy>=0.6",
         "pydantic>=2.8",
         "monty>=2.0.4",
