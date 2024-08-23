@@ -1916,7 +1916,7 @@ We use the deuterium Site defined earlier in this document.
 .. plot::
     :context: close-figs
 
-    from mrsimulator.method import MixingEvent
+    from mrsimulator.method import RotationEvent
 
     deuterium = Site(
         isotope="2H",
@@ -1942,7 +1942,7 @@ We use the deuterium Site defined earlier in this document.
                             {"ch1": {"P": [1], "D": [-1]}},
                         ],
                     ),
-                    MixingEvent(ch1={"angle": 3.141592, "phase": 0}),
+                    RotationEvent(ch1={"angle": 3.141592, "phase": 0}),
                     SpectralEvent(
                         fraction=0.5,
                         transition_queries=[
@@ -1971,7 +1971,7 @@ We use the deuterium Site defined earlier in this document.
                             {"ch1": {"P": [-1], "D": [-1]}},
                         ],
                     ),
-                    MixingEvent(ch1={"angle": 3.141592 / 2, "phase": 0}),
+                    RotationEvent(ch1={"angle": 3.141592 / 2, "phase": 0}),
                     SpectralEvent(
                         fraction=0.5,
                         transition_queries=[

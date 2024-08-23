@@ -4,6 +4,7 @@ from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import DelayEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import parse_dict_to_ev_class
+from mrsimulator.method.event import RotationEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
@@ -245,6 +246,18 @@ def test_Mixing_event():
     # P and D symmetries are supplied at the base level
     with pytest.raises(ValidationError):
         MixingEvent(query={"P": [1], "D": [0]})
+
+
+def test_Rotation_event():
+    mix_event_dict = {"ch1": {"angle": "90 degree", "phase": "0 rad"}}
+    the_event = RotationEvent.parse_dict_with_units(mix_event_dict)
+    basic_mixing_event_tests(the_event)
+
+    # Queries of RotationEvent, like the transition_queries of the SpectralEvent, need
+    # to be defined in a channel-wise dict. Check to make sure error is raised when
+    # P and D symmetries are supplied at the base level
+    with pytest.raises(ValidationError):
+        RotationEvent(query={"P": [1], "D": [0]})
 
 
 # def test_total_and_no_mixing():

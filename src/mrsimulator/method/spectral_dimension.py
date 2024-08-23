@@ -17,6 +17,7 @@ from .event import DelayEvent
 from .event import Event
 from .event import MixingEvent
 from .event import parse_dict_to_ev_class
+from .event import RotationEvent
 from .event import SpectralEvent
 from .utils import cartesian_product
 
@@ -76,7 +77,7 @@ class SpectralDimension(Parseable):
     reference_offset: float = Field(default=0.0)
     origin_offset: float = None
     reciprocal: Reciprocal = None
-    events: List[Union[SpectralEvent, MixingEvent, DelayEvent]] = []
+    events: List[Union[SpectralEvent, MixingEvent, RotationEvent, DelayEvent]] = []
 
     property_unit_types: ClassVar[Dict] = {
         "spectral_width": ["frequency"],
@@ -185,7 +186,7 @@ class SpectralDimension(Parseable):
         description = "" if self.description is None else self.description
 
         default_reciprocal = {
-            "coordinates_offset": f"{-1/(2*increment)} s",
+            "coordinates_offset": f"{-1 / (2 * increment)} s",
             # "period": f"{1/increment} s",
         }
         reciprocal = (

@@ -356,6 +356,12 @@ class MixingEvent(Parseable):
         return [self.ch1, self.ch2, self.ch3]
 
 
+class RotationEvent(MixingEvent):
+    """Rotation Event class. Same as mixing event"""
+
+    pass
+
+
 class Event(Parseable):
     """Event class Object"""
 
