@@ -44,8 +44,8 @@ def parse_dict_to_ev_class(py_dict: dict):
     return SpectralEvent.parse_dict_with_units(py_dict)
 
 
-class BaseEvent(Parseable):
-    """Base BaseEvent class. If the value of the attribute is None, the value of the
+class FreeEvent(Parseable):
+    """Base FreeEvent class. If the value of the attribute is None, the value of the
     corresponding global attribute will be used instead.
 
     Attributes
@@ -186,7 +186,7 @@ class BaseEvent(Parseable):
         return np.vstack(segment)
 
 
-class SpectralEvent(BaseEvent):
+class SpectralEvent(FreeEvent):
     r"""Base SpectralEvent class defines the spin environment and the transition query
     for a segment of the transition pathway.
 
@@ -224,7 +224,7 @@ class SpectralEvent(BaseEvent):
         validate_assignment = True
 
 
-class DelayEvent(BaseEvent):
+class DelayEvent(FreeEvent):
     r"""Base DelayEvent class defines the spin environment and the
     transition query for a segment of the transition pathway. The frequency from this
     event contributes to the spectrum as complex amplitude modulations.
@@ -260,15 +260,15 @@ class DelayEvent(BaseEvent):
 
     property_unit_types: ClassVar[Dict] = {
         "duration": "time",
-        **BaseEvent.property_unit_types,
+        **FreeEvent.property_unit_types,
     }
     property_default_units: ClassVar[Dict] = {
         "duration": "s",
-        **BaseEvent.property_default_units,
+        **FreeEvent.property_default_units,
     }
     property_units: Dict = {
         "duration": "s",
-        **BaseEvent().property_default_units,
+        **FreeEvent().property_default_units,
     }
 
     test_vars: ClassVar[Dict] = {"duration": 0.0}
@@ -354,6 +354,12 @@ class MixingEvent(Parseable):
     def channels(self) -> List[Rotation]:
         """Returns an ordered list of all channels"""
         return [self.ch1, self.ch2, self.ch3]
+
+
+class RotationEvent(MixingEvent):
+    """Rotation Event class. Same as mixing event"""
+
+    pass
 
 
 class Event(Parseable):

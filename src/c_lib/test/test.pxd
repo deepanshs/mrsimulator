@@ -10,6 +10,7 @@
 from libcpp cimport bool as bool_t
 
 cdef extern from "vm_test.h":
+    double test_vm_absd(double a)
     void test_vm_double_add(int count, const double *x, const double *y, double *res)
     void test_vm_double_add_inplace(int count, const double *x, double *y)
     void test_vm_double_subtract(int count, const double *x, const double *y, double *res)

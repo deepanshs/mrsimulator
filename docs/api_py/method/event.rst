@@ -17,7 +17,7 @@ Events
     :inherited-members: BaseModel
 
 
-.. autoclass:: MixingEvent
+.. autoclass:: RotationEvent
     :show-inheritance:
     :members:
     :inherited-members: BaseModel
