@@ -18,6 +18,8 @@ What's new
 - New functions for fitting Czjzek and Extended Czjzek tensor distribution models to experimental spectra.
   See the examples gallery for more information.
 - A new ``DelayEvent`` added to the events library.
+- A collection of utilitiy functions for converting Cartesian tensor to Haeberlen, Mehring, and
+  Maryland conventions and vice-versa.
 - Support for python 3.11 and 3.12
 
 **Simulator**

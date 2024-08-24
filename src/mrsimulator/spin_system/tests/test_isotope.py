@@ -15,7 +15,10 @@ def test_isotope():
     assert silicon.natural_abundance == 4.683
     assert silicon.quadrupole_moment == 0.0
     assert silicon.spin == 0.5
+    assert silicon.efg_to_Cq == 0
     assert silicon.larmor_freq(B0=11.75) == 99.46962016339306
+    assert silicon.B0_to_ref_freq(B0=11.75) == 99.3895867929281
+    assert silicon.ref_freq_to_B0(ref_freq=99.3895867929281) == 11.75
 
     proton = Isotope(symbol="1H")
     assert proton.atomic_number == 1
@@ -23,7 +26,10 @@ def test_isotope():
     assert proton.natural_abundance == 99.985
     assert proton.quadrupole_moment == 0.0
     assert proton.spin == 0.5
+    assert silicon.efg_to_Cq == 0
     assert proton.larmor_freq(B0=9.40) == -400.2283045725638
+    assert proton.B0_to_ref_freq(B0=9.40) == 400.21604182989006
+    assert proton.ref_freq_to_B0(ref_freq=400.21604182989006) == 9.40
 
     nitrogen = Isotope(symbol="14N")
     assert nitrogen.atomic_number == 7
@@ -31,7 +37,10 @@ def test_isotope():
     assert nitrogen.natural_abundance == 99.634
     assert nitrogen.quadrupole_moment == 0.0193
     assert nitrogen.spin == 1
+    assert nitrogen.efg_to_Cq == 4534820.208433115
     assert nitrogen.larmor_freq(B0=18.79) == -57.830093199115574
+    assert nitrogen.B0_to_ref_freq(B0=18.79) == 57.81099284148487
+    assert nitrogen.ref_freq_to_B0(ref_freq=57.81099284148487) == 18.79
 
     error = "Isotope symbol `x` not recognized."
     with pytest.raises(Exception, match=error):
