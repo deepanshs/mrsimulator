@@ -11,7 +11,9 @@ __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
+
 ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
+REFERENCE_DATA = loadfn(path.join(MODULE_DIR, "references.json"))
 DEFAULT_ISOTOPE = {
     "spin_multiplicity": 2,
     "gyromagnetic_ratio": 0,
@@ -19,6 +21,34 @@ DEFAULT_ISOTOPE = {
     "natural_abundance": 100,
     "atomic_number": 0,
 }
+
+
+class IsotopeReference(BaseModel):
+    """Isotope reference class.
+
+    Attributes
+    ----------
+
+    ratio: float
+        Frequency ratio of NMR reference compound.
+
+    compound: str
+        The reference compound formula name.
+
+    solvent: str
+        The solvent used in the reference mixture.
+
+    concentration: str
+        The concentration of the reference mixture.
+    """
+
+    ratio: float
+    compound: str
+    solvent: str
+    concentration: str
+
+    class Config:
+        allow_mutation = False
 
 
 class Isotope(BaseModel):
@@ -43,7 +73,7 @@ class Isotope(BaseModel):
     10.708398861439887
     >>> carbon.atomic_number
     6
-    >>> carbon.quadrupole_moment  # in eB
+    >>> carbon.quadrupole_moment  # in b
     0.0
     """
 
@@ -149,15 +179,27 @@ class Isotope(BaseModel):
 
     @property
     def quadrupole_moment(self):
-        """Quadrupole moment of the nucleus given in units of eB (electron-barn)."""
+        """Quadrupole moment of the nucleus given in units of b (barn)."""
         isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["quadrupole_moment"]
+
+    @property
+    def efg_to_Cq(self):
+        """Factor for converting EFG to quadrupolar coupling constant, Cq, in Hz."""
+        isotope_data = get_isotope_dict(self.symbol)
+        return isotope_data["quadrupole_moment"] * 234.9647776390215e6
 
     @property
     def atomic_number(self):
         """Atomic number of the isotope."""
         isotope_data = get_isotope_dict(self.symbol)
         return isotope_data["atomic_number"]
+
+    @property
+    def reference(self):
+        """Reference compound database"""
+        data = REFERENCE_DATA.get(self.symbol)
+        return IsotopeReference(**data)
 
     def larmor_freq(self, B0=9.4):
         """Return the Larmor frequency of the isotope at a magnetic field strength B0.
@@ -175,6 +217,42 @@ class Isotope(BaseModel):
         >>> freq = silicon.larmor_freq(B0 = 9.4)
         """
         return -self.gyromagnetic_ratio * B0
+
+    def ref_freq_to_B0(self, ref_freq=400):
+        """Return the magnetic field strength B0 given the primary reference frequency.
+
+        Args:
+            float ref_freq: primary reference frequency in MHz
+
+        Returns:
+            float: magnetic flux density in T
+
+        Example
+        -------
+
+        >>> H1 = Isotope(symbol="1H")
+        >>> B0 = H1.ref_freq_to_B0(ref_freq = 400)
+        """
+        ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
+        return 0.02348731439404777 * ref_freq / ref_ratio
+
+    def B0_to_ref_freq(self, B0=9.4):
+        """Return the primary reference frequency given the magnetic field strength B0.
+
+        Args:
+            float B0: magnetic flux density in T
+
+        Returns:
+            float: primary reference frequency in MHz
+
+        Example
+        -------
+
+        >>> H1 = Isotope(symbol="1H")
+        >>> B0 = H1.B0_to_ref_freq(B0 = 9.4)
+        """
+        ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
+        return B0 * ref_ratio / 0.02348731439404777
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:
