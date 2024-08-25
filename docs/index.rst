@@ -191,6 +191,13 @@ The **mrsimulator** package offers the following
     - Extended Czjzek
     - Custom user-defined models
 
+**Limitations**
+
+MRSimulator gain significant computational efficiency by assuming that there are no degeneracies in the energy eigenstates, i.e., all dipolar couplings are in the weak limit, and there are no rotational resonances during evolution periods. The assumptions are valid for a majority of commonly used solid-state NMR methods.  The theoretical details and derivations behind the algorithms used in MRSimulator are presented in the paper ``Simulating Multipulse NMR Spectra of Polycrystalline Solids in the Frequency Domain'' by D. J. Srivastava and P. J. Grandinetti,
+*J. Chem. Phys.*, **160**, 234110 (2024).
+`https://doi.org/10.1063/5.0209887 <https://doi.org/10.1063/5.0209887>`_
+
+
 ----
 
 Introduction
