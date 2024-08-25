@@ -191,6 +191,7 @@ def core_simulator(method,
     # numpy uint8 corresponds to an unsigned char C type
     # More types found here: https://numpy.org/doc/stable/user/basics.types.html#array-types-and-conversions-between-types
     cdef ndarray[cnp.uint8_t] f_contrib = np.asarray(freq_contrib, dtype=np.uint8)
+    print('f_contrib size', sizeof(f_contrib[0]))
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
@@ -206,7 +207,7 @@ def core_simulator(method,
             affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
-    cdef int number_of_sites, number_of_couplings
+    cdef unsigned int number_of_sites, number_of_couplings
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i

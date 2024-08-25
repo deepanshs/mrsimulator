@@ -13,9 +13,8 @@
 #include <stdio.h>
 
 void histogram1d_c(int x_count, const double x_min, const double x_max,
-                   double *restrict hist, int sample_count,
-                   const double *restrict sample_x, const int stride_x,
-                   const double *restrict weights, const int stride_w) {
+                   double *restrict hist, int sample_count, double *restrict sample_x,
+                   const int stride_x, double *restrict weights, const int stride_w) {
   int ix, counter = sample_count;
   double temp_sample, normx;
   double *x_pt = sample_x, *w_pt = weights;
@@ -35,10 +34,9 @@ void histogram1d_c(int x_count, const double x_min, const double x_max,
 
 void histogram2d_c(int x_count, const double x_min, const double x_max, int y_count,
                    const double y_min, const double y_max, double *restrict hist,
-                   int sample_count, const double *restrict sample_x,
-                   const int stride_x, const double *restrict sample_y,
-                   const int stride_y, const double *restrict weights,
-                   const int stride_w) {
+                   int sample_count, double *restrict sample_x, const int stride_x,
+                   double *restrict sample_y, const int stride_y,
+                   double *restrict weights, const int stride_w) {
   int ix, iy, hist_index, counter = sample_count;
   double temp_sample_x, temp_sample_y, normx, normy;
   double *x_pt = sample_x, *y_pt = sample_y, *w_pt = weights;
@@ -66,9 +64,9 @@ void histogram2d_c(int x_count, const double x_min, const double x_max, int y_co
 void histogram2d_interp_c(int x_count, const double x_min, const double x_max,
                           int y_count, const double y_min, const double y_max,
                           double *restrict hist, int sample_count,
-                          const double *restrict sample_x, const int stride_x,
-                          const double *restrict sample_y, const int stride_y,
-                          const double *restrict weights, const int stride_w) {
+                          double *restrict sample_x, const int stride_x,
+                          double *restrict sample_y, const int stride_y,
+                          double *restrict weights, const int stride_w) {
   int ix, iy, p, counter = sample_count;
   bool left;
   double temp_sample_x, temp_sample_y, normx, normy;
