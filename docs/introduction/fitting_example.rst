@@ -360,16 +360,14 @@ instances and run.
     sim = Simulator(spin_systems=[sys], methods=[MAS])
     sim.run()
 
-Before comparing the simulation to the experimental spectrum, you need to add
-the Gaussian line broadening to the simulation. Setup a SignalProcessor instance
-to do a Gaussian lineshape convolution with an FWHM of 50 Hz.
+Next, two convolutions are needed to model the acquired spectrum correctly: a step function to account for the truncation of the echo signal at -8.16 ms, and a Gaussian line shape convolution as an ad-hoc modeling of other residual line broadenings, including transverse relaxation. 
 
 Additionally, you must scale the simulation in intensity to match the
 experimental spectrum. You may have noticed in earlier plots that the vertical
 axis of the experimental spectrum plot was on the order of 1e6. Use numpy
 `max() <https://numpy.org/doc/stable/reference/generated/numpy.maximum.html>`_ to
-get the highest amplitude, set that as the factor as a Scale operation in the
-SignalProcessor.
+get the highest amplitude, set that as the factor as a Scale operation 
+in the SignalProcessor.
 
 .. skip: next
 
@@ -384,6 +382,7 @@ SignalProcessor.
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(),
+            sp.apodization.TopHat(rising_edge="-8.16 ms"),
             sp.apodization.Gaussian(FWHM="50 Hz"),
             sp.FFT(),
             sp.Scale(factor=relative_intensity_factor)
@@ -391,9 +390,11 @@ SignalProcessor.
     )
     processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
+Here, a SignalProcessor instance is created and initialized with four operations.  The first is the ``IFFT()`` to transform the simulation into the time domain.  Recall that **MRSimulator** generates real pure absorption mode spectrum, i.e., with no imaginary part.  Thus, the result of the ``IFFT()`` operation is a complex time-domain signal with amplitude in both positive and negative time.  The second operation is a `TopHat()` apodization with the position of the rising and falling edges as arguments.  The default values of ``rising_edge`` and ``falling_edge`` attributes are :math:`-\infty` and :math:`\infty`, respectively.  In this case, we set the rising edge to :math:`{-8.16 \:\text{ms}}`, where the acquisition of the experimental echo signal begins.  The third operation is a ``Gaussian()`` apodization using a FWHM of 50 Hz. The fourth operation is the ``FFT()``, transforming the simulation back into the frequency domain.
 
-You now have set up and simulated the first guess in modeling the experimental
-spectrum. Plot it and see how it compares to the experimental spectrum.
+You now have set up and simulated the first guess in modeling 
+the experimental spectrum. Plot it and see how it compares to 
+the experimental spectrum.
 
 .. skip: next
 

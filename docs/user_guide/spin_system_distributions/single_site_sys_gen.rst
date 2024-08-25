@@ -7,7 +7,7 @@ Single Site System Generator
 Custom Site and SpinSystem parameters can be passed to the
 :py:meth:`~mrsimulator.utils.collection.single_site_system_generator` method to create a list
 of uncoupled spin systems. Each :ref:`spin_sys_api` in the returned list holds a single
-:ref:`site_api` object since the backend simulation is more efficient for single site spin
+:ref:`site_api` instance since the backend simulation is more efficient for single site spin
 systems. Import the method as below
 
 .. code-block:: python

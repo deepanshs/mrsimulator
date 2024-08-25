@@ -7,11 +7,10 @@ Simulator
 Overview
 --------
 
-The :ref:`simulator_api` is the top-level object in **MRSimulator**. The two main
-attributes of a Simulator object are `spin_systems` and `methods`, which hold a list
-of :ref:`spin_sys_api` and :ref:`method_api` objects, respectively. In addition, a
-simulator object also contains a `config` attribute, which holds a :ref:`config_api`
-object. The ConfigSimulator object configures the simulation properties, which may be
+The :ref:`simulator_api` is the top-level class in **MRSimulator**. The two main attributes of the Simulator class are `spin_systems` and `methods`, which hold a list
+of :ref:`spin_sys_api` and :ref:`method_api` instances, respectively. In addition, the
+simulator class also contains a `config` attribute, which holds a :ref:`config_api`
+instance. The ConfigSimulator class configures the simulation properties, which may be
 useful in optimizing simulations.
 
 In this section, you will learn about the ConfigSimulator attributes. For simplicity,
@@ -23,11 +22,11 @@ the following code pre-defines the plot function to use further in this document
     import matplotlib.pyplot as plt
 
     # function to render figures.
-    def plot(csdm_object, labels):
-        csdm_object = csdm_object if isinstance(csdm_object, list) else [csdm_object]
-        _, ax = plt.subplots(1, len(csdm_object), figsize=(8, 3), subplot_kw={"projection": "csdm"})
-        ax = [ax] if len(csdm_object) == 1 else ax
-        for i, obj in enumerate(csdm_object):
+    def plot(csdm_instance, labels):
+        csdm_instance = csdm_instance if isinstance(csdm_instance, list) else [csdm_instance]
+        _, ax = plt.subplots(1, len(csdm_instance), figsize=(8, 3), subplot_kw={"projection": "csdm"})
+        ax = [ax] if len(csdm_instance) == 1 else ax
+        for i, obj in enumerate(csdm_instance):
             ax[i].plot(obj.real, linewidth=1.5)
             ax[i].set_title(labels[i])
             ax[i].invert_xaxis()
@@ -54,7 +53,7 @@ some of these issues.
     from mrsimulator.method import SpectralDimension
     from mrsimulator.method.lib import BlochDecaySpectrum
 
-    # Setup the spin system and method objects
+    # Setup the spin system and method instances
     Si29_site = Site(
         isotope="29Si",
         shielding_symmetric=SymmetricTensor(
@@ -73,10 +72,10 @@ some of these issues.
         spectral_dimensions=[SpectralDimension(count=1024, spectral_width=25000)]
     )
 
-    # Create the Simulator object
+    # Create the Simulator instance
     sim = Simulator(spin_systems=[system], methods=[method])
 
-Here, ``sim`` is a :ref:`simulator_api` object that holds one spin system and one method.
+Here, ``sim`` is a :ref:`simulator_api` instance that holds one spin system and one method.
 See :ref:`spin_system_documentation` and :ref:`method_documentation` documentation for more
 information on the respective classes.
 
@@ -205,12 +204,12 @@ Custom Sampling
 '''''''''''''''
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.custom_sampling` holds
-a :py:class:`~mrsimulator.simulator.config.CustomSampling` object that overrides the
+a :py:class:`~mrsimulator.simulator.config.CustomSampling` instance that overrides the
 default ASG orientation sampling, that is, the config attributes `integration_density`
 and `integration_volume` are ignored, allowing the users to specify a custom spatial
 sampling for spectral integration.
 
-The CustomSampling class object includes attributes, ``alpha``, ``beta``, and ``weight`` which
+The CustomSampling class instance includes attributes, ``alpha``, ``beta``, and ``weight`` which
 hold a 1D array of :math:`\alpha` and :math:`\beta` Euler angles (in radians) along with their respective weights. When specified, Mrsimulator uses the user-provided Euler angles
 for spectral integration. Mrsimulator additionally supports triangle interpolation for 1D and 2D spectral lineshape interpolation. To invoke
 triangle interpolation, the users may additionally provide a list of triangle vertex
@@ -238,7 +237,7 @@ Note, that when specifying the vertex indexes, the indexing in Python starts wit
     # update the orientation averaging to custom sampling
     # load angles from the file
     alpha, beta, weight = np.loadtxt('zcw_h_987.bz2', unpack=True)
-    # create the CustomSampling object and assign to the config
+    # create the CustomSampling instance and assign to the config
     my_sampling = CustomSampling(
         alpha=alpha.copy(),
         beta=beta.copy(),
@@ -315,7 +314,7 @@ where the frequency contributions from all the spin systems are co-added. Consid
 When the value of :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum`
 is ``spin_system``, the resulting simulation is a series of subspectra corresponding to
 individual spin systems. The number of subspectra equals the number of spin systems
-within the simulator object. Consider the same system as above, now run with
+within the Simulator instance. Consider the same system as above, now run with
 decompose_spectrum as ``spin_system``.
 .. skip: next
 
@@ -344,7 +343,7 @@ decompose_spectrum as ``spin_system``.
         channels=["1H"], spectral_dimensions=[SpectralDimension(count=1024, spectral_width=10000)]
     )
 
-    # Create simulator object, simulate, and plot
+    # Create Simulator instance, simulate, and plot
     sim = Simulator(spin_systems=[sys_A, sys_B], methods=[method])
     sim.run()
     averaged_sim = sim.methods[0].simulation
@@ -370,7 +369,7 @@ Attribute Summaries
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_simulator:
-.. list-table:: The attributes of a Simulator object
+.. list-table:: The attributes of a Simulator instance
   :widths: 20 15 65
   :header-rows: 1
 
@@ -380,19 +379,19 @@ Attribute Summaries
 
   * - spin_systems
     - ``list``
-    - An *optional* list of :ref:`spin_sys_api` objects.
+    - An *optional* list of :ref:`spin_sys_api` instances.
 
   * - methods
     - ``list``
-    - An *optional* list of :ref:`method_api` objectss.
+    - An *optional* list of :ref:`method_api` instances.
 
   * - config
     - ``dict`` or :py:class:`~mrsimulator.simulator.config.ConfigSimulator`
-    - An *optional* ConfigSimulator object, or its dictionary representation.
+    - An *optional* ConfigSimulator instance, or its dictionary representation.
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_sim_config:
-.. list-table:: The attributes of a Simulator object
+.. list-table:: The attributes of the Simulator class
   :widths: 25 10 65
   :header-rows: 1
 

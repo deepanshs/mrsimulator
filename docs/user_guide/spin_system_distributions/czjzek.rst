@@ -13,7 +13,7 @@ for the Czjzek distribution exists (cite) which follows
 where :math:`\zeta` and :math:`\eta` are the Haberlen components of the tensor and :math:`\sigma` is the Czjzek width parameter. See :ref:`czjzek_model` for a further mathematical description of the model.
 
 The remainder of this page quickly describes how to generate Czjzek distributions and generate
-:py:class:`~mrsimulator.spin_system.SpinSystem` objects from these distributions. Also, look at the
+:py:class:`~mrsimulator.spin_system.SpinSystem` instances from these distributions. Also, look at the
 gallery examples using the Czjzek distribution listed at the bottom of this page.
 
 Creating and sampling a Czjzek distribution
@@ -214,7 +214,7 @@ be in units of MHz when sampling quadrupolar tensors in polar coordinates.
     y_range = np.linspace(0, 10, num=150)  # pre-defined y grid in units of MHz
     x_grid, y_grid, amp = cz_model_polar.pdf(pos=[x_range, y_range])
 
-Generating a list of SpinSystem objects from a Czjzek model
+Generating a list of SpinSystem instances from a Czjzek model
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 The utility function :py:meth:`~mrsimulator.utils.collection.single_site_system_generator`, further

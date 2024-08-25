@@ -114,7 +114,7 @@ Extended Czjzek distribution in polar coordinates
 
 As with the Czjzek distribution, we can sample an Extended Czjzek distribution on a polar
 (x, y) grid. Below, we construct two equivalent
-:py:class:`~mrsimulator.models.ExtCzjzekDistribution` objects, except one is defined in polar
+:py:class:`~mrsimulator.models.ExtCzjzekDistribution` instances, except one is defined in polar
 coordinates.
 
 .. skip: next
