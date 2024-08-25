@@ -213,21 +213,23 @@ MRS_dimension *MRS_create_dimensions(
     rotor_angle_in_rad += n_events[i];
     magnetic_flux_density_in_T += n_events[i];
 
-    // printf("dimension %d\n", i);
-    // printf("\tcount %d\n", dimension[i].count);
-    // printf("\tincrement %f Hz\n", dimension[i].increment);
-    // printf("\tcoordinates offset %f Hz\n", dimension[i].coordinates_offset);
-    // for (int j = 0; j < n_events[i]; j++) {
-    //   printf("\tEvent %d\n", j);
-    //   printf("\t\tfraction %f\n", dimension[i].events[j].fraction);
-    //   printf("\t\trotor frequency %f Hz\n",
-    //          dimension[i].events[j].rotor_frequency_in_Hz);
-    //   printf("\t\trotor angle %f rad\n",
-    //          dimension[i].events[j].rotor_angle_in_rad);
-    //   printf("\t\tmagnetic flux density %f T\n",
-    //          dimension[i].events[j].magnetic_flux_density_in_T);
-    //   printf("\n");
-    // }
+    if (DEBUG) {
+      printf("Creating dimensions");
+      printf("dimension %d\n", i);
+      printf("\tcount %d\n", dimension[i].count);
+      printf("\tincrement %f Hz\n", dimension[i].increment);
+      printf("\tcoordinates offset %f Hz\n", dimension[i].coordinates_offset);
+      for (int j = 0; j < n_events[i]; j++) {
+        printf("\tEvent %d\n", j);
+        printf("\t\tfraction %f\n", dimension[i].events[j].fraction);
+        printf("\t\trotor frequency %f Hz\n",
+               dimension[i].events[j].rotor_frequency_in_Hz);
+        printf("\t\trotor angle %f rad\n", dimension[i].events[j].rotor_angle_in_rad);
+        printf("\t\tmagnetic flux density %f T\n",
+               dimension[i].events[j].magnetic_flux_density_in_T);
+        printf("\n");
+      }
+    }
   }
   return dimension;
 }

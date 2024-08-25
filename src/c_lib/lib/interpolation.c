@@ -72,10 +72,10 @@ static void inline delta_fn_gauss_interpolation(const double *freq, const int *p
   index = (int)res;
   w = res - (double)index;
 
-  ip2 = 2 * gauss_table_precision_inverse - index;
-  ip1 = gauss_table_precision_inverse - index;
-  im1 = gauss_table_precision_inverse + index;
-  im2 = 2 * gauss_table_precision_inverse + index;
+  ip2 = (int)(2 * gauss_table_precision_inverse - index);
+  ip1 = (int)(gauss_table_precision_inverse - index);
+  im1 = (int)(gauss_table_precision_inverse + index);
+  im2 = (int)(2 * gauss_table_precision_inverse + index);
 
   a0 = lerp_plus(w, im2);
   a1 = lerp_plus(w, im1);
@@ -263,26 +263,29 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
                               double *spec, int *points, unsigned int iso_intrp) {
   if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL) {
-    if (iso_intrp == 0) return delta_fn_linear_interpolation(freq1, points, amp, spec);
-    if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq1, points, amp, spec);
+    if (iso_intrp == 0) delta_fn_linear_interpolation(freq1, points, amp, spec);
+    if (iso_intrp == 1) delta_fn_gauss_interpolation(freq1, points, amp, spec);
+  } else {
+    __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
   }
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
 }
 
 void triangle_interpolation1D_linear(double *freq1, double *freq2, double *freq3,
                                      double *amp, double *spec, int *points) {
-  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL)
-    return delta_fn_linear_interpolation(freq1, points, amp, spec);
-
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL) {
+    delta_fn_linear_interpolation(freq1, points, amp, spec);
+  } else {
+    __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+  }
 }
 
 void triangle_interpolation1D_gaussian(double *freq1, double *freq2, double *freq3,
                                        double *amp, double *spec, int *points) {
-  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL)
-    return delta_fn_gauss_interpolation(freq1, points, amp, spec);
-
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL) {
+    delta_fn_gauss_interpolation(freq1, points, amp, spec);
+  } else {
+    __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+  }
 }
 
 /**
@@ -838,8 +841,8 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
     int_i_stride += stride;
     int_j_stride += stride;
   }
-  if (iso_intrp == 0) return delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
-  if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq, &n_spec, &amp1, spec);
+  if (iso_intrp == 0) delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
+  if (iso_intrp == 1) delta_fn_gauss_interpolation(freq, &n_spec, &amp1, spec);
 }
 
 void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,

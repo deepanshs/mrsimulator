@@ -64,7 +64,7 @@ def core_simulator(method,
         else:
             positions = None
         averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
-            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=np.uint32(alpha.size),
             allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
             position_size=position_size, positions=&positions[0], interpolation=interpolation
         )
@@ -76,7 +76,7 @@ def core_simulator(method,
         )
 
 # create C spectral dimensions ________________________________________________
-    cdef int n_dimension = len(method.spectral_dimensions)
+    cdef int n_dimension = int(len(method.spectral_dimensions))
 
     # Define and allocate C numpy arrays
     n_points = 1
@@ -257,7 +257,7 @@ def core_simulator(method,
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
         # index_.append(index)
-        number_of_sites = len(spin_sys.sites)
+        number_of_sites = int(len(spin_sys.sites))
 
         # ------------------------------------------------------------------------
         #                          Site specification
@@ -324,7 +324,7 @@ def core_simulator(method,
             if debug:
                 print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
                 print(f'Quadrupolar asymmetry (η) = {eta_e}')
-                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}]')
+                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}')
 
         # sites packed as c struct
         sites_c.number_of_sites = number_of_sites
@@ -345,7 +345,7 @@ def core_simulator(method,
         # J-coupling
         couplings_c.number_of_couplings = 0
         if spin_sys.couplings is not None:
-            number_of_couplings = len(spin_sys.couplings)
+            number_of_couplings = int(len(spin_sys.couplings))
             spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.int32)
 
             iso_j = np.zeros(number_of_couplings, dtype=np.float64)
@@ -395,17 +395,17 @@ def core_simulator(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            # if debug:
-            #     print(f'N couplings = {number_of_couplings}')
-            #     print(f'site index J = {spin_index_ij}')
-            #     print(f'Isotropic J = {iso_j} Hz')
-            #     print(f'J anisotropy = {zeta_j} Hz')
-            #     print(f'J asymmetry = {eta_j}')
-            #     print(f'J orientation = {ori_j}')
+            if debug:
+                print(f'N couplings = {number_of_couplings}')
+                print(f'site index J = {spin_index_ij}')
+                print(f'Isotropic J = {iso_j} Hz')
+                print(f'J anisotropy = {zeta_j} Hz')
+                print(f'J asymmetry = {eta_j}')
+                print(f'J orientation = {ori_j}')
 
-            #     print(f'Dipolar coupling constant = {D_d} Hz')
-            #     print(f'Dipolar asymmetry = {eta_d}')
-            #     print(f'Dipolar orientation = {ori_d}')
+                print(f'Dipolar coupling constant = {D_d} Hz')
+                print(f'Dipolar asymmetry = {eta_d}')
+                print(f'Dipolar orientation = {ori_d}')
 
             # couplings packed as c struct
             couplings_c.number_of_couplings = number_of_couplings
@@ -493,7 +493,7 @@ def core_simulator(method,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def get_zeeman_states(sys):
-    cdef int i, j, n_site = len(sys.sites)
+    cdef int i, j, n_site = int(len(sys.sites))
 
     two_Ip1 = [int(2 * site.isotope.spin + 1) for site in sys.sites]
     spin_quantum_numbers = [
@@ -593,7 +593,7 @@ def calculate_transition_connect_weight(
     Return: A complex amplitude.
     """
     cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
-    cdef int i, n_sites = spin.size
+    cdef int i, n_sites = int(spin.size)
     cdef float m1_f, m1_i, m2_f, m2_i
     for i in range(n_sites):
         m1_f = trans1[1][i]  # starting transition final state
@@ -617,7 +617,7 @@ def get_Haeberlen_components(
         double eta,
         double rho):
     """Return random extended czjzek tensors in Haeberlen convention"""
-    cdef int n = expr_base_p.shape[1]
+    cdef int n = int(expr_base_p.shape[1])
     cdef ndarray[double, ndim=2] param = np.empty((n, 2), dtype=float)
     clib.vm_haeberlen_components(
         n, &expr_base_p[0, 0], &expr_base_q[0, 0], zeta, eta, rho, &param[0, 0]
