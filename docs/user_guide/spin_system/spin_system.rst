@@ -8,9 +8,9 @@ Overview
 --------
 
 At the heart of any **MRSimulator** calculation is the definition of
-a :ref:`spin_sys_api` object describing the sites and couplings within a spin
-system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
-objects which are used to calculate frequency contributions.
+a :ref:`spin_sys_api` class describing the sites and couplings within a spin
+system. Each :ref:`simulator_api` instance holds a list of :ref:`spin_sys_api`
+instances which are used to calculate frequency contributions.
 
 **MRSimulator** faces the same limitation faced by all other NMR simulation
 codes: the computational cost increases exponentially with the number of
@@ -36,7 +36,7 @@ pulse sequence, or some clever combination of the two. In all such cases, any
 effects of residual dipolar couplings on the spectrum are usually modeled as an
 ad-hoc Gaussian lineshape convolution.
 
-A :ref:`spin_sys_api` object is organized according to the UML diagram
+The :ref:`spin_sys_api` class is organized according to the UML diagram
 below.
 
 .. figure:: ../../_static/SpinSystemUML.*
@@ -59,17 +59,17 @@ below.
 Site
 ----
 
-A site object holds single-site NMR interaction parameters, which include the nuclear
+A Site instance holds single-site NMR interaction parameters, which include the nuclear
 shielding and quadrupolar interaction parameters.
-Consider the example below of a :ref:`site_api` object for a deuterium nucleus created in Python.
+Consider the example below of a :ref:`site_api` instance for a deuterium nucleus created in Python.
 
 .. code-block:: python
 
-    # Import objects for the Site
+    # Import classes for the Site
     from mrsimulator import Site
     from mrsimulator.spin_system.tensors import SymmetricTensor
 
-    # Create the site object
+    # Create the site instance
     H2_site = Site(
         isotope="2H",
         isotropic_chemical_shift=4.1,  # in ppm
@@ -113,7 +113,7 @@ reference frame.
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  **MRSimulator**
+Also, all instances in  **MRSimulator**
 have the attribute ``property_units`` which provides the units for all class properties.
 
 .. code-block:: python
@@ -129,9 +129,9 @@ have the attribute ``property_units`` which provides the units for all class pro
 Coupling
 --------
 
-A coupling object holds two site NMR interaction parameters, which can include the *J*-coupling
+The coupling class holds two site NMR interaction parameters, which can include the *J*-coupling
 and the dipolar coupling interaction parameters.
-Consider the example below of a :ref:`coupling_api` object between two sites
+Consider the example below of a :ref:`coupling_api` instance between two sites
 
 .. code-block:: python
 
@@ -157,7 +157,7 @@ Consider the example below of a :ref:`coupling_api` object between two sites
     )
 
 The ``site_index`` key holds a list of two integers corresponding to the index of the
-two coupled sites in the ordered list ``sites`` within the SpinSystem object. The
+two coupled sites in the ordered list ``sites`` within the SpinSystem instance. The
 ordering of the integers in ``site_index`` is irrelevant.
 
 The value of the ``isotropic_j`` is the isotropic *J*-coupling, here given as
@@ -182,8 +182,8 @@ the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively
 SpinSystem
 ----------
 
-The :ref:`spin_sys_api` object is a collection of sites and couplings. Below are examples of different
-spin systems along with discussion on each attribute.
+The :ref:`spin_sys_api` instance holds a collection of sites and couplings. 
+Below are examples of different spin systems along with discussion on each attribute.
 
 Single Site Spin System
 '''''''''''''''''''''''
@@ -209,7 +209,7 @@ We find four keywords at the root level of our SpinSystem object definition: ``n
 optional name of the spin system. Likewise, the value of the description key is an optional
 string describing the spin system.
 
-The value of the ``sites`` key is a list of :ref:`site_api` objects. Here, this list is simply
+The value of the ``sites`` key is a list of :ref:`site_api` instances. Here, this list is simply
 the single object, `H1_site`.
 The value of the ``abundance`` key is the abundance of the spin system, here given
 a value of *80%*. If the abundance key is omitted, the abundance defaults to *100%*.
@@ -220,7 +220,7 @@ its attributes.
 Multi Site Spin System
 ''''''''''''''''''''''
 
-To create a spin system with more than one site, we simply add more site objects to
+To create a spin system with more than one site, we simply add more site instances to
 the sites list. Here we create a :math:`^{13}\text{C}` site and add it along with the previous
 proton site to a new spin system.
 
@@ -245,7 +245,7 @@ proton site to a new spin system.
     )
 
 Again we see the optional ``name`` and ``description`` attributes. The ``sites`` attribute is now
-a list of two :ref:`site_api` objects, the previous :math:`^1\text{H}` site and the new
+a list of two :ref:`site_api` instances, the previous :math:`^1\text{H}` site and the new
 :math:`^{13}\text{C}` site. We have also set the ``abundance`` of this spin system to *0.148%*.
 By leveraging the abundance attribute, multiple spin systems with varying abundances can be
 simulated together. See our :ref:`introduction_isotopomers_example` where isotopomers of varying
@@ -254,7 +254,7 @@ abundance are simulated in tandem.
 Coupled Spin System
 '''''''''''''''''''
 
-To create couplings between sites, we simply need to add a list of :ref:`coupling_api` objects to a
+To create couplings between sites, we simply need to add a list of :ref:`coupling_api` instances to a
 spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
 coupling between them.
 
@@ -307,7 +307,7 @@ coupling between them.
         ),
     )
 
-We now have the site objects and the coupling object to make a coupled spin system. We now
+We now have the site instances and the coupling instance to make a coupled spin system. We now
 construct such a spin system.
 
 .. code-block:: python
@@ -318,7 +318,7 @@ In contrast to the previous examples, we have omitted the optional ``name``, ``d
 ``abundance`` keywords. The name and description for ``coupled_spin_system`` will both be ``None``
 and the abundance will be *100%*.
 
-A list of :ref:`coupling_api` objects passed to the ``couplings`` keywords. The
+A list of :ref:`coupling_api` instances passed to the ``couplings`` keywords. The
 ``site_index`` attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
 ``C13_site`` in the sites list. If we were to add more sites, ``site_index`` might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
@@ -356,11 +356,11 @@ Attribute Summaries
 
   * - ``sites``
     - List
-    - An *optional* list of :ref:`site_api` objects. The default value is an empty list.
+    - An *optional* list of :ref:`site_api` instances. The default value is an empty list.
 
   * - ``couplings``
     - List
-    - An *optional* list of coupling objects. The default value is an empty list.
+    - An *optional* list of coupling instances. The default value is an empty list.
 
   * - ``abundance``
     - String
@@ -381,7 +381,7 @@ Attribute Summaries
 
   * - ``name``, ``label``, and ``description``
     - String
-    - All three are *optional* attributes giving context to a Site object. The default
+    - All three are *optional* attributes giving context to a Site instance. The default
       value for all three is an empty string.
 
   * - ``isotope``
@@ -397,13 +397,13 @@ Attribute Summaries
 
   * - ``shielding_symmetric``
     - :ref:`sy_api`
-    - An *optional* object describing the second-rank traceless symmetric
+    - An *optional* instance describing the second-rank traceless symmetric
       nuclear shielding tensor following the Haeberlen convention. The default
       is ``None``. See the description for the :ref:`sy_api` object.
 
   * - ``quadrupolar``
     - :ref:`sy_api`
-    - An *optional* object describing the second-rank traceless electric
+    - An *optional* instance describing the second-rank traceless electric
       quadrupole tensor. The default is ``None``.
       See the description for the :ref:`sy_api` object.
 
@@ -430,13 +430,13 @@ Attribute Summaries
 
   * - ``j_symmetric``
     - :ref:`sy_api`
-    - An *optional* object describing the second-rank traceless symmetric *J*-coupling
+    - An *optional* instance describing the second-rank traceless symmetric *J*-coupling
       tensor following the Haeberlen convention. The default is ``None``. See
       the description for the :ref:`sy_api` object.
 
   * - ``dipolar``
     - :ref:`sy_api`
-    - An *optional* object describing the second-rank traceless dipolar tensor. The
+    - An *optional* instance describing the second-rank traceless dipolar tensor. The
       default is ``None``. See the description for the :ref:`sy_api`
       object.
 
