@@ -245,7 +245,6 @@ Theory
     :maxdepth: 2
     :caption: Theory
 
-    theory/components
     theory/models
 
 API and references
