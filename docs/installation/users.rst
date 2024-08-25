@@ -14,7 +14,7 @@ For the users
 Strict Requirements
 -------------------
 
-**mrsimulator** has the following strict requirements:
+**MRSimulator** has the following strict requirements:
 
 - `Python <https://www.python.org>`_ |PY_VERSION| or later
 - `Numpy <https://numpy.org>`_ 1.17 or later

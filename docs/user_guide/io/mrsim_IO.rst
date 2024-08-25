@@ -9,7 +9,7 @@ We offer a range of serialization options based on a JSON structure demonstrated
 Dictionary Representation of Objects
 ------------------------------------
 
-All **mrsimulator** objects can be serialized into a JSON format. Calling the
+All **MRSimulator** objects can be serialized into a JSON format. Calling the
 ``json()`` method on an object will return a Python dictionary representing the object
 in JSON format.
 Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
@@ -39,7 +39,7 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
 All values are serialized with units when applicable, but you may call ``json(units=False)``
 if you wish to serialize values without units.
 
-Similarly, all **mrsimulator** objects can be loaded from a dictionary representation. Here we
+Similarly, all **MRSimulator** objects can be loaded from a dictionary representation. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
 to create a :ref:`site_api` object from a dictionary.
 
@@ -268,7 +268,7 @@ method.
 
 By default, all attribute values are serialized with units.  You can serialize attributes
 without units, assuming the default unit of the attribute, by passing
-``with_units=False`` to the method.  Recall that all objects in  **mrsimulator**
+``with_units=False`` to the method.  Recall that all objects in  **MRSimulator**
 have the attribute ``property_units`` which provides the default units for all class
 properties.  Additionally, a metadata dictionary can be passed using the ``application`` keyword.
 
@@ -284,7 +284,7 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
 
 .. note::
 
-    The serialization structure has been updated in **mrsimulator** v0.7. Any `.mrsim` files
+    The serialization structure has been updated in **MRSimulator** v0.7. Any `.mrsim` files
     from v0.6 and earlier will not work. See :ref:`changelog` for breaking changes.
 
 

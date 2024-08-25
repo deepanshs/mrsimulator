@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:28.915** total execution time for 56 files **from all galleries**:
+**00:21.008** total execution time for 56 files **from all galleries**:
 
 .. container::
 
@@ -33,7 +33,7 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_fitting_2D_fitting_plot_2_Coesite_DAS.py` (``../fitting_source/2D_fitting/plot_2_Coesite_DAS.py``)
-     - 00:28.915
+     - 00:21.008
      - 0.0
    * - :ref:`sphx_glr_examples_1D_simulation(crystalline)_plot_0_Wollastonite.py` (``../examples_source/1D_simulation(crystalline)/plot_0_Wollastonite.py``)
      - 00:00.000

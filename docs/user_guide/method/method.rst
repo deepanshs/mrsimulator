@@ -5,10 +5,10 @@
 Method
 ======
 
-While **mrsimulator**'s organization of the :ref:`spin_sys_api` object and its
+While **MRSimulator**'s organization of the :ref:`spin_sys_api` object and its
 composite objects, :ref:`site_api` and :ref:`coupling_api`, are easily
 understood by anyone familiar with the underlying physical concepts, the
-organization of the :ref:`method_api` object in **mrsimulator** and its related
+organization of the :ref:`method_api` object in **MRSimulator** and its related
 composite objects require a more detailed explanation of their design. This
 section assumes that you are already familiar with the topics covered in the
 Introduction sections :ref:`getting_started`,
@@ -23,7 +23,7 @@ Overview
 --------
 
 An experimental NMR method involves a sequence of rf pulses, free evolution
-periods, and sample motion. The Method object in **mrsimulator** models the
+periods, and sample motion. The Method object in **MRSimulator** models the
 spectrum from an NMR pulse sequence. The Method object is designed to be
 versatile in its ability to model spectra from various multi-pulse NMR methods
 using concepts from the `symmetry pathway approach
@@ -56,9 +56,9 @@ experimental design and implementation of an NMR method is in identifying the
 desired transition pathways and finding ways to acquire their signals while
 eliminating all undesired transition pathway signals.
 
-While NMR measurements occur in the time domain, **mrsimulator** simulates the
+While NMR measurements occur in the time domain, **MRSimulator** simulates the
 corresponding multi-dimensional spectra directly in the frequency domain. The
-Method object in **mrsimulator** needs only a few details of the NMR pulse
+Method object in **MRSimulator** needs only a few details of the NMR pulse
 sequence to generate the spectrum. It mimics the result of the pulse sequence
 given the desired transition pathways and their complex amplitudes and average
 frequencies in each spectroscopic dimension of the dataset. To this end, a
@@ -106,7 +106,7 @@ enumeration literals for *all* contributions is generated for the event.
 .. note::
 
   All frequency contributions from direct and indirect spin-spin couplings are
-  calculated in the weak-coupling limit in **mrsimulator**.
+  calculated in the weak-coupling limit in **MRSimulator**.
 
 Additionally, the user can affect transition frequencies during a spectral or
 delay event by changing other measurement attributes: ``rotor_frequency``,
@@ -119,7 +119,7 @@ selected transition pathway.
 Inside SpectralEvent and DelayEvent objects, is a list of
 :py:meth:`~mrsimulator.method.query.TransitionQuery` objects (*vide infra*)
 which determine which transitions are observed during the event. Method
-objects in **mrsimulator** are general-purpose because they are designed for an
+objects in **MRSimulator** are general-purpose because they are designed for an
 arbitrary spin system, i.e., a method does not know the spin system in advance.
 When designing a Method object, you cannot identify and select a transition
 through its initial and final eigenstate quantum numbers. Transition selection
@@ -132,7 +132,7 @@ only during a simulation that the Method object uses its TransitionQuery
 objects to determine the selected transition pathways for a given SpinSystem
 object by the initial and final eigenstate quantum numbers of each transition.
 
-Between adjacent SpectralEvent or DelayEvent objects, **mrsimulator** defaults
+Between adjacent SpectralEvent or DelayEvent objects, **MRSimulator** defaults
 to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
 explicit :py:meth:`~mrsimulator.method.query.MixingEvent` object between such events.
@@ -142,7 +142,7 @@ by the ``channels`` attribute in Method. A Rotation object determines the cohere
 transfer amplitude between transitions.
 
 In this guide to designing custom Method objects, we begin with a brief review
-of the relevant *Symmetry Pathway* concepts employed in **mrsimulator**. This
+of the relevant *Symmetry Pathway* concepts employed in **MRSimulator**. This
 review is necessary for understanding (1) how transitions are selected during
 spectral and delay events and (2) how average signal frequencies and amplitudes
 in each spectral dimension are determined. We outline the procedures for
@@ -197,10 +197,10 @@ energy levels and
 
 possible NMR transitions. We write a transition (coherence) from state :math:`i`
 to :math:`j` using the outer product notation :math:`\ketbra{j}{i}`. In
-**mrsimulator**, all simulations are performed in the high-field limit and
+**MRSimulator**, all simulations are performed in the high-field limit and
 further, assume that all spin-spin couplings are in the weak limit.
 
-To write a custom Method in **mrsimulator**, you'll need to determine the desired
+To write a custom Method in **MRSimulator**, you'll need to determine the desired
 transition pathways and select the desired transitions during each
 SpectralEvent or DelayEvent. Keep in mind, however, that Method
 objects are designed without any details of the spin systems upon which they
@@ -301,7 +301,7 @@ Single-Spin Queries
 
 Based on the review above, we now know for the spin :math:`I=1`, the transition
 :math:`\ketbra{-1}{0}` can be selected with :math:`{(\text{p}_I,\text{d}_I) =
-(-1,1)}`.  In **mrsimulator**, this transition is selected during a
+(-1,1)}`.  In **MRSimulator**, this transition is selected during a
 SpectralEvent using the SymmetryQuery and TransitionQuery objects,
 as defined in the code below.
 
@@ -316,7 +316,7 @@ as defined in the code below.
     spec_event = SpectralEvent(transition_queries=[trans_query])
 
 .. note::
-    Python dictionaries can also be used to create and initialize **mrsimulator** objects.
+    Python dictionaries can also be used to create and initialize **MRSimulator** objects.
     To do this, the dictionary must use the object's attribute names as the key strings and be
     passed to a higher-level object. Since a SpectralEvent object holds a list of
     TransitionQuery objects, the above code could have been written as
@@ -336,7 +336,7 @@ the TransitionQuery attribute ``ch1``, i.e., it acts on the isotope in the
 "first channel". Recall that the ``channels`` attribute of the Method object
 holds an ordered list of isotope strings. This list's first, second, and third
 isotopes are associated with ``ch1``, ``ch2``, and ``ch3``, respectively.
-Currently, **mrsimulator** only supports up to three channels, although this may
+Currently, **MRSimulator** only supports up to three channels, although this may
 be increased in future versions.
 
 The TransitionQuery object goes into a list in the
@@ -1731,10 +1731,10 @@ Default Total Mixing between Adjacent Spectral or Delay Events
 
 In previous discussions, we did not mention the efficiency of transfer between
 selected transitions in adjacent SpectralEvent objects. This is because, as
-default behavior, **mrsimulator** does a *total mixing*, i.e., connects all
+default behavior, **MRSimulator** does a *total mixing*, i.e., connects all
 selected transitions in the two adjacent spectral or delay events. In other
 words, if the first of two adjacent SpectralEvent objects has three selected
-transitions and the second has two selected transitions, then **mrsimulator**
+transitions and the second has two selected transitions, then **MRSimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
 passing from the first to second SpectralEvent objects.
 

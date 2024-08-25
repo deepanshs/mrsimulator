@@ -78,7 +78,7 @@ Welcome to the Mrsimulator documentation
   About
   '''''
 
-**mrsimulator** is an open-source Python package for fast computation/analysis of nuclear
+**MRSimulator** is an open-source Python package for fast computation/analysis of nuclear
 magnetic resonance (NMR) spectra in fluid and solid phases.
 
 
@@ -117,7 +117,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 - It is fully documented with a stable and simple API and is easily incorporated into
   Python scripts and web apps.
 - It is compatible with modern Python packages, such as Scikit-learn, Keras, etc.
-- Packages using **mrsimulator** -
+- Packages using **MRSimulator** -
 
   - `mrinversion <https://mrinversion.readthedocs.io/en/stable/>`_
 
@@ -166,7 +166,7 @@ magnetic resonance (NMR) spectra in fluid and solid phases.
 
 **Features**
 
-The **mrsimulator** package offers the following
+The **MRSimulator** package offers the following
 
 - **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 

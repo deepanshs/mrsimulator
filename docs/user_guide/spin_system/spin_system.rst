@@ -7,12 +7,12 @@ Spin System
 Overview
 --------
 
-At the heart of any **mrsimulator** calculation is the definition of
+At the heart of any **MRSimulator** calculation is the definition of
 a :ref:`spin_sys_api` object describing the sites and couplings within a spin
 system. Each :ref:`simulator_api` object holds a list of :ref:`spin_sys_api`
 objects which are used to calculate frequency contributions.
 
-**mrsimulator** faces the same limitation faced by all other NMR simulation
+**MRSimulator** faces the same limitation faced by all other NMR simulation
 codes: the computational cost increases exponentially with the number of
 couplings between sites in a spin system. In liquids, where isotropic molecular
 motion averages away intermolecular anisotropic couplings, the situation is more
@@ -113,7 +113,7 @@ reference frame.
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
 the :ref:`site_api` and :ref:`sy_api` objects and their attributes, respectively.
 
-Also, all objects in  **mrsimulator**
+Also, all objects in  **MRSimulator**
 have the attribute ``property_units`` which provides the units for all class properties.
 
 .. code-block:: python

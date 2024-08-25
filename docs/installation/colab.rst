@@ -13,7 +13,7 @@ the *Welcome to Colab!* tutorial if you are new to Notebooks.
 ..
 .. and press the *Restart Runtime* button
 
-To install the **mrsimulator** package, type
+To install the **MRSimulator** package, type
 
 .. code-block:: shell
 

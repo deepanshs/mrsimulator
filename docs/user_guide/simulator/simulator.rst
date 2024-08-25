@@ -7,7 +7,7 @@ Simulator
 Overview
 --------
 
-The :ref:`simulator_api` is the top-level object in **mrsimulator**. The two main
+The :ref:`simulator_api` is the top-level object in **MRSimulator**. The two main
 attributes of a Simulator object are `spin_systems` and `methods`, which hold a list
 of :ref:`spin_sys_api` and :ref:`method_api` objects, respectively. In addition, a
 simulator object also contains a `config` attribute, which holds a :ref:`config_api`
@@ -89,7 +89,7 @@ The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.integration_volum
 enumeration of string literals, ``octant``, ``hemisphere``, and ``sphere``. The integration volume
 refers to the volume of a unit sphere over which the integrated NMR frequencies are evaluated.
 The default value is ``octant``, i.e., the spectrum comprises integrated frequencies
-from the positive octant of a unit sphere. **mrsimulator** can exploit the problem's
+from the positive octant of a unit sphere. **MRSimulator** can exploit the problem's
 orientational symmetry, thus optimizing the simulation by performing a partial integration.
 
 To learn more about the orientational symmetries, refer to Eden et al. [#f4]_
