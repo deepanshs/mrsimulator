@@ -59,28 +59,30 @@ void __mrsimulator_core(
   et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
-  printf("int %lu\n", sizeof(int));
-  printf("double %lu\n", sizeof(double));
-  printf("float %lu\n", sizeof(float));
-  printf("unsigned int %lu\n", sizeof(unsigned int));
-  printf("unsigned char %lu\n\n", sizeof(unsigned char));
+  // printf("int %zu\n", sizeof(int));
+  // printf("double %zu\n", sizeof(double));
+  // printf("float %zu\n", sizeof(float));
+  // printf("unsigned int %zu\n", sizeof(unsigned int));
+  // printf("unsigned char %zu\n\n", sizeof(unsigned char));
 
-  printf("transition_pathway (float) %lu\n", sizeof(transition_pathway));
-  printf("transition_pathway_weight (double) %lu\n", sizeof(transition_pathway_weight));
-  printf("n_dimension (int) %lu\n\n", sizeof(n_dimension));
+  // printf("transition_pathway (float) %zu\n", sizeof(transition_pathway[0]));
+  // printf("transition_pathway_weight (double) %zu\n",
+  // sizeof(transition_pathway_weight[0])); printf("n_dimension (int) %zu\n\n",
+  // sizeof(n_dimension));
 
-  printf("iso_intrp (unsigned int) %lu\n", sizeof(iso_intrp));
-  printf("freq_contrib (unsigned char) %lu\n", sizeof(freq_contrib));
-  printf("affine_matrix double %lu\n\n", sizeof(affine_matrix));
+  // printf("iso_intrp (unsigned int) %zu\n", sizeof(iso_intrp));
+  // printf("freq_contrib (unsigned char) %zu\n", sizeof(freq_contrib[0]));
+  // printf("affine_matrix double %zu\n\n", sizeof(affine_matrix[0]));
 
-  printf("n_sites site (unsigned int) %lu\n", sizeof(sites->number_of_sites));
-  printf("n_sites spin (float) %lu\n", sizeof(sites->spin));
-  printf("n_sites gyromagnetic_ratio (double) %lu\n\n",
-         sizeof(sites->gyromagnetic_ratio));
+  // printf("n_sites site (unsigned int) %zu\n", sizeof(sites->number_of_sites));
+  // printf("n_sites spin (float) %zu\n", sizeof(sites->spin[0]));
+  // printf("n_sites gyromagnetic_ratio (double) %zu\n\n",
+  //        sizeof(sites->gyromagnetic_ratio[0]));
 
-  printf("n_coupling n_c (unsigned int) %lu\n", sizeof(couplings->number_of_couplings));
-  printf("n_coupling site_index (int) %lu\n", sizeof(couplings->site_index));
-  printf("isotropic_j_in_Hz (double) %lu\n\n", sizeof(couplings->isotropic_j_in_Hz));
+  // printf("n_coupling n_c (unsigned int) %zu\n",
+  // sizeof(couplings->number_of_couplings)); printf("n_coupling site_index (int)
+  // %zu\n", sizeof(couplings->site_index[0])); printf("isotropic_j_in_Hz (double)
+  // %zu\n\n", sizeof(couplings->isotropic_j_in_Hz[0]));
 
   unsigned char is_spectral;
   unsigned int evt;

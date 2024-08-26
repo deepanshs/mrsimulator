@@ -191,7 +191,6 @@ def core_simulator(method,
     # numpy uint8 corresponds to an unsigned char C type
     # More types found here: https://numpy.org/doc/stable/user/basics.types.html#array-types-and-conversions-between-types
     cdef ndarray[cnp.uint8_t] f_contrib = np.asarray(freq_contrib, dtype=np.uint8)
-    print('f_contrib size', sizeof(f_contrib[0]))
 
 # affine transformation
     cdef ndarray[double] affine_matrix_c
@@ -207,7 +206,7 @@ def core_simulator(method,
             affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
-    cdef unsigned int number_of_sites, number_of_couplings
+    cdef unsigned int number_of_sites, number_of_couplings, _site_idx_, _coup_idx_
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
@@ -279,22 +278,22 @@ def core_simulator(method,
 
         # Extract and assign site information from Site objects to C structure
         # ---------------------------------------------------------------------
-        for i in range(number_of_sites):
-            site = spin_sys.sites[i]
-            spin_i[i] = site.isotope.spin
-            gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
-            i3 = 3*i
+        for _site_idx_ in range(number_of_sites):
+            site = spin_sys.sites[_site_idx_]
+            spin_i[_site_idx_] = np.float32(site.isotope.spin)
+            gyromagnetic_ratio_i[_site_idx_] = site.isotope.gyromagnetic_ratio
+            i3 = 3 * _site_idx_
 
             # CSA tensor
             if site.isotropic_chemical_shift is not None:
-                iso_n[i] = site.isotropic_chemical_shift
+                iso_n[_site_idx_] = site.isotropic_chemical_shift
 
             shielding = site.shielding_symmetric
             if shielding is not None:
                 if shielding.zeta is not None:
-                    zeta_n[i] = shielding.zeta
+                    zeta_n[_site_idx_] = shielding.zeta
                 if shielding.eta is not None:
-                    eta_n[i] = shielding.eta
+                    eta_n[_site_idx_] = shielding.eta
                 if shielding.alpha is not None:
                     ori_n[i3] = shielding.alpha
                 if shielding.beta is not None:
@@ -312,9 +311,9 @@ def core_simulator(method,
             quad = site.quadrupolar
             if quad is not None:
                 if quad.Cq is not None:
-                    Cq_e[i] = quad.Cq
+                    Cq_e[_site_idx_] = quad.Cq
                 if quad.eta is not None:
-                    eta_e[i] = quad.eta
+                    eta_e[_site_idx_] = quad.eta
                 if quad.alpha is not None:
                     ori_e[i3] = quad.alpha
                 if quad.beta is not None:
@@ -360,21 +359,21 @@ def core_simulator(method,
             ori_d = np.zeros(3*number_of_couplings, dtype=np.float64)
 
             # Extract and assign coupling information from Site objects to C structure
-            for i in range(number_of_couplings):
-                coupling = spin_sys.couplings[i]
-                spin_index_ij[2*i: 2*i+2] = coupling.site_index
-                i3 = 3*i
+            for _coup_idx_ in range(number_of_couplings):
+                coupling = spin_sys.couplings[_coup_idx_]
+                spin_index_ij[2*_coup_idx_: 2*_coup_idx_+2] = coupling.site_index
+                i3 = 3 * _coup_idx_
 
                 # J tensor
                 if coupling.isotropic_j is not None:
-                    iso_j[i] = coupling.isotropic_j
+                    iso_j[_coup_idx_] = coupling.isotropic_j
 
                 J_sym = coupling.j_symmetric
                 if J_sym is not None:
                     if J_sym.zeta is not None:
-                        zeta_j[i] = J_sym.zeta
+                        zeta_j[_coup_idx_] = J_sym.zeta
                     if J_sym.eta is not None:
-                        eta_j[i] = J_sym.eta
+                        eta_j[_coup_idx_] = J_sym.eta
                     if J_sym.alpha is not None:
                         ori_j[i3] = J_sym.alpha
                     if J_sym.beta is not None:
@@ -386,9 +385,9 @@ def core_simulator(method,
                 dipolar = coupling.dipolar
                 if dipolar is not None:
                     if dipolar.D is not None:
-                        D_d[i] = dipolar.D
+                        D_d[_coup_idx_] = dipolar.D
                     if dipolar.eta is not None:
-                        eta_d[i] = dipolar.eta
+                        eta_d[_coup_idx_] = dipolar.eta
                     if dipolar.alpha is not None:
                         ori_d[i3] = dipolar.alpha
                     if dipolar.beta is not None:
@@ -448,6 +447,35 @@ def core_simulator(method,
         # print('pathway', transition_pathway_c)
         # print('weight', transition_pathway_weight_c)
         # print('pathway_count, inc', pathway_count, pathway_increment)
+
+        if debug:
+            print("int ", sizeof(int));
+            print("double ", sizeof(double));
+            print("float ", sizeof(float));
+            print("unsigned int ", sizeof(unsigned int));
+            print("unsigned char ", sizeof(unsigned char));
+            print()
+
+            print("transition_pathway (float) ", sizeof(transition_pathway_c[0]));
+            print("transition_pathway_weight (double) ", sizeof(transition_pathway_weight_c[0]));
+            print("n_dimension (int) ", sizeof(n_dimension));
+            print()
+
+            print("iso_intrp (unsigned int) ", sizeof(isotropic_interpolation));
+            print("freq_contrib (unsigned char) ", sizeof(f_contrib[0]));
+            print("affine_matrix (double) ", sizeof(affine_matrix_c[0]));
+            print()
+
+            print("n_sites site (unsigned int) ", sizeof(sites_c.number_of_sites));
+            print("n_sites spin (float) ", sizeof(sites_c.spin[0]));
+            print("n_sites gyromagnetic_ratio (double) ", sizeof(sites_c.gyromagnetic_ratio[0]));
+            print()
+
+            print("n_coupling n_c (unsigned int) ", sizeof(couplings_c.number_of_couplings));
+            print("n_coupling site_index (int) ", sizeof(couplings_c.site_index[0]));
+            print("isotropic_j_in_Hz (double) ", sizeof(couplings_c.isotropic_j_in_Hz[0]));
+            print()
+
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 &amp[0],  # as complex array
@@ -483,6 +511,7 @@ def core_simulator(method,
         amp1.shape = method.shape()
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
+        amp1 = [amp1]
 
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)

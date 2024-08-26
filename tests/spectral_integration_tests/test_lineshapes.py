@@ -149,7 +149,8 @@ def test_pure_shielding_sideband_simpson(report):
         "failed to compare shielding sidebands with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "shielding_sidebands")
-    for i in range(8):
+    max_l = 8
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
@@ -163,7 +164,9 @@ def test_pure_shielding_sideband_simpson(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Shielding Sidebands", report=report)
+        compile_plots(
+            dim, res, info, title=f"Shielding Sidebands {i}/{max_l}", report=report
+        )
 
         message = f"{error_message} test0{i}.json"
         check_all_close(res, message, rel_limit=1e-3)
@@ -174,7 +177,8 @@ def test_pure_quadrupolar_sidebands_simpson(report):
         "failed to compare quadrupolar sidebands with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "quad_sidebands")
-    for i in range(2):
+    max_l = 2
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         for volume in VOLUMES:
             res = []
@@ -189,7 +193,9 @@ def test_pure_quadrupolar_sidebands_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Quad Sidebands", report=report)
+        compile_plots(
+            dim, res, info, title=f"Quad Sidebands {i}/{max_l}", report=report
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=1e-3)
@@ -200,7 +206,8 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
         "failed to compare quad + csa lineshape with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "csa_quad")
-    for i in range(10):
+    max_l = 10
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         res = []
         for volume in VOLUMES:
@@ -213,7 +220,7 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
             dim,
             res,
             info,
-            title="Quad + Shielding Sidebands",
+            title=f"Quad + Shielding Sidebands {i}/{max_l}",
             report=report,
         )
 
@@ -226,7 +233,8 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
         "failed to compare 1st order quad lineshape with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "quad_1st_order")
-    for i in range(2):
+    max_l = 2
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         res = []
         for volume in VOLUMES:
@@ -239,7 +247,7 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
             dim,
             res,
             info,
-            title="1st Order Quadrupolar Lineshape",
+            title=f"1st Order Quadrupolar Lineshape {i}/{max_l}",
             report=report,
         )
 
@@ -250,7 +258,8 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
 def test_j_coupling_lineshape_simpson(report):
     error_message = "failed to compare j-coupling with simpson simulation from file"
     path_ = path.join(SIMPSON_TEST_PATH, "j-coupling")
-    for i in range(20):
+    max_l = 20
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         res = []
         for volume in VOLUMES:
@@ -259,7 +268,9 @@ def test_j_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="J-coupling Spectra", report=report)
+        compile_plots(
+            dim, res, info, title=f"J-coupling Spectra {i}/{max_l}", report=report
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=9e-3)
@@ -270,7 +281,8 @@ def test_dipolar_coupling_lineshape_simpson(report):
         "failed to compare dipolar-coupling with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "dipolar-coupling")
-    for i in range(7):
+    max_l = 7
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
         res = []
         for volume in VOLUMES:
@@ -279,7 +291,9 @@ def test_dipolar_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Dipolar-coupling Spectra", report=report)
+        compile_plots(
+            dim, res, info, title=f"Dipolar-coupling Spectra {i}/{max_l}", report=report
+        )
 
         message = f"{error_message} test0{i:02d}.json"
         check_all_close(res, message, rel_limit=4e-3)
@@ -290,7 +304,8 @@ def test_2D_sideband_sideband_simpson(report):
         "failed to compare sideband-sideband with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "sideband_sideband")
-    for i in range(5):
+    max_l = 5
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
@@ -303,7 +318,7 @@ def test_2D_sideband_sideband_simpson(report):
             res,
             info,
             dim2=dim[1],
-            title="2D sideband-sideband",
+            title=f"2D sideband-sideband {i}/{max_l}",
             report=report,
             label="Simpson",
         )
@@ -321,9 +336,10 @@ def test_quad_csa_cross_rmnsim(report):
     error_message = (
         "failed to compare quad-csa cross-term spectra with rmnsim from file"
     )
+    max_l = 7
     for folder in ["quad_csa_cross1", "quad_csa_cross2"]:
         path_ = path.join(RNMSIM_TEST_PATH, folder)
-        for i in range(7):
+        for i in range(max_l):
             filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
             res = []
@@ -337,7 +353,7 @@ def test_quad_csa_cross_rmnsim(report):
                 dim,
                 res,
                 info,
-                title="Quad-CSA 2nd Order Cross-Term",
+                title=f"Quad-CSA 2nd Order Cross-Term{i}/{max_l}",
                 report=report,
                 label="rmnsim",
             )
@@ -357,7 +373,8 @@ def test_pure_shielding_static_lineshape_python_brute(report):
         "failed to compare shielding lineshape with brute force simulation from file"
     )
     path_ = path.join(PYTHON_BRUTE_TEST_PATH, "shielding")
-    for i in range(5):
+    max_l = 5
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
@@ -375,7 +392,7 @@ def test_pure_shielding_static_lineshape_python_brute(report):
             dim,
             res,
             info,
-            title="Shielding Static Lineshape (Brute Force)",
+            title=f"Shielding Static Lineshape (Brute Force) {i}/{max_l}",
             report=report,
             label="Brute",
         )
@@ -394,7 +411,8 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
         "failed to compare quadrupolar lineshape with brute force simulation from file"
     )
     path_ = path.join(PYTHON_BRUTE_TEST_PATH, "quad")
-    for i in range(19):
+    max_l = 19
+    for i in range(max_l):
         filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
 
         res = []
@@ -411,7 +429,7 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
             dim,
             res,
             info,
-            title="Quad Lineshape Self-Test",
+            title=f"Quad Lineshape Self-Test {i}/{max_l}",
             report=report,
             label="self",
         )
