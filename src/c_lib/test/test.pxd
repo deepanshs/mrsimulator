@@ -84,38 +84,38 @@ cdef extern from "octahedron.h":
 
 cdef extern from "interpolation.h":
     void triangle_interpolation1D(
-        double *freq1,
-        double *freq2,
-        double *freq3,
-        double *amp,
+        double freq1,
+        double freq2,
+        double freq3,
+        double amp,
         double *spec,
-        int *points,
+        int points,
         unsigned int iso_intrp)
 
     void triangle_interpolation1D_linear(
-        double *freq1,
-        double *freq2,
-        double *freq3,
-        double *amp,
+        double freq1,
+        double freq2,
+        double freq3,
+        double amp,
         double *spec,
-        int *points)
+        int points)
 
     void triangle_interpolation1D_gaussian(
-        double *freq1,
-        double *freq2,
-        double *freq3,
-        double *amp,
+        double freq1,
+        double freq2,
+        double freq3,
+        double amp,
         double *spec,
-        int *points)
+        int points)
 
     void triangle_interpolation2D(
-        double *freq11,
-        double *freq12,
-        double *freq13,
-        double *freq21,
-        double *freq22,
-        double *freq23,
-        double *amp,
+        double freq11,
+        double freq12,
+        double freq13,
+        double freq21,
+        double freq22,
+        double freq23,
+        double amp,
         double *spec,
         int m0,
         int m1,

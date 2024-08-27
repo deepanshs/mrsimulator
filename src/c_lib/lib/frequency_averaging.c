@@ -120,9 +120,9 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
           vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
                              amps_imag);
           while (j++ < planA->n_octants) {
-            octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
+            octahedronDeltaInterpolation(nt, offset, &amps_real[address], 1,
                                          dimensions->count, spec, iso_intrp);
-            octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
+            octahedronDeltaInterpolation(nt, offset, &amps_imag[address], 1,
                                          dimensions->count, spec + 1, iso_intrp);
             address += npts;
           }

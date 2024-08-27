@@ -217,8 +217,7 @@ static inline void vm_double_square_root_inplace(int count, double *restrict x) 
  *    res = x * y
  */
 static inline void vm_double_complex_multiply(int count, const void *restrict x,
-                                              const void *restrict y,
-                                              void *restrict res) {
+                                              const void *restrict y, void *res) {
   double *res_ = (double *)res;
   double *x_ = (double *)x;
   double *y_ = (double *)y;
@@ -440,7 +439,7 @@ static inline void vm_double_complex_exp(int count, const void *restrict x,
  *      res = exp(x(imag))
  */
 static inline void vm_double_complex_exp_imag_only(int count, const void *restrict x,
-                                                   void *restrict res) {
+                                                   void *res) {
   // x = __builtin_assume_aligned(x, 32);
   // res = __builtin_assume_aligned(res, 32);
   double *x_ = (double *)x;

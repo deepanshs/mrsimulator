@@ -181,7 +181,7 @@ def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
-                           double amp=1, str type="linear"):
+                           double amp=1.0, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -197,24 +197,22 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                default value is 0.
     :ivar type: Linear or Gaussian interpolation for delta functions.
     """
-    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size/2], dtype=np.int32)
+    cdef int points = np.asarray([spectrum_amp.size/2], dtype=np.int32)[0]
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
 
-    cdef double *f1 = &f_vector[0]
-    cdef double *f2 = &f_vector[1]
-    cdef double *f3 = &f_vector[2]
-
-    cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+    cdef double f1 = f_vector[0]
+    cdef double f2 = f_vector[1]
+    cdef double f3 = f_vector[2]
 
     iso_intrp = 0 if type == "linear" else 1
-    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0],
-                &points[0], iso_intrp)
+    clib.triangle_interpolation1D(f1, f2, f3, amp, &spectrum_amp[0],
+                points, iso_intrp)
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectrum_amp,
-                            double amp=1, str type="linear"):
+                            double amp=1.0, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -229,18 +227,16 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
     cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)
 
-    cdef double *f11 = &f1_vector[0]
-    cdef double *f12 = &f1_vector[1]
-    cdef double *f13 = &f1_vector[2]
+    cdef double f11 = f1_vector[0]
+    cdef double f12 = f1_vector[1]
+    cdef double f13 = f1_vector[2]
 
-    cdef double *f21 = &f2_vector[0]
-    cdef double *f22 = &f2_vector[1]
-    cdef double *f23 = &f2_vector[2]
-
-    cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+    cdef double f21 = f2_vector[0]
+    cdef double f22 = f2_vector[1]
+    cdef double f23 = f2_vector[2]
 
     iso_intrp = 0 if type == "linear" else 1
-    clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, &amp_[0],
+    clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, amp,
                 &spectrum_amp[0, 0], shape[0], shape[1], iso_intrp)
 
 @cython.boundscheck(False)

@@ -200,9 +200,8 @@ def test_triangle_interpolation():
             # plt.title("1D interpolation, span(0, 100)")
             # plt.legend()
             # plt.tight_layout()
-            # plt.show()
             # plt.savefig(f"figs/fig_1D_{i}_{scl}.pdf")
-            # plt.figure().clear()
+            # plt.close()
 
             assert np.allclose(amp_py, amp_c.real, atol=1e-15)
 
