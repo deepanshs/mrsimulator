@@ -185,8 +185,10 @@ class MacOSSetup(Setup):
             # "-Rpass=loop-vectorize",
             # "-Rpass-missed=loop-vectorize",
             # "-Rpass-analysis=loop-vectorize",
-            # "-fvectorize",
+            "-fvectorize",
             "-fcommon",
+            "-Wall",
+            "-Wextra",
         ]
         self.extra_link_args += ["-lm"]
 

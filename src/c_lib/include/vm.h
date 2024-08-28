@@ -18,9 +18,9 @@
 
 // absolute double value
 static inline double absd(double a) {
-  // *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
-  // return a;
-  return fabs(a);
+  *((unsigned __int64_ *)&a) &= ~(1ULL << 63);
+  return a;
+  // return fabs(a);
 }
 
 /** Arithmetic suit ======================================================== */
