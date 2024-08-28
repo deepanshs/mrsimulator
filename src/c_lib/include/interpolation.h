@@ -42,23 +42,21 @@ extern void two_d_averaging(double *spec, const unsigned int freq_size, double *
                             bool user_defined, bool interpolation);
 
 extern void hist1d(double *spec, const unsigned int freq_size, double *freq,
-                   double *amp, int m, const unsigned int nt);
+                   double *amp, int m);
 
 extern void hist2d(double *spec, const unsigned int freq_size, double *freq_1,
-                   double *freq_2, double *amp, int amp_stride, int m0, int m1,
-                   const unsigned int nt);
+                   double *freq_2, double *amp, int amp_stride, int m0, int m1);
 
 extern void generic_2d_triangle_average(double *spec, const unsigned int freq_size,
                                         double *freq1, double *freq2, double *amp,
                                         int amp_stride, int m0, int m1,
                                         const unsigned int position_size,
-                                        int32_t *positions, const unsigned int nt,
-                                        unsigned int iso_intrp);
+                                        int32_t *positions, unsigned int iso_intrp);
 
 extern void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
                                         double *freq, double *amp, int m,
                                         const unsigned int position_size,
-                                        int32_t *positions, const unsigned int nt);
+                                        int32_t *positions);
 
 extern void triangle_interpolation1D_gaussian(double f1, double f2, double f3,
                                               double amp, double *spec, int m0);
@@ -95,12 +93,12 @@ extern void triangle_interpolation2D(double f11, double f12, double f13, double 
  * @param iso_intrp Linear=0 | Gaussian=1 isotropic interpolation scheme.
  */
 void octahedronDeltaInterpolation(const unsigned int nt, double freq, double *amp,
-                                  int stride, int n_spec, double *spec,
+                                  const unsigned int stride, int n_spec, double *spec,
                                   unsigned int iso_intrp);
 
 extern void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
-                                    double *amp, int stride, int m);
+                                    double *amp, const unsigned int stride, int m);
 
 extern void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
-                                      int nt, double *amp, int stride, int m0, int m1,
-                                      unsigned int iso_intrp);
+                                      const unsigned int nt, double *amp, int stride,
+                                      int m0, int m1, unsigned int iso_intrp);

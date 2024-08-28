@@ -814,9 +814,9 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
 //         return [clipped_line]
 
 void octahedronDeltaInterpolation(const unsigned int nt, double freq, double *amp,
-                                  int stride, int n_spec, double *spec,
+                                  const unsigned int stride, int n_spec, double *spec,
                                   unsigned int iso_intrp) {
-  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+  unsigned int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
   unsigned int int_i_stride = 0, int_j_stride = 0;
   double amp1, temp, *amp_address;
 
@@ -845,8 +845,8 @@ void octahedronDeltaInterpolation(const unsigned int nt, double freq, double *am
 }
 
 void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
-                             double *amp, int stride, int m) {
-  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+                             double *amp, const unsigned int stride, int m) {
+  unsigned int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
   unsigned int int_i_stride = 0, int_j_stride = 0;
   double amp1, temp, *amp_address, *freq_address;
 
@@ -898,7 +898,7 @@ void generic_1d_triangle_interpolation(double *spec, const unsigned int freq_siz
 }
 
 void hist1d(double *spec, const unsigned int freq_size, double *freq, double *amp,
-            int m, const unsigned int nt) {
+            int m) {
   unsigned int i = 0, ix;
   double temp_freq;
 
@@ -920,23 +920,22 @@ void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
       octahedronInterpolation(spec, freq, nt, amp_real, 1, dimension_count);
       octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
     } else {
-      hist1d(spec, freq_size, freq, amp_real, dimension_count, nt);
-      hist1d(spec + 1, freq_size, freq, amp_imag, dimension_count, nt);
+      hist1d(spec, freq_size, freq, amp_real, dimension_count);
+      hist1d(spec + 1, freq_size, freq, amp_imag, dimension_count);
     }
   } else {
     generic_1d_triangle_average(spec, freq_size, freq, amp_real, dimension_count,
-                                position_size, positions, nt);
+                                position_size, positions);
     generic_1d_triangle_average(spec + 1, freq_size, freq, amp_imag, dimension_count,
-                                position_size, positions, nt);
+                                position_size, positions);
   }
 }
 
 void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
                                  double *freq, double *amp, int m,
-                                 const unsigned int position_size, int32_t *positions,
-                                 const unsigned int nt) {
+                                 const unsigned int position_size, int32_t *positions) {
   if (positions == NULL) {
-    hist1d(spec, freq_size, freq, amp, m, nt);
+    hist1d(spec, freq_size, freq, amp, m);
   } else {
     generic_1d_triangle_interpolation(spec, freq_size, freq, amp, m, position_size,
                                       positions);
@@ -955,12 +954,12 @@ void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
                                 dimension0_count, dimension1_count, iso_intrp);
     } else {
       hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, dimension0_count,
-             dimension1_count, nt);
+             dimension1_count);
     }
   } else {
     generic_2d_triangle_average(spec, freq_size, freq1, freq2, amp, amp_stride,
                                 dimension0_count, dimension1_count, position_size,
-                                positions, nt, iso_intrp);
+                                positions, iso_intrp);
   }
 }
 
@@ -985,7 +984,7 @@ void generic_2d_triangle_interpolation(double *spec, const unsigned int freq_siz
 }
 
 void hist2d(double *spec, const unsigned int freq_size, double *freq1, double *freq2,
-            double *amp, int amp_stride, int m0, int m1, const unsigned int nt) {
+            double *amp, int amp_stride, int m0, int m1) {
   unsigned int i = 0, ix, iy, hist_index;
   double temp_freq_1, temp_freq_2;
 
@@ -1005,19 +1004,19 @@ void generic_2d_triangle_average(double *spec, const unsigned int freq_size,
                                  double *freq1, double *freq2, double *amp,
                                  int amp_stride, int m0, int m1,
                                  const unsigned int position_size, int32_t *positions,
-                                 const unsigned int nt, unsigned int iso_intrp) {
+                                 unsigned int iso_intrp) {
   if (positions == NULL) {
-    hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, m0, m1, nt);
+    hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, m0, m1);
   } else {
     generic_2d_triangle_interpolation(spec, freq_size, freq1, freq2, amp, amp_stride,
                                       position_size, positions, m0, m1, iso_intrp);
   }
 }
 
-void octahedronInterpolation2D(double *spec, double *freq1, double *freq2, int nt,
-                               double *amp, int stride, int m0, int m1,
-                               unsigned int iso_intrp) {
-  int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
+void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
+                               const unsigned int nt, double *amp, int stride, int m0,
+                               int m1, unsigned int iso_intrp) {
+  unsigned int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
   unsigned int int_i_stride = 0, int_j_stride = 0;
   double amp1, temp, *amp_address, *freq1_address, *freq2_address;
 
