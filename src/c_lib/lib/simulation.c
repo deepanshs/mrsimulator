@@ -50,7 +50,7 @@ void __mrsimulator_core(
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
-    unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
+    int iso_intrp,                // Isotropic interpolation scheme (linear | Gaussian)
     unsigned char *freq_contrib,  // A list of freq_contrib booleans.
     double *affine_matrix         // Affine transformation matrix.
 ) {
@@ -70,22 +70,22 @@ void __mrsimulator_core(
   // sizeof(transition_pathway_weight[0])); printf("n_dimension (int) %zu\n\n",
   // sizeof(n_dimension));
 
-  // printf("iso_intrp (unsigned int) %zu\n", sizeof(iso_intrp));
+  // printf("iso_intrp (int) %zu\n", sizeof(iso_intrp));
   // printf("freq_contrib (unsigned char) %zu\n", sizeof(freq_contrib[0]));
   // printf("affine_matrix double %zu\n\n", sizeof(affine_matrix[0]));
 
-  // printf("n_sites site (unsigned int) %zu\n", sizeof(sites->number_of_sites));
+  // printf("n_sites site (int) %zu\n", sizeof(sites->number_of_sites));
   // printf("n_sites spin (float) %zu\n", sizeof(sites->spin[0]));
   // printf("n_sites gyromagnetic_ratio (double) %zu\n\n",
   //        sizeof(sites->gyromagnetic_ratio[0]));
 
-  // printf("n_coupling n_c (unsigned int) %zu\n",
+  // printf("n_coupling n_c (int) %zu\n",
   // sizeof(couplings->number_of_couplings)); printf("n_coupling site_index (int)
   // %zu\n", sizeof(couplings->site_index[0])); printf("isotropic_j_in_Hz (double)
   // %zu\n\n", sizeof(couplings->isotropic_j_in_Hz[0]));
 
   unsigned char is_spectral;
-  unsigned int evt;
+  int evt;
   int dim, total_pts = scheme->n_gamma * scheme->total_orientations;
   double B0_in_T, fraction, duration;
   vm_double_zeros(total_pts, scheme->phase);
@@ -192,16 +192,16 @@ void mrsimulator_core(
     int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,  // The number of sidebands
-    double rotor_frequency_in_Hz,      // The rotor spin frequency
-    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
+    int number_of_sidebands,       // The number of sidebands
+    double rotor_frequency_in_Hz,  // The rotor spin frequency
+    double rotor_angle_in_rad,     // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
     float *transition_pathway, double *transition_pathway_weight,
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
-    unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    unsigned int interpolate_type, unsigned char *freq_contrib, double *affine_matrix) {
+    int integration_volume,   // 0-octant, 1-hemisphere, 2-sphere.
+    int interpolate_type, unsigned char *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // openblas_set_num_threads(1);
