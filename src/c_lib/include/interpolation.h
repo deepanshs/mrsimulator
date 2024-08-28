@@ -100,5 +100,6 @@ extern void octahedronInterpolation(double *spec, double *freq, const unsigned i
                                     double *amp, const unsigned int stride, int m);
 
 extern void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
-                                      const unsigned int nt, double *amp, int stride,
-                                      int m0, int m1, unsigned int iso_intrp);
+                                      const unsigned int nt, double *amp,
+                                      const unsigned int stride, int m0, int m1,
+                                      unsigned int iso_intrp);

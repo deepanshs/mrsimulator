@@ -141,7 +141,7 @@ cdef extern from "mrsimulator.h":
 #         unsigned int integration_density,
 #         int number_of_sidebands,
 #         double rotor_frequency_in_Hz,
-#         double rotor_angle_in_rad, double increment,
+#         double rotor_angle_in_rad,
 #         bool_t allow_4th_rank)
 
 

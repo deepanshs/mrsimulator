@@ -735,7 +735,7 @@ void rasterization(double *grid, double *v0, double *v1, double *v2, int rows,
 //     for sec in self.clip(0, 1, 1, 0):
 //         v1 = Point(sec[0], sec[1])
 //         v0 = Point(sec[2], sec[3])
-//         if abs(v0.x - 1) < eps and abs(v1.x - 1) < eps \
+//         if abs(v0.x - 1) < eps and abs(v1.x - 1) < eps
 //         or abs(v0.y - 1) < eps and abs(v1.y - 1) < eps:
 //             continue
 
@@ -879,8 +879,7 @@ void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
   }
 }
 
-void generic_1d_triangle_interpolation(double *spec, const unsigned int freq_size,
-                                       double *freq, double *amp, int m,
+void generic_1d_triangle_interpolation(double *spec, double *freq, double *amp, int m,
                                        const unsigned int position_size,
                                        int32_t *positions) {
   unsigned int pos_size = position_size;
@@ -937,8 +936,7 @@ void generic_1d_triangle_average(double *spec, const unsigned int freq_size,
   if (positions == NULL) {
     hist1d(spec, freq_size, freq, amp, m);
   } else {
-    generic_1d_triangle_interpolation(spec, freq_size, freq, amp, m, position_size,
-                                      positions);
+    generic_1d_triangle_interpolation(spec, freq, amp, m, position_size, positions);
   }
 }
 
@@ -963,9 +961,9 @@ void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
   }
 }
 
-void generic_2d_triangle_interpolation(double *spec, const unsigned int freq_size,
-                                       double *freq1, double *freq2, double *amp,
-                                       int amp_stride, const unsigned int position_size,
+void generic_2d_triangle_interpolation(double *spec, double *freq1, double *freq2,
+                                       double *amp, int amp_stride,
+                                       const unsigned int position_size,
                                        int32_t *positions, int m0, int m1,
                                        unsigned int iso_intrp) {
   unsigned int pos_size = position_size;
@@ -1008,14 +1006,15 @@ void generic_2d_triangle_average(double *spec, const unsigned int freq_size,
   if (positions == NULL) {
     hist2d(spec, freq_size, freq1, freq2, amp, amp_stride, m0, m1);
   } else {
-    generic_2d_triangle_interpolation(spec, freq_size, freq1, freq2, amp, amp_stride,
+    generic_2d_triangle_interpolation(spec, freq1, freq2, amp, amp_stride,
                                       position_size, positions, m0, m1, iso_intrp);
   }
 }
 
 void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
-                               const unsigned int nt, double *amp, int stride, int m0,
-                               int m1, unsigned int iso_intrp) {
+                               const unsigned int nt, double *amp,
+                               const unsigned int stride, int m0, int m1,
+                               unsigned int iso_intrp) {
   unsigned int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
   unsigned int int_i_stride = 0, int_j_stride = 0;
   double amp1, temp, *amp_address, *freq1_address, *freq2_address;

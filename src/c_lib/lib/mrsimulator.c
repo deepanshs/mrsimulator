@@ -84,7 +84,7 @@ void MRS_plan_release_temp_storage(MRS_plan *the_plan) {
 MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
                           unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz, double rotor_angle_in_rad,
-                          double increment, bool allow_4th_rank) {
+                          bool allow_4th_rank) {
   MRS_plan *plan = malloc(sizeof(MRS_plan));
   plan->number_of_sidebands = number_of_sidebands;
   plan->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
@@ -136,7 +136,6 @@ MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
 void MRS_plan_update_from_rotor_frequency_in_Hz(MRS_plan *plan,
                                                 double rotor_frequency_in_Hz) {
   unsigned int size_4;
-  // double increment_inverse = 1.0 / increment;
   plan->rotor_frequency_in_Hz = rotor_frequency_in_Hz;
   plan->is_static = (rotor_frequency_in_Hz < 1.0e-3) ? true : false;
 

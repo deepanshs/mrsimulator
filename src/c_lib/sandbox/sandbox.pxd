@@ -42,7 +42,7 @@ cdef extern from "mrsimulator.h":
 
     MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz,
-                          double rotor_angle_in_rad, double increment,
+                          double rotor_angle_in_rad,
                           bool_t allow_4th_rank)
     void MRS_free_plan(MRS_plan *plan)
     void MRS_get_amplitudes_from_plan(MRS_plan *plan, double complex *R2,

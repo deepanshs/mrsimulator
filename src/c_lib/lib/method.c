@@ -155,9 +155,8 @@ static inline void create_plans_for_events_in_dimension(
   dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
   dim->R0_offset = 0.0;
 
-  MRS_plan *plan =
-      MRS_create_plan(scheme, number_of_sidebands, *rotor_frequency_in_Hz,
-                      *rotor_angle_in_rad, increment, scheme->allow_4th_rank);
+  MRS_plan *plan = MRS_create_plan(scheme, number_of_sidebands, *rotor_frequency_in_Hz,
+                                   *rotor_angle_in_rad, scheme->allow_4th_rank);
   // normalize the sideband frequencies.
   cblas_dscal(number_of_sidebands, dim->inverse_increment, plan->vr_freq, 1);
 

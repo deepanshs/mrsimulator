@@ -148,6 +148,8 @@ class LinuxSetup(Setup):
             "-O3",
             "-ffast-math",
             "-fcommon",
+            "-Wall",
+            "-Wextra",
             # "-msse4.2",
             # "-ftree-vectorize",
             # "-fopt-info-vec-all",

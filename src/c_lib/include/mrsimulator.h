@@ -83,7 +83,6 @@ typedef struct MRS_plan MRS_plan;
  * @param rotor_frequency_in_Hz The sample rotation frequency in Hz.
  * @param rotor_angle_in_rad The polar angle in radians with respect to the
  *          z-axis describing the axis of rotation.
- * @param increment The increment along the spectroscopic dimension in Hz.
  * @param allow_4th_rank When true, the plan calculates matrices for
  *          processing the fourth-rank tensors.
  * @return A pointer to the MRS_plan.
@@ -91,7 +90,7 @@ typedef struct MRS_plan MRS_plan;
 MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
                           unsigned int number_of_sidebands,
                           double rotor_frequency_in_Hz, double rotor_angle_in_rad,
-                          double increment, bool allow_4th_rank);
+                          bool allow_4th_rank);
 
 /**
  * @brief Release the memory allocated for the given mrsimulator plan.
