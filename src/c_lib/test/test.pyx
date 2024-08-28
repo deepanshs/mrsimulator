@@ -111,7 +111,7 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def get_exp_Im_angle(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank):
-    cdef unsigned int n_ = n
+    cdef int n_ = n
     cdef np.ndarray[double complex] exp_Im_angle = np.empty(4*n, dtype=np.complex128)
     exp_Im_angle[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
     clib.get_exp_Im_angle(n_, allow_4th_rank, &exp_Im_angle[0], 0.0)
@@ -120,7 +120,7 @@ def get_exp_Im_angle(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(unsigned int number_of_sidebands, double rotor_frequency_in_Hz):
+def pre_phase_components(int number_of_sidebands, double rotor_frequency_in_Hz):
     cdef int n1 = 4 * number_of_sidebands
     cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
     clib.get_sideband_phase_components(number_of_sidebands, rotor_frequency_in_Hz, &pre_phase[0])
@@ -157,7 +157,7 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     :return amp: The amplitude at the given $\alpha$ and $\beta$.
     """
     nt = integration_density
-    cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
+    cdef int octant_orientations = int((nt+1) * (nt+2)/2)
     cdef bool_t interploation = True
 
     cdef np.ndarray[double complex] exp_I_alpha = np.empty(octant_orientations, dtype=np.complex128)
@@ -171,7 +171,7 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, const unsigned int stride=1):
+def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, const int stride=1):
     cdef int i
     cdef int number_of_sidebands = int(amp.shape[0])
     for i in range(number_of_sidebands):
@@ -197,7 +197,7 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                default value is 0.
     :ivar type: Linear or Gaussian interpolation for delta functions.
     """
-    cdef int points = np.asarray([spectrum_amp.size/2], dtype=np.int32)[0]
+    cdef int points = np.asarray([spectrum_amp.size/2], dtype=np.intc)[0]
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
 
     cdef double f1 = f_vector[0]
@@ -222,7 +222,7 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
     :ivar vector2: 1-D array of three points.
     :ivar spectrum_amp: A numpy array of amplitudes. This array is the output.
     """
-    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.int32)
+    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.intc)
     # cdef np.ndarray[int, ndim=1] points = shape
     cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)
@@ -241,8 +241,8 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def __batch_wigner_rotation(unsigned int octant_orientations,
-                            unsigned int n_octants,
+def __batch_wigner_rotation(int octant_orientations,
+                            int n_octants,
                             np.ndarray[double] wigner_2j_matrices,
                             np.ndarray[double complex] R2,
                             np.ndarray[double] wigner_4j_matrices,

@@ -17,7 +17,7 @@
  * Site structure is a collection of site interaction parameters.
  **/
 struct __site_struct {
-  unsigned int number_of_sites; /**< Number of sites */
+  int number_of_sites; /**< Number of sites */
 
   /* Pointer to an array of spin quantum numbers for each site within a spin system. */
   float *spin;
@@ -67,7 +67,7 @@ typedef struct __site_struct site_struct;
  * Coupling structure is a collection of coupled site interaction parameters.
  **/
 struct __coupling_struct {
-  unsigned int number_of_couplings; /**< Number of couplings */
+  int number_of_couplings; /**< Number of couplings */
 
   /* Pointer to an array of the site indexes for each coupled pair within a spin system,
    * incremented in stride of 2/pair. The array size is 2*number_of_couplings. */

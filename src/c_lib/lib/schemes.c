@@ -11,7 +11,7 @@
 
 static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
                                           complex128 *exp_I_beta, bool allow_4th_rank) {
-  unsigned int allocate_size_2, allocate_size_4;
+  int allocate_size_2, allocate_size_4;
   double delta_alpha = 0.0;
   scheme->total_orientations = scheme->octant_orientations;
 
@@ -56,7 +56,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
 
   /* Second-rank reduced wigner matrices at every β orientation from the positive upper
    * octant. */
-  scheme->wigner_2j_matrices = malloc_double(allocate_size_2);
+  scheme->wigner_2j_matrices = malloc_double((size_t)allocate_size_2);
   wigner_d_matrices_from_exp_I_beta(2, scheme->octant_orientations, true, exp_I_beta,
                                     scheme->wigner_2j_matrices);
 
@@ -64,7 +64,7 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   if (allow_4th_rank) {
     /* Fourt-rank reduced wigner matrices at every β orientation from the positive upper
      * octant. */
-    scheme->wigner_4j_matrices = malloc_double(allocate_size_4);
+    scheme->wigner_4j_matrices = malloc_double((size_t)allocate_size_4);
     wigner_d_matrices_from_exp_I_beta(4, scheme->octant_orientations, true, exp_I_beta,
                                       scheme->wigner_4j_matrices);
   }
@@ -106,13 +106,13 @@ static inline void averaging_scheme_setup(MRS_averaging_scheme *scheme,
   /* ................................................................................ */
   /* w2 is the buffer for storing the frequencies calculated from the second-rank
    * tensors. Only calcuate the -2, -1, and 0 tensor components.*/
-  scheme->w2 = malloc_complex128(3 * scheme->total_orientations);
+  scheme->w2 = malloc_complex128((size_t)(3 * scheme->total_orientations));
 
   scheme->w4 = NULL;
   if (allow_4th_rank) {
     /* w4 is the buffer for storing the frequencies calculated from the fourth-rank
      * tensors. Only calcuate the -4, -3, -2, -1, and 0 tensor components.*/
-    scheme->w4 = malloc_complex128(5 * scheme->total_orientations);
+    scheme->w4 = malloc_complex128((size_t)(5 * scheme->total_orientations));
   }
 }
 
@@ -135,10 +135,9 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
 }
 
 /* Create a new orientation averaging scheme. */
-MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
-                                                  bool allow_4th_rank,
-                                                  unsigned int n_gamma,
-                                                  unsigned int integration_volume,
+MRS_averaging_scheme *MRS_create_averaging_scheme(int integration_density,
+                                                  bool allow_4th_rank, int n_gamma,
+                                                  int integration_volume,
                                                   bool interpolation) {
   int alpha_size;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
@@ -160,10 +159,10 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
   alpha_size = 4 * scheme->octant_orientations;
   alpha_size *= (integration_volume == 2) ? 2 : 1;
-  scheme->exp_Im_alpha = malloc_complex128(alpha_size);
-  scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
-  complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
-  scheme->amplitudes = malloc_double(scheme->octant_orientations);
+  scheme->exp_Im_alpha = malloc_complex128((size_t)alpha_size);
+  scheme->exp_Im_gamma = malloc_complex128((size_t)(4 * n_gamma));
+  complex128 *exp_I_beta = malloc_complex128((size_t)scheme->octant_orientations);
+  scheme->amplitudes = malloc_double((size_t)scheme->octant_orientations);
 
   averaging_setup(integration_density,
                   &scheme->exp_Im_alpha[3 * scheme->octant_orientations], exp_I_beta,
@@ -172,8 +171,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
   averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
   // exp(-im gamma) for m=[-4,-1], and gamma=[0..8]*2pi/9
-  double *gamma = malloc_double(n_gamma);
-  double *temp = malloc_double(n_gamma);
+  double *gamma = malloc_double((size_t)n_gamma);
+  double *temp = malloc_double((size_t)n_gamma);
   double factor = CONST_2PI / (double)n_gamma;
   vm_double_arange(n_gamma, gamma);
   cblas_dscal(n_gamma, factor, gamma, 1);
@@ -182,10 +181,11 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
   // reallocate exp_I_beta memory as scratch.
   scheme->scratch = (double *)exp_I_beta;
-  scheme->amps_real = malloc_double(scheme->total_orientations);
-  scheme->amps_imag = malloc_double(scheme->total_orientations);
-  scheme->phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
-  scheme->exp_I_phase = malloc_complex128(scheme->n_gamma * scheme->total_orientations);
+  scheme->amps_real = malloc_double((size_t)scheme->total_orientations);
+  scheme->amps_imag = malloc_double((size_t)scheme->total_orientations);
+  scheme->phase = malloc_double((size_t)(scheme->n_gamma * scheme->total_orientations));
+  scheme->exp_I_phase =
+      malloc_complex128((size_t)(scheme->n_gamma * scheme->total_orientations));
 
   free(gamma);
   free(temp);
@@ -194,9 +194,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 
 /* Create a new orientation averaging scheme. */
 MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
-    double *alpha, double *beta, double *weight, unsigned int n_angles,
-    bool allow_4th_rank, unsigned int n_gamma, const unsigned int position_size,
-    int32_t *positions, bool interpolation) {
+    double *alpha, double *beta, double *weight, int n_angles, bool allow_4th_rank,
+    int n_gamma, const int position_size, int32_t *positions, bool interpolation) {
   double scale;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
@@ -214,10 +213,10 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   /* Calculate α, β, and weights over the positive octant. .......................... */
   /* ................................................................................ */
   // The 4 * octant_orientations memory allocation is for m=4, 3, 2, and 1
-  scheme->exp_Im_alpha = malloc_complex128(4 * scheme->octant_orientations);
-  scheme->exp_Im_gamma = malloc_complex128(4 * n_gamma);
-  complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
-  scheme->amplitudes = malloc_double(scheme->octant_orientations);
+  scheme->exp_Im_alpha = malloc_complex128((size_t)(4 * scheme->octant_orientations));
+  scheme->exp_Im_gamma = malloc_complex128((size_t)(4 * n_gamma));
+  complex128 *exp_I_beta = malloc_complex128((size_t)scheme->octant_orientations);
+  scheme->amplitudes = malloc_double((size_t)scheme->octant_orientations);
 
   // scale = (1 / 6) factor for 1 point to 6 triangle ratio.
   scale = (interpolation) ? 0.1666666667 : 1.0;
@@ -233,8 +232,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   averaging_scheme_setup(scheme, exp_I_beta, allow_4th_rank);
 
   // exp(-im gamma) for m=[-4,-1], and gamma=[0..8]*2pi/9
-  double *gamma = malloc_double(n_gamma);
-  double *temp = malloc_double(n_gamma);
+  double *gamma = malloc_double((size_t)n_gamma);
+  double *temp = malloc_double((size_t)n_gamma);
   double factor = CONST_2PI / (double)n_gamma;
   vm_double_arange(n_gamma, gamma);
   cblas_dscal(n_gamma, factor, gamma, 1);
@@ -243,10 +242,11 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 
   // reallocate exp_I_beta memory as scratch.
   scheme->scratch = (double *)exp_I_beta;
-  scheme->amps_real = malloc_double(scheme->total_orientations);
-  scheme->amps_imag = malloc_double(scheme->total_orientations);
-  scheme->phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
-  scheme->exp_I_phase = malloc_complex128(scheme->n_gamma * scheme->total_orientations);
+  scheme->amps_real = malloc_double((size_t)scheme->total_orientations);
+  scheme->amps_imag = malloc_double((size_t)scheme->total_orientations);
+  scheme->phase = malloc_double((size_t)(scheme->n_gamma * scheme->total_orientations));
+  scheme->exp_I_phase =
+      malloc_complex128((size_t)(scheme->n_gamma * scheme->total_orientations));
 
   free(gamma);
   free(temp);
@@ -256,15 +256,15 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
 /* ---------------------------------------------------------------------------------- */
 /* fftw routine setup ............................................................... */
 /* .................................................................................. */
-MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    unsigned int number_of_sidebands) {
-  unsigned int size = total_orientations * number_of_sidebands;
-  int nssb = (int)number_of_sidebands;
+MRS_fftw_scheme *create_fftw_scheme(int total_orientations, int number_of_sidebands) {
+  int size = total_orientations * number_of_sidebands;
+  int nssb = number_of_sidebands;
   MRS_fftw_scheme *fftw_scheme = malloc(sizeof(MRS_fftw_scheme));
 
   // fftw_scheme->vector = fftw_alloc_complex(size);
-  fftw_scheme->vector = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * size);
-  // malloc_complex128(plan->size);
+  fftw_scheme->vector =
+      (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * (size_t)size);
+  // malloc_complex128((size_t)plan->size);
   // gettimeofday(&fft_setup_time, NULL);
 
   // int fftw_thread = fftw_init_threads();

@@ -12,22 +12,22 @@ from libc.stdint cimport int32_t
 
 cdef extern from "schemes.h":
     ctypedef struct MRS_averaging_scheme:
-        unsigned int total_orientations
-        unsigned int integration_density
-        unsigned int integration_volume
+        int total_orientations
+        int integration_density
+        int integration_volume
 
     MRS_averaging_scheme * MRS_create_averaging_scheme(
-                            unsigned int integration_density,
+                            int integration_density,
                             bool_t allow_4th_rank,
-                            unsigned int n_gamma,
-                            unsigned int integration_volume,
+                            int n_gamma,
+                            int integration_volume,
                             bool_t interpolation)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
                             double *alpha, double *beta,
-                            double *weight, unsigned int n_angles,
+                            double *weight, int n_angles,
                             bool_t allow_4th_rank,
-                            const unsigned int position_size,
+                            const int position_size,
                             int32_t *positions,
                             bool_t interpolation)
 
@@ -36,11 +36,11 @@ cdef extern from "schemes.h":
 cdef extern from "mrsimulator.h":
 
     ctypedef struct MRS_plan:
-        unsigned int number_of_sidebands
+        int number_of_sidebands
         double rotor_frequency_in_Hz
         double rotor_angle_in_rad
 
-    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
+    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
                           double rotor_frequency_in_Hz,
                           double rotor_angle_in_rad,
                           bool_t allow_4th_rank)

@@ -19,12 +19,12 @@ def core_simulator(method,
        list transition_pathways,          # Same length as spin_systems list and
        list transition_weights,  # elements coorespond to each system
        int verbose=0,  # for debug purpose only.
-       unsigned int number_of_sidebands=90,
-       unsigned int integration_density=72,
-       unsigned int decompose_spectrum=0,
-       unsigned int integration_volume=1,
-       unsigned int isotropic_interpolation=0,
-       unsigned int number_of_gamma_angles=1,
+       int number_of_sidebands=90,
+       int integration_density=72,
+       int decompose_spectrum=0,
+       int integration_volume=1,
+       int isotropic_interpolation=0,
+       int number_of_gamma_angles=1,
        bool_t interpolation=True,
        bool_t auto_switch=True,
        debug=False,
@@ -56,15 +56,15 @@ def core_simulator(method,
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
-    cdef unsigned int position_size = 0
+    cdef int position_size = 0
 
     if user_defined:
         if interpolation:
-            position_size = np.uint32(positions.size / 3) if positions is not None else 0
+            position_size = np.intc(positions.size / 3) if positions is not None else 0
         else:
             positions = None
         averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
-            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=np.uint32(alpha.size),
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=np.intc(alpha.size),
             allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
             position_size=position_size, positions=&positions[0], interpolation=interpolation
         )
@@ -91,7 +91,7 @@ def core_simulator(method,
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
-    cdef ndarray[unsigned int] n_dim_sidebands
+    cdef ndarray[int] n_dim_sidebands
 
     # Loop through dimensions and grab attributes/values in python
     freq_contrib = np.asarray([])
@@ -155,11 +155,11 @@ def core_simulator(method,
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
     rair = np.asarray(th, dtype=np.float64)
-    cnt = np.asarray(count, dtype=np.int32)
+    cnt = np.asarray(count, dtype=np.intc)
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
-    n_event = np.asarray(event_i, dtype=np.int32)
-    n_dim_sidebands = np.asarray(dim_sidebands, dtype=np.uint32)
+    n_event = np.asarray(event_i, dtype=np.intc)
+    n_dim_sidebands = np.asarray(dim_sidebands, dtype=np.intc)
 
     # # special 1D case with 1 event.
     # if np.all(srfiH == 1e-3) and np.all(rair - rair[0] == 0):
@@ -182,7 +182,7 @@ def core_simulator(method,
     norm = np.abs(np.prod(incre))
 
 # create fftw scheme __________________________________________________________
-    cdef unsigned int max_sidebands = n_dim_sidebands.max()
+    cdef int max_sidebands = n_dim_sidebands.max()
     cdef clib.MRS_fftw_scheme *fftw_scheme
     fftw_scheme = clib.create_fftw_scheme(averaging_scheme.total_orientations, max_sidebands)
 # _____________________________________________________________________________
@@ -206,7 +206,7 @@ def core_simulator(method,
             affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
-    cdef unsigned int number_of_sites, number_of_couplings, _site_idx_, _coup_idx_
+    cdef int number_of_sites, number_of_couplings, _site_idx_, _coup_idx_
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
@@ -346,7 +346,7 @@ def core_simulator(method,
         couplings_c.number_of_couplings = 0
         if spin_sys.couplings is not None:
             number_of_couplings = int(len(spin_sys.couplings))
-            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.int32)
+            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.intc)
 
             iso_j = np.zeros(number_of_couplings, dtype=np.float64)
             zeta_j = np.zeros(number_of_couplings, dtype=np.float64)

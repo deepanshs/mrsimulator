@@ -65,11 +65,11 @@ cdef extern from "angular_momentum/wigner_matrix.h":
 
     void wigner_dm0_vector(const int l, const double beta, double *R_out)
 
-    void get_exp_Im_angle(const unsigned int octant_orientations,
+    void get_exp_Im_angle(const int octant_orientations,
                           const bool_t allow_4th_rank, void *exp_Im_angle, double delta_alpha)
 
-    void __batch_wigner_rotation(const unsigned int octant_orientations,
-                            const unsigned int n_octants, double *wigner_2j_matrices, void *R2,
+    void __batch_wigner_rotation(const int octant_orientations,
+                            const int n_octants, double *wigner_2j_matrices, void *R2,
                             double *wigner_4j_matrices, void *R4, void *exp_Im_alpha, void *w2,
                             void *w4)
 
@@ -90,7 +90,7 @@ cdef extern from "interpolation.h":
         double amp,
         double *spec,
         int points,
-        unsigned int iso_intrp)
+        int iso_intrp)
 
     void triangle_interpolation1D_linear(
         double freq1,
@@ -119,26 +119,26 @@ cdef extern from "interpolation.h":
         double *spec,
         int m0,
         int m1,
-        unsigned int iso_intrp)
+        int iso_intrp)
 
     void octahedronInterpolation(
         double *spec,
         double *freq,
         int nt,
         double *amp,
-        const unsigned int stride,
+        const int stride,
         int m)
 
 cdef extern from "mrsimulator.h":
     void get_sideband_phase_components(
-        unsigned int number_of_sidebands,
+        int number_of_sidebands,
         double spin_frequency,
         double *pre_phase)
 
 #     ctypedef struct MRS_plan
 
 #     MRS_plan *MRS_create_plan(
-#         unsigned int integration_density,
+#         int integration_density,
 #         int number_of_sidebands,
 #         double rotor_frequency_in_Hz,
 #         double rotor_angle_in_rad,
@@ -172,7 +172,7 @@ cdef extern from "method.h":
         double increment                # Increment of coordinates along the dimension.
         double coordinates_offset       # Start coordinate of the dimension.
         MRS_event *events               # Holds a list of events.
-        unsigned int n_events           # The number of events.
+        int n_events           # The number of events.
 
     # MRS_dimension *MRS_create_dimensions(
     #     MRS_averaging_scheme *scheme,
@@ -182,7 +182,7 @@ cdef extern from "method.h":
     #     double *magnetic_flux_density_in_T,
     #     double *rotor_frequency_in_Hz,
     #     double *rotor_angle_in_rad,
-    #     unsigned int n_events,
+    #     int n_events,
     #     int number_of_sidebands)
 
 cdef extern from "simulation.h":
@@ -201,14 +201,14 @@ cdef extern from "simulation.h":
                                                   # second order quad Hamiltonian.
 
         # spin rate, spin angle and number spinning sidebands
-        unsigned int number_of_sidebands,
+        int number_of_sidebands,
         double rotor_frequency_in_Hz,
         double rotor_angle_in_rad,
 
         # The transition as transition[0] = mi and transition[1] = mf
         double *transition,
         int integration_density,
-        unsigned int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
+        int integration_volume,      # 0-octant, 1-hemisphere, 2-sphere.
         )
 
 cdef extern from "frequency/spatial_orientation_tensor_components.h":

@@ -34,8 +34,8 @@
  */
 
 struct MRS_plan {
-  unsigned int number_of_sidebands; /**< The number of sidebands to compute. */
-  double rotor_frequency_in_Hz;     /**< The sample rotation frequency in  Hz. */
+  int number_of_sidebands;      /**< The number of sidebands to compute. */
+  double rotor_frequency_in_Hz; /**< The sample rotation frequency in  Hz. */
 
   /**
    * The angle, in radians, describing the sample axis-rotation with respect to
@@ -62,8 +62,8 @@ struct MRS_plan {
   bool copy_for_rotor_freq;    // Set True if plan is copied from rotor freq update.
   bool allow_4th_rank;         // If true, creates buffer/tables for 4th-rank tensors.
   bool is_static;              // It true, compute static frequencies
-  unsigned int size;           // # of angular orientations * number of sizebands.
-  unsigned int n_octants;      // # of octants used in the orientational averaging.
+  int size;                    // number of angular orientations * number of sidebands.
+  int n_octants;               // number of octants used in the orientational averaging.
   double *norm_amplitudes;     // array of normalized amplitudes per orientation.
   double *wigner_d2m0_vector;  // wigner-2j dm0 vector, n ∈ [-2, 2].
   double *wigner_d4m0_vector;  // wigner-4j dm0 vector, n ∈ [-4, 4].
@@ -87,8 +87,7 @@ typedef struct MRS_plan MRS_plan;
  *          processing the fourth-rank tensors.
  * @return A pointer to the MRS_plan.
  */
-MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme,
-                          unsigned int number_of_sidebands,
+MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
                           double rotor_frequency_in_Hz, double rotor_angle_in_rad,
                           bool allow_4th_rank);
 
@@ -223,7 +222,7 @@ void MRS_rotate_components_from_PAS_to_common_frame(
     unsigned char *freq_contrib  // The pointer to freq contribs boolean.
 );
 
-extern void get_sideband_phase_components(unsigned int number_of_sidebands,
+extern void get_sideband_phase_components(int number_of_sidebands,
                                           double spin_frequency,
                                           double *restrict pre_phase);
 
