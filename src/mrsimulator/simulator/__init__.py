@@ -587,13 +587,6 @@ class Simulator(Parseable):
             bool pack_as_csdm: Packages the simulated spectrum as a CSDM object if true.
                 Otherwise kept as a numpy array.
         """
-        # if isinstance(amp[0], list):
-        #     simulated_dataset = []
-        #     for item in amp:
-        #         simulated_dataset += item
-        # if isinstance(amp[0], np.ndarray):
-        #     simulated_dataset = [np.asarray(amp).sum(axis=0)]
-
         method.simulation = (
             self._as_csdm_object(amp, method) if pack_as_csdm else np.asarray(amp)
         )

@@ -447,35 +447,6 @@ def core_simulator(method,
         # print('pathway', transition_pathway_c)
         # print('weight', transition_pathway_weight_c)
         # print('pathway_count, inc', pathway_count, pathway_increment)
-
-        if debug:
-            print("int ", sizeof(int));
-            print("double ", sizeof(double));
-            print("float ", sizeof(float));
-            print("unsigned int ", sizeof(unsigned int));
-            print("unsigned char ", sizeof(unsigned char));
-            print()
-
-            print("transition_pathway (float) ", sizeof(transition_pathway_c[0]));
-            print("transition_pathway_weight (double) ", sizeof(transition_pathway_weight_c[0]));
-            print("n_dimension (int) ", sizeof(n_dimension));
-            print()
-
-            print("iso_intrp (unsigned int) ", sizeof(isotropic_interpolation));
-            print("freq_contrib (unsigned char) ", sizeof(f_contrib[0]));
-            print("affine_matrix (double) ", sizeof(affine_matrix_c[0]));
-            print()
-
-            print("n_sites site (unsigned int) ", sizeof(sites_c.number_of_sites));
-            print("n_sites spin (float) ", sizeof(sites_c.spin[0]));
-            print("n_sites gyromagnetic_ratio (double) ", sizeof(sites_c.gyromagnetic_ratio[0]));
-            print()
-
-            print("n_coupling n_c (unsigned int) ", sizeof(couplings_c.number_of_couplings));
-            print("n_coupling site_index (int) ", sizeof(couplings_c.site_index[0]));
-            print("isotropic_j_in_Hz (double) ", sizeof(couplings_c.isotropic_j_in_Hz[0]));
-            print()
-
         for trans__ in range(pathway_count):
             clib.__mrsimulator_core(
                 &amp[0],  # as complex array

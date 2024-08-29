@@ -192,6 +192,7 @@ class MacOSSetup(Setup):
             "-fcommon",
             "-Wall",
             "-Wextra",
+            "-Wconversion",
         ]
         self.extra_link_args += ["-lm"]
 
