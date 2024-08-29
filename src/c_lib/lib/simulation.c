@@ -82,7 +82,7 @@ void __mrsimulator_core(
   // Loop over the dimension.
   for (dim = 0; dim < n_dimension; dim++) {
     // Reset the freqs to zero at the start of each spectral dimension.
-    cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
+    vm_double_zeros(total_pts, dimensions[dim].local_frequency);
     dimensions[dim].R0_offset = 0.0;
 
     plan = dimensions[dim].events->plan;
