@@ -132,7 +132,7 @@ only during a simulation that the Method instance uses its TransitionQuery
 instances to determine the selected transition pathways for a given SpinSystem
 instance by the initial and final eigenstate quantum numbers of each transition.
 
-Between adjacent SpectralEvent or DelayEvent instances, **MRSimulator** defaults
+Between adjacent FreeEvent instances, **MRSimulator** defaults
 to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
 explicit :py:meth:`~mrsimulator.method.query.RotationEvent` instance between such events.
@@ -1700,10 +1700,10 @@ Default Total Mixing between Adjacent Spectral or Delay Events
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 In previous discussions, we did not mention the efficiency of transfer between
-selected transitions in adjacent SpectralEvent instances. This is because, as
+selected transitions in adjacent FreeEvent instances. This is because, as
 default behavior, **MRSimulator** does a *total mixing*, i.e., connects all
-selected transitions in the two adjacent spectral or delay events. In other
-words, if the first of two adjacent SpectralEvent instances has three selected
+selected transitions in the two adjacent FreeEvent instances. In other
+words, if the first of two adjacent FreeEvent instances has three selected
 transitions and the second has two selected transitions, then **MRSimulator**
 will make :math:`3 \times 2 = 6` connections, i.e., six transition pathways
 passing from the first to second SpectralEvent instances.
@@ -1722,8 +1722,8 @@ However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-total mixing event by inserting the RotationEvent instance with rotation
-instances.
+total mixing event by inserting the RotationEvent instance with Rotation
+instances assigned to different channels.
 
 Rotation
 ''''''''
@@ -1968,7 +1968,7 @@ and for the ``solid_echo`` method with the code below.
 Notice that the weights of the transition pathways in the solid-echo method are
 half of those in the Hahn-echo method. This is because the :math:`\pi` pulse in
 the Hahn-echo method gives perfect transfer between the two transitions in the
-adjacent spectral events. In contrast, while the :math:`\pi/2` pulse in the
+adjacent FreeEvent instances. In contrast, while the :math:`\pi/2` pulse in the
 solid-echo method prevents the undesired transition pathways with :math:`\Delta
 \text{d}_I = 0`, it also connects the selected transitions during the first
 spectral event to undesired transitions in the second spectral event, which are
@@ -2095,9 +2095,10 @@ is illustrated below.
     plt.show()
 
 .. note::
-    mrsimulator also includes shortcuts for addressing groups of frequency contributions together.
-    For example, the ``shielding_only`` method could have selected all shielding contributions by
-    using ``freq_contrib=["Shielding"]`` which expands to zeroth- and second-rank shielding.
+    mrsimulator also includes shortcuts for addressing groups of frequency
+    contributions together.  For example, the ``shielding_only`` method could
+    have selected all shielding contributions by using
+    ``freq_contrib=["Shielding"]`` which expands to zeroth- and second-rank shielding.
     A complete list of shortcuts are listed in :ref:`freq_contrib_api`.
 
 
@@ -2107,20 +2108,19 @@ Origin and Reference Offset
 
 :py:meth:`~mrsimulator.method.spectral_dimension.SpectralDimension` has additional
 attributes that have already been discussed in earlier sections of the documentation.
-Notably, ``origin_offset`` and ``reference_offset`` are important for converting
-the frequency coordinate into a dimensionless frequency ratio coordinate. For
-spectra where all the spectral dimensions are associated with single-quantum
-transitions on a single isotope, the convention for defining ``origin_offset``
-and ``reference_offset`` is well established;
-the ``origin_offset``, :math:`o_k`, is interpreted as the NMR spectrometer
-frequency and  the ``reference_offset``, :math:`b_k`, as the reference
-frequency. Given the frequency coordinate, :math:`{X}`, the corresponding
+Notably, ``origin_offset`` is important for converting the frequency coordinate into
+a dimensionless frequency ratio coordinate. For spectra where all the spectral dimensions are associated with single-quantum transitions on a single isotope, the convention is to define
+the ``origin_offset`` as the NMR spectrometer frequency of the primary reference for a given isotope.  Thus, given the frequency coordinate, :math:`{X}`, the corresponding
 dimensionless-frequency ratio follows,
 
 .. math::
     :label: chemicalShiftDef
 
-    {X}^\text{ratio} = \displaystyle \frac{{X}}{o_k - b_k}.
+    {X}^\text{ratio} = \displaystyle \frac{{X}}{o_k}.
+
+
+The ``reference_offset``, :math:`b_k`, is then defined as the offset in hertz between
+the primary reference frequency and the center frequency of the spectrum.
 
 In the case of multiple quantum dimensions, however, there appear
 to be no formal conventions for defining ``origin_offset`` and ``reference_offset``.
@@ -2210,10 +2210,12 @@ Attribute Summaries
 
   * - origin_offset
     - ``float``
-    - An *optional* float representing the origin offset, or Larmor frequency, along the
-      spectroscopic dimension in units of Hz. The default value is ``None`` and the origin offset
-      is set to the Larmor frequency of isotope from the :attr:`~mrsimulator.Method.channels`
-      attribute of the method containing the spectral dimension.
+    - An *optional* float representing the origin offset, or primary reference frequency, along the
+      spectroscopic dimension in units of Hz. The default value is ``None`` and the origin
+      offset is set to the primary reference frequency of isotope from the
+      :attr:`~mrsimulator.Method.channels` and
+      :attr:`~mrsimulator.Method.magnetic_flux_density` attributes of the method containing
+      the spectral dimension.
 
   * - events
     - ``List``
@@ -2280,8 +2282,7 @@ Attribute Summaries
   * - :math:`\text{ch}i`
     - ``dict`` or :py:class:`~mrsimulator.method.query.Rotation`
     - A :py:class:`~mrsimulator.method.query.Rotation` instance, or its ``dict`` representation,
-      determines the complex amplitude of mixing between transitions in adjacent spectral
-      or delay events for the :math:`i^\text{th}` channel, where :math:`i \in [1, 2, 3]`.
+      determines the complex amplitude of mixing between transitions in adjacent FreeEvent instances for the :math:`i^\text{th}` channel, where :math:`i \in [1, 2, 3]`.
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``
