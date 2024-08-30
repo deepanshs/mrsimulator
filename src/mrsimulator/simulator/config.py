@@ -37,7 +37,7 @@ class CustomSampling(BaseModel):
         An array of size N of :math:`\alpha` angle coordinates in radians.
 
     beta: ndarray
-        An array of size N of :math:`\beta' angle coordinates in radians.
+        An array of size N of :math:`\beta` angle coordinates in radians.
 
     weight: ndarray
         An array of size N of weights corresponding to :math:`(\alpha, \beta)`

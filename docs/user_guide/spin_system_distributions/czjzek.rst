@@ -215,7 +215,7 @@ be in units of MHz when sampling quadrupolar tensors in polar coordinates.
     x_grid, y_grid, amp = cz_model_polar.pdf(pos=[x_range, y_range])
 
 Generating a list of SpinSystem instances from a Czjzek model
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 The utility function :py:meth:`~mrsimulator.utils.collection.single_site_system_generator`, further
 described in :ref:`single_site_system_generator_documentation`, can be used in conjunction with
