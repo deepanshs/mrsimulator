@@ -414,7 +414,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
     fraction_duration = dim->inverse_increment * fraction;
   } else {
     local_frequency = dim->local_phase;
-    cblas_dscal(freq_size, 0.0, local_frequency, 1);
+    vm_double_zeros(freq_size, local_frequency);
     fraction_duration = CONST_2PI * duration;
   }
 
