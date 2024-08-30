@@ -137,8 +137,8 @@ to *total mixing*, i.e., connecting all selected transitions in the two adjacent
 spectral or delay events. This default behavior can be overridden by placing an
 explicit :py:meth:`~mrsimulator.method.query.RotationEvent` instance between such events.
 The RotationEvent instance holds :py:meth:`~mrsimulator.method.query.Rotation`
-instances in the attributes ``ch1``, ``ch2``, or ``ch3``, which act on specific 
-isotopes defined by the ``channels`` attribute in Method. The Rotation class 
+instances in the attributes ``ch1``, ``ch2``, or ``ch3``, which act on specific
+isotopes defined by the ``channels`` attribute in Method. The Rotation class
 determines the coherence transfer amplitude between transitions.
 
 In this guide to designing custom Method instances, we begin with a brief review
@@ -1718,30 +1718,11 @@ speed-up in the simulation by avoiding the need to calculate mixing amplitudes.
     of integrated intensities between different methods, depending on the selected
     transition pathways.
 
-If this default mixing behavior had been explicitly shown in the previous example,
-the events list in the first SpectralDimension would have looked like the code
-below.
-
-.. plot::
-    :context: close-figs
-
-    from mrsimulator.method import RotationEvent
-
-    events = [
-        SpectralEvent(fraction=9 / 16, transition_queries=[{"ch1": {"P": [-3], "D": [0]}}]),
-        SpectralEvent(fraction=7 / 16, transition_queries=[{"ch1": {"P": [-1], "D": [0]}}]),
-    ]
-
-Since only one transition was selected in each SpectralEvent, the expected (and
-default) behavior is that there is a mixing (transfer) of coherence between
-the symmetric triple-quantum and central transitions, forming the desired
-transition pathway.
-
 However, when multiple transition pathways are present in a method, you may need
 more accurate mixing amplitudes when connecting selected transitions of adjacent
 events. You may also need to prevent the undesired mixing of specific
 transitions between two adjacent events. As described below, you can avoid a
-``"TotalMixing"`` event by inserting the RotationEvent instance with rotation
+total mixing event by inserting the RotationEvent instance with rotation
 instances.
 
 Rotation
