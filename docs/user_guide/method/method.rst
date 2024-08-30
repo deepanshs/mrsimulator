@@ -1677,7 +1677,7 @@ previous discussion, you will find that the required value for the
 ``affine_matrix=[[1,0],[-8/25, 17/25]]``
 
 RotationEvent
------------
+-------------
 
 The amplitude of a transition pathway signal derives from the product
 of mixing amplitudes associated with each transfer between transitions in a
@@ -1781,6 +1781,8 @@ event, i.e., a no mixing event. This can be implemented with the code below.
 .. plot::
     :context: close-figs
 
+    from mrsimulator.method import RotationEvent
+
     RotationEvent()  # empty instance defaults to a zero rotation on all channels.
 
 The RotationEvent instance holds the rotation details in a RotationEvent instance as
@@ -1866,8 +1868,6 @@ We use the deuterium Site defined earlier in this document.
 
 .. plot::
     :context: close-figs
-
-    from mrsimulator.method import RotationEvent
 
     deuterium = Site(
         isotope="2H",
