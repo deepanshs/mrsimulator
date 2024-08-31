@@ -14,7 +14,7 @@ For the users
 Strict Requirements
 -------------------
 
-**mrsimulator** has the following strict requirements:
+**MRSimulator** has the following strict requirements:
 
 - `Python <https://www.python.org>`_ |PY_VERSION| or later
 - `Numpy <https://numpy.org>`_ 1.17 or later
@@ -94,7 +94,7 @@ Testing your build
 ------------------
 
 .. note::
-  For Windows users using anaconda Python 3.8 and higher, you need to set the following
+  For Windows users using anaconda Python 3.9 and higher, you need to set the following
   environment variable in the ``Anaconda Prompt`` before running mrsimulator scripts.
 
   .. code-block:: bash

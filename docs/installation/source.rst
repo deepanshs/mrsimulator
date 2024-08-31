@@ -3,15 +3,15 @@
 
 You will need a C-compiler suite and the development headers for the BLAS and FFTW libraries,
 along with development headers from Python and Numpy, to build the
-**mrsimulator** library from source.
-The **mrsimulator** package utilizes the BLAS and FFTW routines for numerical computation.
+**MRSimulator** library from source.
+The **MRSimulator** package utilizes the BLAS and FFTW routines for numerical computation.
 To leverage the best performance, we recommend installing the BLAS and FFTW libraries which are
 optimized and tuned for your system. In the following, we list recommendations on installing the
-C-compiler (if applicable), BLAS, FFTW, and building the **mrsimulator** libraries.
+C-compiler (if applicable), BLAS, FFTW, and building the **MRSimulator** libraries.
 
 **Obtaining the Source Packages**
 
-The latest stable source package for **mrsimulator** is available on
+The latest stable source package for **MRSimulator** is available on
 `PyPI <https://pypi.org/project/mrsimulator/#files>`_ and
 `Github release <https://github.com/deepanshs/mrsimulator/releases>`_. Download and
 extract the *.tar.gz* file.

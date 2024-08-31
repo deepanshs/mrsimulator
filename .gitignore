@@ -31,6 +31,7 @@ cython_debug/**
 *.egg
 *.whl
 _temp_*/
+docs/sg_execution_times.rst
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

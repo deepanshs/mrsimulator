@@ -3,7 +3,7 @@
 Installing Python
 """""""""""""""""
 
-**Mrsimulator** requires Python or a hosted Notebook service to run. If you are
+**MRSimulator** requires Python or a hosted Notebook service to run. If you are
 using Google Colab, see specific instructions in the :ref:`install` section.
 
 Checking the version of Python

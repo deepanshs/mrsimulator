@@ -216,7 +216,7 @@ intersphinx_mapping = {
 }
 
 rst_prolog = """
-.. |PY_VERSION| replace:: 3.8
+.. |PY_VERSION| replace:: 3.9
 """
 
 # ---------------------------------------------------------------------------- #

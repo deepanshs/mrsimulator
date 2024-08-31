@@ -15,7 +15,7 @@ Updating Numpy
 """"""""""""""
 
 Google Colab is versatile and platform independent, but some of the pre-installed libraries may be
-old version. When running **mrsimulator** on Google Colab, an incompatible version of ``numpy`` will
+old version. When running **MRSimulator** on Google Colab, an incompatible version of ``numpy`` will
 cause the following error
 
 .. code-block:: bash

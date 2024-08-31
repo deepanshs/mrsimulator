@@ -6,11 +6,11 @@ mrsimulator I/O
 
 We offer a range of serialization options based on a JSON structure demonstrated below.
 
-Dictionary Representation of Objects
-------------------------------------
+Dictionary Representation of class instances
+--------------------------------------------
 
-All **mrsimulator** objects can be serialized into a JSON format. Calling the
-``json()`` method on an object will return a Python dictionary representing the object
+All **MRSimulator** class instances can be serialized into a JSON format. Calling the
+``json()`` method on an instance will return a Python dictionary representing the instance
 in JSON format.
 Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` class.
 
@@ -39,9 +39,9 @@ Below we call the :meth:`~mrsimulator.Site.json` method of the :ref:`site_api` c
 All values are serialized with units when applicable, but you may call ``json(units=False)``
 if you wish to serialize values without units.
 
-Similarly, all **mrsimulator** objects can be loaded from a dictionary representation. Here we
+Similarly, all **MRSimulator** class instances can be loaded from a dictionary representation. Here we
 construct the same site as a dictionary and call :meth:`~mrsimulator.Site.parse_dict_with_units`
-to create a :ref:`site_api` object from a dictionary.
+to create a :ref:`site_api` instance from a dictionary.
 
 .. code-block:: python
 
@@ -61,14 +61,14 @@ to create a :ref:`site_api` object from a dictionary.
 We see that both these sites are equivalent. Values in dictionaries can be given as a
 number and a unit in a string. However, passing values with units increases overhead and
 will throw errors if the units cannot be converted into the expected units for a field.
-For this reason, we recommend instantiating objects directly from classes.
+For this reason, we recommend instantiating instances directly from classes.
 
 .. _load_spin_systems:
 
 Saving and Loading Spin Systems from a File
 -------------------------------------------
 
-A list of spin systems in a :ref:`simulator_api` object can be serialized to a file. Here we create
+A list of spin systems in a :ref:`simulator_api` instance can be serialized to a file. Here we create
 a simulator with three distinct :math:`^{29}\text{Si}` spin systems and serialize these spin
 systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
 
@@ -106,13 +106,13 @@ systems to a file by calling :meth:`~mrsimulator.Simulator.export_spin_systems`.
         ]
     )
 
-    # Create the Simulator object
+    # Create the Simulator instance
     sim = Simulator(spin_systems=[Si29_1, Si29_2, Si29_3])
 
     # Save spin systems to file
     sim.export_spin_systems("example.mrsys")
 
-Now the file ``example.mrsys`` holds a JSON representation of the spin system objects.
+Now the file ``example.mrsys`` holds a JSON representation of the spin system instances.
 We encourage the convention of using .mrsys extension for this JSON file.
 
 Just as spin systems can be saved to a file, spin systems can be loaded from a file. Loading spin
@@ -130,7 +130,7 @@ we load the spin system file, ``example.mrsys``, into a new simulator using the 
 Saving and Loading Methods from a File
 --------------------------------------
 
-A list of methods in a :ref:`simulator_api` object can be serialized to a file. Here we create a
+A list of methods in a :ref:`simulator_api` instance can be serialized to a file. Here we create a
 custom DAS method and serialize it to a file using the method
 :meth:`~mrsimulator.Simulator.export_methods`.
 
@@ -188,12 +188,12 @@ custom DAS method and serialize it to a file using the method
     # Save methods to file
     sim.export_methods("example.mrmtd")
 
-Now the file ``example.mrmtd`` holds a JSON representation of the method object. If multiple
+Now the file ``example.mrmtd`` holds a JSON representation of the Method instance. If multiple
 methods are present, e.g., at different spinning speeds, they will also be serialized.  We
 encourage the convention of using .mrmtd extension for this JSON file.
 
 Just like spin systems, methods can also be loaded from a file. Here we load the DAS
-method into a new simulator object by calling the method
+method into a new Simulator instance by calling the method
 :meth:`~mrsimulator.Simulator.load_methods`.
 
 .. code-block:: python
@@ -207,10 +207,10 @@ Loading complex methods from a file, like the DAS example above, can reduce comp
 Methods representing actual experiments can be saved to a file to later be loaded into a script
 as needed.
 
-Serializing a Simulator Object
-------------------------------
+Serializing a Simulator Instance
+--------------------------------
 
-The entire :ref:`simulator_api` object may be serialized to a JSON-compliant file using the
+The entire :ref:`simulator_api` instance may be serialized to a JSON-compliant file using the
 :meth:`~mrsimulator.Simulator.save` Python method.
 By default, the attribute values are serialized as physical quantities represented as a
 string with a value and a unit.
@@ -218,10 +218,10 @@ string with a value and a unit.
 .. code-block:: python
 
     sim = Simulator()
-    # ... Setup Simulator object
+    # ... Setup Simulator instance
     sim.save("sample.mrsim")
 
-Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a :ref:`simulator_api` object.
+Now the file ``sample.mrsim`` holds the JSON representation of ``sim``, a :ref:`simulator_api` instance.
 To load a simulator from a file, call the class method :meth:`~mrsimulator.Simulator.load`.
 By default, the load method parses the file for units.
 
@@ -243,10 +243,10 @@ The simulated spectrum may be exported to a CSDM-compliant JSON file using the f
 For more information on the CSDM format, see the
 `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
-Serialize Simulator and SignalProcessor object
-----------------------------------------------
+Serialize Simulator and SignalProcessor instances
+-------------------------------------------------
 
-The :ref:`simulator_api` object and a list of :ref:`signal_processor_api` objects
+The :ref:`simulator_api` instance and a list of :ref:`signal_processor_api` instances
 can both be serialized within the same file by calling the :meth:`~mrsimulator.save`
 method.
 
@@ -268,13 +268,13 @@ method.
 
 By default, all attribute values are serialized with units.  You can serialize attributes
 without units, assuming the default unit of the attribute, by passing
-``with_units=False`` to the method.  Recall that all objects in  **mrsimulator**
+``with_units=False`` to the method.  Recall that all class instances in  **MRSimulator**
 have the attribute ``property_units`` which provides the default units for all class
 properties.  Additionally, a metadata dictionary can be passed using the ``application`` keyword.
 
 To load a simulator and signal processors from a file, call the :meth:`~mrsimulator.load`
-method. This method will return an ordered list of a :ref:`simulator_api` object, a list of
-:ref:`signal_processor_api` objects, and a metadata dictionary
+method. This method will return an ordered list of a :ref:`simulator_api` instance, a list of
+:ref:`signal_processor_api` instances, and a metadata dictionary
 
 .. code-block:: python
 
@@ -284,7 +284,7 @@ method. This method will return an ordered list of a :ref:`simulator_api` object
 
 .. note::
 
-    The serialization structure has been updated in **mrsimulator** v0.7. Any `.mrsim` files
+    The serialization structure has been updated in **MRSimulator** v0.7. Any `.mrsim` files
     from v0.6 and earlier will not work. See :ref:`changelog` for breaking changes.
 
 
