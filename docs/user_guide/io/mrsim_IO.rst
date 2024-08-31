@@ -1,7 +1,7 @@
 .. _IO_documentation:
 
 ===============
-mrsimulator I/O
+MRSimulator I/O
 ===============
 
 We offer a range of serialization options based on a JSON structure demonstrated below.

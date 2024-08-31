@@ -4,7 +4,7 @@
 Getting Started
 ===============
 
-In **MRSimulator**, the user initializes instances from mrsimulator classes;
+In **MRSimulator**, the user initializes instances from **MRSimulator** classes;
 The three main classes we will use in this example are:
 :ref:`spin_system_documentation`, :ref:`method_documentation`, and
 :ref:`simulator_documentation`.
