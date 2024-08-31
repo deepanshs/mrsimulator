@@ -49,7 +49,7 @@ of :math:`R_{2,k}`, and are given as
     U_4 &= -\frac{i}{\sqrt{12}} (R_{2,2} - R_{2,-2}), \\
     U_5 &= \frac{1}{\sqrt{12}} (R_{2,2} + R_{2,-2}),
 
-where :math:`U_i` forms an ortho-normal basis. The components, :math:`U_i`, are drawn
+where :math:`U_i` forms an orthonormal basis. The components, :math:`U_i`, are drawn
 from a five-dimensional uncorrelated multivariate normal distribution with zero mean
 and covariance matrix, :math:`\Lambda=\sigma^2 {\bf I}_5`, where :math:`{\bf I}_5` is a
 :math:`5 \times 5` identity matrix and :math:`\sigma` is the standard deviation.

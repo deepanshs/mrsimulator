@@ -5,7 +5,7 @@ Czjzek distribution
 
 The Czjzek distribution models random variations of second-rank traceless
 symmetric tensors about zero, i.e., a tensor with zeta of zero. An analytical expression
-for the Czjzek distribution exists (cite) which follows
+for the Czjzek distribution exists (cite), which follows
 
 .. math::
     f(\zeta, \eta, \sigma) = \eta \left(1-\frac{\eta^2}{9}\right)\frac{\zeta^4}{32\sigma^5 \sqrt{2 \pi}} \times \exp\left(-\frac{\zeta^2}{8\sigma^2}\left(1+\frac{\eta^2}{3}\right)\right),
@@ -76,7 +76,7 @@ The :py:class:`~mrsimulator.models.czjzek.CzjzekDistribution` class also support
             \end{array}
             \right.\end{split}
 
-Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is re-express as the x-y Cartesian grid following,
+Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is re-expressed as the x-y Cartesian grid following,
 
 .. math::
 
@@ -116,11 +116,11 @@ Generating probability distribution functions from a Czjzek model
 The :py:meth:`~mrsimulator.models.CzjzekDistribution.pdf` instance method will generate a
 probability distribution function on the supplied grid using the analytical function defined above.
 The provided grid -- passed to the ``pos`` keyword argument -- needs to be defined in either
-Cartesian or polar coordinates depending on if the
+Cartesian or polar coordinates, depending on whether the
 :py:attr:`~mrsimulator.models.CzjzekDistribution.polar` attribute is ``True`` or ``False``.
 
 Below, we generate and plot a probability distribution on a :math:`\zeta`-:math:`\eta` Cartesian
-grid where ``zeta_range`` and ``eta_range`` define the desired coordinates in each dimension of the
+grid where ``zeta_range`` and ``eta_range`` define the desired coordinates in each dimension of thes
 grid system.
 
 .. plot::

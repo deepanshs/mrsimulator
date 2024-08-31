@@ -1,5 +1,5 @@
 
-Colaboratory is a Google research project. It is a Jupyter notebook environment
+Colaboratory is a Google research project. It is a Jupyter Notebook environment
 that runs entirely in the cloud. Launch a new notebook on
 `Colab <https://colab.research.google.com>`_. We recommend going through
 the *Welcome to Colab!* tutorial if you are new to Notebooks.
@@ -20,5 +20,5 @@ To install the **MRSimulator** package, type
     !pip install mrsimulator
 
 in a new cell, execute, and finally restart the runtime.
-All done! You may now start using the library, or
+All done! You may now start using the library or
 proceed to :ref:`getting_started` to continue the tutorial.

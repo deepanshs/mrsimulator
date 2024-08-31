@@ -36,7 +36,7 @@ following operating systems:
 
 ----
 
-For ``mrsimualtor`` developers, the following packages are required:
+For ``MRSimulator`` developers, the following packages are required:
 
 *For building C libraries*
 

@@ -6,7 +6,7 @@ mrsimulator I/O
 
 We offer a range of serialization options based on a JSON structure demonstrated below.
 
-Dictionary Representation of class instances
+Dictionary Representation of Class Instances
 --------------------------------------------
 
 All **MRSimulator** class instances can be serialized into a JSON format. Calling the

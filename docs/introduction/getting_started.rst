@@ -4,7 +4,7 @@
 Getting Started
 ===============
 
-In mrsimulator, the user initializes instances from mrsimulator classes;
+In **MRSimulator**, the user initializes instances from mrsimulator classes;
 The three main classes we will use in this example are:
 :ref:`spin_system_documentation`, :ref:`method_documentation`, and
 :ref:`simulator_documentation`.
@@ -28,7 +28,7 @@ model because it is human-readable if properly organized and easily integrable
 with numerous programming languages and related software packages. It is also
 the preferred serialization for data exchange in web-based applications.
 
-Here, we have put together a tutorial which introduces the key classes in
+Here, we have put together a tutorial that introduces the key classes in
 a typical **MRSimulator** workflow. See the User Documentation section
 for more detailed documentation on the usage of **MRSimulator** classes. Also,
 check out our :ref:`example_gallery` and :ref:`fitting_examples`.
@@ -98,7 +98,7 @@ by creating a :ref:`coupling_documentation` instance.
 The two sites involved in the Coupling are identified by their indexes in the list
 variable ``site_index``.
 
-Now you have all the pieces needed to create the spin system using the code below.
+Now, you have all the pieces needed to create the spin system using the code below.
 
 .. plot::
     :context: close-figs
@@ -156,18 +156,18 @@ familiar to an NMR spectroscopist.
         ],
     )
 
-Before creating the method instance, the magnetic flux density is 
-calculated using the ``ref_freq_to_B0()`` attribute of the Isotope 
-class.  In this case, ``B0`` is set to a value that gives 
-the :math:`^{1}\text{H}` primary reference, i.e., TMS, a 
-resonance frequency of 400 MHz. 
+Before creating the method instance, the magnetic flux density is
+calculated using the ``ref_freq_to_B0()`` attribute of the Isotope
+class.  In this case, ``B0`` is set to a value that gives
+the :math:`^{1}\text{H}` primary reference, i.e., TMS, a
+resonance frequency of 400 MHz.
 
-In the creation of the BlochDecaySpectrum instance, the ``channel`` 
+In the creation of the BlochDecaySpectrum instance, the ``channel``
 attribute holds a list of isotope strings.  In the
 BlochDecaySpectrum method, however, only the
 first isotope in the list, i.e., :math:`^{13}\text{C}`, is used to simulate
 the spectrum.  The BlochDecaySpectrum method has one spectral
-dimension.  In this example, that spectral dimension has 2048 points, spanning
+dimension.  In this example, that spectral dimension has 2048 points spanning
 80 kHz with a reference offset of 6 kHz.
 
 Next, you will bring the SpinSystem and Method instances together and create a Simulator
@@ -196,8 +196,8 @@ initialized with your previously defined spin system and method, and then call
 
 The simulated spectrum is stored as a CSDM instance in the Method instance at
 ``sim.methods[0].simulation``. To match an experimental MAS spectrum, however,
-you still need to add some line broadening to the simulated spectrum. For this,
-you can use the :ref:`signal_processor_documentation` class described in the
+you need to add some line broadening to the simulated spectrum.
+You can use the :ref:`signal_processor_documentation` class described in the
 next section.
 
 
@@ -214,7 +214,7 @@ convolution of the simulated spectrum with a Lorentzian distribution having a
 full-width-half-maximum of 200 Hz. This is done with three operations: the
 first operation applies an inverse fast Fourier transform of the spectrum into
 the time domain, the second operation applies a time-domain apodization with an
-exponential decay, and the third operation applies a fast Fourier transform
+exponential decay and the third operation applies a fast Fourier transform
 back into the frequency domain.
 
 
@@ -241,14 +241,14 @@ PyPlot
 
 You can use Matplotlib's `PyPlot module
 <https://matplotlib.org/stable/tutorials/introductory/pyplot.html>`__ to plot your
-simulations. To aid in plotting CSDM instance with PyPlot, csdmpy provides a
+simulations. To aid in plotting CSDM instances with PyPlot, csdmpy provides a
 custom CSDM dataset plot axes.  To use it, simply pass ``projection="csdm"`` when instantiating
-an Axes instance. Below is code using the PyPlot module which will generate a
+an Axes instance. Below is code using the PyPlot module, which will generate a
 plot and a pdf file of the simulated spectrum:
 
 .. note::
 
-    To use the custom CSDM axes with ``projection="csdm"``, the csdmpy library needs imported.
+    To use the custom CSDM axes with ``projection="csdm"``, the csdmpy library needs importing.
 
 .. _fig1-getting-started:
 
@@ -286,17 +286,17 @@ is a lightweight, portable, human-readable, and versatile standard for intra-
 and interdisciplinary exchange of scientific datasets. The model supports
 multi-dimensional datasets with a multi-component dependent variable discretely
 sampled at unique points in a multi-dimensional independent variable space. It
-can also hold correlated datasets assuming the different physical quantities
+can also hold correlated datasets, assuming the different physical quantities
 (dependent variables) are sampled on the same orthogonal grid of independent
 variables. It can even handle datasets with non-uniform sampling on a grid.
-The CSDM can also serve as a re-usable building block in developing
+The CSDM can also be a re-usable building block in developing
 more sophisticated portable scientific dataset file standards.
 
 **MRSimulator** also uses CSDM internally as its model for simulated and
 experimental datasets. Any CSDM instance in **MRSimulator** can be serialized as
 a JavaScript Object Notation (JSON) file using its ``save()`` method. For
 example, the simulation after the signal processing step above is saved as a
-csdf file as shown below.
+csdf file, as shown below.
 
 
 

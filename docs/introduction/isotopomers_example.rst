@@ -3,7 +3,7 @@
 Isotopomers Example
 ^^^^^^^^^^^^^^^^^^^
 
-Here you will work through an example that should be familiar to nearly all
+Here, you will work through an example that should be familiar to nearly all
 practitioners of NMR spectroscopy, i.e., the simulation of the :math:`^1\text
 {H}` and :math:`^{13}\text{C}` liquid-state NMR spectra of ethanol with its
 various isotopomers. The :math:`^1\text{H}` spectrum will include the
@@ -221,8 +221,8 @@ spin systems and the list of your two methods, and run the simulations.
 
 
 Note that the Simulator instance runs six simulations in this example, i.e., three ``method_H``
-simulations are run for each of the three isotopomers before being added together to create
-the final ``method_H`` simulation. Similarly three simulations are run to create
+simulations are run for the three isotopomers before being added together to create
+the final ``method_H`` simulation. Similarly, three simulations are run to create
 the final ``method_C`` simulation.
 
 Signal Processors
@@ -346,7 +346,7 @@ objects, as shown below.
 Saving the Methods
 ++++++++++++++++++
 
-Similarly, if you want to save the methods for use in a another project, you
+Similarly, if you want to save the methods for use in another project, you
 can ask the Simulator instance to export the list of Method instances to a JSON
 file.
 
@@ -360,7 +360,7 @@ instances. We encourage the convention of using ``.mrmtd`` extension for this JS
 file.
 
 The list of Method instances can also be reloaded back into a Simulator instance by
-calling ``load_methods()`` with the file name of the saved Method instances, as
+calling ``load_methods()`` with the file name of the saved Method instances as
 shown below.
 
 .. plot::
@@ -374,7 +374,7 @@ Saving the full Simulation
 ++++++++++++++++++++++++++
 
 The Simulation and SignalProcessor instances can also be serialized into JSON
-files. At some point, however, saving the Python script or Jupyter notebook
+files. At some point, however, saving the Python script or Jupyter Notebook
 with your code will be just as convenient.  Nonetheless, you can find
 additional details on JSON serialization of **MRSimulator** instances in the
 :ref:`IO_documentation` section.
