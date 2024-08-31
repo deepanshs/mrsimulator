@@ -363,7 +363,7 @@ class Simulator(Parseable):
         Args:
             method_index: An integer or a list of integers. If provided, only the
                 simulations corresponding to the methods at the given index/indexes
-                will be computed. The default is None, `i.e.`, the simulation for
+                will be computed. The default is None, i.e., the simulation for
                 all methods will be computed.
             bool pack_as_csdm: If true, the simulation results are stored as a
                 `CSDM <https://csdmpy.readthedocs.io/en/stable/api/CSDM.html>`_ object,
@@ -419,9 +419,11 @@ class Simulator(Parseable):
                 backend="loky",
             )(jobs)
 
-            gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
-            w_ref = np.abs(B0 * gyromagnetic_ratio * 1e6)
+            # gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
+            # w_ref = np.abs(B0 * gyromagnetic_ratio * 1e6)
+            isotope = Isotope(symbol=method.channels[0])
+            w_ref = isotope.B0_to_ref_freq(B0)
             for seq in method.spectral_dimensions:
                 seq.origin_offset = w_ref
 
