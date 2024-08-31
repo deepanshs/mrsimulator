@@ -254,6 +254,16 @@ class Isotope(BaseModel):
         ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
         return B0 * ref_ratio / 0.02348731439404777
 
+    @property
+    def ref_larmor_ratio(self):
+        """Ratio of primary reference frequency to larmor frequency of the isotope.
+        The ratio equals (1 - sigma_iso_ref), where sigma_iso_ref is the istropic
+        shielding of the reference in ppm
+        """
+        ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
+        larmor_by_b0 = abs(self.gyromagnetic_ratio)
+        return ref_by_b0 / larmor_by_b0
+
 
 def get_isotope_dict(isotope_symbol: str) -> dict:
     """Get the intrinsic properties of the isotope with symbol isotope_symbol as a

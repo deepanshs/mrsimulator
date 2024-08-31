@@ -26,6 +26,10 @@ struct __site_struct {
    * system. */
   double *gyromagnetic_ratio;
 
+  /* Pointer to an array of (1 - sigma_iso_ref) ratio for each site within a spin
+   * system. */
+  double *one_minus_sigma_iso_ref;
+
   /* Pointer to an array of isotropic chemical shifts in ppm for each site within a spin
    * system. */
   double *isotropic_chemical_shift_in_ppm;
