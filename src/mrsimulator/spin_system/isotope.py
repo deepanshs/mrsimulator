@@ -269,10 +269,8 @@ class Isotope(BaseModel):
         """Ratio of primary reference frequency (w_ref) to larmor frequency (w_0) of
         the isotope.
 
-        w_ref = -w_0 * (1 - sigma_iso_ref), where sigma_iso_ref is the isotropic
-        shielding of the reference in ppm.
-
-        :math:`(1 - sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
+        :math:`(1 - \sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
+        where :math:`\sigma_{iso}^{ref}` is the reference isotropic shielding in ppm.
         """
         ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
         larmor_by_b0 = abs(self.gyromagnetic_ratio)
