@@ -142,9 +142,9 @@ def test_DAS():
             factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
             factor3 = 1 + (eta**2) / 3
             iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
-            # iso_obs = quad_iso_shift(
-            #     0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
-            # )
+            iso_obs = quad_iso_shift(
+                0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
+            )
 
             # get the index where there is a signal
             id1 = dataset_das[i] / dataset_das[i].max()
