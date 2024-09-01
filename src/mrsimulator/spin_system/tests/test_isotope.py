@@ -31,6 +31,11 @@ def test_isotope():
     assert proton.B0_to_ref_freq(B0=9.40) == 400.21604182989006
     assert proton.ref_freq_to_B0(ref_freq=400.21604182989006) == 9.40
 
+    americium = Isotope(symbol="243Am")
+    assert americium.atomic_number == 95
+    assert americium.reference.ratio == 10.956895712592464
+    assert americium.B0_to_ref_freq(B0=11.75) == 54.81406791045811
+
     nitrogen = Isotope(symbol="14N")
     assert nitrogen.atomic_number == 7
     assert nitrogen.gyromagnetic_ratio == 3.0777058647746447
