@@ -256,9 +256,13 @@ class Isotope(BaseModel):
 
     @property
     def ref_larmor_ratio(self):
-        """Ratio of primary reference frequency to larmor frequency of the isotope.
-        The ratio equals (1 - sigma_iso_ref), where sigma_iso_ref is the istropic
-        shielding of the reference in ppm
+        """Ratio of primary reference frequency (w_ref) to larmor frequency (w_0) of
+        the isotope.
+
+        w_ref = -w_0 * (1 - sigma_iso_ref), where sigma_iso_ref is the isotropic
+        shielding of the reference in ppm.
+
+        (1 - sigma_iso_ref) = |-w_ref / w_0|
         """
         ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
         larmor_by_b0 = abs(self.gyromagnetic_ratio)
