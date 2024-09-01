@@ -368,9 +368,9 @@ setup(
     url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=2.0"],
+    setup_requires=["numpy>=1.20"],
     install_requires=[
-        "numpy>=2.0",
+        "numpy>=1.20",
         "csdmpy>=0.6",
         "pydantic>=2.8",
         "monty>=2.0.4",
