@@ -7,8 +7,6 @@
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                  |
 | Metrics      | [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator)                                                                           |
 
-# Summary of MRSimulator
-
 MRSimulator is an open-source Python package designed for fast and comprehensive analysis of NMR spectra in fluid and solid phases. It introduces a new approach to spectral simulation in the frequency domain, based on approximations valid for most commonly used solid-state NMR methodologies, significantly improving numerical efficiency.
 
 ## Key Features
@@ -22,11 +20,11 @@ MRSimulator is an open-source Python package designed for fast and comprehensive
 - **Efficiency**: Achieves high benchmarks by assuming no degeneracies in energy eigenstates and no rotational resonances during evolution periods. Utilizes the symmetry pathway formalism to enhance numerical efficiency.
 - **Coherence Transfer**: Restricts coherence transfer among transitions to pure rotations about an axis in the rotating frame or through an artificial total mixing operation between selected transitions of adjacent free evolution periods.
 
+MRSimulator is not intended as a general magnetic resonance simulation package for exploring complicated spin dynamics.  Other software packages are available that can handle these more sophisticated simulations, albeit at a greater cost in computational time. Instead, MRSimulator focuses on the more tractable applications of solid-state NMR spectroscopy in the chemical and materials sciences, where the user is interested in modeling and fitting experimental spectra to learn site populations and interaction parameters of multiple spin systems, as is often found in disordered or heterogeneous materials.
+
 ## Packages Using MRSimulator
 
 - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
-
-MRSimulator focuses on simpler situations to achieve efficiency gains over conventional density operator simulations, making it suitable for most popular NMR methods. This approach allows for high-performance spectral simulations and analyses, crucial for probing the structure and dynamics of matter.
 
 
 ## Install
