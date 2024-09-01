@@ -1,4 +1,4 @@
-# The Mrsimulator project
+# The MRSimulator project
 
 |              |                                                                                                                                                                                                                                                                                                                                                                            |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -7,35 +7,27 @@
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                  |
 | Metrics      | [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator)                                                                           |
 
-Shortly after the birth of Nuclear Magnetic Resonance (NMR) spectroscopy, it was realized that spin
-and spatial degrees of freedom could be manipulated on a time scale faster than the coherence
-lifetimes of the nuclear spin transitions. This led to an explosion of multi-pulse and sample
-reorientation methodologies in magnetic resonance for probing the structure and dynamics of matter
-over a wide range of length and time scales.
+# Summary of MRSimulator
 
-Numerical simulations of the NMR spectra from these methods have long been a critical
-part of their analyses. The most robust and rigorous numerical approaches employ the full density
-operator, ideal for dealing with finite pulse effects, weak to intermediate to strong couplings,
-non-commuting Hamiltonians, and relaxation and exchange processes. However, such approaches can be
-highly inefficient, particularly when Hamiltonians commute, pulses are ideal, and transverse relaxation
-can be treated as an ad-hoc line broadening. `mrsimulator`, an open-source python package, achieves
-high benchmarks in spectral simulations and analyses by limiting itself to these simpler situations.
-Fortunately, working within this limit only prevents `mrsimulator` from modeling spectra of a small
-fraction of popular NMR methods. The efficiency gains with this approach over conventional density
-operator simulations are tremendous.
+MRSimulator is an open-source Python package designed for fast and comprehensive analysis of NMR spectra in fluid and solid phases. It introduces a new approach to spectral simulation in the frequency domain, based on approximations valid for most commonly used solid-state NMR methodologies, significantly improving numerical efficiency.
 
-**Why use mrsimulator?**
+## Key Features
 
-- It is open-source and free.
-- It is a fast and versatile solid-state NMR simulator of one and two-dimensional static, MAS,
-  and VAS spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar
-  coupling interactions.
-- It includes simulations of weakly coupled nuclei experiencing J and dipolar couplings.
-- It is fully documented with a stable and simple API and is easily incorporated into your
-  python scripts and web apps.
-- It is compatible with modern python packages, such as scikit-learn, Keras, etc.
-- Packages using mrsimulator:
-  - [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
+- **Open-Source and Free**: MRSimulator is freely available and open-source.
+- **Versatile Simulations**: Capable of simulating one- and two-dimensional static, MAS (Magic Angle Spinning), and VAS (Variable Angle Spinning) spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar coupling interactions.
+- **Coupling Interactions**: Includes simulations of weakly coupled nuclei experiencing J and dipolar couplings.
+- **Ease of Use**: Simple-to-use, versatile, and extendable package with a stable and simple API.
+- **Integration**: Easily incorporated into Python scripts and web apps, and compatible with modern Python packages such as scikit-learn and Keras.
+- **FAIR Principles**: Helps researchers follow FAIR (Findability, Accessibility, Interoperability, and Reusability) data practices.
+- **Efficiency**: Achieves high benchmarks by assuming no degeneracies in energy eigenstates and no rotational resonances during evolution periods. Utilizes the symmetry pathway formalism to enhance numerical efficiency.
+- **Coherence Transfer**: Restricts coherence transfer among transitions to pure rotations about an axis in the rotating frame or through an artificial total mixing operation between selected transitions of adjacent free evolution periods.
+
+## Packages Using MRSimulator
+
+- [mrinversion](https://mrinversion.readthedocs.io/en/stable/)
+
+MRSimulator focuses on simpler situations to achieve efficiency gains over conventional density operator simulations, making it suitable for most popular NMR methods. This approach allows for high-performance spectral simulations and analyses, crucial for probing the structure and dynamics of matter.
+
 
 ## Install
 
@@ -91,7 +83,7 @@ This should produce the following figure.
 
 ## Features
 
-The `mrsimulator` package currently offers the following
+The `MRSimulator` package currently offers the following
 
 - **Fast simulation** of one and two-dimensional solid-state NMR spectra.
 
@@ -130,7 +122,7 @@ Discussions are welcome on the [Github discussion](https://github.com/deepanshs/
 
 ## How to cite
 
-If you use mrsimulator in your publication, please consider citing the following work implemented in mrsimulator.
+If you use MRSimulator in your publication, please consider citing the following work implemented in MRSimulator.
 
 - Please use the GitHub citation tool to cite this repository. The tool in located in the About section under the `Cite this repository` category.
 
