@@ -32,7 +32,7 @@ O17_4 = Site(
 O17_5 = Site(
     isotope="17O",
     isotropic_chemical_shift=58,
-    # quadrupolar={"Cq": 5.16e6, "eta": 0.292},
+    quadrupolar={"Cq": 5.16e6, "eta": 0.292},
 )
 
 # all five sites.
@@ -59,10 +59,9 @@ def test_DAS():
         rotor_frequency=1e12,
         spectral_dimensions=[
             {
-                "count": 912,
-                "spectral_width": 5e3,  # in Hz
+                "count": 1024,
+                "spectral_width": 8e3,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17.B0_to_ref_freq(B0) * 1e6,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
                     {
@@ -82,7 +81,6 @@ def test_DAS():
                 "count": 2048,
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17.B0_to_ref_freq(B0) * 1e6,  # in Hz
                 "label": "MAS dimension",
                 "events": [
                     {
@@ -138,20 +136,15 @@ def test_DAS():
                 Cq = site.quadrupolar.Cq
                 eta = site.quadrupolar.eta
             iso = site.isotropic_chemical_shift
-            # factor1 = -(3 / 40) * (Cq / larmor_freq) ** 2
-            # factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
-            # factor3 = 1 + (eta**2) / 3
-            # iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
             iso_obs = quad_iso_shift(
                 0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
             )
             # get the index where there is a signal
-            id1 = dataset_das[i] / dataset_das[i].max()
+            id1 = np.real(dataset_das[i] / dataset_das[i].max())
+            iso_proj = id1.mean(axis=1).real
+            iso_spectrum = np.mean(dataset_das_coords_ppm * iso_proj) / iso_proj.mean()
             index = np.where(id1 == id1.max())[0]
-            # iso_spectrum = dataset_das_coords_Hz[index[0]]  # x[1].coords[index[0]]
-            iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
 
-            print(iso_obs, iso_spectrum)
             # test for the position of isotropic peaks.
             np.testing.assert_almost_equal(iso_obs, iso_spectrum, decimal=1)
 
