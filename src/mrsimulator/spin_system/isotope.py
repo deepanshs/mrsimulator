@@ -266,7 +266,7 @@ class Isotope(BaseModel):
 
     @property
     def ref_larmor_ratio(self):
-        """Ratio of primary reference frequency (w_ref) to larmor frequency (w_0) of
+        r"""Ratio of primary reference frequency (w_ref) to larmor frequency (w_0) of
         the isotope.
 
         :math:`(1 - \sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
