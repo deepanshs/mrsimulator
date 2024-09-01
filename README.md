@@ -7,18 +7,16 @@
 | License      | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)                                                                                                                                                                                                                                                  |
 | Metrics      | [![codecov](https://codecov.io/gh/deepanshs/mrsimulator/branch/master/graph/badge.svg)](https://codecov.io/gh/deepanshs/mrsimulator) [![CodeFactor](https://www.codefactor.io/repository/github/deepanshs/mrsimulator/badge)](https://www.codefactor.io/repository/github/deepanshs/mrsimulator)                                                                           |
 
-MRSimulator is an open-source Python package designed for fast and comprehensive analysis of NMR spectra in fluid and solid phases. It introduces a new approach to spectral simulation in the frequency domain, based on approximations valid for most commonly used solid-state NMR methodologies, significantly improving numerical efficiency.
+MRSimulator is an open-source Python package designed for fast and comprehensive analysis of NMR spectra in fluid and solid phases. It introduces a new approach to spectral simulation in the frequency domain based on approximations valid for most commonly used solid-state NMR methodologies, significantly improving numerical efficiency.
 
 ## Key Features
 
-- **Open-Source and Free**: MRSimulator is freely available and open-source.
-- **Versatile Simulations**: Capable of simulating one- and two-dimensional static, MAS (Magic Angle Spinning), and VAS (Variable Angle Spinning) spectra of nuclei experiencing chemical shift (nuclear shielding) and quadrupolar coupling interactions.
-- **Coupling Interactions**: Includes simulations of weakly coupled nuclei experiencing J and dipolar couplings.
+- **Open-Source and Free**: MRSimulator is fully documented, freely available, and open-source.
+- **Versatile Simulations**: Capable of simulating one- and two-dimensional static, MAS (Magic Angle Spinning), and VAS (Variable Angle Spinning) spectra from a variety of NMR multiple-pulse sequences for nuclei experiencing chemical shift (nuclear shielding), quadrupolar coupling, as well as weak J and dipolar couplings.  Furthermore, it includes the ability to create customized methods for modeling spectra.
+- **Efficiency**: Achieves high benchmarks by assuming no degeneracies in energy eigenstates and no rotational resonances during evolution periods.  It further restricts coherence transfer among transitions to pure rotations about an axis in the rotating frame or through an artificial total mixing operation between selected transitions of adjacent free evolution periods.
 - **Ease of Use**: Simple-to-use, versatile, and extendable package with a stable and simple API.
-- **Integration**: Easily incorporated into Python scripts and web apps, and compatible with modern Python packages such as scikit-learn and Keras.
+- **Integration**: Easily incorporated into Python scripts and web apps and compatible with modern Python packages such as scikit-learn and Keras.
 - **FAIR Principles**: Helps researchers follow FAIR (Findability, Accessibility, Interoperability, and Reusability) data practices.
-- **Efficiency**: Achieves high benchmarks by assuming no degeneracies in energy eigenstates and no rotational resonances during evolution periods. Utilizes the symmetry pathway formalism to enhance numerical efficiency.
-- **Coherence Transfer**: Restricts coherence transfer among transitions to pure rotations about an axis in the rotating frame or through an artificial total mixing operation between selected transitions of adjacent free evolution periods.
 
 MRSimulator is not intended as a general magnetic resonance simulation package for exploring complicated spin dynamics.  Other software packages are available that can handle these more sophisticated simulations, albeit at a greater cost in computational time. Instead, MRSimulator focuses on the more tractable applications of solid-state NMR spectroscopy in the chemical and materials sciences, where the user is interested in modeling and fitting experimental spectra to learn site populations and interaction parameters of multiple spin systems, as is often found in disordered or heterogeneous materials.
 
