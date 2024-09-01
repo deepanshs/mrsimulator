@@ -158,6 +158,3 @@ def test_DAS():
             # test for the spectrum across the isotropic peaks.
             dataset_bloch_i = dataset_bloch[i] / dataset_bloch[i].max()
             assert np.allclose(id1[index[0]], dataset_bloch_i)
-
-
-test_DAS()
