@@ -262,7 +262,7 @@ class Isotope(BaseModel):
         w_ref = -w_0 * (1 - sigma_iso_ref), where sigma_iso_ref is the isotropic
         shielding of the reference in ppm.
 
-        (1 - sigma_iso_ref) = |-w_ref / w_0|
+        (1 - sigma_iso_ref) = | -w_ref / w_0 |
         """
         ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
         larmor_by_b0 = abs(self.gyromagnetic_ratio)
