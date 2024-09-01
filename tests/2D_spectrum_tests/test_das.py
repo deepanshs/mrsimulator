@@ -7,6 +7,7 @@ from mrsimulator.method import Method
 from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.spin_system.isotope import Isotope
 
+
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
 O17 = Isotope(symbol="17O")
 O17_1 = Site(
@@ -99,7 +100,6 @@ def test_DAS():
     sim.run(pack_as_csdm=False)
 
     dataset_das = sim.methods[0].simulation
-    # dataset_das_coords_Hz = das.spectral_dimensions[0].coordinates_Hz()
     dataset_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
