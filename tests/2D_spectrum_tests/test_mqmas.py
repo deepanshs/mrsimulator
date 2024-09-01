@@ -125,20 +125,22 @@ def test_ThreeQ_VAS_spin_3halves():
     sim.run()
 
     dataset = sim.methods[0].simulation
-    dat = dataset.y[0].components[0]
-    index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
     # v_iso = (17/8)*iso_shift + 1e6/8 * (vq/v0)^2 * (eta^2 / 3 + 1)
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * B0 * 1e6
+    vref = method.channels[0].B0_to_ref_freq(B0) * 1e6
     vq = (3 * 3.5e6) / (2 * spin * (2 * spin - 1))
-    v_iso = -9 * 17 / 8 + 1e6 / 8 * ((vq / v0) ** 2) * ((0.36**2) / 3 + 1)
+    v_iso = -9 * 17 / 8 + 1e6 / 8 * (vq**2 / abs(v0 * vref)) * ((0.36**2) / 3 + 1)
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
-    v_iso_spectrum = dataset.x[1].coordinates[index[0]].value
-    np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=2)
+    iso_proj = dataset.y[0].components[0].mean(axis=1).real
+    v_iso_spectrum = (
+        np.mean(dataset.x[1].coordinates.value * iso_proj) / iso_proj.mean()
+    )
+    np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=6)
 
     # The projection onto the  MAS dimension should be the 1D block decay central
     # transition spectrum
@@ -159,7 +161,7 @@ def test_ThreeQ_VAS_spin_3halves():
     sim.run()
 
     data = sim.methods[0].simulation.y[0].components[0]
-    assert np.allclose(data / data.max(), mas_slice / mas_slice.max())
+    assert np.allclose(data / data.mean(), mas_slice / mas_slice.mean())
 
 
 def test_MQMAS_spin_5halves():
@@ -188,20 +190,24 @@ def test_MQMAS_spin_5halves():
     sim.run()
 
     dataset = sim.methods[0].simulation
-    dat = dataset.y[0].components[0]
-    index = np.where(dat == dat.max())[0]
 
     # The isotropic coordinate of this peak is given by
     # v_iso = -(17/31)*iso_shift + 8e6/93 * (vq/v0)^2 * (eta^2 / 3 + 1)
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 7 * 1e6
+    vref = method.channels[0].B0_to_ref_freq(7) * 1e6
     vq = 3 * 3.22e6 / (2 * spin * (2 * spin - 1))
-    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq / v0) ** 2 * ((0.66**2) / 3 + 1)
+    v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq**2 / abs(v0 * vref)) * (
+        (0.66**2) / 3 + 1
+    )
 
     # the coordinate from spectrum along the iso dimension must be equal to v_iso
-    v_iso_spectrum = dataset.x[1].coordinates[index[0]].value
-    np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=2)
+    iso_proj = dataset.y[0].components[0].mean(axis=1).real
+    v_iso_spectrum = (
+        np.mean(dataset.x[1].coordinates.value * iso_proj) / iso_proj.mean()
+    )
+    np.testing.assert_almost_equal(v_iso, v_iso_spectrum, decimal=6)
 
     # The projection onto the  MAS dimension should be the 1D block decay central
     # transition spectrum
