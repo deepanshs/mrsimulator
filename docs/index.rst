@@ -174,14 +174,14 @@ The **MRSimulator** package offers the following
     - for spin :math:`I=\frac{1}{2}`, and quadrupole :math:`I \ge \frac{1}{2}` nuclei
     - at arbitrary macroscopic magnetic flux density
     - at arbitrary rotor angles
-    - at arbitrary spinning frequency
+    - at an arbitrary spinning frequency
 
 - A library of pre-built **NMR methods**,
     - 1D Bloch decay spectrum
     - 1D Bloch decay central transition spectrum
     - 2D Multi-Quantum Variable Angle Spinning (MQ-VAS)
     - 2D Satellite-Transition Variable Angle Spinning (ST-VAS)
-    - 2D isotropic/anisotropic sideband correlation spectrum (e.g. PASS and MAT)
+    - 2D isotropic/anisotropic sideband correlation spectrum (e.g., PASS and MAT)
     - 2D Magic-Angle Flipping (MAF)
     - 2D Dynamic-Angle Spinning (DAS)
     - Custom user-defined methods (Method)
@@ -193,7 +193,7 @@ The **MRSimulator** package offers the following
 
 **Limitations**
 
-MRSimulator gain significant computational efficiency by assuming that there are no degeneracies in the energy eigenstates, i.e., all dipolar couplings are in the weak limit, and there are no rotational resonances during evolution periods. The assumptions are valid for a majority of commonly used solid-state NMR methods.  The theoretical details and derivations behind the algorithms used in MRSimulator are presented in the paper `Simulating Multipulse NMR Spectra of Polycrystalline Solids in the Frequency Domain` by D. J. Srivastava and P. J. Grandinetti,
+**MRSimulator** gains significant computational efficiency by assuming that there are no degeneracies in the energy eigenstates, i.e., all dipolar couplings are in the weak limit, and there are no rotational resonances during evolution periods. The assumptions are valid for a majority of commonly used solid-state NMR methods.  The theoretical details and derivations behind the algorithms used in **MRSimulator** are presented in the paper `Simulating Multipulse NMR Spectra of Polycrystalline Solids in the Frequency Domain` by D. J. Srivastava and P. J. Grandinetti,
 *J. Chem. Phys.*, **160**, 234110 (2024).
 `https://doi.org/10.1063/5.0209887 <https://doi.org/10.1063/5.0209887>`_
 

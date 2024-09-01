@@ -619,9 +619,9 @@ below.
 Multi-Spin Queries
 ------------------
 
-When there is more than one site in a spin system, things get a little more
-complicated with the SymmetryQuery class.  Here we review some important
-concepts associated with transition symmetry functions in coupled spin systems,
+With more than one site in a spin system, things get a little more
+complicated with the SymmetryQuery class.  Here, we review some important
+concepts associated with transition symmetry functions in coupled spin systems
 and see how the SymmetryQuery class is designed to work in such cases.
 
 Single-Spin Single-Quantum Transitions
@@ -714,13 +714,13 @@ is given in the code below.
     plt.grid()
     plt.show()
 
-The assignment of transitions in the spectrum above are, from left to right, are
+The assignment of transitions in the spectrum above, from left to right, are
 :math:`\hat{X}_4, (\hat{X}_3, \hat{X}_2)`, and :math:`\hat{X}_1` centered at 4.5
 ppm, :math:`\hat{M}_4, (\hat{M}_3, \hat{M}_2)`, and :math:`\hat{M}_1` centered
 at 2.5 ppm, and :math:`\hat{A}_4, (\hat{A}_3, \hat{A}_2)`, and :math:`\hat{A}_1`
 centered at 0.5 ppm.
 
-It is essential to realize that all sites having the same isotope are
+It is essential to realize that all sites having the same isotope appear
 "indistinguishable" to a TransitionQuery instance. Recall that ``ch1`` is
 associated with the first isotope in the list of isotope strings assigned to the
 Method attribute ``channels``. When the TransitionQuery above is combined with
@@ -874,8 +874,8 @@ spin-system-specific symmetry queries are illustrated in the table below.
      - 0
      - –1
 
-Again, each row's intermediate spin-system-specific symmetry query is used to
-select a subset of transitions from the complete set of transitions. The final
+Again, each row's intermediate spin-system-specific symmetry query selects
+a subset of transitions from the complete set of transitions. The final
 set of selected transitions is obtained from the union of transition subsets
 from each spin-system-specific symmetry query.
 
@@ -955,7 +955,7 @@ The code below will select these *three-spin single-quantum transitions*.
     plt.grid()
     plt.show()
 
-The assignment of transitions in the spectrum above are, from left to right, are
+The assignment of transitions in the spectrum above, from left to right, are
 :math:`\hat{S}_{3,AMX}`, :math:`\hat{S}_{2,AMX}`, and :math:`\hat{S}_{1,AMX}`
 
 Again, combined with the three-site SpinSystem instance, the SymmetryQuery is
@@ -1008,7 +1008,7 @@ Heteronuclear multiple-spin transitions
 
 How does ``D`` fit into the multi-site SymmetryQuery story? Consider the
 case of two coupled hydrogens, except we replace one of the :math:`^1H` with
-:math:`^2H`.  Let's focus on the single-spin single-quantum transitions, shown
+:math:`^2H`.  Let's focus on the single-spin, single-quantum transitions, shown
 below as :math:`\hat{A}_{1\pm}` and :math:`\hat{A}_{2\pm}` on the left, and the
 two-spin triple-quantum transition, shown below as  :math:`\hat{T}_{AX}` on
 the right.
@@ -1019,8 +1019,8 @@ the right.
     :align: center
 
     Energy level diagram for two coupled nuclei with spins :math:`I=1/2` and
-    :math:`I=1`. Arrows beginning at the initial state and end at the final
-    state represent the single spin single-quantum transitions (left) and the
+    :math:`I=1`. Arrows beginning at the initial state and ending at the final
+    state represent the single-spin single-quantum transitions (left) and the
     three-spin triple-quantum transition.  Transitions are labeled with their
     corresponding single-spin :math:`\text{p}_i` transition symmetry function
     values.
@@ -1176,7 +1176,7 @@ described earlier, :math:`{\Xi}^{(k)}_L(\Theta)` are the spatial symmetry
 functions, and :math:`\omega_k` gives the size of the kth frequency component.
 The experimentalist indirectly influences a frequency component :math:`\Omega_k`
 by direct manipulation of the quantum transition, :math:`i \rightarrow  j`, and
-the spatial orientation,  :math:`\Theta`, of the sample.
+the spatial orientation, :math:`\Theta`, of the sample.
 
 The function symbol :math:`\Xi_\ell(\Theta)` is replaced with the
 upper-case symbols :math:`\mathbb{S}`, :math:`\mathbb{P}(\Theta)`,
@@ -1348,7 +1348,7 @@ Affine Transformations
 ----------------------
 
 The ability to refocus different spatial and transition symmetries into echoes
-with different paths in time-resolved NMR experiments creates opportunities for
+with different paths in time-resolved NMR experiments create opportunities for
 generating multi-dimensional spectra that correlate different interactions.
 These spectra can be made easier to interpret through similarity
 transformations. Most similarity transformations in NMR are affine
@@ -1774,7 +1774,7 @@ Finally, another useful result is
 
     \ketbra{I,m_f}{I, m_i}  \stackrel{(0)_\phi}{\longrightarrow} \ketbra{I, m_f}{I, m_i}.
 
-While it's not surprising that a rotation through an angle of zero does nothing
+While it's unsurprising that a rotation through an angle of zero does nothing
 to the transition, this turns out to help act as the opposite of a total mixing
 event, i.e., a no mixing event. This can be implemented with the code below.
 
@@ -1828,7 +1828,7 @@ respectively.
     :width: 100%
 
     Hahn Echo (left) and Solid-Echo (right) pulse sequences. Above each
-    sequence, on the energy level diagram, are the corresponding two transition
+    sequence, on the energy level diagram are the corresponding two transition
     pathways indicated with blue and orange arrows.  Transitions are labeled
     with their corresponding :math:`\text{p}_I` and :math:`\text{d}_I`
     transition symmetry function values.  Below each sequence are the
@@ -1854,7 +1854,7 @@ the average frequency during each spectral dimension is derived from equal
 fractions of two SpectralEvent instances.  Between these two SpectralEvent
 instances is a RotationEvent with a Rotation instance. The
 Rotation instance is created with a :math:`\pi` rotation in the Hahn Echo
-method, and a :math:`\pi/2` rotation in the Solid Echo method.
+method and a :math:`\pi/2` rotation in the Solid Echo method.
 
 .. note::
 
@@ -2257,8 +2257,8 @@ Attribute Summaries
     - An *optional* list of :ref:`freq_contrib_api` (list of allowed strings) selecting which
       contributions to include when calculating a transition frequency. For example,
       ``["Shielding1_0", "Shielding1_2"]``. String shortcuts encapsulating multiple contributions
-      can also be passed, for example ``["Shielding"]`` selects all shielding interactions. By
-      default, the list is all frequency enumerations and all frequency contributions are
+      can also be passed; for example, ``["Shielding"]`` selects all shielding interactions. By
+      default, the list is all frequency enumerations, and all frequency contributions are
       calculated.
 
   * - transition_queries
@@ -2282,7 +2282,7 @@ Attribute Summaries
   * - :math:`\text{ch}i`
     - ``dict`` or :py:class:`~mrsimulator.method.query.Rotation`
     - A :py:class:`~mrsimulator.method.query.Rotation` instance, or its ``dict`` representation,
-      determines the complex amplitude of mixing between transitions in adjacent FreeEvent instances for the :math:`i^\text{th}` channel, where :math:`i \in [1, 2, 3]`.
+      determines the complex mixing amplitude between transitions in adjacent FreeEvent instances for the :math:`i^\text{th}` channel, where :math:`i \in [1, 2, 3]`.
 
 ..   - The coordinates along each spectral dimension are
 ..       described with the keywords,``count``(:math:`N`), ``spectral_width``

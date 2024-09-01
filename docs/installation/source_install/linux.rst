@@ -4,7 +4,7 @@
 On Linux, the package manager for your distribution is usually the easiest route to
 ensure you have the prerequisites to building the **MRSimulator** library. To build from
 source, you will need the OpenBLAS and FFTW development headers for your Linux
-distribution. Type the following command in the terminal, based on your Linux
+distribution. Type the following command in the terminal based on your Linux
 distribution.
 
 *For (Debian/Ubuntu):*

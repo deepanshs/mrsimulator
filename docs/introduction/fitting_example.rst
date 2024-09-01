@@ -12,7 +12,7 @@ Here, we illustrate the use of the **MRSimulator** instances to
 - import and prepare an experimental dataset for the least-squares analysis,
 - create a fitting model using Simulator and SignalProcessor instances,
 - use the fitting model to perform a least-squares analysis,
-- extract the model parameters with uncertainties, and
+- extract the model parameters with uncertainties and
 - plot the experimental spectrum along with the best-fit simulation and residuals.
 
 Import Experimental Dataset
@@ -263,7 +263,7 @@ Create Fitting Model
 --------------------
 
 To create a proper fitting model, you'll need more information about the nuclei
-being observed, the material's phase, and some idea about the local structure
+being observed, the material's phase and some idea about the local structure
 around the atoms holding the observed nuclei. In this example, you know that
 you are working with :math:`^{27}\text{Al}`, a quadrupolar nucleus with a
 half-integer spin of 5/2, and that the material, :math:`\text{Al(acac)$_3$}`,
@@ -280,8 +280,8 @@ central :math:`m = \tfrac{1}{2}\rightarrow-\tfrac{1}{2}` transition of
 detected than the other transitions.  Armed with this understanding of the
 sample and method, you can proceed to create the fitting model.
 
-To build a spin system, you need to know how many magnetically inequivalent
-nuclei are in the sample and if there are couplings between them. Inspection of
+To build a spin system, you must know how many magnetically inequivalent
+nuclei are in the sample and whether couplings are between them. Inspection of
 the spectrum reveals an anisotropic lineshape that appears to be characteristic
 of the second-order MAS lineshape of a single site. Knowing this requires that
 you are already familiar with such lineshapes (**MRSimulator** can help with
@@ -290,7 +290,7 @@ intensity present in the spectrum, or perhaps the spectrum, as noted earlier,
 is from a distribution of :math:`^{27}\text{Al}` sites with very similar efg
 tensor parameters and dipolar couplings among them. These are all valid
 hypotheses and could be used to create more elaborate and perhaps even more
-realistic spin system models. For now, you can choose the simplest spin system
+realistic spin system models. You can now choose the simplest spin system
 model with a single
 :math:`^{27}\text{Al}` site,  as shown in the code below.
 

@@ -94,7 +94,7 @@ Testing your build
 ------------------
 
 .. note::
-  For Windows users using anaconda Python 3.9 and higher, you need to set the following
+  For Windows users using Anaconda Python 3.9 and higher, you need to set the following
   environment variable in the ``Anaconda Prompt`` before running mrsimulator scripts.
 
   .. code-block:: bash

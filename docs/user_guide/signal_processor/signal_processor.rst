@@ -23,7 +23,7 @@ the `csdmpy documentation <https://csdmpy.readthedocs.io/en/stable/>`__.
 
 Signal processing is a series of operations sequentially applied to the dataset.
 In mrsimulator, the :py:class:`~mrsimulator.signal_processor.SignalProcessor` class is
-used to apply operations. Here we create a new SignalProcessor instance
+used to apply operations. Here, we create a new SignalProcessor instance
 
 .. plot::
     :context: reset
@@ -48,7 +48,7 @@ Each signal processor instance holds a list of operations under the *operations*
 
 First, an inverse Fourier transform is applied to the dataset, converting
 it to the time domain. Then, a Gaussian apodization, parameterized using a
-full-width-at-half-maximum  (FWHM) of 50 Hz, is applied. Note, the
+full-width-at-half-maximum  (FWHM) of 50 Hz, is applied. Note the
 dimensionality of the ``FWHM`` attribute has the inverse dimensionality
 of the dataset domain. Finally, a forward Fourier transform is applied to
 the apodized dataset, and all points are scaled up by 120 times.
@@ -77,7 +77,7 @@ Let's create a CSDM instance and then apply the operations to visualize the resu
 
 To apply the previously defined signal processing operations to the above CSDM instance, use
 the :py:meth:`~mrsimulator.signal_processor.SignalProcessor.apply_operations` method of the
-``SignalProcessor`` instance as follows
+``SignalProcessor`` instance is as follows
 
 .. plot::
     :context: close-figs
@@ -186,6 +186,6 @@ Below is a plot of the dataset before and after applying the operations
 
 .. [#f1] Srivastava, D. J., Vosegaard, T., Massiot, D., Grandinetti, P. J.,
     Core Scientific Dataset Model: A lightweight and portable model and
-    file format for multi-dimensional scientific dataset, PLOS ONE,
+    file format for multi-dimensional scientific datasets, PLOS ONE,
     **15**, 1-38, (2020).
     `DOI:10.1371/journal.pone.0225953 <https://doi.org/10.1371/journal.pone.0225953>`__
