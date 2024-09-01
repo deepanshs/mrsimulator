@@ -32,7 +32,7 @@ O17_4 = Site(
 O17_5 = Site(
     isotope="17O",
     isotropic_chemical_shift=58,
-    quadrupolar={"Cq": 5.16e6, "eta": 0.292},
+    # quadrupolar={"Cq": 5.16e6, "eta": 0.292},
 )
 
 # all five sites.
@@ -44,11 +44,11 @@ spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abunda
 def quad_iso_shift(m, C_q, eta_q, spin, delta_iso_cs, nu_0, nu_ref):
     nu_q = (3 * C_q) / (2 * spin * (2 * spin - 1))
     nu_ref = nu_ref * (-nu_0 / abs(nu_0))  # nu_ref has opposite sign to nu_0
-    term1 = 2 * m * delta_iso_cs * (-nu_0 * 1e-6)
+    term1 = 2 * m * delta_iso_cs * nu_ref
     term2 = (2 * m / 30) * ((eta_q**2 / 3) + 1) * (spin * (spin + 1) - 3 * m**2)
     shift = term1 + (nu_q**2 / nu_0) * term2
     # divide shift by nu_ref before returning to convert from Hz to ppm
-    return shift
+    return shift / nu_ref
 
 
 def test_DAS():
@@ -101,8 +101,8 @@ def test_DAS():
     sim.run(pack_as_csdm=False)
 
     dataset_das = sim.methods[0].simulation
-    dataset_das_coords_Hz = das.spectral_dimensions[0].coordinates_Hz()
-    # dataset_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
+    # dataset_das_coords_Hz = das.spectral_dimensions[0].coordinates_Hz()
+    dataset_das_coords_ppm = das.spectral_dimensions[0].coordinates_ppm()
 
     # Bloch decay central transition method
     bloch = BlochDecayCTSpectrum(
@@ -138,19 +138,18 @@ def test_DAS():
                 Cq = site.quadrupolar.Cq
                 eta = site.quadrupolar.eta
             iso = site.isotropic_chemical_shift
-            factor1 = -(3 / 40) * (Cq / larmor_freq) ** 2
-            factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
-            factor3 = 1 + (eta**2) / 3
-            iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
+            # factor1 = -(3 / 40) * (Cq / larmor_freq) ** 2
+            # factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
+            # factor3 = 1 + (eta**2) / 3
+            # iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
             iso_obs = quad_iso_shift(
                 0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
             )
-
             # get the index where there is a signal
             id1 = dataset_das[i] / dataset_das[i].max()
             index = np.where(id1 == id1.max())[0]
-            iso_spectrum = dataset_das_coords_Hz[index[0]]  # x[1].coords[index[0]]
-            # iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
+            # iso_spectrum = dataset_das_coords_Hz[index[0]]  # x[1].coords[index[0]]
+            iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
 
             print(iso_obs, iso_spectrum)
             # test for the position of isotropic peaks.
@@ -159,3 +158,6 @@ def test_DAS():
             # test for the spectrum across the isotropic peaks.
             dataset_bloch_i = dataset_bloch[i] / dataset_bloch[i].max()
             assert np.allclose(id1[index[0]], dataset_bloch_i)
+
+
+test_DAS()
