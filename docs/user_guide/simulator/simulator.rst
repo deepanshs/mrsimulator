@@ -387,7 +387,7 @@ Attribute Summaries
 
   * - config
     - ``dict`` or :py:class:`~mrsimulator.simulator.config.ConfigSimulator`
-    - An *optional* ConfigSimulator instance, or its dictionary representation.
+    - An *optional* ConfigSimulator instance or its dictionary representation.
 
 .. cssclass:: table-bordered table-striped centered
 .. _table_sim_config:

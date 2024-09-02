@@ -23,7 +23,7 @@
         \end{array}
 
     To simplify usage in figures and discussions, we scale the transition symmetry
-    functions to integers values according to
+    functions to integer values according to
 
     .. math::
 
@@ -47,7 +47,7 @@
         \left \langle i \right|\hat{T}_{\ell_1,0}({\bf I}_1)\hat{T}_{\ell_2,0}({\bf I}_2)\ldots\hat{T}_{\ell_n,0}({\bf I}_n) \left|i \right \rangle
 
     Replacing the symmetry function symbol using sub-shell letter designations becomes
-    more cumbersome in this case.  When the :math:`\ell` are zero on all nuclei except one,
+    more cumbersome in this case.  When the :math:`\ell` values are zero on all nuclei except one,
     we identify these functions as
 
     .. math::
@@ -70,7 +70,7 @@
         \vdots & \vdots &  & \vdots
         \end{array}
 
-    For weakly coupled homonuclear spins it is also convenient to define
+    For weakly coupled homonuclear spins, it is also convenient to define
 
     .. math::
 
@@ -86,8 +86,8 @@
         \vdots
         \end{array}
 
-    When the :math:`\ell` are zero on all nuclei except two, then we identify
-    these functions using a concatenation of sub-shell letter designations, e.g.,
+    When the :math:`\ell` values are zero on all nuclei except two, then we identify
+    these functions by using a concatenation of sub-shell letter designations, e.g.,
 
     .. math::
 

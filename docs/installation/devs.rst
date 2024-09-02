@@ -38,7 +38,7 @@ There are many environment managers available; however, we recommend using
     `downloads page <https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links>`_
     for compatible versions.
 
-    If your Python is built for Apple Silicon, the following command should display similar
+    If your Python is built for Apple Silicon, the following command should display a similar
     output.
 
     .. code-block:: bash
@@ -104,7 +104,7 @@ copy of the fork with
 
     $ git clone --recursive https://github.com/your-user-name/mrsimulator.git
 
-Insert *your-user-name* with your GitHub account username. If there is an error at this
+Insert *your-user-name* with your GitHub account username. If there is an error in this
 stage, it is probably an error in setting up authentication.
 
 You now have a copy of the **MRSimulator** fork from your GitHub account to your local
@@ -120,7 +120,7 @@ called the *upstream* remote. You can read more about
 
 At this point, your local copy of **MRSimulator** doesn't know where the *upstream* development
 version of **MRSimulator** is. To let git know, change into the **MRSimulator** folder you created in
-the previous step, and add a remote:
+the previous step and add a remote:
 
 .. code-block:: bash
 
@@ -209,7 +209,7 @@ Note for the developers and contributors
 To help guide the developers and contributors toward these standards, we have created
 a *.pre-commit-config.yaml* file that, when used with ``pre-commit``, will inspect
 the code and document for issues. To set up ``pre-commit``, type the following one-time
-install statement in the terminals,
+install statements in the terminals,
 
 .. code-block:: bash
 

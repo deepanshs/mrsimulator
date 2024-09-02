@@ -24,9 +24,9 @@ to build a set of SpinSystem instances that can accurately model a spectrum.  In
 solids that are not dilute in NMR-active nuclei, there are still situations
 where one can build approximately accurate spin systems models. One such case is
 when the individual anisotropic spin interactions, such as the shielding (shift)
-anisotropy or the quadrupolar couplings, dominant the spectrum, i.e., they are
+anisotropy or the quadrupolar couplings, dominate the spectrum, i.e., they are
 significantly larger than any dipolar couplings. This can happen for spin 1/2
-nuclei in static samples or samples spinning away from the magic-angle.  In the
+nuclei in static samples or samples spinning away from the magic angle.  In the
 case of half-integer quadrupolar nuclei, this can also happen for a central
 transition spectrum that is significantly broadened by second-order quadrupolar
 effects. Another case is when an experimental method can successfully decouple
@@ -48,7 +48,7 @@ below.
 
   In UML (Unified Modeling Language) diagrams, each class is represented with
   a box that contains two compartments.  The top compartment contains the name
-  of the class, and the bottom compartment contains the attributes of the class.
+  of the class, and the bottom compartment contains the class's attributes.
   Default attribute values are shown as assignments. A composition
   is depicted as a binary association decorated with a filled black diamond.
   Inheritance is shown as a line with a hollow triangle as an arrowhead.
@@ -107,7 +107,7 @@ defined in the optional ``quadrupolar`` key. An EFG tensor is a second-rank trac
 symmetric tensor, and we describe its coupling to a quadrupolar nucleus with ``Cq``
 and ``eta``, i.e., the quadrupolar coupling constant and asymmetry parameter,
 respectively.  Additionally, we use the Euler angle orientations, ``alpha``, ``beta``,
-and ``gamma``, which are the relative orientation of the EFG tensor from a common
+and ``gamma``, which is the relative orientation of the EFG tensor from a common
 reference frame.
 
 See :numref:`table_site` and :numref:`table_symmetric_tensor` for further information on
@@ -182,7 +182,7 @@ the :ref:`site_api` and :ref:`sy_api` instances and their attributes, respective
 SpinSystem
 ----------
 
-The :ref:`spin_sys_api` instance holds a collection of sites and couplings. 
+The :ref:`spin_sys_api` instance holds a collection of sites and couplings.
 Below are examples of different spin systems along with discussion on each attribute.
 
 Single Site Spin System
@@ -254,7 +254,7 @@ abundance are simulated in tandem.
 Coupled Spin System
 '''''''''''''''''''
 
-To create couplings between sites, we simply need to add a list of :ref:`coupling_api` instances to a
+To create couplings between sites, we must add a list of :ref:`coupling_api` instances to a
 spin system. Below we create a :math:`^{2}\text{H}` and :math:`^{13}\text{C}` site as well as a
 coupling between them.
 
@@ -320,7 +320,7 @@ and the abundance will be *100%*.
 
 A list of :ref:`coupling_api` instances passed to the ``couplings`` keywords. The
 ``site_index`` attribute of ``H2_C13_coupling`` correspond to the index of ``H2_site`` and
-``C13_site`` in the sites list. If we were to add more sites, ``site_index`` might need to be
+``C13_site`` in the sites list. If we add more sites, ``site_index`` might need to be
 updated to reflect the index `H2_site`` and ``C13_site`` in the sites list. Again, our
 :ref:`introduction_isotopomers_example` has good usage cases for multiple couplings in a
 spin system.
@@ -346,8 +346,8 @@ Attribute Summaries
 
   * - ``label``
     - String
-    - An *optional* attribute giving a label to the spin system. Like ``name``, it has no
-      effect on a simulation and is purely for readability.
+    - An *optional* attribute giving a label to the spin system. Like ``name``, it does
+	not affect a simulation and is purely for readability.
 
   * - ``description``
     - String
@@ -365,7 +365,7 @@ Attribute Summaries
   * - ``abundance``
     - String
     - An *optional* quantity representing the abundance of the spin system.
-      The abundance is given as percentage, for example, ``25.4`` for 25.4%. This value is
+      The abundance is given as a percentage, for example, ``25.4`` for 25.4%. This value is
       useful when multiple spin systems are present. The default value is ``100``.
 
 
@@ -470,7 +470,7 @@ Attribute Summaries
       ppm, for example, ``10``
 
       **Electric quadrupole:** The quadrupole coupling constant, ``Cq``. The
-      value is a physical quantity given in units of Hz, for example,
+      value is a physical quantity given in units of Hz; for example,
       ``3.1e6`` for 3.1 MHz.
 
       **J-coupling:** The *J*-coupling anisotropy, ``zeta``, calculated

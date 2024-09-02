@@ -24,7 +24,7 @@ package to the OpenBLAS library, type the following in the terminal,
 to the next section.
 
 *(a)* You will need to install the BLAS development header for Apple's Accelerate
-library. The easiest way is to install the Xcode Command Line Tools. Note, this is a
+library. The easiest way is to install the Xcode Command Line Tools. Note this is a
 one-time installation. If you have previously installed the Xcode Command Line Tools,
 you may skip this sub-step. Type the following in the terminal,
 
@@ -44,7 +44,7 @@ code folder, in a text editor. You should see
   # mac-os only
   use_accelerate = False
 
-To link the **MRSimulator** package to the Apple's Accelerate library, change the
+To link the **MRSimulator** package to Apple's Accelerate library, change the
 fields to
 
 .. code-block:: python
