@@ -210,6 +210,7 @@ def core_simulator(method,
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
+    cdef ndarray[double]  one_minus_sigma_iso_ref_i
 
     # CSA
     cdef ndarray[double] iso_n
@@ -265,6 +266,7 @@ def core_simulator(method,
         # CSA
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
+        one_minus_sigma_iso_ref_i = np.empty(number_of_sites, dtype=np.float64)
 
         iso_n = np.zeros(number_of_sites, dtype=np.float64)
         zeta_n = np.zeros(number_of_sites, dtype=np.float64)
@@ -282,6 +284,7 @@ def core_simulator(method,
             site = spin_sys.sites[_site_idx_]
             spin_i[_site_idx_] = np.float32(site.isotope.spin)
             gyromagnetic_ratio_i[_site_idx_] = site.isotope.gyromagnetic_ratio
+            one_minus_sigma_iso_ref_i[_site_idx_] = site.isotope.ref_larmor_ratio
             i3 = 3 * _site_idx_
 
             # CSA tensor
@@ -330,6 +333,7 @@ def core_simulator(method,
         sites_c.number_of_sites = number_of_sites
         sites_c.spin = &spin_i[0]
         sites_c.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
+        sites_c.one_minus_sigma_iso_ref = &one_minus_sigma_iso_ref_i[0]
 
         sites_c.isotropic_chemical_shift_in_ppm = &iso_n[0]
         sites_c.shielding_symmetric_zeta_in_ppm = &zeta_n[0]

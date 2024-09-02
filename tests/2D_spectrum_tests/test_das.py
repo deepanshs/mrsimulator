@@ -5,9 +5,11 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
 from mrsimulator.method.lib import BlochDecayCTSpectrum
+from mrsimulator.spin_system.isotope import Isotope
 
 
 # default unit of isotropic_chemical_shift is ppm and Cq is Hz.
+O17 = Isotope(symbol="17O")
 O17_1 = Site(
     isotope="17O",
     isotropic_chemical_shift=29,
@@ -40,6 +42,16 @@ abundance = [1, 1, 2, 2, 2]
 spin_systems = [SpinSystem(sites=[s], abundance=a) for s, a in zip(sites, abundance)]
 
 
+def quad_iso_shift(m, C_q, eta_q, spin, delta_iso_cs, nu_0, nu_ref):
+    nu_q = (3 * C_q) / (2 * spin * (2 * spin - 1))
+    nu_ref = nu_ref * (-nu_0 / abs(nu_0))  # nu_ref has opposite sign to nu_0
+    term1 = 2 * m * delta_iso_cs * nu_ref
+    term2 = (2 * m / 30) * ((eta_q**2 / 3) + 1) * (spin * (spin + 1) - 3 * m**2)
+    shift = term1 + (nu_q**2 / nu_0) * term2
+    # divide shift by nu_ref before returning to convert from Hz to ppm
+    return shift / nu_ref
+
+
 def test_DAS():
     B0 = 11.7
     das = Method(
@@ -48,10 +60,9 @@ def test_DAS():
         rotor_frequency=1e12,
         spectral_dimensions=[
             {
-                "count": 912,
-                "spectral_width": 5e3,  # in Hz
+                "count": 1024,
+                "spectral_width": 8e3,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "DAS isotropic dimension",
                 "events": [
                     {
@@ -71,7 +82,6 @@ def test_DAS():
                 "count": 2048,
                 "spectral_width": 2e4,  # in Hz
                 "reference_offset": 0,  # in Hz
-                "origin_offset": O17_1.isotope.gyromagnetic_ratio * B0 * 1e6,  # in Hz
                 "label": "MAS dimension",
                 "events": [
                     {
@@ -120,18 +130,20 @@ def test_DAS():
     spin = das.channels[0].spin
     for i, sys in enumerate(spin_systems):
         for site in sys.sites:
-            Cq = site.quadrupolar.Cq
-            eta = site.quadrupolar.eta
+            Cq = 0
+            eta = 0
+            if site.quadrupolar is not None:
+                Cq = site.quadrupolar.Cq
+                eta = site.quadrupolar.eta
             iso = site.isotropic_chemical_shift
-            factor1 = -(3 / 40) * (Cq / larmor_freq) ** 2
-            factor2 = (spin * (spin + 1) - 3 / 4) / (spin**2 * (2 * spin - 1) ** 2)
-            factor3 = 1 + (eta**2) / 3
-            iso_obs = factor1 * factor2 * factor3 * 1e6 + iso
-
+            iso_obs = quad_iso_shift(
+                0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
+            )
             # get the index where there is a signal
-            id1 = dataset_das[i] / dataset_das[i].max()
+            id1 = np.real(dataset_das[i] / dataset_das[i].max())
+            iso_proj = id1.mean(axis=1).real
+            iso_spectrum = np.mean(dataset_das_coords_ppm * iso_proj) / iso_proj.mean()
             index = np.where(id1 == id1.max())[0]
-            iso_spectrum = dataset_das_coords_ppm[index[0]]  # x[1].coords[index[0]]
 
             # test for the position of isotropic peaks.
             np.testing.assert_almost_equal(iso_obs, iso_spectrum, decimal=1)

@@ -37,7 +37,7 @@ class CustomSampling(BaseModel):
         An array of size N of :math:`\alpha` angle coordinates in radians.
 
     beta: ndarray
-        An array of size N of :math:`\beta' angle coordinates in radians.
+        An array of size N of :math:`\beta` angle coordinates in radians.
 
     weight: ndarray
         An array of size N of weights corresponding to :math:`(\alpha, \beta)`
@@ -66,7 +66,7 @@ class CustomSampling(BaseModel):
         if units == "rad":
             array = np.array([self.alpha, self.beta, self.weight])
         if units == "deg":
-            fn = rad_to_deg
+            fn = np.rad2deg
             array = np.array([fn(self.alpha), fn(self.beta), self.weight])
         header = (
             str(array.shape[1]) if target == StrType.simpson else "alpha beta gamma"
@@ -214,13 +214,3 @@ class ConfigSimulator(Parseable):
             __integration_volume_enum__[self.integration_volume]
         ]
         return int(vol * (n + 1) * (n + 2) / 2) * self.number_of_gamma_angles
-
-
-def rad_to_deg(vec):
-    """Convert radians to degrees"""
-    return vec * 180.0 / np.pi
-
-
-def deg_to_rad(vec):
-    """Convert degrees to radians"""
-    return vec * np.pi / 180.0

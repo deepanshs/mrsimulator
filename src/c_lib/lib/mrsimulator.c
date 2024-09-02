@@ -526,7 +526,8 @@ static inline void MRS_rotate_single_site_interaction_components(
     /*  Upto the first order */
     FT_1st_order_nuclear_shielding_tensor_components(
         F0_temp, F2_shield,
-        sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz,
+        sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz *
+            sites->one_minus_sigma_iso_ref[i],
         sites->shielding_symmetric_zeta_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_eta[i], &sites->shielding_orientation[3 * i], *mf,
         *mi);

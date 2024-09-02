@@ -198,8 +198,18 @@ class Isotope(BaseModel):
     @property
     def reference(self):
         """Reference compound database"""
-        data = REFERENCE_DATA.get(self.symbol)
-        return IsotopeReference(**data)
+        data = REFERENCE_DATA.get(self.symbol, None)
+        if data is not None:
+            return IsotopeReference(**data)
+        else:
+            # when ratio = gyromagnetic_ratio * 2.348731439404777; abs(w_ref / w_0) = 1
+            ref_data = {
+                "ratio": self.gyromagnetic_ratio * 2.348731439404777,
+                "compound": "",
+                "solvent": "",
+                "concentration": "",
+            }
+            return IsotopeReference(**ref_data)
 
     def larmor_freq(self, B0=9.4):
         """Return the Larmor frequency of the isotope at a magnetic field strength B0.
@@ -253,6 +263,18 @@ class Isotope(BaseModel):
         """
         ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
         return B0 * ref_ratio / 0.02348731439404777
+
+    @property
+    def ref_larmor_ratio(self):
+        r"""Ratio of primary reference frequency (w_ref) to larmor frequency (w_0) of
+        the isotope.
+
+        :math:`(1 - \sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
+        where :math:`\sigma_{iso}^{ref}` is the reference isotropic shielding in ppm.
+        """
+        ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
+        larmor_by_b0 = abs(self.gyromagnetic_ratio)
+        return ref_by_b0 / larmor_by_b0
 
 
 def get_isotope_dict(isotope_symbol: str) -> dict:

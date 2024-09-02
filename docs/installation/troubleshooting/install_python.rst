@@ -3,7 +3,7 @@
 Installing Python
 """""""""""""""""
 
-**Mrsimulator** requires Python or a hosted Notebook service to run. If you are
+**MRSimulator** requires Python or a hosted Notebook service to run. If you are
 using Google Colab, see specific instructions in the :ref:`install` section.
 
 Checking the version of Python
@@ -25,7 +25,7 @@ Checking the version of Python
 
         .. code-block:: shell
 
-            'python' is not recognized as an internal or external command, operable program or batch file.
+            'python' is not recognized as an internal or external command, operable program, or batch file.
 
         To install Python, visit `python.org <https://www.python.org/downloads/>`__ to download a
         version of Python 3. During the installation process, check **add Python 3.x to PATH**.
@@ -80,7 +80,7 @@ Updating Python
 
 If Python is already installed on your system but is out of date, we recommend `installing Anaconda
 <Virtual Environments for Python>`__ to manage Python versions. Anaconda is versatile and allows
-multiple versions of Python to run on one computer without interfering with each-other.
+multiple versions of Python to run on one computer without interfering with each other.
 
 However, if Anaconda can't be used, newer versions of Python can be installed from `python.org
 <https://www.python.org/downloads/>`__. Python |PY_VERSION| or greater is required to run mrsimulator,

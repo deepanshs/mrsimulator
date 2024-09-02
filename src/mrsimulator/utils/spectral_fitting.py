@@ -550,11 +550,11 @@ def residuals(sim: Simulator, processors: list = None):
     return residual_
 
 
-def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq_Hz):
+def _apply_iso_shift(csdm_obj, iso_shift_ppm, ref_freq):
     """Apply isotropic chemical shift to a CSDM object using the FFT shift theorem."""
     csdm_obj = csdm_obj.fft()
     time_coords = csdm_obj.x[0].coordinates.to("s").value
-    iso_shift_Hz = larmor_freq_Hz * iso_shift_ppm
+    iso_shift_Hz = ref_freq * iso_shift_ppm
     csdm_obj.y[0].components[0] *= np.exp(-np.pi * 2j * time_coords * iso_shift_Hz)
     csdm_obj = csdm_obj.fft()
 
@@ -601,13 +601,8 @@ def _generate_distribution_spectrum(
     Arguments:
         (Parameters) params: The LMfit parameters object holding parameters used during
             the least-squares minimization.
-        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
-        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
-            sample the distribution.
-        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
-            on the same grid defined by pos.
-        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
-            theorem to apply an isotropic chemical shift to each distribution.
+        (np.ndarray) kernel The pre-computed lineshape kernel.
+        (list) spin_system_models:  A list of spin system model.
         (sp.SignalProcessor) processor: A
             :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
             post-simulation signal processing to the resulting spectrum.
@@ -618,7 +613,7 @@ def _generate_distribution_spectrum(
 
     """
     method = kernel.method
-    larmor_freq_Hz = method.channels[0].larmor_freq(B0=method.magnetic_flux_density)
+    ref_freq = method.channels[0].B0_to_ref_freq(B0=method.magnetic_flux_density)
     exp_spectrum = method.experiment
 
     guess_spectrum = exp_spectrum.copy()
@@ -637,7 +632,7 @@ def _generate_distribution_spectrum(
         spec_tmp = _apply_iso_shift(
             csdm_obj=spec_tmp,
             iso_shift_ppm=model.mean_isotropic_chemical_shift,
-            larmor_freq_Hz=larmor_freq_Hz,
+            ref_freq=ref_freq,
         ).real
         spec_tmp *= model.abundance
         guess_spectrum.y[0].components[0] += spec_tmp.y[0].components[0]
@@ -661,16 +656,8 @@ def LMFIT_min_function_dist(
     Arguments:
         (Parameters) params: The LMfit parameters object holding parameters used during
             the least-squares minimization.
-        (cp.CSDM) exp_spectrum: The experimental spectrum to fit to.
-        (tuple) pos: A tuple of two np.ndarray objects defining the grid on which to
-            sample the distribution.
-        (bool) polar: True if the sample grid is in polar coordinates. False if the grid
-            is defined using the Haberlen components.
-        (np.ndarray) The pre-computed lineshape kernel. The kernel needs to be defined
-            on the same grid defined by pos.
-        (int) n_dist: The number of Czjzek distributions to fit for.
-        (float) larmor_freq_Hz: This value is used in conjunction with the FFT shift
-            theorem to apply an isotropic chemical shift to each distribution.
+        (np.ndarray) kernel: The pre-computed lineshape kernel.
+        (list) spin_system_models: A list of spin system distribution models.
         (sp.SignalProcessor) processor: A
             :py:class:~`mrsimulator.signal_processor.Processor` object used to apply
             post-simulation signal processing to the resulting spectrum.

@@ -75,6 +75,7 @@ cdef extern from "object_struct.h":
         int number_of_sites                     # Number of sites
         float *spin                             # The spin quantum number
         double *gyromagnetic_ratio              # gyromagnetic ratio in (MHz/T)
+        double *one_minus_sigma_iso_ref;        # Ref freq / Larmor freq ratio
         double *isotropic_chemical_shift_in_ppm # Isotropic chemical shift (Hz)
         double *shielding_symmetric_zeta_in_ppm # Nuclear shielding anisotropy (Hz)
         double *shielding_symmetric_eta         # Nuclear shielding asymmetry
