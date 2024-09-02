@@ -33,7 +33,7 @@ def message(lib, env, command, key):
         "For example,\n",
         '\texport LDFLAGS="-L/usr/local/opt/openblas/lib"\n',
         '\texport CPPFLAGS="-I/usr/local/opt/openblas/include"\n',
-        f"\nYou can also try installing '{lib}' from {env} with:",
+        f"\nYou can also try installing '{lib}' from {env} with: ",
         f"\n\t{command} install {arg}\n",
     )
     warnings.warn("".join(warning))
@@ -380,6 +380,7 @@ setup(
         "pandas>=1.1.3",
         "lmfit>=1.0.2",
         "matplotlib>=3.3.4",
+        "astropy>=6",
     ],
     entry_points={"console_scripts": ["mrsimulator=mrsimulator.__main__:run"]},
     extras_require=extras,
