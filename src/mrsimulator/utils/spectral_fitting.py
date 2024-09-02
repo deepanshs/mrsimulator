@@ -613,7 +613,7 @@ def _generate_distribution_spectrum(
 
     """
     method = kernel.method
-    ref_freq = method.channels[0].ref_freq_to_B0(B0=method.magnetic_flux_density)
+    ref_freq = method.channels[0].B0_to_ref_freq(B0=method.magnetic_flux_density)
     exp_spectrum = method.experiment
 
     guess_spectrum = exp_spectrum.copy()
