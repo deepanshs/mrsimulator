@@ -20,7 +20,7 @@ What's new
 - A new ``DelayEvent`` added to the events library.
 - A collection of utilitiy functions for converting Cartesian tensor to Haeberlen, Mehring, and
   Maryland conventions and vice-versa.
-- Support for python 3.11 and 3.12
+- Support for python 3.11, 3.12, and 3.13
 
 **Simulator**
 
@@ -41,7 +41,7 @@ What's new
 
 **Additional updates**
 
-- Dropped support for python 3.7 and 3.8
+- Dropped support for python 3.7, 3.8, and 3.9 because they reached the end of their lifetime.
 
 
 v0.7.0
