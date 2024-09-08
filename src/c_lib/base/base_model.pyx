@@ -19,12 +19,12 @@ def core_simulator(method,
        list transition_pathways,          # Same length as spin_systems list and
        list transition_weights,  # elements coorespond to each system
        int verbose=0,  # for debug purpose only.
-       unsigned int number_of_sidebands=90,
-       unsigned int integration_density=72,
-       unsigned int decompose_spectrum=0,
-       unsigned int integration_volume=1,
-       unsigned int isotropic_interpolation=0,
-       unsigned int number_of_gamma_angles=1,
+       int number_of_sidebands=90,
+       int integration_density=72,
+       int decompose_spectrum=0,
+       int integration_volume=1,
+       int isotropic_interpolation=0,
+       int number_of_gamma_angles=1,
        bool_t interpolation=True,
        bool_t auto_switch=True,
        debug=False,
@@ -56,15 +56,15 @@ def core_simulator(method,
 
 # create averaging scheme _____________________________________________________
     cdef clib.MRS_averaging_scheme *averaging_scheme
-    cdef unsigned int position_size = 0
+    cdef int position_size = 0
 
     if user_defined:
         if interpolation:
-            position_size = np.uint32(positions.size / 3) if positions is not None else 0
+            position_size = np.intc(positions.size / 3) if positions is not None else 0
         else:
             positions = None
         averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
-            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
+            alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=np.intc(alpha.size),
             allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
             position_size=position_size, positions=&positions[0], interpolation=interpolation
         )
@@ -76,7 +76,7 @@ def core_simulator(method,
         )
 
 # create C spectral dimensions ________________________________________________
-    cdef int n_dimension = len(method.spectral_dimensions)
+    cdef int n_dimension = int(len(method.spectral_dimensions))
 
     # Define and allocate C numpy arrays
     n_points = 1
@@ -91,7 +91,7 @@ def core_simulator(method,
     cdef ndarray[int] cnt
     cdef ndarray[double] coord_off
     cdef ndarray[double] incre
-    cdef ndarray[unsigned int] n_dim_sidebands
+    cdef ndarray[int] n_dim_sidebands
 
     # Loop through dimensions and grab attributes/values in python
     freq_contrib = np.asarray([])
@@ -155,11 +155,11 @@ def core_simulator(method,
     magnetic_flux_density_in_T = np.asarray(Bo, dtype=np.float64)
     srfiH = np.asarray(vr, dtype=np.float64)
     rair = np.asarray(th, dtype=np.float64)
-    cnt = np.asarray(count, dtype=np.int32)
+    cnt = np.asarray(count, dtype=np.intc)
     incre = np.asarray(increment, dtype=np.float64)
     coord_off = np.asarray(coordinates_offset, dtype=np.float64)
-    n_event = np.asarray(event_i, dtype=np.int32)
-    n_dim_sidebands = np.asarray(dim_sidebands, dtype=np.uint32)
+    n_event = np.asarray(event_i, dtype=np.intc)
+    n_dim_sidebands = np.asarray(dim_sidebands, dtype=np.intc)
 
     # # special 1D case with 1 event.
     # if np.all(srfiH == 1e-3) and np.all(rair - rair[0] == 0):
@@ -182,7 +182,7 @@ def core_simulator(method,
     norm = np.abs(np.prod(incre))
 
 # create fftw scheme __________________________________________________________
-    cdef unsigned int max_sidebands = n_dim_sidebands.max()
+    cdef int max_sidebands = n_dim_sidebands.max()
     cdef clib.MRS_fftw_scheme *fftw_scheme
     fftw_scheme = clib.create_fftw_scheme(averaging_scheme.total_orientations, max_sidebands)
 # _____________________________________________________________________________
@@ -206,7 +206,7 @@ def core_simulator(method,
             affine_matrix_c[3] -=  affine_matrix_c[1]*affine_matrix_c[2]
 
 # sites _______________________________________________________________________________
-    cdef int number_of_sites, number_of_couplings
+    cdef int number_of_sites, number_of_couplings, _site_idx_, _coup_idx_
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
@@ -258,7 +258,7 @@ def core_simulator(method,
 
         # sub_sites = [site for site in spin_sys.sites if site.isotope.symbol == isotope]
         # index_.append(index)
-        number_of_sites = len(spin_sys.sites)
+        number_of_sites = int(len(spin_sys.sites))
 
         # ------------------------------------------------------------------------
         #                          Site specification
@@ -280,23 +280,23 @@ def core_simulator(method,
 
         # Extract and assign site information from Site objects to C structure
         # ---------------------------------------------------------------------
-        for i in range(number_of_sites):
-            site = spin_sys.sites[i]
-            spin_i[i] = site.isotope.spin
-            gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
-            one_minus_sigma_iso_ref_i[i] = site.isotope.ref_larmor_ratio
-            i3 = 3*i
+        for _site_idx_ in range(number_of_sites):
+            site = spin_sys.sites[_site_idx_]
+            spin_i[_site_idx_] = np.float32(site.isotope.spin)
+            gyromagnetic_ratio_i[_site_idx_] = site.isotope.gyromagnetic_ratio
+            one_minus_sigma_iso_ref_i[_site_idx_] = site.isotope.ref_larmor_ratio
+            i3 = 3 * _site_idx_
 
             # CSA tensor
             if site.isotropic_chemical_shift is not None:
-                iso_n[i] = site.isotropic_chemical_shift
+                iso_n[_site_idx_] = site.isotropic_chemical_shift
 
             shielding = site.shielding_symmetric
             if shielding is not None:
                 if shielding.zeta is not None:
-                    zeta_n[i] = shielding.zeta
+                    zeta_n[_site_idx_] = shielding.zeta
                 if shielding.eta is not None:
-                    eta_n[i] = shielding.eta
+                    eta_n[_site_idx_] = shielding.eta
                 if shielding.alpha is not None:
                     ori_n[i3] = shielding.alpha
                 if shielding.beta is not None:
@@ -314,9 +314,9 @@ def core_simulator(method,
             quad = site.quadrupolar
             if quad is not None:
                 if quad.Cq is not None:
-                    Cq_e[i] = quad.Cq
+                    Cq_e[_site_idx_] = quad.Cq
                 if quad.eta is not None:
-                    eta_e[i] = quad.eta
+                    eta_e[_site_idx_] = quad.eta
                 if quad.alpha is not None:
                     ori_e[i3] = quad.alpha
                 if quad.beta is not None:
@@ -327,7 +327,7 @@ def core_simulator(method,
             if debug:
                 print(f'Quadrupolar coupling constant (Cq) = {Cq_e[i]/1e6} MHz')
                 print(f'Quadrupolar asymmetry (η) = {eta_e}')
-                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}]')
+                print(f'Quadrupolar orientation (alpha/beta/gamma) = {ori_e}')
 
         # sites packed as c struct
         sites_c.number_of_sites = number_of_sites
@@ -349,8 +349,8 @@ def core_simulator(method,
         # J-coupling
         couplings_c.number_of_couplings = 0
         if spin_sys.couplings is not None:
-            number_of_couplings = len(spin_sys.couplings)
-            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.int32)
+            number_of_couplings = int(len(spin_sys.couplings))
+            spin_index_ij = np.zeros(2*number_of_couplings, dtype=np.intc)
 
             iso_j = np.zeros(number_of_couplings, dtype=np.float64)
             zeta_j = np.zeros(number_of_couplings, dtype=np.float64)
@@ -363,21 +363,21 @@ def core_simulator(method,
             ori_d = np.zeros(3*number_of_couplings, dtype=np.float64)
 
             # Extract and assign coupling information from Site objects to C structure
-            for i in range(number_of_couplings):
-                coupling = spin_sys.couplings[i]
-                spin_index_ij[2*i: 2*i+2] = coupling.site_index
-                i3 = 3*i
+            for _coup_idx_ in range(number_of_couplings):
+                coupling = spin_sys.couplings[_coup_idx_]
+                spin_index_ij[2*_coup_idx_: 2*_coup_idx_+2] = coupling.site_index
+                i3 = 3 * _coup_idx_
 
                 # J tensor
                 if coupling.isotropic_j is not None:
-                    iso_j[i] = coupling.isotropic_j
+                    iso_j[_coup_idx_] = coupling.isotropic_j
 
                 J_sym = coupling.j_symmetric
                 if J_sym is not None:
                     if J_sym.zeta is not None:
-                        zeta_j[i] = J_sym.zeta
+                        zeta_j[_coup_idx_] = J_sym.zeta
                     if J_sym.eta is not None:
-                        eta_j[i] = J_sym.eta
+                        eta_j[_coup_idx_] = J_sym.eta
                     if J_sym.alpha is not None:
                         ori_j[i3] = J_sym.alpha
                     if J_sym.beta is not None:
@@ -389,9 +389,9 @@ def core_simulator(method,
                 dipolar = coupling.dipolar
                 if dipolar is not None:
                     if dipolar.D is not None:
-                        D_d[i] = dipolar.D
+                        D_d[_coup_idx_] = dipolar.D
                     if dipolar.eta is not None:
-                        eta_d[i] = dipolar.eta
+                        eta_d[_coup_idx_] = dipolar.eta
                     if dipolar.alpha is not None:
                         ori_d[i3] = dipolar.alpha
                     if dipolar.beta is not None:
@@ -399,17 +399,17 @@ def core_simulator(method,
                     if dipolar.gamma is not None:
                         ori_d[i3+2] = dipolar.gamma
 
-            # if debug:
-            #     print(f'N couplings = {number_of_couplings}')
-            #     print(f'site index J = {spin_index_ij}')
-            #     print(f'Isotropic J = {iso_j} Hz')
-            #     print(f'J anisotropy = {zeta_j} Hz')
-            #     print(f'J asymmetry = {eta_j}')
-            #     print(f'J orientation = {ori_j}')
+            if debug:
+                print(f'N couplings = {number_of_couplings}')
+                print(f'site index J = {spin_index_ij}')
+                print(f'Isotropic J = {iso_j} Hz')
+                print(f'J anisotropy = {zeta_j} Hz')
+                print(f'J asymmetry = {eta_j}')
+                print(f'J orientation = {ori_j}')
 
-            #     print(f'Dipolar coupling constant = {D_d} Hz')
-            #     print(f'Dipolar asymmetry = {eta_d}')
-            #     print(f'Dipolar orientation = {ori_d}')
+                print(f'Dipolar coupling constant = {D_d} Hz')
+                print(f'Dipolar asymmetry = {eta_d}')
+                print(f'Dipolar orientation = {ori_d}')
 
             # couplings packed as c struct
             couplings_c.number_of_couplings = number_of_couplings
@@ -486,6 +486,7 @@ def core_simulator(method,
         amp1.shape = method.shape()
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
+        amp1 = [amp1]
 
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)
@@ -497,7 +498,7 @@ def core_simulator(method,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def get_zeeman_states(sys):
-    cdef int i, j, n_site = len(sys.sites)
+    cdef int i, j, n_site = int(len(sys.sites))
 
     two_Ip1 = [int(2 * site.isotope.spin + 1) for site in sys.sites]
     spin_quantum_numbers = [
@@ -597,7 +598,7 @@ def calculate_transition_connect_weight(
     Return: A complex amplitude.
     """
     cdef ndarray[double] factor = np.asarray([1, 0], dtype=np.float64)
-    cdef int i, n_sites = spin.size
+    cdef int i, n_sites = int(spin.size)
     cdef float m1_f, m1_i, m2_f, m2_i
     for i in range(n_sites):
         m1_f = trans1[1][i]  # starting transition final state
@@ -621,7 +622,7 @@ def get_Haeberlen_components(
         double eta,
         double rho):
     """Return random extended czjzek tensors in Haeberlen convention"""
-    cdef int n = expr_base_p.shape[1]
+    cdef int n = int(expr_base_p.shape[1])
     cdef ndarray[double, ndim=2] param = np.empty((n, 2), dtype=float)
     clib.vm_haeberlen_components(
         n, &expr_base_p[0, 0], &expr_base_q[0, 0], zeta, eta, rho, &param[0, 0]

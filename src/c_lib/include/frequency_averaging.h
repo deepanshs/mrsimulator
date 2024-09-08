@@ -10,9 +10,8 @@
 #include "simulation.h"
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               double *spec, unsigned int iso_intrp,
-                               complex128 *exp_I_phase);
+                               double *spec, int iso_intrp, complex128 *exp_I_phase);
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               double *spec, double *affine_matrix,
-                               unsigned int iso_intrp, complex128 *exp_I_phase);
+                               double *spec, double *affine_matrix, int iso_intrp,
+                               complex128 *exp_I_phase);

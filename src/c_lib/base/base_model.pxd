@@ -26,44 +26,44 @@ cdef extern from "angular_momentum/wigner_matrix.h":
 
 cdef extern from "schemes.h":
     ctypedef struct MRS_averaging_scheme:
-        unsigned int total_orientations
+        int total_orientations
 
     ctypedef struct MRS_fftw_scheme:
         pass
 
     MRS_averaging_scheme *MRS_create_averaging_scheme(
-                            unsigned int integration_density,
+                            int integration_density,
                             bool_t allow_4th_rank,
-                            unsigned int n_gamma,
-                            unsigned int integration_volume,
+                            int n_gamma,
+                            int integration_volume,
                             bool_t interpolation)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
                             double *alpha,
                             double *beta,
                             double *weight,
-                            unsigned int n_angles,
+                            int n_angles,
                             bool_t allow_4th_rank,
-                            unsigned int n_gamma,
-                            unsigned int position_size,
+                            int n_gamma,
+                            int position_size,
                             int32_t *positions,
                             bool_t interpolation)
 
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
-    MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    unsigned int number_of_sidebands)
+    MRS_fftw_scheme *create_fftw_scheme(int total_orientations,
+                                    int number_of_sidebands)
     void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme)
 
 
 cdef extern from "mrsimulator.h":
     ctypedef struct MRS_plan:
-        unsigned int number_of_sidebands
+        int number_of_sidebands
         double rotor_frequency_in_Hz
         double rotor_angle_in_rad
 
-    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, unsigned int number_of_sidebands,
+    MRS_plan *MRS_create_plan(MRS_averaging_scheme *scheme, int number_of_sidebands,
                           double rotor_frequency_in_Hz,
-                          double rotor_angle_in_rad, double increment,
+                          double rotor_angle_in_rad,
                           bool_t allow_4th_rank)
     void MRS_free_plan(MRS_plan *plan)
     void MRS_get_amplitudes_from_plan(MRS_plan *plan, bool_t refresh)
@@ -110,7 +110,7 @@ cdef extern from "method.h":
         double increment                # Increment of coordinates along the dimension.
         double coordinates_offset       # Start coordinate of the dimension.
         MRS_event *events               # Holds a list of events.
-        unsigned int n_events           # The number of events.
+        int n_events           # The number of events.
 
     MRS_dimension *MRS_create_dimensions(
         MRS_averaging_scheme *scheme,
@@ -124,8 +124,8 @@ cdef extern from "method.h":
         double *rotor_frequency_in_Hz,
         double *rotor_angle_in_rad,
         int *n_events,
-        unsigned int n_dim,
-        unsigned int *number_of_sidebands)
+        int n_dim,
+        int *number_of_sidebands)
 
     void MRS_free_dimension(MRS_dimension *dimensions, int n)
 
@@ -134,9 +134,9 @@ cdef extern from "simulation.h":
     void mrsimulator_core(
         # spectrum information and related amplitude
         double *spec,
-        double spectral_start,
-        double spectral_increment,
-        int number_of_points,
+        # double spectral_start,
+        # double spectral_increment,
+        # int number_of_points,
 
         site_struct *sites,
         coupling_struct *couplings,
@@ -147,14 +147,14 @@ cdef extern from "simulation.h":
         int quad_second_order,                    # Quad theory for second order,
 
         # spin rate, spin angle and number spinning sidebands
-        unsigned int number_of_sidebands,
+        int number_of_sidebands,
         double rotor_frequency_in_Hz,
         double rotor_angle_in_rad,
 
         float *transition_pathway, # Pointer to a list of transitions.
         int integration_density,
-        unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
-        unsigned int interpolate_type,
+        int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
+        int interpolate_type,
         unsigned char *freq_contrib,
         double *affine_matrix,
         )
@@ -170,7 +170,7 @@ cdef extern from "simulation.h":
         MRS_dimension *dimensions,    # the dimensions within method.
         MRS_fftw_scheme *fftw_scheme, # the fftw scheme
         MRS_averaging_scheme *scheme, # the powder averaging scheme
-        unsigned int interpolate_type,
+        int interpolate_type,
         unsigned char *freq_contrib,
         double *affine_matrix,
         )

@@ -36,30 +36,30 @@
  * thousands of sites.
  */
 typedef struct MRS_averaging_scheme {
-  unsigned int total_orientations; /**< The total number of orientations. */
+  int total_orientations; /**< The total number of orientations. */
 
   /** \privatesection */
-  unsigned int integration_density;  //  # triangles along the edge of the octahedron.
-  unsigned int integration_volume;   //  0-octant, 1-hemisphere, 2-sphere.
-  unsigned int octant_orientations;  //  # unique orientations on the face of an octant.
-  unsigned int n_gamma;              //  number of gamma angles
-  double *amplitudes;                //  array of amplitude scaling per orientation.
-  complex128 *exp_Im_alpha;          //  array of e^in\alpha n=[0,4] per orientation.
-  complex128 *exp_Im_gamma;          //  array of e^im\gamma m=[0,4] per orientation.
-  complex128 *w2;                    //  buffer for 2nd rank frequency calculation.
-  complex128 *w4;                    //  buffer for 4nd rank frequency calculation.
-  double *wigner_2j_matrices;        //  wigner-d 2j matrix per orientation.
-  double *wigner_4j_matrices;        //  wigner-d 4j matrix per orientation.
-  double *scratch;                   //  scratch memory for calculations.
-  bool allow_4th_rank;  //  If true, compute wigner matrices for wigner-d 4j.
-  double *amps_real;    // array of real amplitudes
-  double *amps_imag;    // array of real amplitudes
+  int integration_density;   //  number of triangles along the edge of the octahedron.
+  int integration_volume;    //  0-octant, 1-hemisphere, 2-sphere.
+  int octant_orientations;   //  number of unique orientations on the face of an octant.
+  int n_gamma;               //  number of gamma angles
+  double *amplitudes;        //  array of amplitude scaling per orientation.
+  complex128 *exp_Im_alpha;  //  array of e^in\alpha n=[0,4] per orientation.
+  complex128 *exp_Im_gamma;  //  array of e^im\gamma m=[0,4] per orientation.
+  complex128 *w2;            //  buffer for 2nd rank frequency calculation.
+  complex128 *w4;            //  buffer for 4nd rank frequency calculation.
+  double *wigner_2j_matrices;  //  wigner-d 2j matrix per orientation.
+  double *wigner_4j_matrices;  //  wigner-d 4j matrix per orientation.
+  double *scratch;             //  scratch memory for calculations.
+  bool allow_4th_rank;         //  If true, compute wigner matrices for wigner-d 4j.
+  double *amps_real;           // array of real amplitudes
+  double *amps_imag;           // array of real amplitudes
   double *phase;
   complex128 *exp_I_phase;
-  int32_t *positions;          // array of triangle vertexes (faces) on mesh.
-  unsigned int position_size;  // number of triangle vertexes (faces) on mesh
-  bool user_defined;           // if true, the scheme is user defined
-  bool interpolation;          // if true, use frequency triangle interpolation
+  int32_t *positions;  // array of triangle vertexes (faces) on mesh.
+  int position_size;   // number of triangle vertexes (faces) on mesh
+  bool user_defined;   // if true, the scheme is user defined
+  bool interpolation;  // if true, use frequency triangle interpolation
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -82,10 +82,9 @@ typedef struct MRS_averaging_scheme {
  * @param integration_volume An enumeration. 0=octant, 1=hemisphere, 2=sphere
  * @param interpolation If true, apply frequency triangle interpolation.
  */
-MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_density,
-                                                  bool allow_4th_rank,
-                                                  unsigned int n_gamma,
-                                                  unsigned int integration_volume,
+MRS_averaging_scheme *MRS_create_averaging_scheme(int integration_density,
+                                                  bool allow_4th_rank, int n_gamma,
+                                                  int integration_volume,
                                                   bool interpolation);
 
 /**
@@ -97,7 +96,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * double.
  * @param weight A pointer to an array of size `n_angles` holding the weights of the
  * angle pair (alpha, beta) of type double.
- * @param n_angles An unsigned int equal to the total number of alpha, beta, and weight
+ * @param n_angles An int equal to the total number of alpha, beta, and weight
  * values.
  * @param allow_4th_rank If true, the scheme also calculates matrices for fourth-rank
  * tensors.
@@ -107,9 +106,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
  * @param interpolation If true, apply frequency triangle interpolation.
  */
 MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
-    double *alpha, double *beta, double *weight, unsigned int n_angles,
-    bool allow_4th_rank, unsigned int n_gamma, const unsigned int position_size,
-    int32_t *positions, bool interpolation);
+    double *alpha, double *beta, double *weight, int n_angles, bool allow_4th_rank,
+    int n_gamma, const int position_size, int32_t *positions, bool interpolation);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.
@@ -132,8 +130,7 @@ typedef struct MRS_fftw_scheme {
   fftw_plan the_fftw_plan;  //  The plan for fftw routine.
 } MRS_fftw_scheme;
 
-MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
-                                    unsigned int number_of_sidebands);
+MRS_fftw_scheme *create_fftw_scheme(int total_orientations, int number_of_sidebands);
 
 void MRS_free_fftw_scheme(MRS_fftw_scheme *fftw_scheme);
 

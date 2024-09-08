@@ -395,13 +395,24 @@ class Simulator(Parseable):
 
         for index in method_index:
             method = self.methods[index]
+
+            config_dict = self.config.get_int_dict()
+            # amp = core_simulator(
+            #     method=method,
+            #     spin_systems=self.spin_systems,
+            #     transition_pathways=opt["precomputed_pathways"][index],
+            #     transition_weights=opt["precomputed_weights"][index],
+            #     **config_dict,
+            #     **kwargs,
+            # )
+
+            # Chunk spin systems for multiple jobs
             spin_sys = get_chunks(self.spin_systems, n_jobs)
 
-            # Chunking transition pathways and weights form the optimization dictionary
+            # Chunk transition pathways and weights form the optimization dictionary
             pathways = get_chunks(opt["precomputed_pathways"][index], n_jobs)
             weights = get_chunks(opt["precomputed_weights"][index], n_jobs)
 
-            config_dict = self.config.get_int_dict()
             jobs = (
                 delayed(core_simulator)(
                     method=method,
@@ -418,6 +429,7 @@ class Simulator(Parseable):
                 verbose=verbose,
                 backend="loky",
             )(jobs)
+            amp = amp[0]
 
             B0 = method.spectral_dimensions[0].events[0].magnetic_flux_density
             w_ref = method.channels[0].B0_to_ref_freq(B0) * 1e6
@@ -574,17 +586,8 @@ class Simulator(Parseable):
             bool pack_as_csdm: Packages the simulated spectrum as a CSDM object if true.
                 Otherwise kept as a numpy array.
         """
-        if isinstance(amp[0], list):
-            simulated_dataset = []
-            for item in amp:
-                simulated_dataset += item
-        if isinstance(amp[0], np.ndarray):
-            simulated_dataset = [np.asarray(amp).sum(axis=0)]
-
         method.simulation = (
-            self._as_csdm_object(simulated_dataset, method)
-            if pack_as_csdm
-            else np.asarray(simulated_dataset)
+            self._as_csdm_object(amp, method) if pack_as_csdm else np.asarray(amp)
         )
 
 

@@ -64,10 +64,9 @@ static inline void sideband_amplitude(int npts, int n_octant, complex128 *a11,
 }
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               double *spec, unsigned int iso_intrp,
-                               complex128 *exp_I_phase) {
-  unsigned int i, j, k1, address, ptr, gamma_idx;
-  unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
+                               double *spec, int iso_intrp, complex128 *exp_I_phase) {
+  int i, j, k1, address, ptr, gamma_idx;
+  int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
   double offset_0, offset;
   double *freq, *phase_ptr, *amps = dimensions->freq_amplitude;
@@ -120,9 +119,9 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
           vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
                              amps_imag);
           while (j++ < planA->n_octants) {
-            octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
+            octahedronDeltaInterpolation(nt, offset, &amps_real[address], 1,
                                          dimensions->count, spec, iso_intrp);
-            octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
+            octahedronDeltaInterpolation(nt, offset, &amps_imag[address], 1,
                                          dimensions->count, spec + 1, iso_intrp);
             address += npts;
           }
@@ -158,10 +157,10 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
 }
 
 void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
-                               double *spec, double *affine_matrix,
-                               unsigned int iso_intrp, complex128 *exp_I_phase) {
-  unsigned int i, k, j, address, gamma_idx;
-  unsigned int npts = scheme->octant_orientations, ptr;
+                               double *spec, double *affine_matrix, int iso_intrp,
+                               complex128 *exp_I_phase) {
+  int i, k, j, address, gamma_idx;
+  int npts = scheme->octant_orientations, ptr;
   int *fft1_index, *fft2_index, n_min, n_max;
 
   MRS_plan *planA, *planB;
@@ -170,7 +169,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   double offset0, offset1, offsetA, offsetB;
   double *freq0, *freq1;
   double norm0, norm1;
-  complex128 *res_t = malloc_complex128(npts);
+  complex128 *res_t = malloc_complex128((size_t)npts);
   bool user_defined = scheme->user_defined, interpolation = scheme->interpolation;
 
   offset0 = dimensions[0].R0_offset;

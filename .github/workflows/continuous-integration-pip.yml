@@ -91,7 +91,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install macos system dependencies
-        run: brew install openblas fftw
+        run: |
+          brew install openblas fftw
+          which clang
+          clang --version
 
       - name: Install dependencies
         run: |
@@ -125,7 +128,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install macos system dependencies
-        run: brew install openblas fftw
+        run: |
+          brew install openblas fftw
+          which clang
+          clang --version
 
       - name: Install dependencies
         run: |
