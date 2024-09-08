@@ -33,7 +33,7 @@ If applicable, add screenshots to help explain your problem.
 - For mac OS, please specify which BLAS library (OpenBLAS or Accelerate) you use to
   install the `mrsimulator` library. This point is only applicable if you installed
   the `mrsimulator` library from the source code.
-- Python version: [e.g. 3.10.1]
+- Python version: [e.g. 3.12.1]
 - `mrsimulator` version: [e.g. 0.3]
 
 **Additional context**

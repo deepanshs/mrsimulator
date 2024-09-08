@@ -24,10 +24,11 @@ Once Anaconda is installed, create a new environment by running
 
 .. code-block:: shell
 
-    $ conda create -n <name> python=3.9
+    $ conda create -n <name> python=3.12
 
 where ``<name>`` is the desired name of your environment. Each environment can have a Python
-version specified after ``python=``. We recommend using ``python=3.9``. Next, activate the environment by running
+version specified after ``python=``. We recommend using the latest version of python.
+Next, activate the environment by running
 
 .. code-block:: shell
 

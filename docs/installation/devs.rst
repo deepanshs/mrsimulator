@@ -51,9 +51,9 @@ The following is an example of creating a Conda environment.
 
 .. code-block:: bash
 
-    $ conda create -n mrsimulator-dev python=3.9
+    $ conda create -n mrsimulator-dev python=3.12
 
-The above command will create a new environment named *mrsimulator-dev* using Python 3.9.
+The above command will create a new environment named *mrsimulator-dev* using Python 3.12.
 To activate the environment, use
 
 .. code-block:: bash
