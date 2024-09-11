@@ -33,13 +33,13 @@ def parse_dict_to_ev_class(py_dict: dict):
         (dict) py_dict: JSON representation of the Event class as a dictionary
 
     Returns:
-        Either a SpectralEvent, DelayEvent, or MixingEvent object
+        Either a SpectralEvent, DelayEvent, or RotationEvent object
     """
     if "duration" in py_dict:
         return DelayEvent.parse_dict_with_units(py_dict)
 
     if "ch1" in py_dict or "ch2" in py_dict or "ch3" in py_dict:
-        return MixingEvent.parse_dict_with_units(py_dict)
+        return RotationEvent.parse_dict_with_units(py_dict)
 
     return SpectralEvent.parse_dict_with_units(py_dict)
 
