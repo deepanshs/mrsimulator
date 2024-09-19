@@ -146,6 +146,7 @@ class ConfigSimulator(Parseable):
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
     custom_sampling: Optional[CustomSampling] = None
+    is_complex: bool = True
 
     class Config:
         extra = "forbid"
