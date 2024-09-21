@@ -128,6 +128,10 @@ class ConfigSimulator(Parseable):
         A CustomSampling object specifying the coordinates and weights used in powder
         averaging.
 
+    is_complex: bool
+        When True, the simulation computes both real and imaginary components of the
+        signal. When False, only the real component is computed. Default is True.
+
     Example
     -------
 
