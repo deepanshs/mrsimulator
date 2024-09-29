@@ -550,11 +550,11 @@ def residuals(sim: Simulator, processors: list = None):
     return residual_
 
 
-def _apply_iso_shift(csdm_obj, iso_shift_ppm, ref_freq):
+def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq):
     """Apply isotropic chemical shift to a CSDM object using the FFT shift theorem."""
     csdm_obj = csdm_obj.fft()
     time_coords = csdm_obj.x[0].coordinates.to("s").value
-    iso_shift_Hz = ref_freq * iso_shift_ppm
+    iso_shift_Hz = larmor_freq * iso_shift_ppm
     csdm_obj.y[0].components[0] *= np.exp(-np.pi * 2j * time_coords * iso_shift_Hz)
     csdm_obj = csdm_obj.fft()
 
@@ -613,7 +613,9 @@ def _generate_distribution_spectrum(
 
     """
     method = kernel.method
-    ref_freq = method.channels[0].B0_to_ref_freq(B0=method.magnetic_flux_density)
+    isotope = method.channels[0]
+    larmor_freq = isotope.larmor_freq(B0=method.magnetic_flux_density)
+    larmor_freq *= isotope.ref_larmor_ratio
     exp_spectrum = method.experiment
 
     guess_spectrum = exp_spectrum.copy()
@@ -632,7 +634,7 @@ def _generate_distribution_spectrum(
         spec_tmp = _apply_iso_shift(
             csdm_obj=spec_tmp,
             iso_shift_ppm=model.mean_isotropic_chemical_shift,
-            ref_freq=ref_freq,
+            larmor_freq=larmor_freq,
         ).real
         spec_tmp *= model.abundance
         guess_spectrum.y[0].components[0] += spec_tmp.y[0].components[0]
