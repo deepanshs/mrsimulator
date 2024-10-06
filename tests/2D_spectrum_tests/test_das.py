@@ -137,7 +137,7 @@ def test_DAS():
                 eta = site.quadrupolar.eta
             iso = site.isotropic_chemical_shift
             iso_obs = quad_iso_shift(
-                0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0)
+                0.5, Cq, eta, spin, iso, larmor_freq, O17.B0_to_ref_freq(B0) / 1e6
             )
             # get the index where there is a signal
             id1 = np.real(dataset_das[i] / dataset_das[i].max())
