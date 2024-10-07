@@ -117,13 +117,17 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
           // multiply phase to the amplitudes.
           vm_double_multiply(scheme->total_orientations, phase_ptr, 2, &amps[k1],
                              amps_real);
-          vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
-                             amps_imag);
+          if (scheme->is_complex) {
+            vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
+                               amps_imag);
+          }
           while (j++ < planA->n_octants) {
             octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
                                          dimensions->count, spec, iso_intrp);
-            octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
-                                         dimensions->count, spec + 1, iso_intrp);
+            if (scheme->is_complex) {
+              octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
+                                           dimensions->count, spec + 1, iso_intrp);
+            }
             address += npts;
           }
         }
@@ -139,8 +143,10 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
           // multiply phase to the amplitudes.
           vm_double_multiply(scheme->total_orientations, phase_ptr, 2, &amps[k1],
                              amps_real);
-          vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
-                             amps_imag);
+          if (scheme->is_complex) {
+            vm_double_multiply(scheme->total_orientations, phase_ptr + 1, 2, &amps[k1],
+                               amps_imag);
+          }
           for (j = 0; j < planA->n_octants; j++) {
             // Add offset(isotropic + sideband_order) to the local frequencies.
             vm_double_add_offset(npts, &freq[address], offset, dimensions->freq_offset);
@@ -148,7 +154,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
             one_d_averaging(spec, npts, dimensions->freq_offset, &amps_real[address],
                             &amps_imag[address], dimensions->count,
                             scheme->position_size, scheme->positions, nt, user_defined,
-                            interpolation);
+                            interpolation, scheme->is_complex);
             address += npts;
           }
         }
@@ -270,12 +276,15 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                               dimensions[0].count, dimensions[1].count, iso_intrp,
                               scheme->integration_density, user_defined, interpolation);
 
-              // imaginary part
-              two_d_averaging(spec + 1, npts, dimensions[0].freq_offset,
-                              dimensions[1].freq_offset, freq_amp + 1, 2,
-                              scheme->position_size, scheme->positions,
-                              dimensions[0].count, dimensions[1].count, iso_intrp,
-                              scheme->integration_density, user_defined, interpolation);
+              if (scheme->is_complex) {
+                // imaginary part
+                two_d_averaging(spec + 1, npts, dimensions[0].freq_offset,
+                                dimensions[1].freq_offset, freq_amp + 1, 2,
+                                scheme->position_size, scheme->positions,
+                                dimensions[0].count, dimensions[1].count, iso_intrp,
+                                scheme->integration_density, user_defined,
+                                interpolation);
+              }
             }
           }
         }

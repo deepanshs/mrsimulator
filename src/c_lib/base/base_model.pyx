@@ -25,6 +25,7 @@ def core_simulator(method,
        unsigned int integration_volume=1,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
+       bool_t is_complex=True,
        bool_t interpolation=True,
        bool_t auto_switch=True,
        debug=False,
@@ -66,13 +67,14 @@ def core_simulator(method,
         averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
             alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
             allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
-            position_size=position_size, positions=&positions[0], interpolation=interpolation
+            position_size=position_size, positions=&positions[0], interpolation=interpolation,
+            is_complex=is_complex
         )
     else:
         averaging_scheme = clib.MRS_create_averaging_scheme(
             integration_density=integration_density, allow_4th_rank=allow_4th_rank,
             n_gamma=number_of_gamma_angles, integration_volume=integration_volume,
-            interpolation=interpolation
+            interpolation=interpolation, is_complex=is_complex
         )
 
 # create C spectral dimensions ________________________________________________
