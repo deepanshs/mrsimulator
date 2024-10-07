@@ -55,8 +55,8 @@ In the above example, we draw *50000* random points of the distribution. The out
     import matplotlib.pyplot as plt
 
     plt.scatter(zeta_dist, eta_dist, s=4, alpha=0.02)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.xlim(-15, 15)
     plt.ylim(0, 1)
     plt.tight_layout()
@@ -146,8 +146,8 @@ on the grid. Below, the distribution is plotted
 
 
     plt.contourf(zeta_grid, eta_grid, amp, levels=10)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.tight_layout()
     plt.show()
 
