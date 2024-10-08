@@ -218,7 +218,7 @@ class Isotope(BaseModel):
             float B0: magnetic field strength in T
 
         Returns:
-            float: Larmor frequency in MHz
+            float: Larmor frequency in Hz
 
         Example
         -------
@@ -226,13 +226,13 @@ class Isotope(BaseModel):
         >>> silicon = Isotope(symbol="29Si")
         >>> freq = silicon.larmor_freq(B0 = 9.4)
         """
-        return -self.gyromagnetic_ratio * B0
+        return -self.gyromagnetic_ratio * B0 * 1.0e6
 
-    def ref_freq_to_B0(self, ref_freq=400):
+    def ref_freq_to_B0(self, ref_freq=400e6):
         """Return the magnetic field strength B0 given the primary reference frequency.
 
         Args:
-            float ref_freq: primary reference frequency in MHz
+            float ref_freq: primary reference frequency in Hz
 
         Returns:
             float: magnetic flux density in T
@@ -241,10 +241,10 @@ class Isotope(BaseModel):
         -------
 
         >>> H1 = Isotope(symbol="1H")
-        >>> B0 = H1.ref_freq_to_B0(ref_freq = 400)
+        >>> B0 = H1.ref_freq_to_B0(ref_freq = 400e6)
         """
         ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
-        return 0.02348731439404777 * ref_freq / ref_ratio
+        return 1.0e-6 * 0.02348731439404777 * ref_freq / ref_ratio
 
     def B0_to_ref_freq(self, B0=9.4):
         """Return the primary reference frequency given the magnetic field strength B0.
@@ -253,7 +253,7 @@ class Isotope(BaseModel):
             float B0: magnetic flux density in T
 
         Returns:
-            float: primary reference frequency in MHz
+            float: primary reference frequency in Hz
 
         Example
         -------
@@ -262,7 +262,7 @@ class Isotope(BaseModel):
         >>> B0 = H1.B0_to_ref_freq(B0 = 9.4)
         """
         ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
-        return B0 * ref_ratio / 0.02348731439404777
+        return 1.0e6 * B0 * ref_ratio / 0.02348731439404777
 
     @property
     def ref_larmor_ratio(self):

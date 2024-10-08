@@ -614,7 +614,7 @@ def _generate_distribution_spectrum(
     """
     method = kernel.method
     isotope = method.channels[0]
-    larmor_freq = isotope.larmor_freq(B0=method.magnetic_flux_density)
+    larmor_freq = isotope.larmor_freq(B0=method.magnetic_flux_density) / 1.0e6  # MHz
     larmor_freq *= isotope.ref_larmor_ratio
     exp_spectrum = method.experiment
 

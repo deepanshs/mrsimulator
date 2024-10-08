@@ -137,8 +137,8 @@ familiar to an NMR spectroscopist.
     from mrsimulator.spin_system.isotope import Isotope
 
     # Set the magnetic flux density in T from the proton
-    # frequency of TMS, a primary reference, in MHz
-    B0 = Isotope(symbol="1H").ref_freq_to_B0(400)
+    # frequency of TMS, a primary reference, in Hz
+    B0 = Isotope(symbol="1H").ref_freq_to_B0(400e6)
 
     # Create a BlochDecaySpectrum instance
     method = BlochDecaySpectrum(
