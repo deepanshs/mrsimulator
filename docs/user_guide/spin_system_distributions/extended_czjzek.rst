@@ -52,8 +52,8 @@ The scatter plot of these coordinates is shown below.
     import matplotlib.pyplot as plt
 
     plt.scatter(zeta_dist, eta_dist, s=4, alpha=0.01)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.xlim(60, 100)
     plt.ylim(0, 1)
     plt.tight_layout()
@@ -105,7 +105,7 @@ The plot of the extended Czjzek probability distribution is shown below.
 
     plt.contourf(Cq_grid, eta_grid, amp, levels=10)
     plt.xlabel("$C_q$ / MHz")
-    plt.ylabel("$\eta$")
+    plt.ylabel("$\\eta$")
     plt.tight_layout()
     plt.show()
 
@@ -141,7 +141,7 @@ coordinates.
     fig, ax = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": (5, 4)})
     ax[0].contourf(Cq_grid, eta_grid, amp, levels=10)
     ax[0].set_xlabel("$C_q$ / MHz")
-    ax[0].set_ylabel("$\eta$")
+    ax[0].set_ylabel("$\\eta$")
     ax[0].set_title("Cartesian coordinates")
     ax[1].contourf(x_grid, y_grid, amp_polar, levels=10)
     ax[1].set_xlabel("x / MHz")

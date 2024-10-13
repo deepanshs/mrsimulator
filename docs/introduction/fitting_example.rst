@@ -339,7 +339,7 @@ to be modeled with the Method class.
 
     Al27 = Isotope(symbol="27Al")
     origin_offset = spectral_dims[0]["origin_offset"]
-    B0 = Al27.ref_freq_to_B0(origin_offset / 1e6)
+    B0 = Al27.ref_freq_to_B0(origin_offset)
 
     MAS = BlochDecayCTSpectrum(
         channels=["27Al"],

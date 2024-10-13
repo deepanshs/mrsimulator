@@ -61,18 +61,18 @@ _, ax = plt.subplots(1, 3, figsize=(9, 3))
 
 # isotropic shift v.s. shielding anisotropy
 ax[0].contourf(zeta_range, iso_range, pdf.sum(axis=2))
-ax[0].set_xlabel(r"shielding anisotropy, $\zeta$ / ppm")
+ax[0].set_xlabel("shielding anisotropy, $\\zeta$ / ppm")
 ax[0].set_ylabel("isotropic chemical shift / ppm")
 
 # isotropic shift v.s. shielding asymmetry
 ax[1].contourf(eta_range, iso_range, pdf.sum(axis=1))
-ax[1].set_xlabel(r"shielding asymmetry, $\eta$")
+ax[1].set_xlabel("shielding asymmetry, $\\eta$")
 ax[1].set_ylabel("isotropic chemical shift / ppm")
 
 # shielding anisotropy v.s. shielding asymmetry
 ax[2].contourf(eta_range, zeta_range, pdf.sum(axis=0))
-ax[2].set_xlabel(r"shielding asymmetry, $\eta$")
-ax[2].set_ylabel(r"shielding anisotropy, $\zeta$ / ppm")
+ax[2].set_xlabel("shielding asymmetry, $\\eta$")
+ax[2].set_ylabel("shielding anisotropy, $\\zeta$ / ppm")
 
 plt.tight_layout()
 plt.show()
