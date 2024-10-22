@@ -23,7 +23,6 @@ following operating systems:
 - `csdmpy>=0.6 <https://csdmpy.readthedocs.io/en/stable/>`_
 - `pydantic>=2.8 <https://pydantic-docs.helpmanual.io>`_
 - `nmrglue>=0.9 <https://nmrglue.readthedocs.io/>`_
-- monty>=2.0.4
 - typing-extensions>=3.7
 - numexpr>=2.8.4
 - psutil>=5.4.8

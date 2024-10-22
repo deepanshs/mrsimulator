@@ -1,9 +1,9 @@
 """Base Isotope class."""
+import json
 from os import path
 from typing import ClassVar
 from typing import Dict
 
-from monty.serialization import loadfn
 from pydantic.v1 import BaseModel
 from pydantic.v1 import validator
 
@@ -12,8 +12,12 @@ __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
 
-ISOTOPE_DATA = loadfn(path.join(MODULE_DIR, "isotope_data.json"))
-REFERENCE_DATA = loadfn(path.join(MODULE_DIR, "references.json"))
+with open(path.join(MODULE_DIR, "isotope_data.json")) as f:
+    ISOTOPE_DATA = json.load(f)
+
+with open(path.join(MODULE_DIR, "references.json")) as f:
+    REFERENCE_DATA = json.load(f)
+
 DEFAULT_ISOTOPE = {
     "spin_multiplicity": 2,
     "gyromagnetic_ratio": 0,
