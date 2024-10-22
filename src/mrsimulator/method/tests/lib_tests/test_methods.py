@@ -1,8 +1,8 @@
+import json
 from os import path
 
 import numpy as np
 import pytest
-from monty.serialization import loadfn
 from mrsimulator.method import Method
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.method.lib import ThreeQ_VAS
@@ -11,7 +11,8 @@ __author__ = "Deepansh J. Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
 MODULE_DIR = path.dirname(path.abspath(__file__))
-TESTDATA = loadfn(path.join(MODULE_DIR, "test_data.json"))
+with open(path.join(MODULE_DIR, "test_data.json")) as f:
+    TESTDATA = json.load(f)
 
 MAS_DIM = {
     "count": 128,

@@ -1,7 +1,7 @@
+import json
 import os
 
 import pytest
-from monty.serialization import loadfn
 from mrsimulator import __version__
 from mrsimulator import dict
 from mrsimulator import load
@@ -16,7 +16,8 @@ from mrsimulator.utils.error import FileConversionError
 
 
 MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEST_DATA = loadfn(os.path.join(MODULE_DIR, "test_data.json"))
+with open(os.path.join(MODULE_DIR, "test_data.json")) as f:
+    TEST_DATA = json.load(f)
 
 # mrsimulator save and load test
 
