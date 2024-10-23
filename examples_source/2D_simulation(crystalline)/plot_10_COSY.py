@@ -82,6 +82,8 @@ methods = [
 
 # %%
 sim = Simulator(spin_systems=[ax_system], methods=methods)
+sim.config.integration_density = 1
+sim.config.number_of_sidebands = 1
 sim.run()
 
 # %% [markdown]
@@ -101,14 +103,13 @@ proc = sp.SignalProcessor(
     ]
 )
 
-spectra_list = [
-    proc.apply_operations(dataset=method.simulation) for method in sim.methods
-]
+processed_path = proc.apply_operations(dataset=sim.methods[0].simulation)
+processed_antipath = proc.apply_operations(dataset=sim.methods[1].simulation)
 
-flipped = spectra_list[1].fft(axis=0).conj().fft(axis=0)
-flipped.dimensions[1] = spectra_list[0].dimensions[1]
+flipped = processed_antipath.fft(axis=0).conj().fft(axis=0)
+flipped.dimensions[1] = processed_path.dimensions[1]
 
-phase_sensitive_COSY = flipped + spectra_list[0]
+phase_sensitive_COSY = flipped + processed_path
 
 # %% [markdown]
 # Plot the spectrum
