@@ -371,7 +371,7 @@ setup(
     setup_requires=["numpy>=1.20"],
     install_requires=[
         "numpy>=1.20",
-        "csdmpy>=0.6",
+        "csdmpy>=0.7",
         "pydantic>=2.8",
         "typing-extensions>=3.7",
         "psutil>=5.4.8",
