@@ -1,6 +1,6 @@
 numpy>=1.20
 matplotlib>=3.3.3
-csdmpy>=0.6
+csdmpy>=0.7
 astropy>=5.1
 pydantic>=2.8
 typing-extensions>=3.7
