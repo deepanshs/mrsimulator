@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Sigma-2, ²⁹Si INADEQUATE and refocused INADEQUATE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ²⁹Si INADEQUATE and refocused INADEQUATE simulation on Sigma-2
 """
