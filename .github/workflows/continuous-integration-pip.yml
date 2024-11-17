@@ -74,7 +74,7 @@ jobs:
           pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.2
 
   testing_mac_arm:
     needs: [code_lint]
@@ -110,7 +110,7 @@ jobs:
           pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.2
 
   testing_mac_intel:
     needs: [code_lint]
@@ -146,7 +146,7 @@ jobs:
           pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.2
 
   testing_windows:
     needs: [code_lint]
@@ -188,4 +188,4 @@ jobs:
           pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.2
