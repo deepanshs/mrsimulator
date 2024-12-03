@@ -73,7 +73,7 @@ preferred-citation:
   title: 'MRSimulator: A cross-platform, object-oriented software package for rapid solid-state NMR spectral simulation and analysis'
   month: 12
   year: 2024
-  number: 21
+  issue: 21
   volume: 161
-  pages: 212501
+  start: 212501
   url: 'https://doi.org/10.1063/5.0237608'
