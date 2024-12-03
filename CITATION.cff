@@ -51,29 +51,29 @@ identifiers:
 preferred-citation:
   type: article
   authors:
-    - given-names: Deepansh J.
-      family-names: Srivastava
-      affiliation: Hyperfine
-      orcid: https://orcid.org/0000-0003-1341-2197
-    - given-names: Matthew
-      family-names: Giammar
-      affiliation: The Ohio State University
-    - given-names: Maxwell C.
-      family-names: Venetos
-      affiliation: 'University of California, Berkeley'
-    - given-names: Lexi
-      family-names: McCarthy-Carney
-      affiliation: The Ohio State University
-    - given-names: Philip J.
-      family-names: Grandinetti
-      affiliation: The Ohio State University
-      orcid: https://orcid.org/0000-0003-0102-316X
-  doi: '10.1063/5.0237608'
-  journal: 'The Journal of Chemical Physics'
-  title: 'MRSimulator: A cross-platform, object-oriented software package for rapid solid-state NMR spectral simulation and analysis'
+    - given-names: "Deepansh J."
+      family-names: "Srivastava"
+      affiliation: "Hyperfine"
+      orcid: "https://orcid.org/0000-0003-1341-2197"
+    - given-names: "Matthew"
+      family-names: "Giammar"
+      affiliation: "The Ohio State University"
+    - given-names: "Maxwell C."
+      family-names: "Venetos"
+      affiliation: "University of California, Berkeley"
+    - given-names: "Lexi"
+      family-names: "McCarthy-Carney"
+      affiliation: "The Ohio State University"
+    - given-names: "Philip J."
+      family-names: "Grandinetti"
+      affiliation: "The Ohio State University"
+      orcid: "https://orcid.org/0000-0003-0102-316X"
+  doi: "10.1063/5.0237608"
+  journal: "The Journal of Chemical Physics"
+  title: "MRSimulator: A cross-platform, object-oriented software package for rapid solid-state NMR spectral simulation and analysis"
   month: 12
   year: 2024
   issue: 21
   volume: 161
   start: 212501
-  url: 'https://doi.org/10.1063/5.0237608'
+  url: "https://doi.org/10.1063/5.0237608"
