@@ -122,6 +122,8 @@ If you use MRSimulator in your publication, please consider citing the following
 
 - Please use the GitHub citation tool to cite this repository. The tool in located in the About section under the `Cite this repository` category.
 
+- Srivastava D.J., Giammar M., Venetos M.C., McCarthy-Carney L., and Grandinetti P.J. (2024) MRSimulator: A cross-platform, object-oriented software package for rapid solid-state NMR spectral simulation and analysis. *J. Chem. Phys*. 161, 212501, https://doi.org/10.1063/5.0237608
+
 - Srivastava D.J. and Grandinetti P.J. (2024) Simulating multipulse NMR spectra of polycrystalline solids in the frequency domain. *J. Chem. Phys*. 160, 234110, https://doi.org/10.1063/5.0209887
 
 - Srivastava D.J., Baltisberger J.H and Grandinetti P.J. (2024) Rapid simulation of two-dimensional spectra with correlated anisotropic dimension. *J. Chem. Phys*. 160, 134104, https://doi.org/10.1063/5.0200042
