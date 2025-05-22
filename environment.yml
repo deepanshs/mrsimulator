@@ -22,3 +22,4 @@ dependencies:
       - lmfit>=1.0.2
       - psutil>=5.4.8
       - nmrglue>=0.9
+      - emcee>=3.0.2
