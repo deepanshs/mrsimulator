@@ -88,6 +88,6 @@ def test_large_shifts():
 
         simulation = sim.methods[0].simulation
         simulation.x[0].to("ppm", "nmr_frequency_ratio")
-        max_amp = simulation.x[0].coordinates[int(np.argmax(simulation))]
+        max_amp = simulation.x[0].coordinates[int(np.argmax(simulation).value)]
 
         np.testing.assert_almost_equal(max_amp.value, shift, decimal=1)
