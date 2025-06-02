@@ -93,6 +93,7 @@ def test_config():
         "name": None,
         "description": None,
         "label": None,
+        "is_complex": True,
     }
 
     assert a.config.get_int_dict() == {
@@ -102,6 +103,7 @@ def test_config():
         "integration_volume": 1,
         "integration_density": 20,
         "isotropic_interpolation": 1,
+        "is_complex": True,
     }
 
     assert b != a
@@ -123,6 +125,7 @@ def test_config():
         "name": None,
         "description": None,
         "label": None,
+        "is_complex": True,
     }
 
     assert a.config.get_int_dict() == {
@@ -132,6 +135,7 @@ def test_config():
         "integration_volume": 2,
         "integration_density": 20,
         "isotropic_interpolation": 1,
+        "is_complex": True,
     }
 
     assert b != a

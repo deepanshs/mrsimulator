@@ -2,17 +2,17 @@
 
 Least-Squares Fitting Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**Mrsimulator** can interact with various Python data science
+**MRSimulator** can interact with various Python data science
 packages.  One such package,
 `LMFIT <https://lmfit.github.io/lmfit-py/>`_, can be used to perform non-linear
 least-squares analysis of experimental NMR spectra.
 
-Here, we illustrate the use of the **mrsimulator** objects to
+Here, we illustrate the use of the **MRSimulator** instances to
 
 - import and prepare an experimental dataset for the least-squares analysis,
-- create a fitting model using Simulator and SignalProcessor objects,
+- create a fitting model using Simulator and SignalProcessor instances,
 - use the fitting model to perform a least-squares analysis,
-- extract the model parameters with uncertainties, and
+- extract the model parameters with uncertainties and
 - plot the experimental spectrum along with the best-fit simulation and residuals.
 
 Import Experimental Dataset
@@ -73,7 +73,46 @@ object.
     # convert to CSDM format
     csdm_ds = converter.to_csdm()
 
-With the dataset converted into a CSDM object, plot the dataset to make sure
+Once imported, it is necessary to update a few attributes of the CSDM
+instance in the code below.
+
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    # set origin offset to primary reference
+    csdm_ds.dimensions[0].reciprocal.origin_offset = "104.38311571 MHz"
+
+    # and set coordinates offset to carrier frequency
+    csdm_ds.dimensions[0].reciprocal.coordinates_offset = "-538.05 Hz"
+
+    # set time origin to echo top
+    csdm_ds.dimensions[0].coordinates_offset = "-8.16 ms"
+
+Specifically, the ``reciprocal.origin_offset`` attribute of is set to
+104.38311571 MHz, the :math:`^{27}\text{Al}` primary reference resonance
+frequency measured on this spectrometer using a 1.1 mol/kg solution
+of :math:`\text{Al(NO$_3$)$_3$}` as an external standard.  Additionally,
+the ``reciprocal.coordinates_offset`` attribute is set to the offset
+between the primary reference resonance frequency and the spectrometer
+carrier frequency. In principle, these two steps should not be
+necessary as these two attributes should have been set correctly
+when the Bruker dataset is imported. However, it is not uncommon
+that were not set correctly during the data acquisition.  Thus,
+it is always a good idea to check and adjust these values as needed.
+
+Additionally, since this signal is acquired with a Hahn-echo sequence, with acquisition
+beginning immediately after the 180 deg. pulse, the ``coordinates_offset``
+needs to be adjusted to place the time origin at the top of the echo.
+This should be the time between the centers of the two pulses.  There are,
+however, some additional receiver delays before the signal acquisition
+begins, and those times, which are among the pulse sequence parameters,
+need to be subtracted from the inter-pulse spacing. For this measurement,
+we have predetermined the echo top position to be 8.16 ms. Thus, we set the
+``coordinates_offset`` attribute to -8.16 ms.
+
+With the dataset converted into a CSDM instance, plot the dataset to make sure
 that you imported it correctly.
 
 .. skip: next
@@ -105,19 +144,7 @@ Proceeding from here, you'll need to transform this dataset into the frequency
 domain for the least-squares analysis. Before applying the Fourier transform,
 however, two things need to be adjusted.
 
-First, you need to adjust the ``coordinates_offset`` to place the time origin at
-the top of the echo. You can find this time offset among the pulse sequence
-parameters. If you acquired the signal with a simple Hahn-echo sequence,
-i.e., :math:`\pi/2-\tau-\pi-t`, then the ``coordinates_offset`` should be the
-time between the centers of the two pulses. However, there are often some
-additional receiver delays before the signal acquisition begins, and those
-times need to be subtracted from the interpulse spacing. In this measurement,
-we determined the echo top position to be 0.00816 s. The
-``coordinates_offset``, the time associated with the first point in the signal,
-will need to be set to –0.00816 s. When correctly set, the time origin should
-coincide with the maximum magnitude of the complex signal.
-
-Second, you need to phase correct the time domain so that the maximum echo
+First, you need to phase correct the time domain so that the maximum echo
 amplitude is in the real part of the signal. For this operation, you can use
 numpy `abs
 () <https://numpy.org/doc/stable/reference/generated/numpy.absolute.html>`_ to
@@ -127,7 +154,7 @@ find the time index where the absolute value of the signal is at a maximum.
 Then use the signal phase at that time index to place the maximum amplitude
 into the real part of the time domain signal.
 
-Both these steps are performed by the code below.
+These steps are performed by the code below.
 
 .. skip: next
 
@@ -135,9 +162,6 @@ Both these steps are performed by the code below.
     :context: close-figs
 
     import numpy as np
-
-    # set time origin to echo top
-    csdm_ds.dimensions[0].coordinates_offset = "-0.00816 s"
 
     # Phase echo top, putting maximum amplitude into real part
     index = np.argmax(np.abs(csdm_ds.dependent_variables[0].components[0]))
@@ -164,9 +188,9 @@ using a higher MAS rate. Nonetheless, you can still proceed in this analysis
 and, as you will see later, can model this additional decay with an ad-hoc
 Gaussian convolution of the spectrum.
 
-Next, create a SignalProcessor object to apply the Fourier transform operation
-to the CSDM object ``exp_spectrum``. Note that with a correctly set time
-origin, the :py:meth:`~mrsimulator.signal_processor.FFT` operation
+Next, a Fourier transform operation is applied to the CSDM dataset using
+the ``.fft()`` method of the CSDM class, as shown in the code below.
+Note that with a correctly set time origin, the ``.fft()`` method
 automatically applies the appropriate first-order phase correction to the
 spectrum after performing the fast Fourier transform. After performing the
 Fourier transform, convert the coordinate units of the CSDM dimension from
@@ -181,10 +205,7 @@ method of the
 .. plot::
     :context: close-figs
 
-    from mrsimulator import signal_processor as sp
-
-    ft = sp.SignalProcessor(operations=[sp.FFT()])
-    exp_spectrum = ft.apply_operations(dataset=phased_ds)
+    exp_spectrum = phased_ds.fft()
     exp_spectrum.dimensions[0].to("ppm", "nmr_frequency_ratio")
 
     fig, ax = plt.subplots(1, 2, figsize=(9, 3.5), subplot_kw={"projection": "csdm"})
@@ -195,7 +216,7 @@ method of the
     ax[1].plot(exp_spectrum.real, label="real")
     ax[1].plot(exp_spectrum.imag, label="imag")
     ax[1].set_title("Zoomed Spectrum")
-    ax[1].set_xlim(-15, 15)
+    ax[1].set_xlim(-20, 10)
     ax[1].grid()
     plt.tight_layout()
     plt.legend()
@@ -242,7 +263,7 @@ Create Fitting Model
 --------------------
 
 To create a proper fitting model, you'll need more information about the nuclei
-being observed, the material's phase, and some idea about the local structure
+being observed, the material's phase and some idea about the local structure
 around the atoms holding the observed nuclei. In this example, you know that
 you are working with :math:`^{27}\text{Al}`, a quadrupolar nucleus with a
 half-integer spin of 5/2, and that the material, :math:`\text{Al(acac)$_3$}`,
@@ -259,51 +280,17 @@ central :math:`m = \tfrac{1}{2}\rightarrow-\tfrac{1}{2}` transition of
 detected than the other transitions.  Armed with this understanding of the
 sample and method, you can proceed to create the fitting model.
 
-Start by creating the Method object to model the experimental method used to
-acquire the spectrum. Choose the
-:py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method since the
-measurement is designed to excite only the central transition of the
-:math:`^{27}\text{Al}` nuclei. From the CSDM object holding the experimental
-spectrum, i.e., ``exp_spectrum``, you can extract the relevant parameters for
-the ``spectral_dimensions`` attribute of the
-BlochDecayCTSpectrum method using the
-fitting utility function
-:py:meth:`~mrsimulator.utils.get_spectral_dimensions`. The experimental
-measurement parameters associated with the method attributes
-``magnetic_flux_density`` and ``rotor_frequency`` are also used in creating
-this BlochDecayCTSpectrum method.
-Finally, every Method object has the ``experiment`` attribute used to hold the
-experimental spectrum that is to be modeled with the Method object.
-
-.. skip: next
-
-.. plot::
-    :context: close-figs
-
-    from mrsimulator.method.lib import BlochDecayCTSpectrum
-    from mrsimulator.utils import get_spectral_dimensions
-
-    spectral_dims = get_spectral_dimensions(exp_spectrum)
-    MAS = BlochDecayCTSpectrum(
-        channels=["27Al"],
-        magnetic_flux_density=9.4,  # in T
-        rotor_frequency=12500,  # in Hz
-        spectral_dimensions=spectral_dims,
-        experiment=exp_spectrum,  # add the measurement to the method.
-    )
-
-
-To build a spin system, you need to know how many magnetically inequivalent
-nuclei are in the sample and if there are couplings between them. Inspection of
+To build a spin system, you must know how many magnetically inequivalent
+nuclei are in the sample and whether couplings are between them. Inspection of
 the spectrum reveals an anisotropic lineshape that appears to be characteristic
 of the second-order MAS lineshape of a single site. Knowing this requires that
-you are already familiar with such lineshapes (**mrsimulator** can help with
+you are already familiar with such lineshapes (**MRSimulator** can help with
 that!). One might also hypothesize that there may be other sites with lower
 intensity present in the spectrum, or perhaps the spectrum, as noted earlier,
 is from a distribution of :math:`^{27}\text{Al}` sites with very similar efg
 tensor parameters and dipolar couplings among them. These are all valid
 hypotheses and could be used to create more elaborate and perhaps even more
-realistic spin system models. For now, you can choose the simplest spin system
+realistic spin system models. You can now choose the simplest spin system
 model with a single
 :math:`^{27}\text{Al}` site,  as shown in the code below.
 
@@ -316,7 +303,7 @@ model with a single
 
     site = Site(
         isotope="27Al",
-        isotropic_chemical_shift=5,
+        isotropic_chemical_shift=0,
         quadrupolar={"Cq": 3e6, "eta": 0.0},
     )
     sys = SpinSystem(sites=[site])
@@ -324,9 +311,47 @@ model with a single
 The tensor parameters above are an educated guess for the tensor parameters,
 which can be iteratively refined using the code that follows.
 
+Next, we create the Method instance to model the experimental method used to
+acquire the spectrum. Choose the
+:py:meth:`~mrsimulator.method.lib.base.BlochDecayCTSpectrum()` method since the
+measurement is designed to excite only the central transition of the
+:math:`^{27}\text{Al}` nuclei. From the CSDM instance holding the experimental
+spectrum, i.e., ``exp_spectrum``, you can extract the relevant parameters for
+the ``spectral_dimensions`` attribute of the BlochDecayCTSpectrum method
+using the fitting utility function
+:py:meth:`~mrsimulator.utils.get_spectral_dimensions`. The experimental
+measurement parameters associated with the method attributes
+``magnetic_flux_density`` and ``rotor_frequency`` are also used in creating
+this BlochDecayCTSpectrum method.  Finally, the Method class has the
+``experiment`` attribute used to hold the experimental spectrum that is
+to be modeled with the Method class.
 
-Create the simulator object initialized with the SpinSystem and Method objects
-and run.
+.. skip: next
+
+.. plot::
+    :context: close-figs
+
+    from mrsimulator.method.lib import BlochDecayCTSpectrum
+    from mrsimulator.utils import get_spectral_dimensions
+    from mrsimulator.spin_system.isotope import Isotope
+
+    spectral_dims = get_spectral_dimensions(exp_spectrum)
+
+    Al27 = Isotope(symbol="27Al")
+    origin_offset = spectral_dims[0]["origin_offset"]
+    B0 = Al27.ref_freq_to_B0(origin_offset)
+
+    MAS = BlochDecayCTSpectrum(
+        channels=["27Al"],
+        magnetic_flux_density=B0,  # in T
+        rotor_frequency=12500,  # in Hz
+        spectral_dimensions=spectral_dims,
+        experiment=exp_spectrum,  # add the measurement to the method.
+    )
+
+
+Create the simulator instance initialized with the SpinSystem and Method
+instances and run.
 
 .. skip: next
 
@@ -336,21 +361,21 @@ and run.
     sim = Simulator(spin_systems=[sys], methods=[MAS])
     sim.run()
 
-Before comparing the simulation to the experimental spectrum, you need to add
-the Gaussian line broadening to the simulation. Setup a SignalProcessor object
-to do a Gaussian lineshape convolution with an FWHM of 50 Hz.
+Next, two convolutions are needed to model the acquired spectrum correctly: a step function to account for the truncation of the echo signal at -8.16 ms, and a Gaussian line shape convolution as an ad-hoc modeling of other residual line broadenings, including transverse relaxation.
 
 Additionally, you must scale the simulation in intensity to match the
 experimental spectrum. You may have noticed in earlier plots that the vertical
 axis of the experimental spectrum plot was on the order of 1e6. Use numpy
 `max() <https://numpy.org/doc/stable/reference/generated/numpy.maximum.html>`_ to
-get the highest amplitude, set that as the factor as a Scale operation in the
-SignalProcessor.
+get the highest amplitude, set that as the factor as a Scale operation
+in the SignalProcessor.
 
 .. skip: next
 
 .. plot::
     :context: close-figs
+
+    from mrsimulator import signal_processor as sp
 
     # Post Simulation Processing
     # --------------------------
@@ -358,6 +383,7 @@ SignalProcessor.
     processor = sp.SignalProcessor(
         operations=[
             sp.IFFT(),
+            sp.apodization.TopHat(rising_edge="-8.16 ms"),
             sp.apodization.Gaussian(FWHM="50 Hz"),
             sp.FFT(),
             sp.Scale(factor=relative_intensity_factor)
@@ -365,9 +391,11 @@ SignalProcessor.
     )
     processed_dataset = processor.apply_operations(dataset=sim.methods[0].simulation).real
 
+Here, a SignalProcessor instance is created and initialized with four operations.  The first is the ``IFFT()`` to transform the simulation into the time domain.  Recall that **MRSimulator** generates real pure absorption mode spectrum, i.e., with no imaginary part.  Thus, the result of the ``IFFT()`` operation is a complex time-domain signal with amplitude in both positive and negative time.  The second operation is a `TopHat()` apodization with the position of the rising and falling edges as arguments.  The default values of ``rising_edge`` and ``falling_edge`` attributes are :math:`-\infty` and :math:`\infty`, respectively.  In this case, we set the rising edge to :math:`{-8.16 \:\text{ms}}`, where the acquisition of the experimental echo signal begins.  The third operation is a ``Gaussian()`` apodization using a FWHM of 50 Hz. The fourth operation is the ``FFT()``, transforming the simulation back into the frequency domain.  The final operation scales the simulation intensity to match the experimental spectrum.
 
-You now have set up and simulated the first guess in modeling the experimental
-spectrum. Plot it and see how it compares to the experimental spectrum.
+You now have set up and simulated the first guess in modeling
+the experimental spectrum. Plot it and see how it compares to
+the experimental spectrum.
 
 .. skip: next
 
@@ -380,7 +408,7 @@ spectrum. Plot it and see how it compares to the experimental spectrum.
     ax = plt.subplot(projection="csdm")
     ax.plot(exp_spectrum, label="Experiment")
     ax.plot(processed_dataset, label="Guess Spectrum")
-    ax.set_xlim(-15, 15)
+    ax.set_xlim(-20, 10)
     plt.legend()
     plt.grid()
     plt.tight_layout()
@@ -407,9 +435,9 @@ Define the fit parameters
 '''''''''''''''''''''''''
 
 
-Begin by using an **mrsimulator** utility function
+Begin by using an **MRSimulator** utility function
 :py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params` to extract a
-list of LMFIT parameters from the Simulator and SignalProcessor objects.
+list of LMFIT parameters from the Simulator and SignalProcessor instances.
 
 .. skip: next
 
@@ -493,7 +521,7 @@ The least-squares analysis is performed by creating an `LMFIT
 <https://lmfit.github.io/lmfit-py/>`_ `Minimizer
 <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_
 object initialized with a chi-squared function and the fit parameters
-(``fit_parameters``). Any additional objects needed to evaluate the chi-squared
+(``fit_parameters``). Any additional instances needed to evaluate the chi-squared
 function are placed in ``fcn_args``.
 For :py:meth:`~mrsimulator.utils.spectral_fitting.LMFIT_min_function`,
 ``fcn_args`` needs to hold the Simulator, SignalProcessor, and the experimental
@@ -503,14 +531,14 @@ After the
 `minimize() <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.minimize>`_
 function of the
 `Minimizer <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.Minimizer>`_
-object exits, the parameters in the Simulator and SignalProcessor are updated
+instance exits, the parameters in the Simulator and SignalProcessor are updated
 with the best-fit parameters and the results of the least-squares analysis is
 returned as an
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_
-object containing the optimized parameters and several goodness-of-fit
+instance containing the optimized parameters and several goodness-of-fit
 statistics.
 
-Use the code below to create and initialize the ``Minimizer`` object, run the
+Use the code below to create and initialize the ``Minimizer`` instance, run the
 minimization, and print the
 `MinimizerResult <https://lmfit-py.readthedocs.io/en/latest/fitting.html#lmfit.minimizer.MinimizerResult>`_.
 
@@ -565,10 +593,10 @@ Compare experimental and best-fit spectra with residuals
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 You can now plot the experimental and best-fit simulated spectra along with the
-residuals.  Use the **mrsimulator** utility
+residuals.  Use the **MRSimulator** utility
 function :py:meth:`~mrsimulator.utils.spectral_fitting.bestfit`
 and :py:meth:`~mrsimulator.utils.spectral_fitting.residuals` to extract the
-best-fit simulation and the residuals as CSDM objects.
+best-fit simulation and the residuals as CSDM instances.
 
 .. skip: next
 
@@ -584,7 +612,7 @@ best-fit simulation and the residuals as CSDM objects.
     ax.plot(exp_spectrum, label="Experiment")
     ax.plot(best_fit, alpha=0.75, label="Best Fit")
     ax.plot(residuals, alpha=0.75, label="Residuals")
-    ax.set_xlim(-15, 15)
+    ax.set_xlim(-20, 10)
     plt.legend()
     plt.grid()
     plt.tight_layout()
@@ -595,9 +623,9 @@ The Minimizer will improve the fit parameters even if the initial parameters are
 far from the best-fit values. However, if the initial parameters are too far
 away, the Minimizer may not reach the best-fit parameters in a single run. If
 you think that may be the case, you can re-extract a new initial guess from the
-Simulator and SignalProcessor objects using
+Simulator and SignalProcessor instances using
 :py:meth:`~mrsimulator.utils.spectral_fitting.make_LMFIT_params`, create and
-initialize a new Minimizer object as before, and run again, i.e., rerun the
+initialize a new Minimizer instance as before, and run again, i.e., rerun the
 code starting at the beginning of this section. You may see that the fit
 improves and gives a lower chi-squared value.
 
@@ -621,7 +649,10 @@ parameter to be a fit parameter, and rerun the analysis.
         fcn_args=(sim, processor, sigma),
         fcn_kws={"opt": opt}
     )
-    result = minner.minimize()
+    result = minner.minimize(method="powell")
+    result = minner.minimize(
+        params=result.params, method="leastsq"
+    )
 
     best_fit = sf.bestfit(sim, processor)[0].real
     residuals = sf.residuals(sim, processor)[0].real
@@ -632,7 +663,7 @@ parameter to be a fit parameter, and rerun the analysis.
     ax.plot(exp_spectrum, label="Experiment")
     ax.plot(best_fit, alpha=0.75, label="Best Fit")
     ax.plot(residuals, alpha=0.75, label="Residuals")
-    ax.set_xlim(-15, 15)
+    ax.set_xlim(-20, 10)
     plt.legend()
     plt.grid()
     plt.tight_layout()

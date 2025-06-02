@@ -3,7 +3,7 @@
 Extended Czjzek distribution
 ----------------------------
 
-The Extended Czjzek distribution models random variations of second-rank traceless symmetric tensors about a non-zero tensor. Unlike the Czjzek distribution, the Extended Czjzek model has no known analytical function for the probability distribution. Therefore, mrsimulator relies on random sampling to approximate the probability distribution function. See :ref:`ext_czjzek_model` and references within for a further description of the model.
+The Extended Czjzek distribution models random variations of second-rank traceless symmetric tensors about a non-zero tensor. Unlike the Czjzek distribution, the Extended Czjzek model has no known analytical function for the probability distribution. Therefore, MRSimulator relies on random sampling to approximate the probability distribution function. See :ref:`ext_czjzek_model` and references within for a further description of the model.
 
 Extended Czjzek distribution of symmetric shielding tensors
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -29,8 +29,8 @@ extended Czjzek distribution about a second-rank traceless symmetric shielding t
 described by anisotropy of 80 ppm and an asymmetry parameter of 0.4. The perturbation
 fraction is 0.1.
 
-As before, you may either draw random samples from this distribution or generate a
-probability distribution function. Let's first draw points from this distribution, using
+As before, you may draw random samples from this distribution or generate a
+probability distribution function. Let's first draw points from this distribution using
 the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the instance.
 
 .. plot::
@@ -39,7 +39,7 @@ the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.rvs` method of the insta
     zeta_dist, eta_dist = shielding_model.rvs(size=50000)
 
 In the above example, we draw *size=50000* random points of the distribution. The output
-``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points, defined
+``zeta_dist`` and ``eta_dist`` hold the tensor parameter coordinates of the points defined
 in the Haeberlen convention.
 The scatter plot of these coordinates is shown below.
 
@@ -52,8 +52,8 @@ The scatter plot of these coordinates is shown below.
     import matplotlib.pyplot as plt
 
     plt.scatter(zeta_dist, eta_dist, s=4, alpha=0.01)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.xlim(60, 100)
     plt.ylim(0, 1)
     plt.tight_layout()
@@ -88,7 +88,7 @@ two dimensions. In the above example, ``Cq_range`` and ``eta_range`` are the
 range of :math:`\text{Cq}` and :math:`\eta_q` coordinates, which is then given as the
 argument to the :py:meth:`~mrsimulator.models.ExtCzjzekDistribution.pdf` method. The pdf
 method also accepts the keyword argument ``size`` which defines the number of random samples
-used to approximate the probability distribution. A larger number will create better
+to approximate the probability distribution. A larger number will create better
 approximations, although this increased quality comes at the expense of computation time.
 The output ``Cq_grid``, ``eta_grid``, and ``amp`` hold the two coordinates and
 amplitude, respectively.
@@ -105,7 +105,7 @@ The plot of the extended Czjzek probability distribution is shown below.
 
     plt.contourf(Cq_grid, eta_grid, amp, levels=10)
     plt.xlabel("$C_q$ / MHz")
-    plt.ylabel("$\eta$")
+    plt.ylabel("$\\eta$")
     plt.tight_layout()
     plt.show()
 
@@ -114,7 +114,7 @@ Extended Czjzek distribution in polar coordinates
 
 As with the Czjzek distribution, we can sample an Extended Czjzek distribution on a polar
 (x, y) grid. Below, we construct two equivalent
-:py:class:`~mrsimulator.models.ExtCzjzekDistribution` objects, except one is defined in polar
+:py:class:`~mrsimulator.models.ExtCzjzekDistribution` instances, except one is defined in polar
 coordinates.
 
 .. skip: next
@@ -141,7 +141,7 @@ coordinates.
     fig, ax = plt.subplots(1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": (5, 4)})
     ax[0].contourf(Cq_grid, eta_grid, amp, levels=10)
     ax[0].set_xlabel("$C_q$ / MHz")
-    ax[0].set_ylabel("$\eta$")
+    ax[0].set_ylabel("$\\eta$")
     ax[0].set_title("Cartesian coordinates")
     ax[1].contourf(x_grid, y_grid, amp_polar, levels=10)
     ax[1].set_xlabel("x / MHz")

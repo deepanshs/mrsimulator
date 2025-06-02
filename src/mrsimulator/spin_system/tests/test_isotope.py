@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 from mrsimulator.spin_system.isotope import get_isotope_dict
 from mrsimulator.spin_system.isotope import Isotope
@@ -15,7 +16,11 @@ def test_isotope():
     assert silicon.natural_abundance == 4.683
     assert silicon.quadrupole_moment == 0.0
     assert silicon.spin == 0.5
-    assert silicon.larmor_freq(B0=11.75) == 99.46962016339306
+    assert silicon.efg_to_Cq == 0
+    assert np.allclose(silicon.larmor_freq(B0=11.75), 99.46962016339306e6)
+    silicon_ref_freq = 99.3895867929281e6
+    assert np.allclose(silicon.B0_to_ref_freq(B0=11.75), silicon_ref_freq)
+    assert np.allclose(silicon.ref_freq_to_B0(ref_freq=silicon_ref_freq), 11.75)
 
     proton = Isotope(symbol="1H")
     assert proton.atomic_number == 1
@@ -23,7 +28,16 @@ def test_isotope():
     assert proton.natural_abundance == 99.985
     assert proton.quadrupole_moment == 0.0
     assert proton.spin == 0.5
-    assert proton.larmor_freq(B0=9.40) == -400.2283045725638
+    assert silicon.efg_to_Cq == 0
+    assert np.allclose(proton.larmor_freq(B0=9.40), -400.2283045725638e6)
+    proton_ref_freq = 400.21604182989006e6
+    assert np.allclose(proton.B0_to_ref_freq(B0=9.40), proton_ref_freq)
+    assert np.allclose(proton.ref_freq_to_B0(ref_freq=proton_ref_freq), 9.40)
+
+    americium = Isotope(symbol="243Am")
+    assert americium.atomic_number == 95
+    assert americium.reference.ratio == 10.956895712592464
+    assert np.allclose(americium.B0_to_ref_freq(B0=11.75), 54.81406791045811e6)
 
     nitrogen = Isotope(symbol="14N")
     assert nitrogen.atomic_number == 7
@@ -31,7 +45,11 @@ def test_isotope():
     assert nitrogen.natural_abundance == 99.634
     assert nitrogen.quadrupole_moment == 0.0193
     assert nitrogen.spin == 1
-    assert nitrogen.larmor_freq(B0=18.79) == -57.830093199115574
+    assert nitrogen.efg_to_Cq == 4534820.208433115
+    assert np.allclose(nitrogen.larmor_freq(B0=18.79), -57.830093199115574e6)
+    nitrogen_ref_freq = 57.81099284148487e6
+    assert np.allclose(nitrogen.B0_to_ref_freq(B0=18.79), nitrogen_ref_freq)
+    assert np.allclose(nitrogen.ref_freq_to_B0(ref_freq=nitrogen_ref_freq), 18.79)
 
     error = "Isotope symbol `x` not recognized."
     with pytest.raises(Exception, match=error):

@@ -25,6 +25,7 @@ def core_simulator(method,
        unsigned int integration_volume=1,
        unsigned int isotropic_interpolation=0,
        unsigned int number_of_gamma_angles=1,
+       bool_t is_complex=True,
        bool_t interpolation=True,
        bool_t auto_switch=True,
        debug=False,
@@ -66,13 +67,14 @@ def core_simulator(method,
         averaging_scheme = clib.MRS_create_averaging_scheme_from_alpha_beta(
             alpha=&alpha[0], beta=&beta[0], weight=&weight[0], n_angles=alpha.size,
             allow_4th_rank=allow_4th_rank, n_gamma=number_of_gamma_angles,
-            position_size=position_size, positions=&positions[0], interpolation=interpolation
+            position_size=position_size, positions=&positions[0], interpolation=interpolation,
+            is_complex=is_complex
         )
     else:
         averaging_scheme = clib.MRS_create_averaging_scheme(
             integration_density=integration_density, allow_4th_rank=allow_4th_rank,
             n_gamma=number_of_gamma_angles, integration_volume=integration_volume,
-            interpolation=interpolation
+            interpolation=interpolation, is_complex=is_complex
         )
 
 # create C spectral dimensions ________________________________________________
@@ -112,7 +114,7 @@ def core_simulator(method,
         n_ev = 0
         track = []
         for event in dim.events:
-            if event.__class__.__name__ != "MixingEvent":
+            if event.__class__.__name__ not in ["MixingEvent", "RotationEvent"]:
                 freq_contrib = np.append(freq_contrib, event._freq_contrib_flags())
 
                 if event.rotor_frequency < 1.0e-3:
@@ -210,6 +212,7 @@ def core_simulator(method,
     cdef ndarray[int] spin_index_ij
     cdef ndarray[float] spin_i
     cdef ndarray[double] gyromagnetic_ratio_i
+    cdef ndarray[double]  one_minus_sigma_iso_ref_i
 
     # CSA
     cdef ndarray[double] iso_n
@@ -265,6 +268,7 @@ def core_simulator(method,
         # CSA
         spin_i = np.empty(number_of_sites, dtype=np.float32)
         gyromagnetic_ratio_i = np.empty(number_of_sites, dtype=np.float64)
+        one_minus_sigma_iso_ref_i = np.empty(number_of_sites, dtype=np.float64)
 
         iso_n = np.zeros(number_of_sites, dtype=np.float64)
         zeta_n = np.zeros(number_of_sites, dtype=np.float64)
@@ -282,6 +286,7 @@ def core_simulator(method,
             site = spin_sys.sites[i]
             spin_i[i] = site.isotope.spin
             gyromagnetic_ratio_i[i] = site.isotope.gyromagnetic_ratio
+            one_minus_sigma_iso_ref_i[i] = site.isotope.ref_larmor_ratio
             i3 = 3*i
 
             # CSA tensor
@@ -330,6 +335,7 @@ def core_simulator(method,
         sites_c.number_of_sites = number_of_sites
         sites_c.spin = &spin_i[0]
         sites_c.gyromagnetic_ratio = &gyromagnetic_ratio_i[0]
+        sites_c.one_minus_sigma_iso_ref = &one_minus_sigma_iso_ref_i[0]
 
         sites_c.isotropic_chemical_shift_in_ppm = &iso_n[0]
         sites_c.shielding_symmetric_zeta_in_ppm = &zeta_n[0]

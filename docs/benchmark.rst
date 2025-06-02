@@ -4,7 +4,7 @@
 Performance benchmark
 =====================
 
-One of the objectives in the design of the **mrsimulator** library is to enable
+One of the objectives in the design of the **MRSimulator** library is to enable
 fast NMR spectrum simulation.
 For this, we have put considerable effort into optimizing the library.
 The following benchmark shows the library's performance in computing the

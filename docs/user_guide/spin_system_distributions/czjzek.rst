@@ -5,7 +5,7 @@ Czjzek distribution
 
 The Czjzek distribution models random variations of second-rank traceless
 symmetric tensors about zero, i.e., a tensor with zeta of zero. An analytical expression
-for the Czjzek distribution exists (cite) which follows
+for the Czjzek distribution exists (cite), which follows
 
 .. math::
     f(\zeta, \eta, \sigma) = \eta \left(1-\frac{\eta^2}{9}\right)\frac{\zeta^4}{32\sigma^5 \sqrt{2 \pi}} \times \exp\left(-\frac{\zeta^2}{8\sigma^2}\left(1+\frac{\eta^2}{3}\right)\right),
@@ -13,7 +13,7 @@ for the Czjzek distribution exists (cite) which follows
 where :math:`\zeta` and :math:`\eta` are the Haberlen components of the tensor and :math:`\sigma` is the Czjzek width parameter. See :ref:`czjzek_model` for a further mathematical description of the model.
 
 The remainder of this page quickly describes how to generate Czjzek distributions and generate
-:py:class:`~mrsimulator.spin_system.SpinSystem` objects from these distributions. Also, look at the
+:py:class:`~mrsimulator.spin_system.SpinSystem` instances from these distributions. Also, look at the
 gallery examples using the Czjzek distribution listed at the bottom of this page.
 
 Creating and sampling a Czjzek distribution
@@ -55,8 +55,8 @@ In the above example, we draw *50000* random points of the distribution. The out
     import matplotlib.pyplot as plt
 
     plt.scatter(zeta_dist, eta_dist, s=4, alpha=0.02)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.xlim(-15, 15)
     plt.ylim(0, 1)
     plt.tight_layout()
@@ -76,7 +76,7 @@ The :py:class:`~mrsimulator.models.czjzek.CzjzekDistribution` class also support
             \end{array}
             \right.\end{split}
 
-Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is re-express as the x-y Cartesian grid following,
+Because Cartesian grids are more manageable in computation, the above polar piece-wise grid is re-expressed as the x-y Cartesian grid following,
 
 .. math::
 
@@ -116,11 +116,11 @@ Generating probability distribution functions from a Czjzek model
 The :py:meth:`~mrsimulator.models.CzjzekDistribution.pdf` instance method will generate a
 probability distribution function on the supplied grid using the analytical function defined above.
 The provided grid -- passed to the ``pos`` keyword argument -- needs to be defined in either
-Cartesian or polar coordinates depending on if the
+Cartesian or polar coordinates, depending on whether the
 :py:attr:`~mrsimulator.models.CzjzekDistribution.polar` attribute is ``True`` or ``False``.
 
 Below, we generate and plot a probability distribution on a :math:`\zeta`-:math:`\eta` Cartesian
-grid where ``zeta_range`` and ``eta_range`` define the desired coordinates in each dimension of the
+grid where ``zeta_range`` and ``eta_range`` define the desired coordinates in each dimension of thes
 grid system.
 
 .. plot::
@@ -146,8 +146,8 @@ on the grid. Below, the distribution is plotted
 
 
     plt.contourf(zeta_grid, eta_grid, amp, levels=10)
-    plt.xlabel("$\zeta$ / ppm")
-    plt.ylabel("$\eta$")
+    plt.xlabel("$\\zeta$ / ppm")
+    plt.ylabel("$\\eta$")
     plt.tight_layout()
     plt.show()
 
@@ -214,8 +214,8 @@ be in units of MHz when sampling quadrupolar tensors in polar coordinates.
     y_range = np.linspace(0, 10, num=150)  # pre-defined y grid in units of MHz
     x_grid, y_grid, amp = cz_model_polar.pdf(pos=[x_range, y_range])
 
-Generating a list of SpinSystem objects from a Czjzek model
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Generating a list of SpinSystem instances from a Czjzek model
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 The utility function :py:meth:`~mrsimulator.utils.collection.single_site_system_generator`, further
 described in :ref:`single_site_system_generator_documentation`, can be used in conjunction with

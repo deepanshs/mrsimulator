@@ -216,7 +216,7 @@ intersphinx_mapping = {
 }
 
 rst_prolog = """
-.. |PY_VERSION| replace:: 3.8
+.. |PY_VERSION| replace:: 3.10
 """
 
 # ---------------------------------------------------------------------------- #
@@ -363,7 +363,7 @@ html_theme_options = {
 }
 
 html_style = "style.css"
-html_title = f"mrsimulator:docs v{__version__}"
+html_title = f"mrsimulator: docs v{__version__}"
 html_logo = "_static/mrsimulator_logo.png"
 html_favicon = "_static/favicon.ico"
 html_last_updated_fmt = ""

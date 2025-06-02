@@ -4,7 +4,7 @@
 Methods Library
 ===============
 
-For convenience, **mrsimulator** offers the following pre-built methods -
+For convenience, **MRSimulator** offers the following pre-built methods -
 
 * :ref:`bloch_decay`
 * :ref:`bloch_decay_CT`

@@ -60,6 +60,7 @@ typedef struct MRS_averaging_scheme {
   unsigned int position_size;  // number of triangle vertexes (faces) on mesh
   bool user_defined;           // if true, the scheme is user defined
   bool interpolation;          // if true, use frequency triangle interpolation
+  bool is_complex;             // return cmoplex simulation
 } MRS_averaging_scheme;
 
 // typedef struct MRS_averaging_scheme;
@@ -86,7 +87,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
                                                   bool allow_4th_rank,
                                                   unsigned int n_gamma,
                                                   unsigned int integration_volume,
-                                                  bool interpolation);
+                                                  bool interpolation, bool is_complex);
 
 /**
  * Create a new orientation averaging scheme from given alpha and beta.
@@ -109,7 +110,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(unsigned int integration_densi
 MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
     double *alpha, double *beta, double *weight, unsigned int n_angles,
     bool allow_4th_rank, unsigned int n_gamma, const unsigned int position_size,
-    int32_t *positions, bool interpolation);
+    int32_t *positions, bool interpolation, bool is_complex);
 
 /**
  * Free the memory allocated for the spatial orientation averaging scheme.

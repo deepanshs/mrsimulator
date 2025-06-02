@@ -416,7 +416,7 @@ void MRS_get_normalized_frequencies_from_plan(MRS_averaging_scheme *scheme,
     fraction_duration = dim->inverse_increment * fraction;
   } else {
     local_frequency = dim->local_phase;
-    cblas_dscal(freq_size, 0.0, local_frequency, 1);
+    vm_double_zeros(freq_size, local_frequency);
     fraction_duration = CONST_2PI * duration;
   }
 
@@ -528,7 +528,8 @@ static inline void MRS_rotate_single_site_interaction_components(
     /*  Upto the first order */
     FT_1st_order_nuclear_shielding_tensor_components(
         F0_temp, F2_shield,
-        sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz,
+        sites->isotropic_chemical_shift_in_ppm[i] * larmor_freq_in_MHz *
+            sites->one_minus_sigma_iso_ref[i],
         sites->shielding_symmetric_zeta_in_ppm[i] * larmor_freq_in_MHz,
         sites->shielding_symmetric_eta[i], &sites->shielding_orientation[3 * i], *mf,
         *mi);

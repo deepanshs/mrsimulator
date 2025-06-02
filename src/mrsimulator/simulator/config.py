@@ -37,7 +37,7 @@ class CustomSampling(BaseModel):
         An array of size N of :math:`\alpha` angle coordinates in radians.
 
     beta: ndarray
-        An array of size N of :math:`\beta' angle coordinates in radians.
+        An array of size N of :math:`\beta` angle coordinates in radians.
 
     weight: ndarray
         An array of size N of weights corresponding to :math:`(\alpha, \beta)`
@@ -66,7 +66,7 @@ class CustomSampling(BaseModel):
         if units == "rad":
             array = np.array([self.alpha, self.beta, self.weight])
         if units == "deg":
-            fn = rad_to_deg
+            fn = np.rad2deg
             array = np.array([fn(self.alpha), fn(self.beta), self.weight])
         header = (
             str(array.shape[1]) if target == StrType.simpson else "alpha beta gamma"
@@ -128,6 +128,10 @@ class ConfigSimulator(Parseable):
         A CustomSampling object specifying the coordinates and weights used in powder
         averaging.
 
+    is_complex: bool
+        When True, the simulation computes both real and imaginary components of the
+        signal. When False, only the real component is computed. Default is True.
+
     Example
     -------
 
@@ -146,6 +150,7 @@ class ConfigSimulator(Parseable):
     decompose_spectrum: Literal["none", "spin_system"] = "none"
     isotropic_interpolation: Literal["linear", "gaussian"] = "linear"
     custom_sampling: Optional[CustomSampling] = None
+    is_complex: bool = True
 
     class Config:
         extra = "forbid"
@@ -214,13 +219,3 @@ class ConfigSimulator(Parseable):
             __integration_volume_enum__[self.integration_volume]
         ]
         return int(vol * (n + 1) * (n + 2) / 2) * self.number_of_gamma_angles
-
-
-def rad_to_deg(vec):
-    """Convert radians to degrees"""
-    return vec * 180.0 / np.pi
-
-
-def deg_to_rad(vec):
-    """Convert degrees to radians"""
-    return vec * np.pi / 180.0

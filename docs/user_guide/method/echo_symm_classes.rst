@@ -36,7 +36,7 @@
 
         \overline{{\Xi}_k {\xi}_k} = \frac{1}{t} \int_0^t {\Xi}_k(t') \, {\xi}_k(t')  \, dt' = 0.
 
-    Within the class of transition echoes we find subclasses such as
+    Within the class of transition echoes, we find subclasses such as
     :math:`\text{p}` echoes, which include the Hahn echo and the stimulated
     echo; :math:`\text{d}` echoes, which include the solid echo and Solomon
     echoes,  :math:`\text{c}_4` echoes, used in MQ-MAS and Satellite-Transition
@@ -45,7 +45,7 @@
     :math:`\text{c}_0` echoes, used in Multiple-Quantum DOuble Rotation
     (MQ-DOR).
 
-    Within the class of spatial echoes we find subclasses such as :math:`\mathbb{D}`
+    Within the class of spatial echoes, we find subclasses such as :math:`\mathbb{D}`
     rotary echoes, which occur during sample rotation, and :math:`\mathbb{D}_0` and
     :math:`\mathbb{G}_0` echoes, which are designed to occur simultaneously during the
     Dynamic-Angle Spinning (DAS) experiment.

@@ -7,8 +7,8 @@ Single Site System Generator
 Custom Site and SpinSystem parameters can be passed to the
 :py:meth:`~mrsimulator.utils.collection.single_site_system_generator` method to create a list
 of uncoupled spin systems. Each :ref:`spin_sys_api` in the returned list holds a single
-:ref:`site_api` object since the backend simulation is more efficient for single site spin
-systems. Import the method as below
+:ref:`site_api` instance since the backend simulation is more efficient for single-site spin
+systems. Import the method as shown below
 
 .. code-block:: python
 
@@ -35,7 +35,7 @@ have the same length, otherwise an error will be thrown. For example,
     Traceback (most recent call last):
     ...
     ValueError: An array or list was either too short or too long. All arguments must be the
-    same size. If one attribute is a type list of length n, then all attributes with list types
+    same size. If one attribute is a type list of length n, all attributes with list types
     must also be of length n, and all remaining attributes must be scalar (singular float, int,
     or str).
 
@@ -81,8 +81,8 @@ Passing lists of Tensor Parameters
 ----------------------------------
 
 Tensor parameters for sites are passed as dictionaries where the keywords represent the tensor
-attribute and the values are single values or a ``list``/``np.array`` of values. Again, these
-lists must have the same length of all other lists passed. Single values will be broadcast to a
+attribute, and the values are single values or a ``list``/``np.array`` of values. Again, these
+lists must have the same length as all other lists passed. Single values will be broadcast to a
 list of that value with the same length as other lists passed. For example
 
 .. code-block:: python

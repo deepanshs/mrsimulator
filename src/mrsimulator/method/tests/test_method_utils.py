@@ -4,6 +4,7 @@ from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
 from mrsimulator.method import MixingEvent
+from mrsimulator.method import RotationEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method.utils import combine_mixing_queries
 from mrsimulator.method.utils import mixing_query_connect_map
@@ -48,7 +49,7 @@ def test_nearest_mixing_query():
 
 
 def test_mixing_query_connect_map():
-    MX1 = MixingEvent(ch1={"angle": 0.12})
+    MX1 = RotationEvent(ch1={"angle": 0.12})
     MX2 = MixingEvent(ch2={"angle": 1.12})
 
     # Use MixingEvents with non-enum queries

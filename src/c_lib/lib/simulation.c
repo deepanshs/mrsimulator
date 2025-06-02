@@ -82,7 +82,7 @@ void __mrsimulator_core(
   // Loop over the dimension.
   for (dim = 0; dim < n_dimension; dim++) {
     // Reset the freqs to zero at the start of each spectral dimension.
-    cblas_dscal(total_pts, 0.0, dimensions[dim].local_frequency, 1);
+    vm_double_zeros(total_pts, dimensions[dim].local_frequency);
     dimensions[dim].R0_offset = 0.0;
 
     plan = dimensions[dim].events->plan;
@@ -187,6 +187,7 @@ void mrsimulator_core(
 
   bool allow_4th_rank = false;
   bool interpolation = true;
+  bool is_complex = true;
 
   if (sites[0].spin[0] > 0.5 && quad_second_order == 1) {
     allow_4th_rank = true;
@@ -199,8 +200,9 @@ void mrsimulator_core(
     number_of_sidebands = 1;
   }
 
-  MRS_averaging_scheme *scheme = MRS_create_averaging_scheme(
-      integration_density, allow_4th_rank, 9, integration_volume, interpolation);
+  MRS_averaging_scheme *scheme =
+      MRS_create_averaging_scheme(integration_density, allow_4th_rank, 9,
+                                  integration_volume, interpolation, is_complex);
 
   MRS_fftw_scheme *fftw_scheme =
       create_fftw_scheme(scheme->total_orientations, number_of_sidebands);
