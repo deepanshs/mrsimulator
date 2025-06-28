@@ -893,7 +893,7 @@ void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
     if (i < local_index) {
       temp += amp_address[int_j_stride + stride];
       __triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
-                               &amp1, &local_amp[0], &local_amp[1], &local_amp[2], spec,
+                               &temp, &local_amp[0], &local_amp[1], &local_amp[2], spec,
                                &m);
     } else {
       local_index = j + nt;
