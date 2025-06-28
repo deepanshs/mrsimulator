@@ -23,10 +23,8 @@
  *          1. gaussian-interpolation.
  */
 extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double *amp,
-                                     double *spec, int *m0, unsigned int iso_intrp);
-
-extern void triangle_interpolation1D_linear(double *f1, double *f2, double *f3,
-                                            double *amp, double *spec, int *m0);
+                                     double *local_amps, double *spec, int *m0,
+                                     unsigned int iso_intrp);
 
 extern void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
                             double *amp_real, double *amp_imag, int dimension_count,
@@ -60,8 +58,6 @@ extern void generic_1d_triangle_average(double *spec, const unsigned int freq_si
                                         const unsigned int position_size,
                                         int32_t *positions, const unsigned int nt);
 
-extern void triangle_interpolation1D_gaussian(double *f1, double *f2, double *f3,
-                                              double *amp, double *spec, int *m0);
 /**
  * @brief Rasterize a vector triangle with coordinates ((f11, f21), (f12, f22), (f13,
  * f23)) onto a 2D grid.

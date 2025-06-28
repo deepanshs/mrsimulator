@@ -88,25 +88,10 @@ cdef extern from "interpolation.h":
         double *freq2,
         double *freq3,
         double *amp,
+        double *local_amps,
         double *spec,
         int *points,
         unsigned int iso_intrp)
-
-    void triangle_interpolation1D_linear(
-        double *freq1,
-        double *freq2,
-        double *freq3,
-        double *amp,
-        double *spec,
-        int *points)
-
-    void triangle_interpolation1D_gaussian(
-        double *freq1,
-        double *freq2,
-        double *freq3,
-        double *amp,
-        double *spec,
-        int *points)
 
     void triangle_interpolation2D(
         double *freq11,
