@@ -27,10 +27,10 @@ extern void triangle_interpolation1D(double *f1, double *f2, double *f3, double 
                                      unsigned int iso_intrp);
 
 extern void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
-                            double *amp_real, double *amp_imag, int dimension_count,
-                            const unsigned int position_size, int32_t *positions,
-                            const unsigned int nt, bool user_defined,
-                            bool interpolation, bool is_complex);
+                            double *amp_real, double *amp_imag, double *rf_amps,
+                            int dimension_count, const unsigned int position_size,
+                            int32_t *positions, const unsigned int nt,
+                            bool user_defined, bool interpolation, bool is_complex);
 
 extern void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
                             double *freq2, double *amp, int amp_stride,
@@ -96,7 +96,8 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
                                   unsigned int iso_intrp);
 
 extern void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
-                                    double *amp, int stride, int m);
+                                    double *amp, int stride, double *rf_amps,
+                                    int rf_stride, int m);
 
 extern void octahedronInterpolation2D(double *spec, double *freq1, double *freq2,
                                       int nt, double *amp, int stride, int m0, int m1,
