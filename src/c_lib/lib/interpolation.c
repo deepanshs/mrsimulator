@@ -237,13 +237,6 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   double top, t, ta, top2, h;
   p = (int)(*freq1);
 
-  // check if the three points lie within a bin interval.
-  if (p == (int)(*freq2) && p == (int)(*freq3)) {
-    if (p >= *points || p < 0) return;
-    spec[2 * p] += *amp;
-    return;
-  }
-
   double f[3] = {freq1[0], freq2[0], freq3[0]};
   double amp_f[3] = {amp1[0], amp2[0], amp3[0]};
 
@@ -262,6 +255,14 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
     amp_f[i + 1] = ta;
   }
 
+  double f20 = f[2] - f[0], f21 = f[2] - f[1], f10 = f[1] - f[0];
+  // check if the three points lie within a bin interval.
+  if (p == (int)(*freq2) && p == (int)(*freq3)) {
+    if (p >= *points || p < 0) return;
+    h = (amp_f[2] * f21 + 2.0 * amp_f[1] * f20 + amp_f[0] * f10) / (3.0 * f20);
+    spec[2 * p] += *amp * h;
+    return;
+  }
   // if min frequency is higher than the last bin, return
   p = (int)f[0];
   if (p >= *points) return;
@@ -272,7 +273,7 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
 
   pmid = (int)f[1];
 
-  h = *amp * 2.0 / (f[2] - f[0]);
+  h = *amp * 2.0 / f20;
 
   bool clips[4];
   get_clipping_conditions(&p, &pmid, &pmax, points, clips);
@@ -870,40 +871,53 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
 }
 
 void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
-                             double *amp, int stride, int m) {
+                             double *amp, int stride, double *rf_amps, int rf_stride,
+                             int m) {
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
-  unsigned int int_i_stride = 0, int_j_stride = 0;
-  double amp1, temp, *amp_address, *freq_address;
-  double local_amp[3] = {1.0, 1.0, 1.0};
+  unsigned int i_stride = 0, j_stride = 0, i_rf_stride = 0, j_rf_stride = 0;
+  double amp1, temp, *amp_address, *freq_address, *rf_amp_address;
+  double amp_a, amp_b, amp_c, amp_max;
 
   /* Interpolate between 1d points by setting up triangles of unit area */
   local_index = nt - 1;
   amp_address = &amp[(nt + 1) * stride];
+  rf_amp_address = &rf_amps[(nt + 1) * rf_stride];
   freq_address = &freq[nt + 1];
 
   // Note, amp is the sum of amplitude at three vertexes because the factor 3 is already
   // applied to the amplitude vector.
   while (i < n_pts - 1) {
-    temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = temp + amp[int_i_stride];
+    temp = amp[i_stride + stride] + amp_address[j_stride];
+    amp1 = temp + amp[i_stride];
 
-    __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1,
-                             &local_amp[0], &local_amp[1], &local_amp[2], spec, &m);
+    amp_a = rf_amps[i_rf_stride];
+    amp_b = rf_amps[i_rf_stride + rf_stride];
+    amp_c = rf_amp_address[j_rf_stride];
+
+    __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, &amp_a,
+                             &amp_b, &amp_c, spec, &m);
 
     if (i < local_index) {
-      temp += amp_address[int_j_stride + stride];
+      temp += amp_address[j_stride + stride];
+
+      amp_a = rf_amps[i_rf_stride + rf_stride];
+      amp_b = rf_amp_address[j_rf_stride];
+      amp_c = rf_amp_address[j_rf_stride + rf_stride];
+
       __triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
-                               &temp, &local_amp[0], &local_amp[1], &local_amp[2], spec,
-                               &m);
+                               &temp, &amp_a, &amp_b, &amp_c, spec, &m);
     } else {
       local_index = j + nt;
       i++;
-      int_i_stride += stride;
+      i_stride += stride;
+      i_rf_stride += rf_stride;
     }
     i++;
     j++;
-    int_i_stride += stride;
-    int_j_stride += stride;
+    i_stride += stride;
+    j_stride += stride;
+    i_rf_stride += rf_stride;
+    j_rf_stride += rf_stride;
   }
 }
 
@@ -942,15 +956,16 @@ void hist1d(double *spec, const unsigned int freq_size, double *freq, double *am
 }
 
 void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
-                     double *amp_real, double *amp_imag, int dimension_count,
-                     const unsigned int position_size, int32_t *positions,
-                     const unsigned int nt, bool user_defined, bool interpolation,
-                     bool is_complex) {
+                     double *amp_real, double *amp_imag, double *rf_amps,
+                     int dimension_count, const unsigned int position_size,
+                     int32_t *positions, const unsigned int nt, bool user_defined,
+                     bool interpolation, bool is_complex) {
   if (!user_defined) {
     if (interpolation) {
-      octahedronInterpolation(spec, freq, nt, amp_real, 1, dimension_count);
+      octahedronInterpolation(spec, freq, nt, amp_real, 1, rf_amps, 2, dimension_count);
       if (is_complex) {
-        octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
+        octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, rf_amps + 1, 2,
+                                dimension_count);
       }
     } else {
       hist1d(spec, freq_size, freq, amp_real, dimension_count, nt);

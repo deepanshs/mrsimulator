@@ -112,6 +112,8 @@ cdef extern from "interpolation.h":
         int nt,
         double *amp,
         int stride,
+        double *rf_amps,
+        int rf_stride,
         int m)
 
 cdef extern from "mrsimulator.h":

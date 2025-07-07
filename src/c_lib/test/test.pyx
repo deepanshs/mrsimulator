@@ -171,11 +171,11 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):
+def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, np.ndarray[double, ndim=2] rf_amps, int stride=1, int rf_stride=1):
     cdef int i
     cdef int number_of_sidebands = amp.shape[0]
     for i in range(number_of_sidebands):
-        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, &rf_amps[i, 0], rf_stride, spec.size)
 
 
 @cython.boundscheck(False)
