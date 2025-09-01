@@ -8,6 +8,7 @@ from mrsimulator.utils.parseable import Parseable
 from . import affine as af  # noqa:F401
 from . import apodization as ap  # noqa:F401
 from . import baseline as bl  # noqa:F401
+from . import correction as cf  # noqa:F401
 from ._base import Operation
 
 
