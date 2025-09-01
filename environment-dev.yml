@@ -21,6 +21,7 @@ dependencies:
       - lmfit>=1.0.2
       - psutil>=5.4.8
       - joblib>=1.0.0
+      - emcee>=3.0.2
       # for testing
       - pytest<8.0
       - pytest-cov
