@@ -173,6 +173,8 @@ jobs:
       - run: |
           conda --version
           which python
+          find ${CONDA_PREFIX}/include -name "fftw3.h"
+          find ${CONDA_PREFIX}/include -name "cblas.h"
 
       - name: Build and install package from source
         shell: pwsh
