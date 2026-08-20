@@ -176,15 +176,15 @@ def c_setup_random_euler_angles(filename, group):
     pix2 = 2 * np.pi
     if group == "shielding_symmetric":
         for spin_system in sim.spin_systems:
-            spin_system.sites[0].shielding_symmetric.alpha = np.random.rand(1) * pix2
-            spin_system.sites[0].shielding_symmetric.beta = np.random.rand(1) * pix2
-            spin_system.sites[0].shielding_symmetric.gamma = np.random.rand(1) * pix2
+            spin_system.sites[0].shielding_symmetric.alpha = np.random.rand() * pix2
+            spin_system.sites[0].shielding_symmetric.beta = np.random.rand() * pix2
+            spin_system.sites[0].shielding_symmetric.gamma = np.random.rand() * pix2
 
     if group == "quadrupolar":
         for spin_system in sim.spin_systems:
-            spin_system.sites[0].quadrupolar.alpha = np.random.rand(1) * pix2
-            spin_system.sites[0].quadrupolar.beta = np.random.rand(1) * pix2
-            spin_system.sites[0].quadrupolar.gamma = np.random.rand(1) * pix2
+            spin_system.sites[0].quadrupolar.alpha = np.random.rand() * pix2
+            spin_system.sites[0].quadrupolar.beta = np.random.rand() * pix2
+            spin_system.sites[0].quadrupolar.gamma = np.random.rand() * pix2
 
     data_mrsimulator, _ = simulator_process(sim, data_object)
     return data_mrsimulator, data_source
