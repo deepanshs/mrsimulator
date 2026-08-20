@@ -114,7 +114,7 @@ jobs:
 
   testing_mac_intel:
     needs: [code_lint]
-    runs-on: "macos-13"
+    runs-on: "macos-15-intel"
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
