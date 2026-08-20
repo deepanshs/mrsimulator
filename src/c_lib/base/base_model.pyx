@@ -150,7 +150,7 @@ def core_simulator(method,
 
         dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
 
-    # Assing values to previously defined C numpy arrays
+    # Assign values to previously defined C numpy arrays
     frac = np.asarray(fr, dtype=np.float64)
     dur = np.asarray(du, dtype=np.float64)
     is_spectral = np.asarray(is_spec, dtype=np.uint8)

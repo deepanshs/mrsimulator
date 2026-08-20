@@ -1,6 +1,9 @@
 # Default requirements
-numpy>=1.20
+numpy>=2.0
 matplotlib>=3.3.4
+fonttools>=4.60.2
+brotli>=1.2.0
+tornado>=6.5.7
 csdmpy>=0.7
 astropy>=5.1
 pydantic>=2.8
@@ -19,7 +22,7 @@ pre-commit>=2.11.1
 
 # Test requirements
 sympy
-pytest
+pytest>=9.0.3,<10.0
 pytest-cov
 sybil>=3.0.0
 

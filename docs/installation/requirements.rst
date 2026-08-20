@@ -43,7 +43,7 @@ For ``MRSimulator`` developers, the following packages are required:
 
 *For unit tests*
 - sympy
-- pytest<8.0
+- pytest>=8.0,<9.0
 - pytest-cov
 - sybil>=3.0.0
 
