@@ -18,7 +18,7 @@ cython>=0.29.11
 
 # Formatting requirements
 black
-pre-commit>=2.11.1
+pre-commit>=4.6.2
 
 # Test requirements
 sympy
