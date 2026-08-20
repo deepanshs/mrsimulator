@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 # %%
 # Import the dataset
 # ------------------
-host = "http://ssnmr.org/sites/default/files/"
+host = "https://ssnmr.org/sites/default/files/"
 filename = "mrsimulator/La bc - LaY90 cpmg.csdf"
 experiment = cp.load(host + filename).real
 experiment.x[0].to("ppm", "nmr_frequency_ratio")
