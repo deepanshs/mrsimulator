@@ -187,7 +187,7 @@ jobs:
 
       - name: Set up QEMU
         if: startsWith(matrix.os, 'ubuntu') && matrix.cibw.arch
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: arm64
 
