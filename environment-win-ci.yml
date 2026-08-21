@@ -1,0 +1,13 @@
+# Minimal conda environment for Windows CI.
+# Only native libraries that must come from conda go here; everything else
+# (numpy, cython, matplotlib, pytest, ...) is installed via pip from
+# requirements-dev.txt, same as the Linux/macOS CI jobs. Keeping this list
+# short makes the conda solve/install step much faster.
+name: mrsimulator-dev
+channels:
+  - conda-forge
+dependencies:
+  - fftw>=3.3.9
+  - openblas
+  - pip
+  - setuptools>=27.3
