@@ -25,7 +25,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "31P Phophonate Static.csdf"
 experiment = cp.load(host + filename)
 

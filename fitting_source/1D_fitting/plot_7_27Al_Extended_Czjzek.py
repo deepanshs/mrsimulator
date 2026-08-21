@@ -37,7 +37,7 @@ from mrsimulator.models.utils import LineShapeKernel
 # -------------------------------
 #
 # Below we import and visualize the experimental dataset.
-host = "http://ssnmr.org/sites/default/files/mrsimulator/"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "20K_20Al_10P_50Si_HahnEcho_27Al.csdf"
 exp_data = cp.load(host + filename).real
 

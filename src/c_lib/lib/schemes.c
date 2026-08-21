@@ -138,7 +138,7 @@ void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme) {
 MRS_averaging_scheme *MRS_create_averaging_scheme(int integration_density,
                                                   bool allow_4th_rank, int n_gamma,
                                                   int integration_volume,
-                                                  bool interpolation) {
+                                                  bool interpolation, bool is_complex) {
   int alpha_size;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
@@ -150,6 +150,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(int integration_density,
   scheme->integration_density = integration_density;
   scheme->integration_volume = integration_volume;
   scheme->allow_4th_rank = allow_4th_rank;
+  scheme->is_complex = is_complex;
 
   scheme->octant_orientations =
       ((integration_density + 1) * (integration_density + 2)) / 2;
@@ -195,7 +196,8 @@ MRS_averaging_scheme *MRS_create_averaging_scheme(int integration_density,
 /* Create a new orientation averaging scheme. */
 MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
     double *alpha, double *beta, double *weight, int n_angles, bool allow_4th_rank,
-    int n_gamma, const int position_size, int32_t *positions, bool interpolation) {
+    int n_gamma, const int position_size, int32_t *positions, bool interpolation,
+    bool is_complex) {
   double scale;
   MRS_averaging_scheme *scheme = malloc(sizeof(MRS_averaging_scheme));
 
@@ -207,6 +209,7 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   scheme->integration_density = 0;
   scheme->integration_volume = 0;
   scheme->allow_4th_rank = allow_4th_rank;
+  scheme->is_complex = is_complex;
 
   scheme->octant_orientations = n_angles;
 

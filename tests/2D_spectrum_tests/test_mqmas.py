@@ -131,7 +131,7 @@ def test_ThreeQ_VAS_spin_3halves():
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * B0 * 1e6
-    vref = method.channels[0].B0_to_ref_freq(B0) * 1e6
+    vref = method.channels[0].B0_to_ref_freq(B0)
     vq = (3 * 3.5e6) / (2 * spin * (2 * spin - 1))
     v_iso = -9 * 17 / 8 + 1e6 / 8 * (vq**2 / abs(v0 * vref)) * ((0.36**2) / 3 + 1)
 
@@ -196,7 +196,7 @@ def test_MQMAS_spin_5halves():
     # ref: D. Massiot et al. / Solid State Nuclear Magnetic Resonance 6 (1996) 73-83
     spin = method.channels[0].spin
     v0 = method.channels[0].gyromagnetic_ratio * 7 * 1e6
-    vref = method.channels[0].B0_to_ref_freq(7) * 1e6
+    vref = method.channels[0].B0_to_ref_freq(7)
     vq = 3 * 3.22e6 / (2 * spin * (2 * spin - 1))
     v_iso = -(17 / 31) * 64.5 - (8e6 / 93) * (vq**2 / abs(v0 * vref)) * (
         (0.66**2) / 3 + 1

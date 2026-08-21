@@ -43,8 +43,8 @@ _, _, amp = ExtCzjzekDistribution(dominant, eps=0.14).pdf(pos=[z_lim, e_lim])
 # The following is the plot of the extended Czjzek distribution.
 plt.figure(figsize=(4.25, 3.0))
 plt.contourf(z_dist, e_dist, amp, levels=10)
-plt.xlabel(r"$\zeta$ / ppm")
-plt.ylabel(r"$\eta$")
+plt.xlabel("$\\zeta$ / ppm")
+plt.ylabel("$\\eta$")
 plt.tight_layout()
 plt.show()
 
@@ -101,8 +101,8 @@ _, _, amp = ExtCzjzekDistribution(dominant, eps=0.25).pdf(pos=[cq_lim, e_lim])
 # The following is the plot of the extended Czjzek distribution.
 plt.figure(figsize=(4.25, 3.0))
 plt.contourf(cq_dist, e_dist, amp, levels=10)
-plt.xlabel(r"$C_q$ / MHz")
-plt.ylabel(r"$\eta$")
+plt.xlabel("$C_q$ / MHz")
+plt.ylabel("$\\eta$")
 plt.tight_layout()
 plt.show()
 

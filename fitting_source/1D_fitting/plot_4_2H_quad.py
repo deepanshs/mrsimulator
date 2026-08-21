@@ -24,7 +24,7 @@ from mrsimulator.spin_system.tensors import SymmetricTensor
 # %%
 # Import the dataset
 # ------------------
-host = "https://nmr.cemhti.cnrs-orleans.fr/Dmfit/Help/csdm/"
+host = "https://ssnmr.org/sites/default/files/mrsimulator/"
 filename = "2H methiodine MAS.csdf"
 experiment = cp.load(host + filename)
 

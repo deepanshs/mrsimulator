@@ -46,8 +46,8 @@ _, _, amp = CzjzekDistribution(sigma=3.1415).pdf(pos=[z_range, e_range])
 # The following is the contour plot of the Czjzek distribution.
 plt.figure(figsize=(4.25, 3.0))
 plt.contourf(z_dist, e_dist, amp, levels=10)
-plt.xlabel(r"$\zeta$ / ppm")
-plt.ylabel(r"$\eta$")
+plt.xlabel("$\\zeta$ / ppm")
+plt.ylabel("$\\eta$")
 plt.tight_layout()
 plt.show()
 

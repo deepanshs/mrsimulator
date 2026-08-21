@@ -212,7 +212,7 @@ class TransitionQuery(Parseable):
         live_ch, live_ch_index = [], []
         live_n_sites = []
         for i, channel_id in enumerate(channels):
-            ch_obj = getattr(self, f"ch{i+1}")
+            ch_obj = getattr(self, f"ch{i + 1}")
             ch_obj = ch_obj if ch_obj is not None else SymmetryQuery()
             if channel_id in isotopes:
                 sym_combination += [

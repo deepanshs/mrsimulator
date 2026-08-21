@@ -14,3 +14,4 @@ include src/mrsimulator/spin_system/references.json
 
 include src/c_lib/base/base_model.*
 include src/c_lib/test/test.*
+include src/c_lib/clib/clib.*

@@ -158,7 +158,7 @@ def terminal_start_setup():
     print(f"{delimit:-<{size}}")
     left_align = "Computation method"
     right_align = "Average time"
-    print(f"{left_align:<{size-15}}{right_align:>15}")
+    print(f"{left_align:<{size - 15}}{right_align:>15}")
     print(f"{delimit:-<{size}}")
 
 
@@ -243,12 +243,12 @@ def interpolation_blocks(n, level):
     ]
     print(f"\nLevel {level} results.")
     print("Average computation time for rendering triangles on an nD-grid.")
-    print(f"Reported value is the time per render averaged over {10*n} triangles.")
+    print(f"Reported value is the time per render averaged over {10 * n} triangles.")
     terminal_start_setup()
     for i, des in enumerate(description):
         t = timeit.timeit(
             f"interpolation_execute(tasks[{i}])",
-            setup=f"tasks=interpolation_benchmark({10*n})",
+            setup=f"tasks=interpolation_benchmark({10 * n})",
             globals=globals(),
             number=1,
         )

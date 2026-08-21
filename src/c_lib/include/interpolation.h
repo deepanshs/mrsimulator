@@ -31,7 +31,7 @@ extern void triangle_interpolation1D_linear(double f1, double f2, double f3, dou
 extern void one_d_averaging(double *spec, const int freq_size, double *freq,
                             double *amp_real, double *amp_imag, int dimension_count,
                             const int position_size, int32_t *positions, const int nt,
-                            bool user_defined, bool interpolation);
+                            bool user_defined, bool interpolation, bool is_complex);
 
 extern void two_d_averaging(double *spec, const int freq_size, double *freq1,
                             double *freq2, double *amp, int amp_stride,

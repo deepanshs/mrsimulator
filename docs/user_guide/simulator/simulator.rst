@@ -271,7 +271,7 @@ number of gamma angles.
         (right) Accurate simulation from a sufficiently large number of gamma angle averaging.
 
     from mrsimulator.method import Method
-    from mrsimulator.method.event import SpectralEvent, MixingEvent
+    from mrsimulator.method.event import SpectralEvent, RotationEvent
 
     site = Site(isotope="29Si", shielding_symmetric={"zeta": 100, "eta": 0.2})
     spin_system = SpinSystem(sites=[site])
@@ -286,7 +286,7 @@ number of gamma angles.
                 spectral_width=25000,
                 events=[
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(ch1={"angle": np.pi / 2}),
+                    RotationEvent(ch1={"angle": np.pi / 2}),
                     SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
                 ]
         )],
@@ -307,15 +307,15 @@ Decompose Spectrum
 ''''''''''''''''''
 
 The attribute :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum`
-is an enumeration with two string literals, ``None`` and ``spin_system``. The default value is ``None``.
+is an enumeration with two string literals, ``none`` and ``spin_system``. The default value is ``none``.
 
-If the value is ``None`` (default), the resulting simulation is a single spectrum
+If the value is ``none`` (default), the resulting simulation is a single spectrum
 where the frequency contributions from all the spin systems are co-added. Consider the example below.
 When the value of :py:attr:`~mrsimulator.simulator.ConfigSimulator.decompose_spectrum`
 is ``spin_system``, the resulting simulation is a series of subspectra corresponding to
 individual spin systems. The number of subspectra equals the number of spin systems
-within the Simulator instance. Consider the same system as above, now run with
-decompose_spectrum as ``spin_system``.
+within the Simulator instance. Consider the following example with two spin systems simulated with decompose_spectrum attribute set to default ``none`` and ``spin_system``.
+
 .. skip: next
 
 .. plot::
