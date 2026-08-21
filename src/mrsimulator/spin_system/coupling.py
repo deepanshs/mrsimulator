@@ -63,7 +63,7 @@ class Coupling(Parseable):
         The allowed attributes of the :ref:`asy_api` class for `j_antisymmetric` are
         ``zeta``, ``alpha``, and ``beta``, where ``zeta`` is the anisotropy parameter
         of the anti-symmetric first-rank tensor given in Hz. The angles ``alpha`` and
-        ``beta``is in radians.
+        ``beta`` are in radians.
 
         Example
         -------

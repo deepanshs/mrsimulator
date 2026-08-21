@@ -110,7 +110,7 @@ def zcw_averaging(M: int, triangle_mesh=True, integration_volume="sphere"):
     return generate_custom_sampling(alpha, beta, weight, triangle_mesh)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sampling = zcw_averaging(M=10, integration_volume="hemisphere", triangle_mesh=False)
     # rad2deg = 180.0 / np.pi
     nd_array = np.array([sampling.alpha, sampling.beta, sampling.weight]).T

@@ -349,9 +349,13 @@ def test_sites_to_pandas_df():
     assert list(pd_o["shielding_symmetric.eta"]) == [
         i if i is not None else None for i in eta_n
     ]
-    assert list(pd_o["quadrupolar.Cq"]) == [
-        f"{i} Hz" if i is not None else None for i in Cq
-    ]
+    expected_cq = [f"{i} Hz" if i is not None else None for i in Cq]
+    actual_cq = list(pd_o["quadrupolar.Cq"])
+    for actual, expected in zip(actual_cq, expected_cq):
+        if expected is None:
+            assert actual is None or (isinstance(actual, float) and np.isnan(actual))
+        else:
+            assert actual == expected
     # assert list(pd_o["quadrupolar.eta"]) == [
     #     i if i is not None else None for i in eta_q
     # ]

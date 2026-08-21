@@ -32,7 +32,7 @@ extern void one_d_averaging(double *spec, const unsigned int freq_size, double *
                             double *amp_real, double *amp_imag, int dimension_count,
                             const unsigned int position_size, int32_t *positions,
                             const unsigned int nt, bool user_defined,
-                            bool interpolation);
+                            bool interpolation, bool is_complex);
 
 extern void two_d_averaging(double *spec, const unsigned int freq_size, double *freq1,
                             double *freq2, double *amp, int amp_stride,

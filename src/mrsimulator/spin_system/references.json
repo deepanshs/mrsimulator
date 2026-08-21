@@ -1,0 +1,566 @@
+{
+    "1H": {
+        "ratio": 100.0,
+        "compound": "Me4Si",
+        "solvent": "CDCl3",
+        "concentration": "0.01 L/L"
+    },
+    "2H": {
+        "ratio": 15.350609,
+        "compound": "(CD3)4Si",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "3H": {
+        "ratio": 105.663974,
+        "compound": "Me4Si",
+        "solvent": "CDCl3",
+        "concentration": "0.01 L/L"
+    },
+    "3He": {
+        "ratio": 76.178976,
+        "compound": "He",
+        "solvent": "gas",
+        "concentration": "1.0 L/L"
+    },
+    "6Li": {
+        "ratio": 14.716086,
+        "compound": "LiCl",
+        "solvent": "D2O",
+        "concentration": "9.7 mol/kg"
+    },
+    "7Li": {
+        "ratio": 38.863797,
+        "compound": "LiCl",
+        "solvent": "D2O",
+        "concentration": "9.7 mol/kg"
+    },
+    "9Be": {
+        "ratio": 14.051813,
+        "compound": "BeSO4",
+        "solvent": "D2O",
+        "concentration": "0.43 mol/kg"
+    },
+    "10B": {
+        "ratio": 10.743658,
+        "compound": "BF3.Et2O",
+        "solvent": "CDCl3",
+        "concentration": "0.15 L/L"
+    },
+    "11B": {
+        "ratio": 32.083974,
+        "compound": "BF3.Et2O",
+        "solvent": "CDCl3",
+        "concentration": "0.15 L/L"
+    },
+    "13C": {
+        "ratio": 25.14502,
+        "compound": "Me4Si",
+        "solvent": "CDCl3",
+        "concentration": "0.01 L/L"
+    },
+    "14N": {
+        "ratio": 7.226317,
+        "compound": "MeNO2",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "15N": {
+        "ratio": 10.136767,
+        "compound": "MeNO2",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "17O": {
+        "ratio": 13.556457,
+        "compound": "D2O",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "19F": {
+        "ratio": 94.094011,
+        "compound": "CFCl3",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "21Ne": {
+        "ratio": 7.894296,
+        "compound": "Ne",
+        "solvent": "gas",
+        "concentration": "1.1 MPa"
+    },
+    "23Na": {
+        "ratio": 26.4519,
+        "compound": "NaCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "25Mg": {
+        "ratio": 6.121635,
+        "compound": "MgCl2",
+        "solvent": "D2O",
+        "concentration": "11 mol/L"
+    },
+    "27Al": {
+        "ratio": 26.056859,
+        "compound": "Al(NO3)3",
+        "solvent": "D2O",
+        "concentration": "1.1 mol/kg"
+    },
+    "29Si": {
+        "ratio": 19.867187,
+        "compound": "Me4Si",
+        "solvent": "CDCl3",
+        "concentration": "0.01 L/L"
+    },
+    "31P": {
+        "ratio": 40.480742,
+        "compound": "H3PO4",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "33S": {
+        "ratio": 7.676,
+        "compound": "(NH4)2SO4",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "35Cl": {
+        "ratio": 9.797909,
+        "compound": "NaCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "37Cl": {
+        "ratio": 8.155725,
+        "compound": "NaCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "39K": {
+        "ratio": 4.666373,
+        "compound": "KCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "40K": {
+        "ratio": 5.802018,
+        "compound": "KCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "41K": {
+        "ratio": 2.561305,
+        "compound": "KCl",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "43Ca": {
+        "ratio": 6.730029,
+        "compound": "CaCl2",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "45Sc": {
+        "ratio": 24.291747,
+        "compound": "Sc(NO3)3",
+        "solvent": "D2O",
+        "concentration": "0.06 mol/L"
+    },
+    "47Ti": {
+        "ratio": 5.637534,
+        "compound": "TiCl4",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "49Ti": {
+        "ratio": 5.639037,
+        "compound": "TiCl4",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "50V": {
+        "ratio": 9.970309,
+        "compound": "VOCl3",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "51V": {
+        "ratio": 26.302948,
+        "compound": "VOCl3",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "53Cr": {
+        "ratio": 5.652496,
+        "compound": "K2CrO4",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "55Mn": {
+        "ratio": 24.789218,
+        "compound": "KMnO4",
+        "solvent": "D2O",
+        "concentration": "0.82 mol/kg"
+    },
+    "57Fe": {
+        "ratio": 3.237778,
+        "compound": "Fe(CO)5",
+        "solvent": "C6D6",
+        "concentration": "0.80 L/L"
+    },
+    "59Co": {
+        "ratio": 23.727074,
+        "compound": "K3[Co(CN)6]",
+        "solvent": "D2O",
+        "concentration": "0.56 mol/kg"
+    },
+    "61Ni": {
+        "ratio": 8.936051,
+        "compound": "Ni(CO)4",
+        "solvent": "neat",
+        "concentration": "0.80 L/L"
+    },
+    "63Cu": {
+        "ratio": 26.515473,
+        "compound": "[Cu(MeCN)4][ClO4]",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "65Cu": {
+        "ratio": 28.403693,
+        "compound": "[Cu(MeCN)4][ClO4]",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "67Zn": {
+        "ratio": 6.256803,
+        "compound": "Zn(NO3)2",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "69Ga": {
+        "ratio": 24.001354,
+        "compound": "Ga(NO3)3",
+        "solvent": "D2O",
+        "concentration": "1.1 mol/kg"
+    },
+    "71Ga": {
+        "ratio": 30.496704,
+        "compound": "Ga(NO3)3",
+        "solvent": "D2O",
+        "concentration": "1.1 mol/kg"
+    },
+    "73Ge": {
+        "ratio": 3.488315,
+        "compound": "Me4Ge",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "75As": {
+        "ratio": 17.122614,
+        "compound": "NaAsF6",
+        "solvent": "CD3CN",
+        "concentration": "0.5 mol/L"
+    },
+    "77Se": {
+        "ratio": 19.071513,
+        "compound": "Me2Se",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "79Br": {
+        "ratio": 25.05398,
+        "compound": "NaBr",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "81Br": {
+        "ratio": 27.006518,
+        "compound": "NaBr",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "83Kr": {
+        "ratio": 3.8476,
+        "compound": "Kr",
+        "solvent": "gas",
+        "concentration": "1.0 L/L"
+    },
+    "85Rb": {
+        "ratio": 9.654943,
+        "compound": "RbCl",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "87Rb": {
+        "ratio": 32.720454,
+        "compound": "RbCl",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "87Sr": {
+        "ratio": 4.333822,
+        "compound": "SrCl2",
+        "solvent": "D2O",
+        "concentration": "0.5 mol/L"
+    },
+    "89Y": {
+        "ratio": 4.900198,
+        "compound": "Y(NO3)3",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "91Zr": {
+        "ratio": 9.296298,
+        "compound": "Zr(C5H5)2Cl2",
+        "solvent": "CH2Cl2",
+        "concentration": "sat'd"
+    },
+    "93Nb": {
+        "ratio": 24.47617,
+        "compound": "K[NbCl6]",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "95Mo": {
+        "ratio": 6.516926,
+        "compound": "Na2MoO4",
+        "solvent": "D2O",
+        "concentration": "2 mol/L"
+    },
+    "97Mo": {
+        "ratio": 6.653695,
+        "compound": "Na2MoO4",
+        "solvent": "D2O",
+        "concentration": "2 mol/L"
+    },
+    "99Tc": {
+        "ratio": 22.508326,
+        "compound": "NH4TcO4",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "99Ru": {
+        "ratio": 4.605151,
+        "compound": "K4[Ru(CN)6]",
+        "solvent": "D2O",
+        "concentration": "0.3 mol/L"
+    },
+    "103Rh": {
+        "ratio": 3.186447,
+        "compound": "Rh(acac)3",
+        "solvent": "CDCl3",
+        "concentration": "sat'd"
+    },
+    "105Pd": {
+        "ratio": 4.5761,
+        "compound": "K2PdCl6",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "107Ag": {
+        "ratio": 4.047819,
+        "compound": "AgNO3",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "109Ag": {
+        "ratio": 4.653533,
+        "compound": "AgNO3",
+        "solvent": "D2O",
+        "concentration": "sat'd"
+    },
+    "111Cd": {
+        "ratio": 21.21548,
+        "compound": "Me2Cd",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "113Cd": {
+        "ratio": 22.193175,
+        "compound": "Me2Cd",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "113In": {
+        "ratio": 21.865755,
+        "compound": "In(NO3)3",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "115In": {
+        "ratio": 21.912629,
+        "compound": "In(NO3)3",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "115Sn": {
+        "ratio": 32.718749,
+        "compound": "Me4Sn",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "117Sn": {
+        "ratio": 35.632259,
+        "compound": "Me4Sn",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "119Sn": {
+        "ratio": 37.290632,
+        "compound": "Me4Sn",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "121Sb": {
+        "ratio": 23.930577,
+        "compound": "KSbCl6",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "123Sb": {
+        "ratio": 12.959217,
+        "compound": "KSbCl6",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "123Te": {
+        "ratio": 26.169742,
+        "compound": "Me2Te",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "125Te": {
+        "ratio": 31.549769,
+        "compound": "Me2Te",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "127I": {
+        "ratio": 20.00786,
+        "compound": "KI",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "129Xe": {
+        "ratio": 27.810186,
+        "compound": "XeOF4",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "131Xe": {
+        "ratio": 8.243921,
+        "compound": "XeOF4",
+        "solvent": "neat",
+        "concentration": "1.0 L/L"
+    },
+    "133Cs": {
+        "ratio": 13.116142,
+        "compound": "CsNO3",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "135Ba": {
+        "ratio": 9.934457,
+        "compound": "BaCl2",
+        "solvent": "D2O",
+        "concentration": "0.5 mol/L"
+    },
+    "137Ba": {
+        "ratio": 11.112928,
+        "compound": "BaCl2",
+        "solvent": "D2O",
+        "concentration": "0.5 mol/L"
+    },
+    "138La": {
+        "ratio": 13.1943,
+        "compound": "LaCl3",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "139La": {
+        "ratio": 14.125641,
+        "compound": "LaCl3",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "181Ta": {
+        "ratio": 11.9896,
+        "compound": "KTaCl6",
+        "solvent": "CH3CN",
+        "concentration": "sat'd"
+    },
+    "183W": {
+        "ratio": 4.166387,
+        "compound": "Na2WO4",
+        "solvent": "D2O",
+        "concentration": "1 mol/L"
+    },
+    "185Re": {
+        "ratio": 22.5246,
+        "compound": "K2ReO4",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "187Re": {
+        "ratio": 22.7516,
+        "compound": "K2ReO4",
+        "solvent": "D2O",
+        "concentration": "0.1 mol/L"
+    },
+    "187Os": {
+        "ratio": 2.282331,
+        "compound": "OsO4",
+        "solvent": "CCl4",
+        "concentration": "0.98 mol/L"
+    },
+    "189Os": {
+        "ratio": 7.7654,
+        "compound": "OsO4",
+        "solvent": "CCl4",
+        "concentration": "0.98 mol/L"
+    },
+    "185Pt": {
+        "ratio": 21.496784,
+        "compound": "Na2PtCl6",
+        "solvent": "D2O",
+        "concentration": "1.2 mol/L"
+    },
+    "199Hg": {
+        "ratio": 17.910822,
+        "compound": "Me2Hg",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "201Hg": {
+        "ratio": 6.611583,
+        "compound": "Me2Hg",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "203Tl": {
+        "ratio": 57.1232,
+        "compound": "Tl(NO3)2",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "205Tl": {
+        "ratio": 57.683838,
+        "compound": "Tl(NO3)2",
+        "solvent": "D2O",
+        "concentration": "0.01 mol/L"
+    },
+    "207Pb": {
+        "ratio": 20.920599,
+        "compound": "Me4Pb",
+        "solvent": "neat",
+        "concentration": "1 L/L"
+    },
+    "209Bi": {
+        "ratio": 16.069288,
+        "compound": "Bi(NO3)3",
+        "solvent": "HNO3/D2O",
+        "concentration": "0.01 mol/L"
+    }
+}

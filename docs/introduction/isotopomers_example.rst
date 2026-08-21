@@ -3,7 +3,7 @@
 Isotopomers Example
 ^^^^^^^^^^^^^^^^^^^
 
-Here you will work through an example that should be familiar to nearly all
+Here, you will work through an example that should be familiar to nearly all
 practitioners of NMR spectroscopy, i.e., the simulation of the :math:`^1\text
 {H}` and :math:`^{13}\text{C}` liquid-state NMR spectra of ethanol with its
 various isotopomers. The :math:`^1\text{H}` spectrum will include the
@@ -66,11 +66,11 @@ and two magnetically inequivalent :math:`^{13}\text{C}` sites, as shown in the c
     # methylene carbon site
     C_CH2 = Site(isotope="13C", isotropic_chemical_shift=58)
 
-These sites will be used, along with :ref:`coupling_documentation` objects described below, to create each of the isotopomers.
+These sites will be used, along with :ref:`coupling_documentation` instances described below, to create each of the isotopomers.
 
 Isotopomer 1
 ''''''''''''
-To create the SpinSystem object for the most abundant isotopomer, start by creating a list of sites present in this isotopomer.
+To create the SpinSystem instance for the most abundant isotopomer, start by creating a list of sites present in this isotopomer.
 
 .. plot::
     :context: close-figs
@@ -82,8 +82,8 @@ Each site in the isotopomer is identified by its index in the ``iso1_sites``
 ordered list, which are numbered from 0 to 5.   Remember that the two Sites
 involved in a Coupling are identified by their indexes in this list.
 
-Next, create the :ref:`coupling_documentation` objects between the sites and
-place the Coupling objects in a list.
+Next, create the :ref:`coupling_documentation` instances between the sites and
+place the Coupling instances in a list.
 
 .. plot::
     :context: close-figs
@@ -106,7 +106,7 @@ place the Coupling objects in a list.
         HH_coupling_6,
     ]
 
-Finally, create the SpinSystem object for this isotopomer along with its abundance.
+Finally, create the SpinSystem instance for this isotopomer along with its abundance.
 
 .. plot::
     :context: close-figs
@@ -118,11 +118,11 @@ Isotopomer 2
 ''''''''''''
 
 Replacing the methyl carbon with a :math:`^{13}\text{C}` isotope gives the
-second isotopomer.  To create its SpinSystem object, follow the code below,
+second isotopomer.  To create its SpinSystem instance, follow the code below,
 where (1) you create the list of sites to include the ``C_CH3`` site, (2) you
-create three Coupling objects for its J coupling to the three attached
+create three Coupling instances for its J coupling to the three attached
 protons, (3) you create the list of couplings, and, finally, (4) you create the
-SpinSystem object for the isotopomer using the lists of sites and couplings
+SpinSystem instance for the isotopomer using the lists of sites and couplings
 along with the isotopomer's abundance of 1.08%.
 
 .. plot::
@@ -207,7 +207,7 @@ for the first isotope in the ``channels`` attribute list.
 Simulations
 -----------
 
-Next, create an instance of the simulator object with the list of your three
+Next, create an instance of the simulator instance with the list of your three
 spin systems and the list of your two methods, and run the simulations.
 
 .. plot::
@@ -220,20 +220,20 @@ spin systems and the list of your two methods, and run the simulations.
     sim.run()
 
 
-Note that the Simulator object runs six simulations in this example, i.e., three ``method_H``
-simulations are run for each of the three isotopomers before being added together to create
-the final ``method_H`` simulation. Similarly three simulations are run to create
+Note that the Simulator instance runs six simulations in this example, i.e., three ``method_H``
+simulations are run for the three isotopomers before being added together to create
+the final ``method_H`` simulation. Similarly, three simulations are run to create
 the final ``method_C`` simulation.
 
 Signal Processors
 -----------------
 
 Before plotting the spectra, add some line broadening to the resonances. For
-this, create SignalProcessor objects initialized with a list of operations
+this, create SignalProcessor instances initialized with a list of operations
 that give a convolution with a Lorentzian line shape.  For the :math:`^{1}\text
-{H}` spectrum, create a SignalProcessor object with an exponential apodization
+{H}` spectrum, create a SignalProcessor instance with an exponential apodization
 that gives a full-width-half-maximum (FWHM) of 1 Hz, while for the :math:`^
-{13}\text{C}` spectrum, create an otherwise identical SignalProcessor object
+{13}\text{C}` spectrum, create an otherwise identical SignalProcessor instance
 that gives an FWHM of 20 Hz.
 
 .. plot::
@@ -320,7 +320,7 @@ Saving the SpinSystems
 ++++++++++++++++++++++
 
 If you want to save the spin systems for use in a different project, you can ask
-the Simulator object to export the list of SpinSystem objects to a JSON file
+the Simulator instance to export the list of SpinSystem instances to a JSON file
 with the code below.
 
 .. plot::
@@ -329,10 +329,10 @@ with the code below.
     sim.export_spin_systems("ethanol.mrsys")
 
 
-The file ``ethanol.mrsys`` holds a JSON representation of the SpinSystem objects. We
+The file ``ethanol.mrsys`` holds a JSON representation of the SpinSystem instances. We
 encourage the convention of using ``.mrsys`` extension for this JSON file.
 
-The list of SpinSystem objects can be reloaded back into a Simulator object by
+The list of SpinSystem instances can be reloaded back into a Simulator instance by
 calling ``load_spin_systems()`` with the file name of the saved SpinSystem
 objects, as shown below.
 
@@ -346,8 +346,8 @@ objects, as shown below.
 Saving the Methods
 ++++++++++++++++++
 
-Similarly, if you want to save the methods for use in a another project, you
-can ask the Simulator object to export the list of Method objects to a JSON
+Similarly, if you want to save the methods for use in another project, you
+can ask the Simulator instance to export the list of Method instances to a JSON
 file.
 
 .. plot::
@@ -356,11 +356,11 @@ file.
     sim.export_methods("H1C13Methods.mrmtd")
 
 As before, the file ``H1C13Methods.mrmtd`` holds a JSON representation of the method
-objects. We encourage the convention of using ``.mrmtd`` extension for this JSON
+instances. We encourage the convention of using ``.mrmtd`` extension for this JSON
 file.
 
-The list of Method objects can also be reloaded back into a Simulator object by
-calling ``load_methods()`` with the file name of the saved Method objects, as
+The list of Method instances can also be reloaded back into a Simulator instance by
+calling ``load_methods()`` with the file name of the saved Method instances as
 shown below.
 
 .. plot::
@@ -373,10 +373,10 @@ shown below.
 Saving the full Simulation
 ++++++++++++++++++++++++++
 
-The Simulation and SignalProcessor objects can also be serialized into JSON
-files. At some point, however, saving the Python script or Jupyter notebook
+The Simulation and SignalProcessor instances can also be serialized into JSON
+files. At some point, however, saving the Python script or Jupyter Notebook
 with your code will be just as convenient.  Nonetheless, you can find
-additional details on JSON serialization of **mrsimulator** objects in the
+additional details on JSON serialization of **MRSimulator** instances in the
 :ref:`IO_documentation` section.
 
 .. plot::

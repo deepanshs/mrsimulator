@@ -135,8 +135,8 @@ for i, datum in enumerate(processed_dataset):
             color="black",
             linewidth=1,
             label=(
-                f"$\\nu_r={spin_rates[i]/1e3: .0f}$ kHz \n"
-                f"$\\beta={beta_orientation[j]/np.pi*180: .0f}^\\circ$"
+                f"$\\nu_r={spin_rates[i] / 1e3: .0f}$ kHz \n"
+                f"$\\beta={beta_orientation[j] / np.pi * 180: .0f}^\\circ$"
             ),
         )
         ax[i, j].invert_xaxis()

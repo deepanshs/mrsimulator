@@ -14,6 +14,12 @@
 /** Arithmetic suit ======================================================== */
 
 /**
+ * Absolute double test
+ * res = |x|
+ */
+double test_vm_absd(double a) { return absd(a); }
+
+/**
  * Add the elements of vector x and y and store in res of type double.
  *      res = x + y
  */

@@ -15,7 +15,7 @@ IndentationError
 
 If you encounter an ``IndentationError``, you have an extra/missing whitespace in your code.
 Code editors make finding troublesome whitespace easier, but the error should also show the
-code snippet which threw the error.
+code snippet that threw the error.
 
 - ``IndentationError: expected an indented block`` means some code is missing an indent after a
   class/method/loop deceleration.
@@ -45,7 +45,7 @@ As an example of indentation, here is some code that adds the numbers 0 to 9:
 Mismatched Brackets and Square Brackets
 """""""""""""""""""""""""""""""""""""""
 
-Nesting many lists and dictionaries inside each other become hard to read. If you have mismatched or
+Nesting many lists and dictionaries inside each other makes it hard to read. If you have mismatched or
 missing brackets, Python will throw ``SyntaxError: invalid syntax``. Code editors can automatically
 format large nestings and highlight which openings and closings go together, making the code easier
 to understand.
@@ -136,6 +136,6 @@ For example
       File "<stdin>", line 1, in <module>
     TypeError: 'int' object is not subscriptable
 
-Also, there is a limit to how times you can index a subscriptable object. A 1D list can only be indexed once,
-2D twice, and so on. If you are using nested lists/dicts, make sure you aren't exceeding the number
+Also, there is a limit to how many times you can index a subscriptable object. A 1D list can only be indexed once,
+2D twice, and so on. If you are using nested lists or dictionaries, ensure you aren't exceeding the number
 of indexes possible.

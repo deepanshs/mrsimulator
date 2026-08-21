@@ -1,9 +1,10 @@
 import numpy as np
 import pytest
-from mrsimulator.method.event import BaseEvent
 from mrsimulator.method.event import DelayEvent
+from mrsimulator.method.event import FreeEvent
 from mrsimulator.method.event import MixingEvent
 from mrsimulator.method.event import parse_dict_to_ev_class
+from mrsimulator.method.event import RotationEvent
 from mrsimulator.method.event import SpectralEvent
 from mrsimulator.method.frequency_contrib import FREQ_ENUM_SHORTCUT
 from mrsimulator.method.frequency_contrib import FREQ_LIST_ALL
@@ -16,28 +17,28 @@ __email__ = "srivastava.89@osu.edu"
 
 
 def test_freq_contrib():
-    event = BaseEvent(freq_contrib=["Quad2_4", "Quad2_0"])
+    event = FreeEvent(freq_contrib=["Quad2_4", "Quad2_0"])
     assert set(event.dict()["freq_contrib"]) == {"Quad2_4", "Quad2_0"}
     assert set(event.dict()["freq_contrib"]) == {"Quad2_4", "Quad2_0"}
     assert set(event.json(units=False)["freq_contrib"]) == {"Quad2_0", "Quad2_4"}
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 1, 0, 1, 0, 0, 0] + [0] * 9)
 
-    event = BaseEvent(freq_contrib=["Shielding1_2"])
+    event = FreeEvent(freq_contrib=["Shielding1_2"])
     assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 0, 0, 0, 0] + [0] * 9)
 
-    event = BaseEvent()
+    event = FreeEvent()
     assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL)
     assert np.all(event._freq_contrib_flags() == [1, 1, 1, 1, 1, 1, 1, 1, 1] + [1] * 9)
 
-    event = BaseEvent(freq_contrib=["J1_0", "Shielding1_0"])
+    event = FreeEvent(freq_contrib=["J1_0", "Shielding1_0"])
     assert set(event.dict()["freq_contrib"]) == {"J1_0", "Shielding1_0"}
     assert np.all(event._freq_contrib_flags() == [1, 0, 0, 0, 0, 0, 1, 0, 0] + [0] * 9)
 
-    event = BaseEvent(freq_contrib=["J1_0", "J1_2", "D1_2"])
+    event = FreeEvent(freq_contrib=["J1_0", "J1_2", "D1_2"])
     assert set(event.dict()["freq_contrib"]) == {"J1_0", "J1_2", "D1_2"}
     assert np.all(event._freq_contrib_flags() == [0, 0, 0, 0, 0, 0, 1, 1, 1] + [0] * 9)
 
-    event = BaseEvent(freq_contrib=["Quad2_4", "J1_2", "D1_2", "Shielding1_2"])
+    event = FreeEvent(freq_contrib=["Quad2_4", "J1_2", "D1_2", "Shielding1_2"])
     assert set(event.dict()["freq_contrib"]) == {
         "Quad2_4",
         "J1_2",
@@ -47,48 +48,48 @@ def test_freq_contrib():
     assert np.all(event._freq_contrib_flags() == [0, 1, 0, 0, 0, 1, 0, 1, 1] + [0] * 9)
 
     tag = "Quad_Shielding_cross"
-    event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
+    event = FreeEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
     assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 9 + [1] * 3 + [0] * 6)
 
     tag = "Quad_J_cross"
-    event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
+    event = FreeEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
     assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 12 + [1] * 3 + [0] * 3)
 
     tag = "Quad_Dipolar_cross"
-    event = BaseEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
+    event = FreeEvent(freq_contrib=[f"{tag}_{i}" for i in [0, 2, 4]])
     assert set(event.dict()["freq_contrib"]) == {f"{tag}_{i}" for i in [0, 2, 4]}
     assert np.all(event._freq_contrib_flags() == [0] * 15 + [1] * 3)
 
     for k in FREQ_LIST_ALL:
-        event = BaseEvent(freq_contrib=[f"!{k}"])
+        event = FreeEvent(freq_contrib=[f"!{k}"])
         assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL) - {k}
 
 
 def test_freq_contrib_shortcuts():
     # Just shortcuts, no negations
     for k, v in FREQ_ENUM_SHORTCUT.items():
-        event = BaseEvent(freq_contrib=[k])
+        event = FreeEvent(freq_contrib=[k])
         assert set(event.dict()["freq_contrib"]) == v
 
     # All negations (from default list of all)
     for k, v in FREQ_ENUM_SHORTCUT.items():
-        event = BaseEvent(freq_contrib=[f"!{k}"])
+        event = FreeEvent(freq_contrib=[f"!{k}"])
         assert set(event.dict()["freq_contrib"]) == set(FREQ_LIST_ALL) - v
 
     # Some combinations of shortcuts and negated shortcuts
-    event = BaseEvent(freq_contrib=["Quad", "!Second_order"])
+    event = FreeEvent(freq_contrib=["Quad", "!Second_order"])
     assert set(event.dict()["freq_contrib"]) == {"Quad1_2"}
 
-    event = BaseEvent(freq_contrib=["First_order", "!J", "!D"])
+    event = FreeEvent(freq_contrib=["First_order", "!J", "!D"])
     assert set(event.dict()["freq_contrib"]) == {
         "Shielding1_0",
         "Shielding1_2",
         "Quad1_2",
     }
 
-    event = BaseEvent(freq_contrib=["First_order", "Second_rank", "!cross"])
+    event = FreeEvent(freq_contrib=["First_order", "Second_rank", "!cross"])
     assert set(event.dict()["freq_contrib"]) == {
         "Shielding1_0",
         "Shielding1_2",
@@ -247,6 +248,18 @@ def test_Mixing_event():
         MixingEvent(query={"P": [1], "D": [0]})
 
 
+def test_Rotation_event():
+    mix_event_dict = {"ch1": {"angle": "90 degree", "phase": "0 rad"}}
+    the_event = RotationEvent.parse_dict_with_units(mix_event_dict)
+    basic_mixing_event_tests(the_event)
+
+    # Queries of RotationEvent, like the transition_queries of the SpectralEvent, need
+    # to be defined in a channel-wise dict. Check to make sure error is raised when
+    # P and D symmetries are supplied at the base level
+    with pytest.raises(ValidationError):
+        RotationEvent(query={"P": [1], "D": [0]})
+
+
 # def test_total_and_no_mixing():
 #     def assert_all_zero(mix_ev):
 #         assert mix_ev.query.value.ch1.angle == 0
@@ -304,7 +317,7 @@ def check_equal(query, isotopes, channels, res):
             assert item2 in test[i]["D"]
 
 
-def test_BaseEvent_combination():
+def test_FreeEvent_combination():
     # P = -1 D = -1 on A B B A system, channel A, B
     # P = +1 D = -1 on A B B A system, channel A, B
     query = [

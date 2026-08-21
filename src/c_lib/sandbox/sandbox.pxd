@@ -21,7 +21,8 @@ cdef extern from "schemes.h":
                             bool_t allow_4th_rank,
                             unsigned int n_gamma,
                             unsigned int integration_volume,
-                            bool_t interpolation)
+                            bool_t interpolation,
+                            bool_t is_complex)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
                             double *alpha, double *beta,
@@ -29,7 +30,8 @@ cdef extern from "schemes.h":
                             bool_t allow_4th_rank,
                             const unsigned int position_size,
                             int32_t *positions,
-                            bool_t interpolation)
+                            bool_t interpolation,
+                            bool_t is_complex)
 
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
 

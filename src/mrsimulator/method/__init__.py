@@ -20,6 +20,7 @@ from pydantic.v1 import validator
 
 from .event import DelayEvent  # noqa: F401
 from .event import MixingEvent  # noqa: F401
+from .event import RotationEvent  # noqa: F401
 from .event import SpectralEvent  # noqa: F401
 from .plot import plot as _plot
 from .spectral_dimension import CHANNELS
@@ -183,7 +184,7 @@ class Method(Parseable):
 
     @validator("rotor_frequency", always=True, pre=True)
     def validate_rotor_frequency(cls, v, **kwargs):
-        return 1e12 if np.isinf(v) else v
+        return 1.0e12 if np.isinf(v) else v
 
     def __init__(self, **kwargs):
         Method.check(kwargs)
@@ -201,7 +202,8 @@ class Method(Parseable):
             [
                 ev.rotor_frequency
                 for ev in sd.events
-                if ev.__class__.__name__ not in ["MixingEvent", "ConstantTimeEvent"]
+                if ev.__class__.__name__
+                not in ["MixingEvent", "RotationEvent", "ConstantTimeEvent"]
             ]
             for sd in self.spectral_dimensions
         ]
@@ -302,7 +304,8 @@ class Method(Parseable):
                 shared_keys = set(ev.keys()).intersection(glb_keys)
                 for k in glb:
                     is_mixing = np.any([f"ch{i}" in ev for i in range(1, 4)])
-                    if k not in shared_keys and not is_mixing:  # Skip MixingEvent
+                    # Skip MixingEvent/RotationEvent
+                    if k not in shared_keys and not is_mixing:
                         ev.update({k: glb[k]})
 
     def dict(self, **kwargs):
@@ -483,7 +486,7 @@ class Method(Parseable):
             evt.filter_transitions(all_transitions, isotopes, channels)
             for dim in self.spectral_dimensions
             for evt in dim.events
-            if evt.__class__.__name__ != "MixingEvent"
+            if evt.__class__.__name__ not in ["MixingEvent", "RotationEvent"]
         ]
         if all([sg.size == 0 for sg in segments]):  # List of empty segments
             return np.asarray([])
@@ -634,7 +637,7 @@ class Method(Parseable):
             - (str) label: Event label
             - (float) duration: Duration of the DelayEvent
             - (float) fraction: Fraction of the SpectralEvent
-            - (Rtotaion) channels: Rotation object of the MixingEvent
+            - (Rtotaion) channels: Rotation object of the MixingEvent/RotationEvent
             - (float) magnetic_flux_density: Magnetic flux density during an event (T)
             - (float) rotor_frequency: Rotor frequency during an event (Hz)
             - (float) rotor_angle: Rotor angle during an event converted to Degrees
@@ -664,6 +667,7 @@ class Method(Parseable):
         CD = "DelayEvent"
         SP = "SpectralEvent"
         MX = "MixingEvent"
+        RO = "RotationEvent"
 
         # Columns required to be present
         required = [
@@ -681,10 +685,10 @@ class Method(Parseable):
 
         # Properties that can accessed by getattr()
         prop_dict = {
-            "label": (CD, SP, MX),
+            "label": (CD, SP, MX, RO),
             "duration": CD,
             "fraction": SP,
-            "channels": MX,
+            "channels": (MX, RO),
             "magnetic_flux_density": (CD, SP),
             "rotor_frequency": (CD, SP),
             "rotor_angle": (CD, SP),

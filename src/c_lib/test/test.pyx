@@ -276,6 +276,11 @@ def rank_2_tensor_products(np.ndarray[double complex] tensor_a, np.ndarray[doubl
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
+def vm_absd(double a):
+    return clib.test_vm_absd(a)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
 def vm_add(np.ndarray[double] A, np.ndarray[double] B):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
     clib.test_vm_double_add(A.size, &A[0], &B[0], &res[0])

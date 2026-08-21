@@ -912,20 +912,27 @@ void hist1d(double *spec, const unsigned int freq_size, double *freq, double *am
 void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
                      double *amp_real, double *amp_imag, int dimension_count,
                      const unsigned int position_size, int32_t *positions,
-                     const unsigned int nt, bool user_defined, bool interpolation) {
+                     const unsigned int nt, bool user_defined, bool interpolation,
+                     bool is_complex) {
   if (!user_defined) {
     if (interpolation) {
       octahedronInterpolation(spec, freq, nt, amp_real, 1, dimension_count);
-      octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
+      if (is_complex) {
+        octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
+      }
     } else {
       hist1d(spec, freq_size, freq, amp_real, dimension_count, nt);
-      hist1d(spec + 1, freq_size, freq, amp_imag, dimension_count, nt);
+      if (is_complex) {
+        hist1d(spec + 1, freq_size, freq, amp_imag, dimension_count, nt);
+      }
     }
   } else {
     generic_1d_triangle_average(spec, freq_size, freq, amp_real, dimension_count,
                                 position_size, positions, nt);
-    generic_1d_triangle_average(spec + 1, freq_size, freq, amp_imag, dimension_count,
-                                position_size, positions, nt);
+    if (is_complex) {
+      generic_1d_triangle_average(spec + 1, freq_size, freq, amp_imag, dimension_count,
+                                  position_size, positions, nt);
+    }
   }
 }
 

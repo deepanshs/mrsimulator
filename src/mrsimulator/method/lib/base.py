@@ -144,13 +144,13 @@ class BaseNamedMethod(Method):
 
 
 class BaseNamedMethod1D(BaseNamedMethod):
-    """Base class for named one-dimensional simulation simulation method."""
+    """Base class for named one-dimensional simulation method."""
 
     ndim: ClassVar[int] = 1
 
 
 class BaseNamedMethod2D(BaseNamedMethod):
-    """Base class for named two-dimensional simulation simulation method."""
+    """Base class for named two-dimensional simulation method."""
 
     ndim: ClassVar[int] = 2
     rotor_frequency: float = Field(default=1.0e12, ge=0.0)

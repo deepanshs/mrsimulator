@@ -78,11 +78,12 @@ cdef class AveragingScheme:
             allow_4th_rank: Boolean, If True, pre-calculates tables for computing fourth rank tensors.
         """
         self.allow_4th_rank = allow_4th_rank
+        is_complex = True
         integration_volume_ = 0
         if integration_volume == 'hemisphere':
             integration_volume_=1
         self.scheme = clib.MRS_create_averaging_scheme(integration_density,
-                                    allow_4th_rank, 9, integration_volume_)
+                                    allow_4th_rank, 9, integration_volume_, is_complex)
 
     @property
     def interpolation(self):

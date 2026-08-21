@@ -2,7 +2,7 @@ import numpy as np
 from mrsimulator import Site
 from mrsimulator import SpinSystem
 from mrsimulator.method import Method
-from mrsimulator.method import MixingEvent
+from mrsimulator.method import RotationEvent
 from mrsimulator.method import SpectralDimension
 from mrsimulator.method import SpectralEvent
 from mrsimulator.transition import TransitionPathway
@@ -207,7 +207,7 @@ def test_no_mixing():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
-                    MixingEvent(),
+                    RotationEvent(),
                 ]
             ),
             SpectralDimension(
@@ -270,7 +270,7 @@ def test_no_zero_transition_weights():
             SpectralDimension(
                 events=[
                     SpectralEvent(transition_queries=[{"ch1": {"P": [1]}}]),
-                    MixingEvent(ch1={"angle": np.pi}),
+                    RotationEvent(ch1={"angle": np.pi}),
                     SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}]),
                 ]
             )

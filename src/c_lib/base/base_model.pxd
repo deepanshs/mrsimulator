@@ -36,7 +36,8 @@ cdef extern from "schemes.h":
                             bool_t allow_4th_rank,
                             unsigned int n_gamma,
                             unsigned int integration_volume,
-                            bool_t interpolation)
+                            bool_t interpolation,
+                            bool_t is_complex)
 
     MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
                             double *alpha,
@@ -47,7 +48,8 @@ cdef extern from "schemes.h":
                             unsigned int n_gamma,
                             unsigned int position_size,
                             int32_t *positions,
-                            bool_t interpolation)
+                            bool_t interpolation,
+                            bool_t is_complex)
 
     void MRS_free_averaging_scheme(MRS_averaging_scheme *scheme)
     MRS_fftw_scheme *create_fftw_scheme(unsigned int total_orientations,
@@ -75,6 +77,7 @@ cdef extern from "object_struct.h":
         int number_of_sites                     # Number of sites
         float *spin                             # The spin quantum number
         double *gyromagnetic_ratio              # gyromagnetic ratio in (MHz/T)
+        double *one_minus_sigma_iso_ref;        # Ref freq / Larmor freq ratio
         double *isotropic_chemical_shift_in_ppm # Isotropic chemical shift (Hz)
         double *shielding_symmetric_zeta_in_ppm # Nuclear shielding anisotropy (Hz)
         double *shielding_symmetric_eta         # Nuclear shielding asymmetry

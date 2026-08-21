@@ -1,11 +1,13 @@
 cff-version: 1.2.0
-type: software
 title: mrsimulator
-message: Please cite this software using these metadata.
+message: >-
+  Please cite this software using the metadata from
+  'preferred-citation'.
 abstract: A fast solid-state NMR spectrum simulation and analysis library.
 
+type: software
 authors:
-  - given-names: Deepansh
+  - given-names: Deepansh J.
     family-names: Srivastava
     email: deepansh2012@gmail.com
     affiliation: Hyperfine
@@ -14,18 +16,20 @@ authors:
     family-names: Giammar
     email: giammar.7@osu.edu
     affiliation: The Ohio State University
-  - given-names: Maxwell
+  - given-names: Maxwell C.
     family-names: Venetos
     affiliation: 'University of California, Berkeley'
-  - given-names: Alexis
-    family-names: McCarthy
+  - given-names: Lexi
+    family-names: McCarthy-Carney
     affiliation: The Ohio State University
     email: mccarthy.677@osu.edu
-  - given-names: Philip
+  - given-names: Philip J.
     family-names: Grandinetti
     email: grandinetti@chemistry.ohio-state.edu
     affiliation: The Ohio State University
     orcid: https://orcid.org/0000-0003-0102-316X
+license: BSD-3-Clause
+repository-code: https://github.com/deepanshs/mrsimulator
 
 identifiers:
   - description: "Release version 0.7.0 of Mrsimulator"
@@ -44,8 +48,32 @@ identifiers:
     type: doi
     value: "10.5281/zenodo.3978780"
 
-version: 0.7.0
-license: BSD-3-Clause
-doi: "10.5281/zenodo.6892947"
-# date-released: "Unreleased"
-repository-code: https://github.com/deepanshs/mrsimulator
+preferred-citation:
+  type: article
+  authors:
+    - given-names: "Deepansh J."
+      family-names: "Srivastava"
+      affiliation: "Hyperfine"
+      orcid: "https://orcid.org/0000-0003-1341-2197"
+    - given-names: "Matthew"
+      family-names: "Giammar"
+      affiliation: "The Ohio State University"
+    - given-names: "Maxwell C."
+      family-names: "Venetos"
+      affiliation: "University of California, Berkeley"
+    - given-names: "Lexi"
+      family-names: "McCarthy-Carney"
+      affiliation: "The Ohio State University"
+    - given-names: "Philip J."
+      family-names: "Grandinetti"
+      affiliation: "The Ohio State University"
+      orcid: "https://orcid.org/0000-0003-0102-316X"
+  doi: "10.1063/5.0237608"
+  journal: "The Journal of Chemical Physics"
+  title: "MRSimulator: A cross-platform, object-oriented software package for rapid solid-state NMR spectral simulation and analysis"
+  month: 12
+  year: 2024
+  issue: 21
+  volume: 161
+  start: 212501
+  url: "https://doi.org/10.1063/5.0237608"

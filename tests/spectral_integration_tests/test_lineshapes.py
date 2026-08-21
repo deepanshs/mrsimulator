@@ -28,7 +28,7 @@ matplotlib.rc("font", **font)
 
 @pytest.fixture(scope="module")
 def report():
-    if __GENERATE_REPORT__:
+    if __GENERATE_REPORT__:  # pragma: no cover
         pdf = PdfPages("reports/lineshapes_report.pdf")
     else:
         pdf = None
@@ -39,7 +39,7 @@ def report():
 def report_pdf(report):
     """Generate report"""
     yield
-    if __GENERATE_REPORT__:
+    if __GENERATE_REPORT__:  # pragma: no cover
         report.close()
 
 
@@ -48,7 +48,7 @@ def compile_plots(dim, rep, info, dim2=None, title=None, report=None, label="sim
     if not __GENERATE_REPORT__:
         return
 
-    if dim2 is None:
+    if dim2 is None:  # pragma: no cover
         fig, ax = plt.subplots(
             1, 2, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]}
         )
@@ -65,7 +65,7 @@ def compile_plots(dim, rep, info, dim2=None, title=None, report=None, label="sim
         )
         ax[0].legend()
         axbig = ax[1]
-    else:
+    else:  # pragma: no cover
         fig, ax = plt.subplots(
             2, 2, sharex=True, figsize=(9, 4), gridspec_kw={"width_ratios": [1, 1]}
         )
@@ -116,7 +116,7 @@ def test_pdf():
     __GENERATE_REPORT__ = True
 
     is_present = path.isdir("_temp")
-    if not is_present:
+    if not is_present:  # pragma: no cover
         mkdir("_temp")
     filename = "_temp/lineshapes_report_scrap.pdf"
     report_file = PdfPages(filename)
@@ -149,8 +149,9 @@ def test_pure_shielding_sideband_simpson(report):
         "failed to compare shielding sidebands with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "shielding_sidebands")
-    for i in range(8):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 8
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
 
         res = []
         # euler angle all zero
@@ -163,7 +164,8 @@ def test_pure_shielding_sideband_simpson(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Shielding Sidebands", report=report)
+        title = f"Shielding Sidebands ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
         message = f"{error_message} test0{i}.json"
         check_all_close(res, message, rel_limit=1e-3)
@@ -174,8 +176,9 @@ def test_pure_quadrupolar_sidebands_simpson(report):
         "failed to compare quadrupolar sidebands with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "quad_sidebands")
-    for i in range(2):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 2
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
         for volume in VOLUMES:
             res = []
             data_mrsimulator, data_source, info, dim = c_setup(
@@ -189,9 +192,10 @@ def test_pure_quadrupolar_sidebands_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Quad Sidebands", report=report)
+        title = f"Quad Sidebands ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=1e-3)
 
 
@@ -200,8 +204,9 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
         "failed to compare quad + csa lineshape with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "csa_quad")
-    for i in range(10):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 10
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
         res = []
         for volume in VOLUMES:
             data_mrsimulator, data_source, info, dim = c_setup(
@@ -209,15 +214,10 @@ def test_csa_plus_quadrupolar_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(
-            dim,
-            res,
-            info,
-            title="Quad + Shielding Sidebands",
-            report=report,
-        )
+        title = f"Quad + Shielding Sidebands ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=5e-2)
 
 
@@ -226,8 +226,9 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
         "failed to compare 1st order quad lineshape with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "quad_1st_order")
-    for i in range(2):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 2
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
         res = []
         for volume in VOLUMES:
             data_mrsimulator, data_source, info, dim = c_setup(
@@ -235,23 +236,19 @@ def test_1st_order_quadrupolar_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(
-            dim,
-            res,
-            info,
-            title="1st Order Quadrupolar Lineshape",
-            report=report,
-        )
+        title = f"1st Order Quadrupolar Lineshape ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=1e-3)
 
 
 def test_j_coupling_lineshape_simpson(report):
     error_message = "failed to compare j-coupling with simpson simulation from file"
     path_ = path.join(SIMPSON_TEST_PATH, "j-coupling")
-    for i in range(20):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 20
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
         res = []
         for volume in VOLUMES:
             data_mrsimulator, data_source, info, dim = c_setup(
@@ -259,9 +256,10 @@ def test_j_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="J-coupling Spectra", report=report)
+        title = f"J-coupling Spectra ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=9e-3)
 
 
@@ -270,8 +268,9 @@ def test_dipolar_coupling_lineshape_simpson(report):
         "failed to compare dipolar-coupling with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "dipolar-coupling")
-    for i in range(7):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 7
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
         res = []
         for volume in VOLUMES:
             data_mrsimulator, data_source, info, dim = c_setup(
@@ -279,9 +278,10 @@ def test_dipolar_coupling_lineshape_simpson(report):
             )
             res.append([data_mrsimulator, data_source])
 
-        compile_plots(dim, res, info, title="Dipolar-coupling Spectra", report=report)
+        title = f"Dipolar-coupling Spectra ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report)
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=4e-3)
 
 
@@ -290,22 +290,18 @@ def test_2D_sideband_sideband_simpson(report):
         "failed to compare sideband-sideband with simpson simulation from file"
     )
     path_ = path.join(SIMPSON_TEST_PATH, "sideband_sideband")
-    for i in range(5):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 5
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
 
         res = []
         # euler angle all zero
         data_mrsimulator, data_source, info, dim = c_setup(filename=filename)
         res.append([data_mrsimulator, data_source])
 
+        title = f"2D sideband-sideband ({i + 1} / {total})"
         compile_plots(
-            dim[0],
-            res,
-            info,
-            dim2=dim[1],
-            title="2D sideband-sideband",
-            report=report,
-            label="Simpson",
+            dim[0], res, info, dim2=dim[1], title=title, report=report, label="Simpson"
         )
 
         message = f"{error_message} test0{i}.json"
@@ -321,10 +317,13 @@ def test_quad_csa_cross_rmnsim(report):
     error_message = (
         "failed to compare quad-csa cross-term spectra with rmnsim from file"
     )
-    for folder in ["quad_csa_cross1", "quad_csa_cross2"]:
+    total = 7
+    for j_, folder in enumerate(["quad_csa_cross1", "quad_csa_cross2"]):
         path_ = path.join(RNMSIM_TEST_PATH, folder)
-        for i in range(7):
-            filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+        for i in range(total):
+            filename = path.join(
+                path_, f"test{i:02d}", f"test{i:02d}.json"  # noqa: E231
+            )
 
             res = []
             # euler angle all zero
@@ -333,14 +332,8 @@ def test_quad_csa_cross_rmnsim(report):
             )
             res.append([data_mrsimulator, data_source])
 
-            compile_plots(
-                dim,
-                res,
-                info,
-                title="Quad-CSA 2nd Order Cross-Term",
-                report=report,
-                label="rmnsim",
-            )
+            title = f"Quad-CSA 2nd Order Cross-Term-{j_} ({i + 1} / {total})"
+            compile_plots(dim, res, info, title=title, report=report, label="rmnsim")
 
             message = f"{error_message} test0{i}.json"
             check_all_close(res, message, rel_limit=8e-2)
@@ -357,8 +350,9 @@ def test_pure_shielding_static_lineshape_python_brute(report):
         "failed to compare shielding lineshape with brute force simulation from file"
     )
     path_ = path.join(PYTHON_BRUTE_TEST_PATH, "shielding")
-    for i in range(5):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 5
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
 
         res = []
         # euler angle all zero
@@ -371,14 +365,8 @@ def test_pure_shielding_static_lineshape_python_brute(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        compile_plots(
-            dim,
-            res,
-            info,
-            title="Shielding Static Lineshape (Brute Force)",
-            report=report,
-            label="Brute",
-        )
+        title = f"Shielding Static Lineshape (Brute Force) ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report, label="Brute")
 
         message = f"{error_message} test0{i}.json"
         check_all_close(res, message, rel_limit=1e-3)
@@ -394,8 +382,9 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
         "failed to compare quadrupolar lineshape with brute force simulation from file"
     )
     path_ = path.join(PYTHON_BRUTE_TEST_PATH, "quad")
-    for i in range(19):
-        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")
+    total = 19
+    for i in range(total):
+        filename = path.join(path_, f"test{i:02d}", f"test{i:02d}.json")  # noqa: E231
 
         res = []
         data_mrsimulator, data_source, info, dim = c_setup(filename=filename)
@@ -407,14 +396,8 @@ def test_pure_quadrupolar_lineshape_python_brute(report):
         )
         res.append([data_mrsimulator, data_source])
 
-        compile_plots(
-            dim,
-            res,
-            info,
-            title="Quad Lineshape Self-Test",
-            report=report,
-            label="self",
-        )
+        title = f"Quad Lineshape Self-Test ({i + 1} / {total})"
+        compile_plots(dim, res, info, title=title, report=report, label="self")
 
-        message = f"{error_message} test0{i:02d}.json"
+        message = f"{error_message} test0{i:02d}.json"  # noqa: E231
         check_all_close(res, message, rel_limit=1e-3)

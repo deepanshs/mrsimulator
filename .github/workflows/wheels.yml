@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: setup python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -37,7 +37,7 @@ jobs:
         run: pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v7.0.0
 
   source-distribution:
     needs: [build-test]
@@ -45,12 +45,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: setup python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install system dependencies
         run: sudo apt-get install --yes libopenblas-dev libfftw3-dev
@@ -63,7 +63,7 @@ jobs:
           python setup.py sdist
 
       - name: upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: "dist/*.tar.gz"
@@ -120,7 +120,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-12
+          - os: macos-15-intel
             name: mac 64-bit x86_64
             cibw:
               build: "cp3*"
@@ -169,12 +169,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.10"
+          python-version: "3.12"
           architecture: ${{ matrix.architecture }}
 
       - name: customize mac-arm-64
@@ -231,7 +231,7 @@ jobs:
         run: |
           python -m cibuildwheel .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.name }}
           path: "wheelhouse/*"

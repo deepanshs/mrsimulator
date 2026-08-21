@@ -7,6 +7,12 @@ def test_c_arithmetic():
         a = np.random.rand(500)
         b = np.random.rand(500)
 
+        c = [clib.vm_absd(_a) for _a in a]
+        np.testing.assert_allclose(c, np.abs(a))
+
+        c = [clib.vm_absd(_b) for _b in b]
+        np.testing.assert_allclose(c, np.abs(b))
+
         c = clib.vm_add(a, b)
         np.testing.assert_allclose(c, a + b)
 

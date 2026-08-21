@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from mrsimulator import Simulator, SpinSystem, Site
 from mrsimulator import signal_processor as sp
 from mrsimulator.spin_system.tensors import SymmetricTensor
-from mrsimulator.method import Method, SpectralDimension, SpectralEvent, MixingEvent
+from mrsimulator.method import Method, SpectralDimension, SpectralEvent, RotationEvent
 
 # sphinx_gallery_thumbnail_number = 3
 
@@ -42,8 +42,8 @@ spin_system = SpinSystem(sites=[site])
 # the method parameters, as shown below.
 #
 # By default, all transitions selected from a `SpectralEvent` connect to all selected
-# transitions from the following `SpectralEvent` if no `MixingEvent` is defined
-# between them. Here, we define a `MixingEvent` with an angle of 109.5 degrees to
+# transitions from the following `SpectralEvent` if no `RotationEvent` is defined
+# between them. Here, we define a `RotationEvent` with an angle of 109.5 degrees to
 # connect the 3Q to 1Q transitions.
 coaster = Method(
     name="COASTER",
@@ -59,7 +59,7 @@ coaster = Method(
             label="$\\omega_1$ (CSA)",
             events=[
                 SpectralEvent(transition_queries=[{"ch1": {"P": [3], "D": [0]}}]),
-                MixingEvent(ch1={"angle": np.pi * 109.5 / 180, "phase": 0}),
+                RotationEvent(ch1={"angle": np.pi * 109.5 / 180, "phase": 0}),
             ],
         ),
         # The last spectral dimension block is the direct-dimension

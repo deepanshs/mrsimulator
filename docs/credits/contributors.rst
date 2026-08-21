@@ -1,5 +1,5 @@
-Authors and Credits
-===================
+Contributors
+============
 
 - `Deepansh Srivastava (Ohio State University) <https://github.com/deepanshs>`_
 - `Maxwell C. Venetos (UC Berkeley) <https://github.com/mVenetos97>`_

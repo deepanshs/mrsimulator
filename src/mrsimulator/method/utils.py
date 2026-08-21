@@ -100,7 +100,11 @@ def get_mixing_query(spectral_dimensions, index):
     mixing = spectral_dimensions[sp].events[index]
 
     # Return the query, if is a MixingEvent, otherwise the value of the MixingEnum
-    return mixing if mixing.__class__.__name__ == "MixingEvent" else mixing.value
+    return (
+        mixing
+        if mixing.__class__.__name__ in ["MixingEvent", "RotationEvent"]
+        else mixing.value
+    )
 
 
 def map_mix_query_attr_to_ch(mixing_query):
@@ -113,8 +117,8 @@ def map_mix_query_attr_to_ch(mixing_query):
     attributes = ["angle", "phase"]
     return {
         i: {
-            item: getattr(getattr(mixing_query, f"ch{i+1}"), item) or 0
-            if getattr(mixing_query, f"ch{i+1}") is not None
+            item: getattr(getattr(mixing_query, f"ch{i + 1}"), item) or 0
+            if getattr(mixing_query, f"ch{i + 1}") is not None
             else 0
             for item in attributes
         }
@@ -183,7 +187,7 @@ def get_grouped_mixing_queries(spec_dims, event_names):
     mixing_query_sets = {}
     previous_event_mix = False
     for i, name in enumerate(event_names):
-        if name != "MixingEvent":
+        if name not in ["MixingEvent", "RotationEvent"]:
             previous_event_mix = False
 
         # Skip this event if the previous event mixing or if this event TotalMixing
@@ -196,7 +200,10 @@ def get_grouped_mixing_queries(spec_dims, event_names):
             previous_event_mix = True
             mixing_query_sets[i] = []
             j = i
-            while j < len(event_names) and event_names[j] == "MixingEvent":
+            while j < len(event_names) and event_names[j] in [
+                "MixingEvent",
+                "RotationEvent",
+            ]:
                 # Only add query if the query is not the string TotalMixing
                 query = get_mixing_query(spec_dims, j)
                 mixing_query_sets[i] += [query] if query != "TotalMixing" else []
@@ -217,7 +224,11 @@ def mixing_query_connect_map(spectral_dimensions):
         evt.__class__.__name__ for dim in spectral_dimensions for evt in dim.events
     ]
     grouped_mix_map = get_grouped_mixing_queries(spectral_dimensions, event_names)
-    non_mix_index = [i for i, ev in enumerate(event_names) if ev != "MixingEvent"]
+    non_mix_index = [
+        i
+        for i, ev in enumerate(event_names)
+        if ev not in ["MixingEvent", "RotationEvent"]
+    ]
     non_mix_index_map = {index: i for i, index in enumerate(non_mix_index)}
 
     return [

@@ -24,7 +24,7 @@ matplotlib.rc("font", **font)
 
 @pytest.fixture(scope="module")
 def report():
-    if __GENERATE_REPORT__:
+    if __GENERATE_REPORT__:  # pragma: no cover
         pdf = PdfPages("reports/interpolation_report.pdf")
     else:
         pdf = None
@@ -35,7 +35,7 @@ def report():
 def report_pdf(report):
     """Generate report"""
     yield
-    if __GENERATE_REPORT__:
+    if __GENERATE_REPORT__:  # pragma: no cover
         report.close()
 
 
@@ -119,7 +119,7 @@ def test_pdf():
     __GENERATE_REPORT__ = True
 
     is_present = path.isdir("_temp")
-    if not is_present:
+    if not is_present:  # pragma: no cover
         mkdir("_temp")
     filename = "_temp/interpolation_report_scrap.pdf"
     report_file = PdfPages(filename)

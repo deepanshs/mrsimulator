@@ -1,19 +1,19 @@
 License
 =======
 
-Mrsimulator License
+MRSimulator License
 -------------------
 
-Mrsimulator is licensed under BSD 3-Clause License
+MRSimulator is licensed under BSD 3-Clause License
 
-Copyright (c) 2019-|today|, Mrsimulator Developers,
+Copyright (c) 2019-|today|, MRSimulator Developers,
 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
+* Redistributions of source code must retain the above copyright notice; this
   list of conditions and the following disclaimer.
 
 * Redistributions in binary form must reproduce the above copyright notice,
