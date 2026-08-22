@@ -15,6 +15,14 @@
 {# Silence the bottom relbar. #}
 {% block relbar2 %} {% endblock %}
 
+{%- block sidebarlogo %}
+{%- if logo_url %}
+<p class="logo"><a href="{{ pathto(master_doc) }}">
+  <img class="logo" src="{{ logo_url }}" alt="{{ project|e }}" />
+</a></p>
+{%- endif %}
+{%- endblock %}
+
 {%- block footer %}
 <footer class="footer">
   <p class="flex">
