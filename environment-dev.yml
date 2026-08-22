@@ -31,6 +31,7 @@ dependencies:
       - sybil>=3.0.0
       # building docs
       - sphinx>=4.0
+      - standard-imghdr; python_version >= "3.13"
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10
