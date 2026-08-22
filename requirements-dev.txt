@@ -28,7 +28,7 @@ sybil>=3.0.0
 
 # Building Docs requirements
 sphinxjp.themes.basicstrap
-sphinx>=4
+sphinx>=8.1.3
 standard-imghdr; python_version >= "3.13"
 sphinx-gallery>=0.10
 pillow>=7.1.2
