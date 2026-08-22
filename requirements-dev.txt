@@ -1,6 +1,6 @@
 # Default requirements
 numpy>=2.0
-matplotlib>=3.3.4
+matplotlib>=3.10.9
 fonttools>=4.60.2
 brotli>=1.2.0
 tornado>=6.5.7
