@@ -9,15 +9,35 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import datetime
+import importlib
 import os
-import subprocess
 import sys
 import warnings
 
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
 
+
+def _patch_sphinx_tabs_visit():
+    try:
+        sphinx_tabs_tabs = importlib.import_module("sphinx_tabs.tabs")
+    except ImportError:
+        return
+
+    def visit(translator, node):
+        attrs = node.attributes.copy()
+        for attr in ("classes", "ids", "names", "dupnames", "backrefs"):
+            attrs.pop(attr, None)
+        text = translator.starttag(node, node.tagname, **attrs)
+        translator.body.append(text.strip())
+
+    sphinx_tabs_tabs.visit = visit
+
+
+_patch_sphinx_tabs_visit()
+
 sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # scraper = _sg_scraper.plotly_sg_scraper
 # -- Project information -----------------------------------------------------
@@ -59,8 +79,6 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
-    # "sphinxcontrib.bibtex",
-    "breathe",
     "sphinxjp.themes.basicstrap",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.intersphinx",
@@ -225,27 +243,6 @@ rst_prolog = """
 copybutton_prompt_text = ">>> |\\$ |\\[\\d*\\]: |\\.\\.\\.: |[.][.][.] "
 copybutton_prompt_is_regexp = True
 
-# ---------------------------------------------------------------------------- #
-#                            Doxygen C docs config                             #
-# ---------------------------------------------------------------------------- #
-try:
-    subprocess.run("doxygen", shell=False)
-    doxy_output = os.path.abspath("./xml")
-
-    # Setup the breathe extension
-    breathe_projects = {"mrsim": doxy_output}
-    breathe_default_project = "mrsim"
-    breathe_domain_by_extension = {"h": "c"}
-    breathe_use_project_refids = True
-    breathe_doxygen_config_options = {
-        "PREDEFINED": "DOXYGEN_SHOULD_SKIP_THIS",
-        # "GENERATE_XML": True,
-        # "XML_PROGRAMLISTING": True,
-        # "INPUT": "../../src/c_lib/include",
-    }
-except Exception:
-    print("Skipping C-docs (doxygen)....")
-# ---------------------------------------------------------------------------- #
 
 # numfig config
 numfig = True
@@ -363,6 +360,10 @@ html_theme_options = {
 }
 
 html_style = "style.css"
+# Sphinx>=7 stopped injecting `style` into the template context automatically.
+# The basicstrap theme's layout.html still references `{{ style }}` directly,
+# so restore it via html_context to avoid "'style' is undefined" theme errors.
+html_context = {"style": html_style}
 html_title = f"mrsimulator: docs v{__version__}"
 html_logo = "_static/mrsimulator_logo.png"
 html_favicon = "_static/favicon.ico"
@@ -600,5 +601,15 @@ epub_cover = ("_static/launch_2048x2732.png", "")
 epub_exclude_files = ["search.html", "_static/style.css"]
 
 
+def _fix_basicstrap_asset_lists(app, pagename, templatename, context, doctree):
+    # Sphinx>=7 wraps css/script assets in objects instead of plain filename
+    # strings, but the basicstrap theme templates still expect strings.
+    for key in ("css_files", "script_files"):
+        assets = context.get(key)
+        if assets:
+            context[key] = [getattr(asset, "filename", asset) for asset in assets]
+
+
 def setup(app):
     app.add_css_file("style.css")
+    app.connect("html-page-context", _fix_basicstrap_asset_lists)
