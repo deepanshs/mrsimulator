@@ -9,12 +9,32 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import datetime
+import importlib
 import os
 import sys
 import warnings
 
 from sphinx_gallery.sorting import ExplicitOrder
 from sphinx_gallery.sorting import FileNameSortKey
+
+
+def _patch_sphinx_tabs_visit():
+    try:
+        sphinx_tabs_tabs = importlib.import_module("sphinx_tabs.tabs")
+    except ImportError:
+        return
+
+    def visit(translator, node):
+        attrs = node.attributes.copy()
+        for attr in ("classes", "ids", "names", "dupnames", "backrefs"):
+            attrs.pop(attr, None)
+        text = translator.starttag(node, node.tagname, **attrs)
+        translator.body.append(text.strip())
+
+    sphinx_tabs_tabs.visit = visit
+
+
+_patch_sphinx_tabs_visit()
 
 sys.path.insert(0, os.path.abspath("../.."))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
