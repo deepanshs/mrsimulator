@@ -28,10 +28,9 @@ sybil>=3.0.0
 
 # Building Docs requirements
 sphinxjp.themes.basicstrap
-sphinx<7
+sphinx>=4
 sphinx-gallery>=0.10
 pillow>=7.1.2
-breathe==4.34.0
 sphinx_copybutton>=0.5.2
 sphinx-tabs>=1.1.13
 recommonmark

@@ -55,10 +55,9 @@ For ``MRSimulator`` developers, the following packages are required:
 *For building documentation*
 
 - sphinxjp.themes.basicstrap
-- sphinx<=6.0
+- sphinx>=4.0
 - sphinx-gallery>=0.10
 - pillow>=7.1.2
-- breathe==4.34.0
 - sphinx_copybutton>=0.3.0
 - sphinx-tabs>=1.1.13
 - recommonmark

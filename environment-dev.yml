@@ -30,12 +30,11 @@ dependencies:
       - sympy
       - sybil>=3.0.0
       # building docs
-      - sphinx<=6.0
+      - sphinx>=4.0
       - sphinxjp.themes.basicstrap
       - sphinx-copybutton>=0.2.12
       - sphinx-gallery>=0.10
       - pillow>=7.1.2
-      - breathe==4.26
       - sphinx-tabs>=1.1.13
       - recommonmark
       - sphinx-version-warning
