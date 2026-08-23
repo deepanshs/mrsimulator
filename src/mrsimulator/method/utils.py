@@ -16,8 +16,7 @@ def cartesian_product(*arrays):
     arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
     for i, a in enumerate(np.ix_(*arrays)):
         arr[..., i] = a
-    arr.shape = (-1, la)
-    return arr
+    return arr.reshape(-1, la)
 
 
 def get_symmetry_indexes(fn, list_of_sym):

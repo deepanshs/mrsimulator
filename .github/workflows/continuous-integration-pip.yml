@@ -216,6 +216,8 @@ jobs:
 
       - name: Test with pytest
         shell: pwsh
+        env:
+          MPLBACKEND: Agg
         run: python -m pytest --cov=./ --cov-report=xml
 
       - name: Upload coverage

@@ -51,7 +51,7 @@ def czjzek_zeta_eta(sigma: float, pos: list):
     eta_idx = np.where(eta.ravel() == 1)
     pdf_model = pdf_model.ravel()
     pdf_model[eta_idx] /= 2.0
-    pdf_model.shape = zeta.shape
+    pdf_model = pdf_model.reshape(zeta.shape)
     return pos[0], pos[1], pdf_model
 
 
