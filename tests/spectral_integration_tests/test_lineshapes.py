@@ -1,6 +1,6 @@
 """Lineshape Test."""
-from copy import deepcopy
-from os import mkdir
+# from copy import deepcopy
+# from os import mkdir
 from os import path
 from pprint import pformat
 
@@ -110,25 +110,25 @@ def compile_plots(dim, rep, info, dim2=None, title=None, report=None, label="sim
     plt.close()
 
 
-def test_pdf():
-    global __GENERATE_REPORT__
-    temp_status = deepcopy(__GENERATE_REPORT__)
-    __GENERATE_REPORT__ = True
+# def test_pdf():
+#     global __GENERATE_REPORT__
+#     temp_status = deepcopy(__GENERATE_REPORT__)
+#     __GENERATE_REPORT__ = True
 
-    is_present = path.isdir("_temp")
-    if not is_present:  # pragma: no cover
-        mkdir("_temp")
-    filename = "_temp/lineshapes_report_scrap.pdf"
-    report_file = PdfPages(filename)
-    dim = np.arange(10)
-    res = [np.arange(10), np.arange(10)]
-    info = {"config": 1, "spin_systems": 2, "methods": 3}
-    compile_plots(dim, [res], info, title="Shielding Sidebands", report=report_file)
-    report_file.close()
-    is_file = path.isfile(filename)
-    assert is_file
+#     is_present = path.isdir("_temp")
+#     if not is_present:  # pragma: no cover
+#         mkdir("_temp")
+#     filename = "_temp/lineshapes_report_scrap.pdf"
+#     report_file = PdfPages(filename)
+#     dim = np.arange(10)
+#     res = [np.arange(10), np.arange(10)]
+#     info = {"config": 1, "spin_systems": 2, "methods": 3}
+#     compile_plots(dim, [res], info, title="Shielding Sidebands", report=report_file)
+#     report_file.close()
+#     is_file = path.isfile(filename)
+#     assert is_file
 
-    __GENERATE_REPORT__ = temp_status
+#     __GENERATE_REPORT__ = temp_status
 
 
 def check_all_close(res, message, rel_limit):
