@@ -9,5 +9,6 @@ channels:
 dependencies:
   - fftw>=3.3.9
   - openblas
+  - tk
   - pip
   - setuptools>=27.3
