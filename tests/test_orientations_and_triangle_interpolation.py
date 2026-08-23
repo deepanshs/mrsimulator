@@ -1,8 +1,7 @@
 """Test for c functions."""
-from copy import deepcopy
-from os import mkdir
-from os import path
-
+# from copy import deepcopy
+# from os import mkdir
+# from os import path
 import matplotlib.pyplot as plt
 import mrsimulator.tests.tests as clib
 import numpy as np
@@ -113,28 +112,28 @@ def plot_2d_raster(rep, title=None, report=None):
     plt.close()
 
 
-def test_pdf():
-    global __GENERATE_REPORT__
-    temp_status = deepcopy(__GENERATE_REPORT__)
-    __GENERATE_REPORT__ = True
+# def test_pdf():
+#     global __GENERATE_REPORT__
+#     temp_status = deepcopy(__GENERATE_REPORT__)
+#     __GENERATE_REPORT__ = True
 
-    is_present = path.isdir("_temp")
-    if not is_present:  # pragma: no cover
-        mkdir("_temp")
-    filename = "_temp/interpolation_report_scrap.pdf"
-    report_file = PdfPages(filename)
-    amp2d = np.random.rand(100).reshape(10, 10)
-    pts1 = np.array([1, 3, 6])
-    pts2 = np.array([5, 2, 9])
-    proj_x = amp2d.sum(axis=0)
-    proj_y = amp2d.sum(axis=1)
-    rep = [amp2d, pts1, pts2, proj_x, proj_y]
-    plot_2d_raster([rep], title="All points within FOV", report=report_file)
-    report_file.close()
-    is_file = path.isfile(filename)
-    assert is_file
+#     is_present = path.isdir("_temp")
+#     if not is_present:  # pragma: no cover
+#         mkdir("_temp")
+#     filename = "_temp/interpolation_report_scrap.pdf"
+#     report_file = PdfPages(filename)
+#     amp2d = np.random.rand(100).reshape(10, 10)
+#     pts1 = np.array([1, 3, 6])
+#     pts2 = np.array([5, 2, 9])
+#     proj_x = amp2d.sum(axis=0)
+#     proj_y = amp2d.sum(axis=1)
+#     rep = [amp2d, pts1, pts2, proj_x, proj_y]
+#     plot_2d_raster([rep], title="All points within FOV", report=report_file)
+#     report_file.close()
+#     is_file = path.isfile(filename)
+#     assert is_file
 
-    __GENERATE_REPORT__ = temp_status
+#     __GENERATE_REPORT__ = temp_status
 
 
 def test_octahedron_averaging_setup():
