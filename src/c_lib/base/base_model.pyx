@@ -485,7 +485,7 @@ def core_simulator(method,
         else:
             amp1 = amp_individual
     else:
-        amp1.shape = method.shape()
+        amp1 = amp1.reshape(method.shape())
         if gyromagnetic_ratio < 0:
             amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
 
