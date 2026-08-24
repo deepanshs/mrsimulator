@@ -1,6 +1,6 @@
 
 numpy>=1.20
-setuptools>=27.3
+setuptools>=84.0.0
 cython>=0.29.11
 requests>=2.21.0
 matplotlib>=3.10.9
