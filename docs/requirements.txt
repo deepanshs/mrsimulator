@@ -10,7 +10,7 @@ numexpr>=2.8.4
 psutil>=7.2.2
 joblib>=1.5.3
 cython>=0.29.11
-nmrglue>=0.9
+nmrglue>=0.12
 
 # Building Docs requirements
 sphinxjp.themes.basicstrap
