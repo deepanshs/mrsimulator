@@ -1,5 +1,5 @@
 
-numpy>=1.20
+numpy>=2.2.6
 setuptools>=84.0.0
 cython>=0.29.11
 requests>=2.21.0

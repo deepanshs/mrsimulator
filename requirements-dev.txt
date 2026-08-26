@@ -1,5 +1,5 @@
 # Default requirements
-numpy>=2.0
+numpy>=2.2.6
 matplotlib>=3.10.9
 fonttools>=4.60.2
 brotli>=1.2.0
