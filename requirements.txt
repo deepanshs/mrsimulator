@@ -1,5 +1,5 @@
 
-numpy>=2.0
+numpy>=2.2.6
 matplotlib>=3.10.9
 csdmpy>=0.7
 astropy>=6.1.7
