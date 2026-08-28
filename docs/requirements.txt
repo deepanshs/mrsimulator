@@ -9,7 +9,7 @@ pandas>=2.3.3
 numexpr>=2.8.4
 psutil>=7.2.2
 joblib>=1.5.3
-cython>=0.29.11
+cython>=3.3.0
 nmrglue>=0.12
 
 # Building Docs requirements
