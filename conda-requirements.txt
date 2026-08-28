@@ -2,7 +2,7 @@
 numpy>=2.2.6
 setuptools>=84.0.0
 cython>=3.3.0
-requests>=2.21.0
+requests>=2.34.2
 matplotlib>=3.10.9
 fftw>=3.3.9
 pandas>=2.3.3
