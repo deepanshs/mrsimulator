@@ -20,7 +20,7 @@ def histogram1d(
         ndarray[double, ndim=1] weights,
     ):
     cdef ndarray[double] hist = np.zeros(x_count, dtype=np.float64)
-    cdef int sample_count = sample_x.size
+    cdef int sample_count = int(sample_x.size)
     cdef int c_int64 = ctypes.sizeof(ctypes.c_int64)
     cdef int stride_x = sample_x.ctypes.strides[0] / c_int64
     cdef int stride_w = weights.ctypes.strides[0] / c_int64
@@ -49,7 +49,7 @@ def histogram2d(
         int interp=0,
     ):
     cdef ndarray[double, ndim=2] hist = np.zeros((x_count, y_count), dtype=np.float64)
-    cdef int sample_count = sample_x.size
+    cdef int sample_count = int(sample_x.size)
     cdef int c_int64 = ctypes.sizeof(ctypes.c_int64)
     cdef int stride_x = sample_x.ctypes.strides[0] / c_int64
     cdef int stride_y = sample_y.ctypes.strides[0] / c_int64

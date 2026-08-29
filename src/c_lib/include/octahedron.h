@@ -11,20 +11,20 @@
 #include "interpolation.h"
 
 extern void octahedronGetDirectionCosineSquareAndWeightsOverOctant(
-    const unsigned int nt, double *restrict xr, double *restrict yr,
-    double *restrict zr, double *restrict amp);
+    const int nt, double *restrict xr, double *restrict yr, double *restrict zr,
+    double *restrict amp);
 
-extern void octahedronGetPolarAngleTrigOverOctant(const unsigned int nt,
+extern void octahedronGetPolarAngleTrigOverOctant(const int nt,
                                                   double *restrict cos_alpha,
                                                   double *restrict cos_beta,
                                                   double *restrict amp);
 
-extern void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
+extern void octahedronGetComplexExpOfPolarAngleOverOctant(const int nt,
                                                           void *restrict exp_I_alpha,
                                                           void *restrict exp_I_beta,
                                                           double *restrict amp);
 
-void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum);
+void get_total_amplitude(const int nt, double *amp, double *amp_sum);
 
-extern void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta,
-                            double *amp, bool interpolation);
+extern void averaging_setup(int nt, void *exp_I_alpha, void *exp_I_beta, double *amp,
+                            bool interpolation);

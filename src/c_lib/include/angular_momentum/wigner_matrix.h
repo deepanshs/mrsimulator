@@ -121,8 +121,7 @@ extern void single_wigner_rotation(const int l, const double *euler_angles,
  *      fourth-rank wigner matrices. The length of w4 is `octant_orientations x
  *      n_octants x 9` with 9 as the leading dimension.
  */
-extern void __batch_wigner_rotation(const unsigned int octant_orientations,
-                                    const unsigned int n_octants,
+extern void __batch_wigner_rotation(const int octant_orientations, const int n_octants,
                                     double *wigner_2j_matrices, complex128 *R2,
                                     double *wigner_4j_matrices, complex128 *R4,
                                     complex128 *exp_Im_alpha, complex128 *w2,
@@ -133,5 +132,5 @@ extern void __batch_wigner_rotation(const unsigned int octant_orientations,
  * The function accepts cos_angle = cos(angle).
  * The result is stored in exp_Im_angle as m x n matrix where m = [-4,-3,-2,-1]
  */
-extern void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
-                             void *exp_Im_angle, double delta_alpha);
+extern void get_exp_Im_angle(const int n, const bool allow_4th_rank, void *exp_Im_angle,
+                             double delta_alpha);
