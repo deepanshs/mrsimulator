@@ -284,7 +284,7 @@ library_dirs = list(set(win.library_dirs))
 include_dirs = list(set(win.include_dirs))
 libraries = list(set(win.libraries))
 
-# other include paths
+# Other include paths
 include_dirs += ["src/c_lib/include/", numpy_include]
 
 # print info
@@ -353,57 +353,10 @@ ext_modules += [
 if USE_CYTHON:
     ext_modules = cythonize(ext_modules, language_level=3, gdb_debug=False)
 
-extras = {}  # {"all": ["matplotlib>=3.3.4"]}
-
-description = "A python toolbox for simulating fast real-time solid-state NMR spectra."
 setup(
-    name="mrsimulator",
     version=version,
-    description=description,
-    long_description=open(join(module_dir, "README.md")).read(),
-    long_description_content_type="text/markdown",
-    author="Deepansh J. Srivastava",
-    author_email="srivastava.89@osu.edu",
-    python_requires=">=3.10",
-    url="https://github.com/deepanshs/mrsimulator/",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["numpy>=2.0"],
-    install_requires=[
-        "numpy>=2.0",
-        "csdmpy>=0.7",
-        "pydantic>=2.8",
-        "typing-extensions>=3.7",
-        "psutil>=5.4.8",
-        "joblib>=1.0.0",
-        "pandas>=1.1.3",
-        "lmfit>=1.0.2",
-        "matplotlib>=3.3.4",
-        "astropy>=6",
-    ],
-    entry_points={"console_scripts": ["mrsimulator=mrsimulator.__main__:run"]},
-    extras_require=extras,
     ext_modules=ext_modules,
     include_package_data=True,
-    zip_safe=False,
-    license="BSD-3-Clause",
-    classifiers=[
-        # Trove classifiers
-        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "Intended Audience :: Science/Research",
-        "Intended Audience :: Education",
-        "Intended Audience :: Developers",
-        "Operating System :: OS Independent",
-        "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: C",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Topic :: Education",
-        "Topic :: Scientific/Engineering :: Chemistry",
-        "Topic :: Scientific/Engineering :: Physics",
-    ],
 )
