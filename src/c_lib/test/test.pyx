@@ -171,17 +171,18 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):
+def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, np.ndarray[double, ndim=2] rf_amps, int stride=1, int rf_stride=1):
     cdef int i
     cdef int number_of_sidebands = amp.shape[0]
     for i in range(number_of_sidebands):
-        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, &rf_amps[i, 0], rf_stride, spec.size)
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
-                           double amp=1, str type="linear"):
+                            double amp=1, np.ndarray[double, ndim=1] amps2=np.array([1., 1., 1.]),
+                            str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -205,10 +206,11 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
     cdef double *f3 = &f_vector[2]
 
     cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+    cdef np.ndarray[double, ndim=1] amps2_ = np.asarray(amps2)
 
     iso_intrp = 0 if type == "linear" else 1
-    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0],
-                &points[0], iso_intrp)
+    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &amps2_[0], &spectrum_amp[0],
+                                  &points[0], iso_intrp)
 
 
 @cython.boundscheck(False)
