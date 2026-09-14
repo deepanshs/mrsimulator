@@ -23,7 +23,7 @@ def wigner_d_element(float l, float m1, float m2, double beta):
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def wigner_d_matrices(int l, np.ndarray[double] angle):
-    cdef int n = angle.size
+    cdef int n = int(angle.size)
     cdef int n1 = (2*l+1)**2
     cdef np.ndarray[double] wigner = np.empty(n*n1, dtype=np.float64)
     clib.wigner_d_matrices(l, n, &angle[0], &wigner[0])
@@ -46,7 +46,7 @@ def wigner_d_matrices_from_exp_I_beta(int l, bool_t half, np.ndarray[double comp
     :ivar exp_I_beta: An 1D numpy array or a scalar representing $\exp\beta$.
     """
     n1 = (2 * l + 1)
-    cdef int n = exp_I_beta.size
+    cdef int n = int(exp_I_beta.size)
     size = n * n1*(l+1) if half else n * n1**2
 
     cdef np.ndarray[double, ndim=1] wigner = np.empty(size)
@@ -88,7 +88,7 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
                         np.ndarray[double complex] R_in):
 
     cdef int n1 = 2 * l + 1
-    cdef int n = cos_alpha.size
+    cdef int n = int(cos_alpha.size)
     cdef np.ndarray[double, ndim=1] wigner
     cdef np.ndarray[double complex, ndim=1] exp_I_beta
     wigner = np.empty(n1 * (l+1) * n, dtype=np.float64)
@@ -111,7 +111,7 @@ def __wigner_rotation_2(int l, np.ndarray[double] cos_alpha,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def get_exp_Im_angle(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank):
-    cdef unsigned int n_ = n
+    cdef int n_ = n
     cdef np.ndarray[double complex] exp_Im_angle = np.empty(4*n, dtype=np.complex128)
     exp_Im_angle[3*n:] = cos_alpha + 1j*np.sqrt(1.0 - cos_alpha**2)
     clib.get_exp_Im_angle(n_, allow_4th_rank, &exp_Im_angle[0], 0.0)
@@ -120,7 +120,7 @@ def get_exp_Im_angle(int n, np.ndarray[double] cos_alpha, bool_t allow_4th_rank)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def pre_phase_components(unsigned int number_of_sidebands, double rotor_frequency_in_Hz):
+def pre_phase_components(int number_of_sidebands, double rotor_frequency_in_Hz):
     cdef int n1 = 4 * number_of_sidebands
     cdef np.ndarray[double] pre_phase = np.zeros(2*n1, dtype=np.float64)
     clib.get_sideband_phase_components(number_of_sidebands, rotor_frequency_in_Hz, &pre_phase[0])
@@ -157,7 +157,7 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
     :return amp: The amplitude at the given $\alpha$ and $\beta$.
     """
     nt = integration_density
-    cdef unsigned int octant_orientations = int((nt+1) * (nt+2)/2)
+    cdef int octant_orientations = int((nt+1) * (nt+2)/2)
     cdef bool_t interploation = True
 
     cdef np.ndarray[double complex] exp_I_alpha = np.empty(octant_orientations, dtype=np.complex128)
@@ -171,17 +171,17 @@ def cosine_of_polar_angles_and_amplitudes(int integration_density=72):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, int stride=1):
+def octahedronInterpolation(np.ndarray[double] spec, np.ndarray[double, ndim=2] freq, int nt, np.ndarray[double, ndim=2] amp, const int stride=1):
     cdef int i
-    cdef int number_of_sidebands = amp.shape[0]
+    cdef int number_of_sidebands = int(amp.shape[0])
     for i in range(number_of_sidebands):
-        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, spec.size)
+        clib.octahedronInterpolation(&spec[0], &freq[i,0], nt, &amp[i,0], stride, int(spec.size))
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
-                           double amp=1, str type="linear"):
+                           double amp=1.0, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -197,24 +197,22 @@ def triangle_interpolation1D(vector, np.ndarray[double, ndim=1] spectrum_amp,
                default value is 0.
     :ivar type: Linear or Gaussian interpolation for delta functions.
     """
-    cdef np.ndarray[int, ndim=1] points = np.asarray([spectrum_amp.size/2], dtype=np.int32)
+    cdef int points = np.asarray([spectrum_amp.size/2], dtype=np.intc)[0]
     cdef np.ndarray[double, ndim=1] f_vector = np.asarray(vector, dtype=np.float64)
 
-    cdef double *f1 = &f_vector[0]
-    cdef double *f2 = &f_vector[1]
-    cdef double *f3 = &f_vector[2]
-
-    cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+    cdef double f1 = f_vector[0]
+    cdef double f2 = f_vector[1]
+    cdef double f3 = f_vector[2]
 
     iso_intrp = 0 if type == "linear" else 1
-    clib.triangle_interpolation1D(f1, f2, f3, &amp_[0], &spectrum_amp[0],
-                &points[0], iso_intrp)
+    clib.triangle_interpolation1D(f1, f2, f3, amp, &spectrum_amp[0],
+                points, iso_intrp)
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectrum_amp,
-                            double amp=1, str type="linear"):
+                            double amp=1.0, str type="linear"):
     r"""Given a vector of three points, this method interpolates the
     between the points to form a triangle. The height of the triangle is given
     as `2.0/(f[2]-f[1])` where `f` is the array `vector` sorted in an ascending
@@ -224,29 +222,27 @@ def triangle_interpolation2D(vector1, vector2, np.ndarray[double, ndim=2] spectr
     :ivar vector2: 1-D array of three points.
     :ivar spectrum_amp: A numpy array of amplitudes. This array is the output.
     """
-    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.int32)
+    shape = np.asarray([spectrum_amp.shape[0], spectrum_amp.shape[1]/2], dtype=np.intc)
     # cdef np.ndarray[int, ndim=1] points = shape
     cdef np.ndarray[double, ndim=1] f1_vector = np.asarray(vector1, dtype=np.float64)
     cdef np.ndarray[double, ndim=1] f2_vector = np.asarray(vector2, dtype=np.float64)
 
-    cdef double *f11 = &f1_vector[0]
-    cdef double *f12 = &f1_vector[1]
-    cdef double *f13 = &f1_vector[2]
+    cdef double f11 = f1_vector[0]
+    cdef double f12 = f1_vector[1]
+    cdef double f13 = f1_vector[2]
 
-    cdef double *f21 = &f2_vector[0]
-    cdef double *f22 = &f2_vector[1]
-    cdef double *f23 = &f2_vector[2]
-
-    cdef np.ndarray[double, ndim=1] amp_ = np.asarray([amp])
+    cdef double f21 = f2_vector[0]
+    cdef double f22 = f2_vector[1]
+    cdef double f23 = f2_vector[2]
 
     iso_intrp = 0 if type == "linear" else 1
-    clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, &amp_[0],
+    clib.triangle_interpolation2D(f11, f12, f13, f21, f22, f23, amp,
                 &spectrum_amp[0, 0], shape[0], shape[1], iso_intrp)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def __batch_wigner_rotation(unsigned int octant_orientations,
-                            unsigned int n_octants,
+def __batch_wigner_rotation(int octant_orientations,
+                            int n_octants,
                             np.ndarray[double] wigner_2j_matrices,
                             np.ndarray[double complex] R2,
                             np.ndarray[double] wigner_4j_matrices,
@@ -283,122 +279,122 @@ def vm_absd(double a):
 @cython.wraparound(False)
 def vm_add(np.ndarray[double] A, np.ndarray[double] B):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_add(A.size, &A[0], &B[0], &res[0])
+    clib.test_vm_double_add(int(A.size), &A[0], &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_add_inplace(np.ndarray[double] A, np.ndarray[double] B):
-    clib.test_vm_double_add_inplace(A.size, &A[0], &B[0])
+    clib.test_vm_double_add_inplace(int(A.size), &A[0], &B[0])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sub(np.ndarray[double] A, np.ndarray[double] B):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_subtract(A.size, &A[0], &B[0], &res[0])
+    clib.test_vm_double_subtract(int(A.size), &A[0], &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sub_inplace(np.ndarray[double] A, np.ndarray[double] B):
-    clib.test_vm_double_subtract_inplace(A.size, &A[0], &B[0])
+    clib.test_vm_double_subtract_inplace(int(A.size), &A[0], &B[0])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_mult(np.ndarray[double] A, np.ndarray[double] B):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_multiply(A.size, &A[0], 1, &B[0], &res[0])
+    clib.test_vm_double_multiply(int(A.size), &A[0], 1, &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_mult_inplace(np.ndarray[double] A, np.ndarray[double] B):
-    clib.test_vm_double_multiply_inplace(A.size, &A[0], 1, &B[0], 1)
+    clib.test_vm_double_multiply_inplace(int(A.size), &A[0], 1, &B[0], 1)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_div(np.ndarray[double] A, np.ndarray[double] B):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_divide(A.size, &A[0], &B[0], &res[0])
+    clib.test_vm_double_divide(int(A.size), &A[0], &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_div_inplace(np.ndarray[double] A, np.ndarray[double] B):
-    clib.test_vm_double_divide_inplace(A.size, &A[0], &B[0])
+    clib.test_vm_double_divide_inplace(int(A.size), &A[0], &B[0])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_cmult(np.ndarray[complex] A, np.ndarray[complex] B):
     cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
-    clib.test_vm_double_complex_multiply(A.size, &A[0], &B[0], &res[0])
+    clib.test_vm_double_complex_multiply(int(A.size), &A[0], &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_cmult_conj(np.ndarray[complex] A, np.ndarray[complex] B):
     cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
-    clib.test_vm_double_complex_conj_multiply(A.size, &A[0], &B[0], &res[0])
+    clib.test_vm_double_complex_conj_multiply(int(A.size), &A[0], &B[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sq(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_square(A.size, &A[0], &res[0])
+    clib.test_vm_double_square(int(A.size), &A[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sq_inplace(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_square_inplace(A.size, &A[0])
+    clib.test_vm_double_square_inplace(int(A.size), &A[0])
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sqrt(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_square_root(A.size, &A[0], &res[0])
+    clib.test_vm_double_square_root(int(A.size), &A[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sqrt_inplace(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_square_root_inplace(A.size, &A[0])
+    clib.test_vm_double_square_root_inplace(int(A.size), &A[0])
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_cos(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_cosine(A.size, &A[0], &res[0])
+    clib.test_vm_double_cosine(int(A.size), &A[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_sin(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_sine(A.size, &A[0], &res[0])
+    clib.test_vm_double_sine(int(A.size), &A[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_cos_I_sin(np.ndarray[double] A):
     cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
-    clib.test_vm_cosine_I_sine(A.size, &A[0], &res[0])
+    clib.test_vm_cosine_I_sine(int(A.size), &A[0], &res[0])
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_exp(np.ndarray[double] A):
     cdef np.ndarray[double] res = np.zeros(A.size, dtype=float)
-    clib.test_vm_double_exp(A.size, &A[0], &res[0], 1)
+    clib.test_vm_double_exp(int(A.size), &A[0], &res[0], 1)
     return res
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def vm_I_exp(np.ndarray[complex] A):
     cdef np.ndarray[complex] res = np.zeros(A.size, dtype=complex)
-    clib.test_vm_double_complex_exp(A.size, &A[0], &res[0])
+    clib.test_vm_double_complex_exp(int(A.size), &A[0], &res[0])
     return res
