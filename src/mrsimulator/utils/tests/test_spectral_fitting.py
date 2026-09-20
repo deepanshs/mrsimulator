@@ -383,3 +383,61 @@ def test_distribution():
     assert params["ext_czjzek_2_eps"] == 0.5
     assert params["ext_czjzek_2_mean_isotropic_chemical_shift"] == 0.0
     assert np.allclose(params["ext_czjzek_2_abundance"], 100.0 / 3.0)
+
+
+def _peak_ppm_axis(count, increment, complex_fft, origin_offset):
+    """A LinearDimension covering a symmetric ppm range about zero."""
+    offset = 0.0 if complex_fft else -increment * count / 2
+    dim = cp.LinearDimension(
+        count=count,
+        increment=f"{increment} Hz",
+        coordinates_offset=f"{offset} Hz",
+        origin_offset=f"{origin_offset} Hz",
+        complex_fft=complex_fft,
+    )
+    ppm_dim = dim.copy()
+    ppm_dim.to("ppm", "nmr_frequency_ratio")
+    return dim, ppm_dim.coordinates.value
+
+
+AXIS_CONVENTIONS = [
+    # (increment in Hz, complex_fft)
+    (100.0, True),
+    (100.0, False),
+    (-100.0, True),
+    (-100.0, False),
+]
+
+
+@pytest.mark.parametrize("increment, complex_fft", AXIS_CONVENTIONS)
+def test_apply_iso_shift_direction(increment, complex_fft):
+    """The FFT shift theorem must move a peak to +iso ppm regardless of whether the
+    dimension uses the complex_fft convention or a descending frequency increment.
+
+    csdmpy's `CSDM.fft()` performs an inverse FFT when `complex_fft` is True and a
+    forward FFT otherwise. The two use conjugate kernels, so a phase ramp of a fixed
+    sign shifts the spectrum in opposite directions for the two conventions.
+    """
+    count, origin_offset = 1024, 100e6  # 1 ppm == 100 Hz
+    iso_ppm = 60.0
+    # `_generate_distribution_spectrum` passes a *negative* larmor frequency, as
+    # `Isotope.larmor_freq` returns -gamma * B0.
+    larmor_freq = -origin_offset / 1e6
+
+    dim, ppm = _peak_ppm_axis(count, increment, complex_fft, origin_offset)
+    amp = np.exp(-(ppm**2) / (2 * 8.0**2))  # Gaussian centred at 0 ppm
+    obj = cp.CSDM(
+        dimensions=[dim], dependent_variables=[cp.as_dependent_variable(amp)]
+    )
+
+    assert abs(ppm[np.argmax(obj.y[0].components[0])]) < 1.0
+
+    shifted = sf._apply_iso_shift(
+        obj.copy(), iso_shift_ppm=iso_ppm, larmor_freq=larmor_freq
+    ).real
+
+    peak = ppm[np.argmax(shifted.y[0].components[0])]
+    assert abs(peak - iso_ppm) < 1.0, (
+        f"increment={increment} Hz, complex_fft={complex_fft}: peak moved to "
+        f"{peak:+.2f} ppm, expected {iso_ppm:+.2f} ppm"
+    )

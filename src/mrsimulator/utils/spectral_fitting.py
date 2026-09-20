@@ -552,10 +552,18 @@ def residuals(sim: Simulator, processors: list = None):
 
 def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq):
     """Apply isotropic chemical shift to a CSDM object using the FFT shift theorem."""
+    # `CSDM.fft()` performs an inverse FFT when the dimension follows the complex_fft
+    # convention, and a forward FFT otherwise. The two use conjugate kernels, so the
+    # phase ramp below must flip sign with the convention, else the spectrum shifts
+    # the wrong way on datasets stored without complex_fft (e.g. Bruker imports).
+    sign = 1.0 if csdm_obj.x[0].complex_fft else -1.0
+
     csdm_obj = csdm_obj.fft()
     time_coords = csdm_obj.x[0].coordinates.to("s").value
     iso_shift_Hz = larmor_freq * iso_shift_ppm
-    csdm_obj.y[0].components[0] *= np.exp(-np.pi * 2j * time_coords * iso_shift_Hz)
+    csdm_obj.y[0].components[0] *= np.exp(
+        -sign * np.pi * 2j * time_coords * iso_shift_Hz
+    )
     csdm_obj = csdm_obj.fft()
 
     return csdm_obj
