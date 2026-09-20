@@ -1,3 +1,12 @@
+v1.1.0
+
+**Bug Fixes**
+
+- Fixed a bug in the distribution fitting utilities where the ``mean_isotropic_chemical_shift``
+  of a tensor distribution model was applied with the wrong sign on datasets whose spectral
+  dimension does not use the ``complex_fft`` convention, such as imported Bruker datasets.
+
+
 v1.0.0
 ------
 
