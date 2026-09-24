@@ -65,7 +65,7 @@ static inline void sideband_amplitude(int npts, int n_octant, complex128 *a11,
 
 void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *scheme,
                                double *spec, unsigned int iso_intrp,
-                               complex128 *exp_I_phase) {
+                               complex128 *exp_I_phase, double *rf_amps) {
   unsigned int i, j, k1, address, ptr, gamma_idx;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
@@ -86,8 +86,8 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     break;
   default:
     /**
-     * Scale the absolute value square with the powder scheme weights. Only
-     * the real part is scaled and the imaginary part is left as is. */
+     * Scale the absolute value square sideband ampllitude with the powder scheme
+     * weights. Only the real part is scaled and the imaginary part is left as is. */
     for (j = 0; j < npts; j++) {
       cblas_dscal(planA->n_octants * planA->number_of_sidebands,
                   planA->norm_amplitudes[j], &amps[j], npts);
@@ -152,7 +152,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
             vm_double_add_offset(npts, &freq[address], offset, dimensions->freq_offset);
             // Perform tenting on every sideband order over all orientations.
             one_d_averaging(spec, npts, dimensions->freq_offset, &amps_real[address],
-                            &amps_imag[address], dimensions->count,
+                            &amps_imag[address], rf_amps, dimensions->count,
                             scheme->position_size, scheme->positions, nt, user_defined,
                             interpolation, scheme->is_complex);
             address += npts;
