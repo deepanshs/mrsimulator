@@ -21,8 +21,8 @@ void MRS_free_event(MRS_event *the_event) {
 }
 
 /** Free the memory/buffer allocation for the MRS dimensions and events within. **/
-void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n) {
-  unsigned int dim, evt;
+void MRS_free_dimension(MRS_dimension *dimensions, int n) {
+  int dim, evt;
   for (dim = 0; dim < n; dim++) {
     if (DEBUG) printf("post execution dimension %d cleanup\n", dim);
     for (evt = 0; evt < dimensions[dim].n_events; evt++) {
@@ -143,31 +143,30 @@ static inline void create_plans_for_events_in_dimension(
     double coordinates_offset, int n_events, double *fraction, double *duration,
     unsigned char *is_spectral, double *rotor_frequency_in_Hz,
     double *rotor_angle_in_rad, double *magnetic_flux_density_in_T,
-    unsigned int number_of_sidebands) {
+    int number_of_sidebands) {
   int i;
   dim->count = count;
   dim->coordinates_offset = coordinates_offset;
   dim->increment = increment;
   dim->n_events = n_events;
-  dim->events = (MRS_event *)malloc(n_events * sizeof(MRS_event));
+  dim->events = (MRS_event *)malloc((size_t)n_events * sizeof(MRS_event));
 
   dim->inverse_increment = 1.0 / increment;
   dim->normalize_offset = 0.5 - (coordinates_offset * dim->inverse_increment);
   dim->R0_offset = 0.0;
 
-  MRS_plan *plan =
-      MRS_create_plan(scheme, number_of_sidebands, *rotor_frequency_in_Hz,
-                      *rotor_angle_in_rad, increment, scheme->allow_4th_rank);
+  MRS_plan *plan = MRS_create_plan(scheme, number_of_sidebands, *rotor_frequency_in_Hz,
+                                   *rotor_angle_in_rad, scheme->allow_4th_rank);
   // normalize the sideband frequencies.
   cblas_dscal(number_of_sidebands, dim->inverse_increment, plan->vr_freq, 1);
 
   for (i = 0; i < n_events; i++) {
-    dim->events[i].event_freq_amplitude = malloc_complex128(plan->size);
+    dim->events[i].event_freq_amplitude = malloc_complex128((size_t)plan->size);
     vm_double_ones(plan->size * 2, (double *)dim->events[i].event_freq_amplitude);
     cblas_dscal(plan->size, 0.0, (double *)dim->events[i].event_freq_amplitude + 1, 2);
 
     // if (*rotor_frequency_in_Hz != 0.0 && *rotor_frequency_in_Hz != 1.0e12) {
-    //   dim->events[i].freq_amplitude = malloc_double(plan->size);
+    //   dim->events[i].freq_amplitude = malloc_double((size_t)plan->size);
     //   vm_double_ones(plan->size, dim->events[i].freq_amplitude);
     // }
     MRS_set_event(&(dim->events[i]), *fraction++, *duration++, *is_spectral++,
@@ -181,10 +180,12 @@ static inline void create_plans_for_events_in_dimension(
 
   /* buffer to hold the local frequencies and frequency offset. The buffer is useful
    * when the rotor angle is off magic angle (54.735 deg). */
-  dim->local_frequency = malloc_double(scheme->n_gamma * scheme->total_orientations);
-  dim->local_phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
-  dim->freq_offset = malloc_double(scheme->octant_orientations);
-  dim->freq_amplitude = malloc_double(plan->size);
+  dim->local_frequency =
+      malloc_double((size_t)(scheme->n_gamma * scheme->total_orientations));
+  dim->local_phase =
+      malloc_double((size_t)(scheme->n_gamma * scheme->total_orientations));
+  dim->freq_offset = malloc_double((size_t)scheme->octant_orientations);
+  dim->freq_amplitude = malloc_double((size_t)plan->size);
 }
 
 /**
@@ -195,10 +196,10 @@ MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *durations, unsigned char *is_spectral,
     double *magnetic_flux_density_in_T, double *rotor_frequency_in_Hz,
-    double *rotor_angle_in_rad, int *n_events, unsigned int n_dim,
-    unsigned int *number_of_sidebands) {
-  unsigned int i;
-  MRS_dimension *dimension = (MRS_dimension *)malloc(n_dim * sizeof(MRS_dimension));
+    double *rotor_angle_in_rad, int *n_events, int n_dim, int *number_of_sidebands) {
+  int i;
+  MRS_dimension *dimension =
+      (MRS_dimension *)malloc((size_t)n_dim * sizeof(MRS_dimension));
 
   for (i = 0; i < n_dim; i++) {
     create_plans_for_events_in_dimension(
@@ -213,21 +214,23 @@ MRS_dimension *MRS_create_dimensions(
     rotor_angle_in_rad += n_events[i];
     magnetic_flux_density_in_T += n_events[i];
 
-    // printf("dimension %d\n", i);
-    // printf("\tcount %d\n", dimension[i].count);
-    // printf("\tincrement %f Hz\n", dimension[i].increment);
-    // printf("\tcoordinates offset %f Hz\n", dimension[i].coordinates_offset);
-    // for (int j = 0; j < n_events[i]; j++) {
-    //   printf("\tEvent %d\n", j);
-    //   printf("\t\tfraction %f\n", dimension[i].events[j].fraction);
-    //   printf("\t\trotor frequency %f Hz\n",
-    //          dimension[i].events[j].rotor_frequency_in_Hz);
-    //   printf("\t\trotor angle %f rad\n",
-    //          dimension[i].events[j].rotor_angle_in_rad);
-    //   printf("\t\tmagnetic flux density %f T\n",
-    //          dimension[i].events[j].magnetic_flux_density_in_T);
-    //   printf("\n");
-    // }
+    if (DEBUG) {
+      printf("Creating dimensions");
+      printf("dimension %d\n", i);
+      printf("\tcount %d\n", dimension[i].count);
+      printf("\tincrement %f Hz\n", dimension[i].increment);
+      printf("\tcoordinates offset %f Hz\n", dimension[i].coordinates_offset);
+      for (int j = 0; j < n_events[i]; j++) {
+        printf("\tEvent %d\n", j);
+        printf("\t\tfraction %f\n", dimension[i].events[j].fraction);
+        printf("\t\trotor frequency %f Hz\n",
+               dimension[i].events[j].rotor_frequency_in_Hz);
+        printf("\t\trotor angle %f rad\n", dimension[i].events[j].rotor_angle_in_rad);
+        printf("\t\tmagnetic flux density %f T\n",
+               dimension[i].events[j].magnetic_flux_density_in_T);
+        printf("\n");
+      }
+    }
   }
   return dimension;
 }

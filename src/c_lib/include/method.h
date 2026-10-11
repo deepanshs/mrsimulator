@@ -29,7 +29,7 @@ typedef struct MRS_dimension {
   double increment;          /**<  Increment of coordinates along the dimension. */
   double coordinates_offset; /**<  Start coordinate of the dimension. */
   MRS_event *events;         /**< Holds a list of events. */
-  unsigned int n_events;     /**< The number of events. */
+  int n_events;              /**< The number of events. */
 
   /* private attributes */
   double R0_offset;  // holds the isotropic offset. This is used in determining if or
@@ -68,8 +68,7 @@ MRS_dimension *MRS_create_dimensions(
     MRS_averaging_scheme *scheme, int *count, double *coordinates_offset,
     double *increment, double *fractions, double *durations, unsigned char *is_spectral,
     double *magnetic_flux_density_in_T, double *rotor_frequency_in_Hz,
-    double *rotor_angle_in_rad, int *n_events, unsigned int n_dim,
-    unsigned int *number_of_sidebands);
+    double *rotor_angle_in_rad, int *n_events, int n_dim, int *number_of_sidebands);
 
 /**
  * @brief Free the memory allocation for the MRS dimensions.
@@ -77,6 +76,6 @@ MRS_dimension *MRS_create_dimensions(
  * @param dimensions The pointer to an array of MRS_dimension structs.
  * @param	n An interger defining the number of MRS_dimension structs in `dimensions`.
  */
-void MRS_free_dimension(MRS_dimension *dimensions, unsigned int n);
+void MRS_free_dimension(MRS_dimension *dimensions, int n);
 
 #endif /* method_h */

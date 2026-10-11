@@ -9,19 +9,19 @@
 
 extern void histogram1d_c(int x_count, const double x_min, const double x_max,
                           double *restrict hist, int sample_count,
-                          const double *restrict sample_x, const int stride_x,
-                          const double *restrict weights, const int stride_w);
+                          double *restrict sample_x, const int stride_x,
+                          double *restrict weights, const int stride_w);
 
 extern void histogram2d_c(int x_count, const double x_min, const double x_max,
                           int y_count, const double y_min, const double y_max,
                           double *restrict hist, int sample_count,
-                          const double *restrict sample_x, const int stride_x,
-                          const double *restrict sample_y, const int stride_y,
-                          const double *restrict weights, const int stride_w);
+                          double *restrict sample_x, const int stride_x,
+                          double *restrict sample_y, const int stride_y,
+                          double *restrict weights, const int stride_w);
 
 extern void histogram2d_interp_c(int x_count, const double x_min, const double x_max,
                                  int y_count, const double y_min, const double y_max,
                                  double *restrict hist, int sample_count,
-                                 const double *restrict sample_x, const int stride_x,
-                                 const double *restrict sample_y, const int stride_y,
-                                 const double *restrict weights, const int stride_w);
+                                 double *restrict sample_x, const int stride_x,
+                                 double *restrict sample_y, const int stride_y,
+                                 double *restrict weights, const int stride_w);

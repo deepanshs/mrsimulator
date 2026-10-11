@@ -9,12 +9,12 @@
 
 #include "octahedron.h"
 
-void octahedronGetDirectionCosineSquareAndWeightsOverOctant(const unsigned int nt,
+void octahedronGetDirectionCosineSquareAndWeightsOverOctant(const int nt,
                                                             double *restrict xr,
                                                             double *restrict yr,
                                                             double *restrict zr,
                                                             double *restrict amp) {
-  unsigned int i, j;
+  int i, j;
   // scale is divided by pi to remove angular dependence.
   // The factor 6 is because each point in the triangle interpolation is shared by
   // 6 neighboring triangles.
@@ -48,15 +48,14 @@ void octahedronGetDirectionCosineSquareAndWeightsOverOctant(const unsigned int n
   *amp = 1.0 / (r2 * r2 * factor);
 }
 
-void octahedronGetPolarAngleTrigOverOctant(const unsigned int nt,
-                                           double *restrict cos_alpha,
+void octahedronGetPolarAngleTrigOverOctant(const int nt, double *restrict cos_alpha,
                                            double *restrict cos_beta,
                                            double *restrict amp) {
-  unsigned int points = (nt + 1) * (nt + 2) / 2;
-  double *xr = malloc_double(points);
-  double *yr = malloc_double(points);
-  double *zr = malloc_double(points);
-  double *sin_beta = malloc_double(points);
+  int points = (nt + 1) * (nt + 2) / 2;
+  double *xr = malloc_double((size_t)points);
+  double *yr = malloc_double((size_t)points);
+  double *zr = malloc_double((size_t)points);
+  double *sin_beta = malloc_double((size_t)points);
 
   // The values xr = x^2, yr = y^2, zr = z^2, where x, y, and z are the
   // direction cosines.
@@ -78,7 +77,7 @@ void octahedronGetPolarAngleTrigOverOctant(const unsigned int nt,
   // vdSqrt(points, &yr[0], &yr[0]);
 
   // Evaluate cos_alpha = x/sqrt(x^2 + y^2) = zr/sin_beta
-  vm_double_divide(points - 1, zr, sin_beta, cos_alpha);
+  vm_double_divide((points - 1), zr, sin_beta, cos_alpha);
   // vdDiv(points-1, yr, sinBeta, sinAlpha );
 
   cos_alpha[points - 1] = 1.0;
@@ -90,14 +89,14 @@ void octahedronGetPolarAngleTrigOverOctant(const unsigned int nt,
   free(sin_beta);
 }
 
-void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
+void octahedronGetComplexExpOfPolarAngleOverOctant(const int nt,
                                                    void *restrict exp_I_alpha,
                                                    void *restrict exp_I_beta,
                                                    double *restrict amp) {
-  unsigned int points = (nt + 1) * (nt + 2) / 2;
-  double *xr = malloc_double(points);
-  double *yr = malloc_double(points);
-  double *zr = malloc_double(points);
+  int points = (nt + 1) * (nt + 2) / 2;
+  double *xr = malloc_double((size_t)points);
+  double *yr = malloc_double((size_t)points);
+  double *zr = malloc_double((size_t)points);
 
   octahedronGetDirectionCosineSquareAndWeightsOverOctant(nt, xr, yr, zr, amp);
   // At this point the variables
@@ -143,7 +142,7 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // cos(alpha) = x/sqrt(x^2 + y^2) = x/sin(beta) ... (3)
   // In terms of the variables, Eq (3) is given as xr/zr.
   // Evaluate xr = xr/zr
-  vm_double_divide_inplace(points - 1, zr, xr);
+  vm_double_divide_inplace((points - 1), zr, xr);
   xr[points - 1] = 0.0;
   // Copy cos(alpha), aka xr, to the even addresses of exp_I_alpha
   cblas_dcopy(points, xr, 1, (double *)exp_I_alpha, 2);
@@ -152,7 +151,7 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // sin(alpha) = y/sqrt(x^2 + y^2) = y/sin(beta) ... (4)
   // In terms of the variables, Eq (4) is given as yr/zr.
   // Evaluate yr = yr/zr
-  vm_double_divide_inplace(points - 1, zr, yr);
+  vm_double_divide_inplace((points - 1), zr, yr);
   yr[points - 1] = 0.0;
   // Copy sin(alpha), aka yr, to the odd addresses of exp_I_alpha.
   cblas_dcopy(points, yr, 1, (double *)exp_I_alpha + 1, 2);
@@ -163,8 +162,8 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   free(zr);
 }
 
-void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum) {
-  unsigned int i = 0, j = 0, local_index = nt - 1, n_pts = (nt + 1) * (nt + 2) / 2;
+void get_total_amplitude(const int nt, double *amp, double *amp_sum) {
+  int i = 0, j = 0, local_index = nt - 1, n_pts = (nt + 1) * (nt + 2) / 2;
   double *amp_address, temp;
 
   amp_address = &amp[nt + 1];
@@ -189,8 +188,8 @@ void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum) {
 // fix amplitude for binning case:
 // octant face edge points are divided by 2
 // octant vertexes are divided by 4
-void fix_amplitude_for_binning(unsigned int nt, double *amp) {
-  unsigned int i = 0, i_max = (nt + 1) * (nt + 2) / 2, tt = nt - 1;
+void fix_amplitude_for_binning(int nt, double *amp) {
+  int i = 0, i_max = (nt + 1) * (nt + 2) / 2, tt = nt - 1;
   bool inc_one = false;
   while (i <= nt) amp[i++] /= 2.0;
   while (i < i_max) {
@@ -211,7 +210,7 @@ void fix_amplitude_for_binning(unsigned int nt, double *amp) {
   cblas_dscal(i_max, 6.0, amp, 1);
 }
 
-void averaging_setup(unsigned int nt, void *exp_I_alpha, void *exp_I_beta, double *amp,
+void averaging_setup(int nt, void *exp_I_alpha, void *exp_I_beta, double *amp,
                      bool interpolation) {
   // octahedronGetPolarAngleTrigOverOctant(nt, cos_alpha, cos_beta, amp);
   octahedronGetComplexExpOfPolarAngleOverOctant(nt, exp_I_alpha, exp_I_beta, amp);

@@ -66,7 +66,7 @@ class Setup:
 
     def conda_setup_for_windows(self):
         self.libraries += ["fftw3", "openblas"]
-        self.extra_compile_args = ["/DUSE_OPENBLAS"]
+        self.extra_compile_args += ["/DUSE_OPENBLAS"]
 
         print(sys.version)
         loc = dirname(sys.executable)
@@ -93,7 +93,7 @@ class Setup:
 
         self.include_dirs += self.check_valid_path([join(loc, "include")])
         self.library_dirs += self.check_valid_path([join(loc, "lib")])
-        self.extra_compile_args = ["-O3", "-ffast-math", "-DUSE_OPENBLAS"]
+        self.extra_compile_args += ["-O3", "-ffast-math", "-DUSE_OPENBLAS"]
         self.libraries += ["fftw3", "openblas"]
 
     def on_exit_message(self, blas_lib, fftw_lib):
@@ -132,8 +132,8 @@ class WindowsSetup(Setup):
     def __init__(self):
         super().__init__()
 
-        self.extra_link_args += ["-Wl"]
-        self.extra_compile_args = ["-DFFTW_DLL"]
+        self.extra_link_args += []
+        self.extra_compile_args += ["-DFFTW_DLL", "/permissive-"]
 
         # if use_mkl:
         #     self.mkl_blas_info()
@@ -148,6 +148,11 @@ class LinuxSetup(Setup):
             "-O3",
             "-ffast-math",
             "-fcommon",
+            "-Wall",
+            "-Wextra",
+            "-Wconversion",
+            # "-Werror",
+            # "-pedantic",
             # "-msse4.2",
             # "-ftree-vectorize",
             # "-fopt-info-vec-all",
@@ -185,6 +190,9 @@ class MacOSSetup(Setup):
             # "-Rpass-analysis=loop-vectorize",
             "-fvectorize",
             "-fcommon",
+            "-Wall",
+            "-Wextra",
+            "-Wconversion",
         ]
         self.extra_link_args += ["-lm"]
 

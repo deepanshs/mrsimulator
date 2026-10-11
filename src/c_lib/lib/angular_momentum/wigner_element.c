@@ -37,16 +37,17 @@ static inline double __generic_wigner_d_element(const float l, const float m1,
   double cx = cos(beta / 2.);
   double sum = 0.0, k1, k2, k3, x, y;
   int sign = 1;
-  int k;
+  int k, n1, n2;
+  float two = 2.0;
 
   for (k = 0; k <= (int)(l - m1); k++) {
-    k1 = (int)(l - m1 - k);
-    k2 = (int)(l + m2 - k);
-    k3 = (int)(k + m1 - m2);
+    k1 = (int)(l - m1 - (float)k);
+    k2 = (int)(l + m2 - (float)k);
+    k3 = (int)((float)k + m1 - m2);
 
     if (k1 >= 0 && k2 >= 0 && k3 >= 0) {
-      int n1 = (int)(2 * l + m2 - m1 - 2 * k);
-      int n2 = (int)(m1 - m2 + 2 * k);
+      n1 = (int)(two * l + m2 - m1 - two * (float)k);
+      n2 = (int)(m1 - m2 + two * (float)k);
       x = my_power(cx, n1);
       y = my_power(sx, n2);
       sum += sign * x * y /
@@ -54,7 +55,8 @@ static inline double __generic_wigner_d_element(const float l, const float m1,
     }
     sign = -sign;
   }
-  double f = fac(l + m2) * fac(l - m2) * fac(l + m1) * fac(l - m1);
+  double f = fac((double)(l + m2)) * fac((double)(l - m2)) * fac((double)(l + m1)) *
+             fac((double)(l - m1));
   sign = ((int)(m1 - m2) % 2 == 0) ? 1 : -1;
   f = sqrt(f);
   return (sign * sum * f);
@@ -358,7 +360,7 @@ void transition_connect_factor(const float l, const float m1_f, const float m1_i
 //                                const double phi, double *restrict factor, int
 //                                n_sites) {
 //   double m1_f, m1_i, m2_f, m2_i;
-//   complex128 *weight = malloc_complex128(n_sites);
+//   complex128 *weight = malloc_complex128((size_t)n_sites);
 //   for (int i = 1; i < n_sites; i++) {
 //     m1_i = transition_inital[i];
 //     m1_f = (transition_inital + n_sites)[i];

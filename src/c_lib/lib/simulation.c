@@ -50,7 +50,7 @@ void __mrsimulator_core(
     MRS_dimension *dimensions,          // Pointer to MRS_dimension structure.
     MRS_fftw_scheme *fftw_scheme,       // Pointer to the fftw scheme.
     MRS_averaging_scheme *scheme,       // Pointer to the powder averaging scheme.
-    unsigned int iso_intrp,       // Isotropic interpolation scheme (linear | Gaussian)
+    int iso_intrp,                // Isotropic interpolation scheme (linear | Gaussian)
     unsigned char *freq_contrib,  // A list of freq_contrib booleans.
     double *affine_matrix         // Affine transformation matrix.
 ) {
@@ -59,8 +59,9 @@ void __mrsimulator_core(
   et al. `Computation of Orientational Averages in Solid-State NMR by Gaussian
   Spherical Quadrature` JMR, 132, 1998. https://doi.org/10.1006/jmre.1998.1427
   */
+
   unsigned char is_spectral;
-  unsigned int evt;
+  int evt;
   int dim, total_pts = scheme->n_gamma * scheme->total_orientations;
   double B0_in_T, fraction, duration;
   vm_double_zeros(total_pts, scheme->phase);
@@ -156,10 +157,10 @@ void __mrsimulator_core(
 
 void mrsimulator_core(
     // spectrum information and related amplitude
-    double *spec,                // Pointer to the spectrum array (complex).
-    double coordinates_offset,   // The start of the frequency spectrum.
-    double increment,            // The increment of the frequency spectrum.
-    int count,                   // Number of points on the frequency spectrum.
+    double *spec,  // Pointer to the spectrum array (complex).
+    // double coordinates_offset,   // The start of the frequency spectrum.
+    // double increment,            // The increment of the frequency spectrum.
+    // int count,                   // Number of points on the frequency spectrum.
     site_struct *sites,          // Pointer to a list of sites within a spin system.
     coupling_struct *couplings,  // Pointer to a list of couplings within a spin system.
     MRS_dimension *dimensions,   // the dimensions in the method.
@@ -167,16 +168,16 @@ void mrsimulator_core(
     int quad_second_order,       // Quad theory for second order,
 
     // spin rate, spin angle and number spinning sidebands
-    unsigned int number_of_sidebands,  // The number of sidebands
-    double rotor_frequency_in_Hz,      // The rotor spin frequency
-    double rotor_angle_in_rad,         // The rotor angle relative to lab-frame z-axis
+    int number_of_sidebands,       // The number of sidebands
+    double rotor_frequency_in_Hz,  // The rotor spin frequency
+    double rotor_angle_in_rad,     // The rotor angle relative to lab-frame z-axis
 
     // Pointer to the a list of transitions.
     float *transition_pathway, double *transition_pathway_weight,
     // powder orientation average
     int integration_density,  // The number of triangle along the edge of octahedron
-    unsigned int integration_volume,  // 0-octant, 1-hemisphere, 2-sphere.
-    unsigned int interpolate_type, unsigned char *freq_contrib, double *affine_matrix) {
+    int integration_volume,   // 0-octant, 1-hemisphere, 2-sphere.
+    int interpolate_type, unsigned char *freq_contrib, double *affine_matrix) {
   // int num_process = openblas_get_num_procs();
   // int num_threads = openblas_get_num_threads();
   // openblas_set_num_threads(1);

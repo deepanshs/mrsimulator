@@ -107,7 +107,7 @@ static inline void vm_double_ones(int count, double *restrict res) {
  * @returns values A pointer to the fft output order vector of size @p n.
  */
 static inline double *get_FFT_order_freq(int n, double increment) {
-  double *vr_freq = malloc_double(n);
+  double *vr_freq = malloc_double((size_t)n);
   int m, positive_limit, negative_limit;
 
   if (n % 2 == 0) {
@@ -121,7 +121,7 @@ static inline double *get_FFT_order_freq(int n, double increment) {
   for (m = 0; m <= positive_limit; m++) *vr_freq++ = (double)m * increment;
   for (m = negative_limit; m < 0; m++) *vr_freq++ = (double)m * increment;
   return vr_freq - n;
-};
+}
 
 /**
  * @brief Return a vector ordered according to the fft output order.
@@ -130,7 +130,7 @@ static inline double *get_FFT_order_freq(int n, double increment) {
  * @returns values A pointer to the fft output order vector of size @p n.
  */
 static inline int *get_FFT_index(int n) {
-  int *freq_index = malloc_int(n);
+  int *freq_index = malloc_int((size_t)n);
   int m, positive_limit, negative_limit;
 
   if (n % 2 == 0) {
@@ -144,4 +144,4 @@ static inline int *get_FFT_index(int n) {
   for (m = 0; m <= positive_limit; m++) *freq_index++ = m;
   for (m = negative_limit; m < 0; m++) *freq_index++ = m;
   return freq_index - n;
-};
+}

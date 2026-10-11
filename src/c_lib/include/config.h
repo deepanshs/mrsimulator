@@ -60,12 +60,13 @@ typedef float complex64[2];
 // ---------------------------------------------------------------------------- //
 
 // OS base definitions -------------------------------------------------------- //
-#define __int64_ long  // for both mac-os and linux (unix system)
-
 #ifdef _WIN32  // windows 32-bit or 64-bit
 #define __int64_ long long
 // #if _MSC_VER && !__INTEL_COMPILER  // windows msvc compiler
 // #endif  // end windows 32-bit or 64-bit
+#else
+// for both mac-os and linux (unix system)
+#define __int64_ long
 #endif  // end windows msvc compiler
 // ---------------------------------------------------------------------------- //
 
