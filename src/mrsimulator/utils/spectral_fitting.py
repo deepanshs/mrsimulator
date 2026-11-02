@@ -559,10 +559,23 @@ def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq):
     sign = 1.0 if csdm_obj.x[0].complex_fft else -1.0
 
     csdm_obj = csdm_obj.fft()
-    time_coords = csdm_obj.x[0].coordinates.to("s").value
-    iso_shift_Hz = larmor_freq * iso_shift_ppm
+    time_dim = csdm_obj.x[0]
+    time_coords = time_dim.coordinates.to("s").value
+
+    # The signal is periodic in time. Wrap the coordinates onto the symmetric interval
+    # [-T/2, T/2) so that the aliased negative-time half of the FID receives the same
+    # phase ramp as it would at its true (negative) time. Without this, a frequency
+    # dimension whose reciprocal dimension has no coordinates offset yields a one-sided
+    # time axis [0, T) and a non-integer-bin shift distorts the spectrum.
+    period = time_coords.size * abs(time_dim.increment.to("s").value)
+    time_coords = (time_coords + period / 2) % period - period / 2
+
+    # mrsimulator reverses the spectrum of negative gyromagnetic ratio nuclei so that
+    # the ppm axis increases in the same direction for every isotope. The shift
+    # direction therefore depends only on the Larmor frequency magnitude, not its sign.
+    iso_shift_Hz = abs(larmor_freq) * iso_shift_ppm
     csdm_obj.y[0].components[0] *= np.exp(
-        -sign * np.pi * 2j * time_coords * iso_shift_Hz
+        sign * np.pi * 2j * time_coords * iso_shift_Hz
     )
     csdm_obj = csdm_obj.fft()
 
