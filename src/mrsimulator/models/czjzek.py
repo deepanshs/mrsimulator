@@ -135,6 +135,16 @@ class AbstractDistribution:
         self.abundance = abundance
         self.polar = polar
 
+    def _get_basis_p_q(self, size: int):
+        """Return the p and q basis of the Czjzek random tensors, evaluated at sigma=1,
+        for size samples. The basis is cached when cache_tensors is True, and rebuilt
+        when the size changes."""
+        if not self._cache_tensors:
+            return get_p_q_basis(*czjzek_random_components(1, size))
+        if self._basis_p_q is None or self._basis_p_q[0].shape[-1] != size:
+            self._basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
+        return self._basis_p_q
+
     def pdf(
         self,
         pos,
@@ -291,16 +301,10 @@ class CzjzekDistribution(AbstractDistribution):
         Example:
             >>> Cq_dist, eta_dist = cz_model.rvs(size=1000000)
         """
-        if self._cache_tensors:
-            if self._basis_p_q is None:
-                self._basis_p_q = get_p_q_basis(
-                    *czjzek_random_components(self.sigma, size)
-                )
-            basis_p_q = self._basis_p_q
-        else:
-            basis_p_q = get_p_q_basis(*czjzek_random_components(self.sigma, size))
-
-        zeta, eta = get_Haeberlen_components(*basis_p_q, 0, 0, 1.0)
+        # The basis is evaluated at sigma = 1 and scaled by rho = sigma, so that the
+        # cached basis remains valid when sigma changes.
+        basis_p_q = self._get_basis_p_q(size)
+        zeta, eta = get_Haeberlen_components(*basis_p_q, 0, 0, self.sigma)
         if not self.polar:
             return zeta, eta
         return zeta_eta_to_x_y(zeta, eta)
@@ -399,12 +403,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
         """
 
         # czjzek_random_distribution model
-        if self._cache_tensors:
-            if self._basis_p_q is None:
-                self._basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
-            basis_p_q = self._basis_p_q
-        else:
-            basis_p_q = get_p_q_basis(*czjzek_random_components(1, size))
+        basis_p_q = self._get_basis_p_q(size)
 
         symmetric_tensor = self.symmetric_tensor
 
@@ -412,9 +411,7 @@ class ExtCzjzekDistribution(AbstractDistribution):
         eta = symmetric_tensor.eta
 
         # the traceless second-rank symmetric Cartesian tensor in PAS
-        T0 = [0.0, 0.0, 0.0]
-        if zeta != 0 and eta != 0:
-            T0 = get_principal_components(zeta, eta)
+        T0 = get_principal_components(zeta, eta)
 
         # 2-norm of the tensor
         norm_T0 = np.linalg.norm(T0)

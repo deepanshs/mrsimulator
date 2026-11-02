@@ -192,3 +192,39 @@ def test_equality():
 
     c = Coupling(site_index=[0, 1], isotropic_j=16)
     assert a != c
+
+
+def test_coupling_j_tensors_units():
+    """j_symmetric without zeta parses, j_antisymmetric round trips through json, and
+    ppm units for the J tensors are rejected."""
+    coupling = Coupling.parse_dict_with_units(
+        {"site_index": [0, 1], "j_symmetric": {"eta": 0.5}}
+    )
+    assert coupling.j_symmetric.eta == 0.5
+    assert coupling.j_symmetric.zeta is None
+
+    coupling = Coupling(
+        site_index=[0, 1], j_antisymmetric={"zeta": 10, "alpha": 0.1, "beta": 0.2}
+    )
+    assert coupling.json()["j_antisymmetric"]["zeta"] == "10.0 Hz"
+    assert Coupling.parse_dict_with_units(coupling.json()) == coupling
+
+    for key in ["j_symmetric", "j_antisymmetric"]:
+        with pytest.raises(ValueError, match=".*Use frequency units.*"):
+            Coupling.parse_dict_with_units(
+                {"site_index": [0, 1], key: {"zeta": "10 ppm"}}
+            )
+
+
+def test_coupling_parse_does_not_mutate_input():
+    """parse_dict_with_units does not modify the input dict."""
+    py_dict = {
+        "site_index": [0, 1],
+        "isotropic_j": "10 Hz",
+        "j_symmetric": {"zeta": "5 Hz", "eta": 0.1},
+        "dipolar": {"D": "1 kHz"},
+    }
+    assert Coupling.parse_dict_with_units(py_dict) == Coupling.parse_dict_with_units(
+        py_dict
+    )
+    assert py_dict["j_symmetric"] == {"zeta": "5 Hz", "eta": 0.1}

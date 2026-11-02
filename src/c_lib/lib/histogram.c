@@ -9,6 +9,7 @@
 
 #include "histogram.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -26,6 +27,7 @@ void histogram1d_c(int x_count, const double x_min, const double x_max,
     temp_sample = *x_pt;
     if (temp_sample >= x_min && temp_sample < x_max) {
       ix = (int)((temp_sample - x_min) * normx);
+      if (ix >= x_count) ix = x_count - 1;  // round-off just below x_max
       hist[ix] += *w_pt;
     }
     x_pt += stride_x;
@@ -53,6 +55,8 @@ void histogram2d_c(int x_count, const double x_min, const double x_max, int y_co
       if (temp_sample_y >= y_min && temp_sample_y < y_max) {
         ix = (int)((temp_sample_x - x_min) * normx);
         iy = (int)((temp_sample_y - y_min) * normy);
+        if (ix >= x_count) ix = x_count - 1;  // round-off just below x_max
+        if (iy >= y_count) iy = y_count - 1;  // round-off just below y_max
         hist_index = iy + y_count * ix;
         hist[hist_index] += *w_pt;
       }
@@ -63,54 +67,51 @@ void histogram2d_c(int x_count, const double x_min, const double x_max, int y_co
   }
 }
 
+/**
+ * Bilinear deposit of the samples onto the bin centres. A sample between the outer bin
+ * centre and the edge of the range is deposited onto the outer bin.
+ */
 void histogram2d_interp_c(int x_count, const double x_min, const double x_max,
                           int y_count, const double y_min, const double y_max,
                           double *restrict hist, int sample_count,
                           const double *restrict sample_x, const int stride_x,
                           const double *restrict sample_y, const int stride_y,
                           const double *restrict weights, const int stride_w) {
-  int ix, iy, p, counter = sample_count;
-  bool left;
-  double temp_sample_x, temp_sample_y, normx, normy;
-  double *x_pt = sample_x, *y_pt = sample_y, *w_pt = weights;
-  double delta_x, delta_y, x_min_adj, y_min_adj;
+  int ix0, iy0, ix1, iy1, counter = sample_count;
+  double temp_sample_x, temp_sample_y, normx, normy, fx, fy, dx, dy, w;
+  const double *x_pt = sample_x, *y_pt = sample_y, *w_pt = weights;
 
   normx = (double)(x_count) / (x_max - x_min);
   normy = (double)(y_count) / (y_max - y_min);
 
-  x_min_adj = x_min;  // - 1.0 / normx;
-  y_min_adj = y_min;  // - 1.0 / normy;
-
   while (counter-- > 0) {
     temp_sample_x = *x_pt;
-    if (temp_sample_x >= x_min_adj && temp_sample_x < x_max) {
-      temp_sample_y = *y_pt;
-      if (temp_sample_y >= y_min_adj && temp_sample_y < y_max) {
-        ix = (int)((temp_sample_x - x_min) * normx);
-        iy = (int)((temp_sample_y - y_min) * normy);
-        p = iy + y_count * ix;
+    temp_sample_y = *y_pt;
+    if (temp_sample_x >= x_min && temp_sample_x < x_max && temp_sample_y >= y_min &&
+        temp_sample_y < y_max) {
+      // position in units of bins, relative to the centre of the first bin
+      fx = (temp_sample_x - x_min) * normx - 0.5;
+      fy = (temp_sample_y - y_min) * normy - 0.5;
+      ix0 = (int)floor(fx);
+      iy0 = (int)floor(fy);
+      dx = fx - ix0;
+      dy = fy - iy0;
 
-        delta_y = temp_sample_y - iy / normy;
-        delta_x = temp_sample_x - ix / normx;
+      // clamp the neighbours to the range
+      ix1 = ix0 + 1;
+      iy1 = iy0 + 1;
+      if (ix0 < 0) ix0 = 0;
+      if (iy0 < 0) iy0 = 0;
+      if (ix1 > x_count - 1) ix1 = x_count - 1;
+      if (iy1 > y_count - 1) iy1 = y_count - 1;
+      if (ix0 > x_count - 1) ix0 = x_count - 1;
+      if (iy0 > y_count - 1) iy0 = y_count - 1;
 
-        left = (delta_y) < 0;
-        if (left) {
-          if (iy != 0) hist[p - 1] -= *w_pt * delta_y;
-          hist[p] += *w_pt * (1.0 + delta_y);
-        } else {
-          if (iy != y_count) hist[p + 1] += *w_pt * delta_y;
-          hist[p] += *w_pt * (1.0 - delta_y);
-        }
-
-        left = (delta_x) < 0;
-        if (left) {
-          if (iy != 0) hist[p - y_count] -= *w_pt * delta_x;
-          hist[p] += *w_pt * (1.0 + delta_x);
-        } else {
-          if (iy != y_count) hist[p + y_count] += *w_pt * delta_x;
-          hist[p] += *w_pt * (1.0 - delta_x);
-        }
-      }
+      w = *w_pt;
+      hist[iy0 + y_count * ix0] += w * (1.0 - dx) * (1.0 - dy);
+      hist[iy1 + y_count * ix0] += w * (1.0 - dx) * dy;
+      hist[iy0 + y_count * ix1] += w * dx * (1.0 - dy);
+      hist[iy1 + y_count * ix1] += w * dx * dy;
     }
     x_pt += stride_x;
     y_pt += stride_y;

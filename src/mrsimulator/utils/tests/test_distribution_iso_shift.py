@@ -6,10 +6,13 @@ import csdmpy as cp
 import mrsimulator.utils.spectral_fitting as sf
 import numpy as np
 import pytest
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.models import CzjzekDistribution
 from mrsimulator.models.utils import LineShapeKernel
 from mrsimulator.simulator import ConfigSimulator
+from mrsimulator.spin_system.isotope import Isotope
+from mrsimulator.utils import get_spectral_dimensions
 
 
 def _center_of_gravity(ppm, amp):
@@ -95,30 +98,37 @@ def test_apply_iso_shift_direction(
     assert abs(_center_of_gravity(ppm, y.real) - iso_ppm) < 1e-3, msg
 
 
-def _experiment_like(method, complex_fft, increment_sign):
-    """Return an experiment CSDM object on the method's grid, either in mrsimulator's
-    own convention (complex_fft=True) or in the convention of an imported dataset
-    (complex_fft=False) with an ascending or descending frequency axis."""
-    sd = method.spectral_dimensions[0]
-    w_ref = method.channels[0].B0_to_ref_freq(method.magnetic_flux_density)
-    if complex_fft:
-        dim = sd.to_csdm_dimension()
-        dim.origin_offset = f"{w_ref} Hz"
-    else:
-        increment = increment_sign * sd.spectral_width / sd.count
-        dim = cp.LinearDimension(
-            count=sd.count,
-            increment=f"{increment} Hz",
-            coordinates_offset=f"{-increment * sd.count / 2} Hz",
-            origin_offset=f"{w_ref} Hz",
-            complex_fft=False,
-        )
-    exp = cp.CSDM(
+def _experiment(isotope, B0, count, spectral_width, complex_fft, increment_sign):
+    """Return an experiment CSDM object (in Hz), either in mrsimulator's own convention
+    (complex_fft=True) or in the convention of an imported dataset (complex_fft=False)
+    with an ascending or descending frequency axis."""
+    w_ref = Isotope(symbol=isotope).B0_to_ref_freq(B0)
+    increment = increment_sign * spectral_width / count
+    offset = 0.0 if complex_fft else -increment * count / 2
+    dim = cp.LinearDimension(
+        count=count,
+        increment=f"{increment} Hz",
+        coordinates_offset=f"{offset} Hz",
+        origin_offset=f"{w_ref} Hz",
+        complex_fft=complex_fft,
+    )
+    return cp.CSDM(
         dimensions=[dim],
-        dependent_variables=[cp.as_dependent_variable(np.zeros(sd.count))],
+        dependent_variables=[cp.as_dependent_variable(np.zeros(count))],
+    )
+
+
+def _method_for_experiment(method_class, isotope, exp, **kwargs):
+    """Documented fitting flow: the method grid is taken from the experiment."""
+    method = method_class(
+        channels=[isotope],
+        magnetic_flux_density=9.4,
+        spectral_dimensions=get_spectral_dimensions(exp),
+        **kwargs,
     )
     exp.x[0].to("ppm", "nmr_frequency_ratio")
-    return exp
+    method.experiment = exp
+    return method
 
 
 @pytest.mark.parametrize("isotope", ["27Al", "29Si"])  # positive and negative gamma
@@ -132,12 +142,8 @@ def test_generate_distribution_spectrum_iso_shift(isotope, complex_fft, incremen
     the complex_fft convention. The spectral width is chosen so that the shift is not
     an integer number of bins."""
     iso_ppm = 60.0
-    method = BlochDecaySpectrum(
-        channels=[isotope],
-        magnetic_flux_density=9.4,
-        spectral_dimensions=[{"count": 1024, "spectral_width": 60e3}],
-    )
-    method.experiment = _experiment_like(method, complex_fft, increment_sign)
+    exp = _experiment(isotope, 9.4, 1024, 60e3, complex_fft, increment_sign)
+    method = _method_for_experiment(BlochDecaySpectrum, isotope, exp)
 
     pos = (np.linspace(-10, 10, 11), np.linspace(0, 1, 3))
     kernel = LineShapeKernel(
@@ -157,3 +163,104 @@ def test_generate_distribution_spectrum_iso_shift(isotope, complex_fft, incremen
     assert (
         abs(_center_of_gravity(ppm, amp) - iso_ppm) < 0.1
     ), f"{isotope}, complex_fft={complex_fft}, increment_sign={increment_sign}"
+
+
+def _quad_distribution_spectrum(complex_fft, increment_sign):
+    """Quadrupolar Czjzek distribution spectrum of 27Al (central transition, static)
+    with a mean isotropic chemical shift of 60 ppm. Returns (ppm, amplitude)."""
+    exp = _experiment("27Al", 9.4, 1024, 100e3, complex_fft, increment_sign)
+    method = _method_for_experiment(
+        BlochDecayCTSpectrum, "27Al", exp, rotor_frequency=0
+    )
+    pos = (np.linspace(0, 8e6, 17), np.linspace(0, 1, 6))
+    kernel = LineShapeKernel(
+        method=method, pos=pos, config=ConfigSimulator(number_of_sidebands=1)
+    )
+    kernel.generate_lineshape(tensor_type="quadrupolar")
+
+    model = CzjzekDistribution(sigma=1.5e6, mean_isotropic_chemical_shift=60.0)
+    params = sf.make_LMFIT_params(spin_system_models=[model])
+    spectrum = sf._generate_distribution_spectrum(params, kernel, [model])
+    ppm = method.experiment.x[0].coordinates.value
+    return ppm, spectrum.y[0].components[0].real
+
+
+def test_quadrupolar_distribution_spectrum_axis_conventions():
+    """An asymmetric (second-order quadrupolar) distribution line shape must be
+    identical on the ppm axis for experiments stored with or without the complex_fft
+    convention, and with an ascending or descending frequency axis."""
+    ppm_ref, amp_ref = _quad_distribution_spectrum(True, 1)
+    amp_ref /= amp_ref.max()
+
+    # the line shape is asymmetric about its maximum, so a mirrored kernel is detected
+    peak = ppm_ref[np.argmax(amp_ref)]
+    mirrored = np.interp(2 * peak - ppm_ref, ppm_ref, amp_ref)
+    assert np.abs(mirrored - amp_ref).max() > 0.2
+
+    for complex_fft, increment_sign in [(False, 1), (False, -1)]:
+        ppm, amp = _quad_distribution_spectrum(complex_fft, increment_sign)
+        order = np.argsort(ppm)
+        amp_i = np.interp(ppm_ref, ppm[order], amp[order] / amp.max())
+        assert np.abs(amp_i - amp_ref).max() < 1e-2, (complex_fft, increment_sign)
+
+
+def test_generate_distribution_spectrum_mismatched_grid():
+    """A method whose spectral grid does not match the experiment grid (here, an
+    ascending method grid with a descending experiment axis) must raise an error
+    instead of silently producing a mirrored spectrum."""
+    exp = _experiment("27Al", 9.4, 1024, 100e3, False, -1)
+    exp.x[0].to("ppm", "nmr_frequency_ratio")
+    method = BlochDecayCTSpectrum(
+        channels=["27Al"],
+        magnetic_flux_density=9.4,
+        rotor_frequency=0,
+        spectral_dimensions=[{"count": 1024, "spectral_width": 100e3}],
+        experiment=exp,
+    )
+    pos = (np.linspace(0, 8e6, 5), np.linspace(0, 1, 3))
+    kernel = LineShapeKernel(
+        method=method, pos=pos, config=ConfigSimulator(number_of_sidebands=1)
+    )
+    kernel.generate_lineshape(tensor_type="quadrupolar")
+
+    model = CzjzekDistribution(sigma=1.5e6, mean_isotropic_chemical_shift=60.0)
+    params = sf.make_LMFIT_params(spin_system_models=[model])
+    with pytest.raises(ValueError, match="get_spectral_dimensions"):
+        sf._generate_distribution_spectrum(params, kernel, [model])
+
+
+def test_kernel_grid_checked_once_per_experiment(monkeypatch):
+    """The kernel grid check runs once per (kernel, experiment) pair, not on every
+    evaluation of the distribution spectrum, and again when the experiment changes."""
+    exp = _experiment("27Al", 9.4, 256, 100e3, True, 1)
+    method = _method_for_experiment(
+        BlochDecayCTSpectrum, "27Al", exp, rotor_frequency=0
+    )
+    pos = (np.linspace(0, 8e6, 5), np.linspace(0, 1, 3))
+    kernel = LineShapeKernel(
+        method=method, pos=pos, config=ConfigSimulator(number_of_sidebands=1)
+    )
+    kernel.generate_lineshape(tensor_type="quadrupolar")
+    model = CzjzekDistribution(sigma=1.5e6, mean_isotropic_chemical_shift=60.0)
+    params = sf.make_LMFIT_params(spin_system_models=[model])
+
+    calls = []
+    original = sf._check_kernel_grid
+    monkeypatch.setattr(
+        sf, "_check_kernel_grid", lambda m, e: calls.append(1) or original(m, e)
+    )
+
+    for _ in range(3):
+        sf._generate_distribution_spectrum(params, kernel, [model])
+    assert len(calls) == 1
+
+    # a new experiment on the same grid is checked again, once
+    method.experiment = _experiment("27Al", 9.4, 256, 100e3, True, 1)
+    for _ in range(2):
+        sf._generate_distribution_spectrum(params, kernel, [model])
+    assert len(calls) == 2
+
+    # a mismatched experiment is still caught
+    method.experiment = _experiment("27Al", 9.4, 256, 100e3, False, -1)
+    with pytest.raises(ValueError, match="get_spectral_dimensions"):
+        sf._generate_distribution_spectrum(params, kernel, [model])

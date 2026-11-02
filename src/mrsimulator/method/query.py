@@ -194,7 +194,26 @@ class TransitionQuery(Parseable):
             if np.all(np.isnan(value)):
                 expanded_symmetry[key] = np.asarray([])
 
+        # A query is impossible when it requests more sites than are available on a
+        # channel. Flag it, so that its empty expansion is not confused with an
+        # unconstrained query.
+        expanded_symmetry["impossible"] = self._is_impossible(
+            isotopes, channels, sites_per_channel
+        )
         return expanded_symmetry
+
+    def _is_impossible(self, isotopes, channels, sites_per_channel):
+        """Return True if the query requests more sites than available on any
+        channel."""
+        for i, channel_id in enumerate(channels):
+            ch_obj = getattr(self, f"ch{i + 1}")
+            if ch_obj is None or channel_id not in isotopes:
+                continue
+            for symmetry in SYMMETRY_ELEMENTS:
+                query = getattr(ch_obj, symmetry)
+                if query is not None and len(query) > sites_per_channel[i]:
+                    return True
+        return False
 
     def _get_missing_channel_isotope(self, isotopes, channels):
         missing_ch = []

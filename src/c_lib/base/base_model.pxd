@@ -68,9 +68,6 @@ cdef extern from "mrsimulator.h":
                           double rotor_angle_in_rad, double increment,
                           bool_t allow_4th_rank)
     void MRS_free_plan(MRS_plan *plan)
-    void MRS_get_amplitudes_from_plan(MRS_plan *plan, bool_t refresh)
-    void MRS_get_frequencies_from_plan(MRS_plan *plan, double R0, double complex *R2,
-                                  double complex *R4, bool_t refresh)
 
 cdef extern from "object_struct.h":
     ctypedef struct site_struct:
@@ -133,34 +130,6 @@ cdef extern from "method.h":
 
 
 cdef extern from "simulation.h":
-    void mrsimulator_core(
-        # spectrum information and related amplitude
-        double *spec,
-        double spectral_start,
-        double spectral_increment,
-        int number_of_points,
-
-        site_struct *sites,
-        coupling_struct *couplings,
-
-        MRS_dimension *dimensions[],
-        int n_dimension,
-
-        int quad_second_order,                    # Quad theory for second order,
-
-        # spin rate, spin angle and number spinning sidebands
-        unsigned int number_of_sidebands,
-        double rotor_frequency_in_Hz,
-        double rotor_angle_in_rad,
-
-        float *transition_pathway, # Pointer to a list of transitions.
-        int integration_density,
-        unsigned int integration_volume,  # 0-octant, 1-hemisphere, 2-sphere
-        unsigned int interpolate_type,
-        unsigned char *freq_contrib,
-        double *affine_matrix,
-        )
-
     void __mrsimulator_core(
         # spectrum information and related amplitude
         double *spec,

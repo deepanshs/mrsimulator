@@ -10,6 +10,20 @@
 #include "frequency_averaging.h"
 
 /**
+ * Evaluates the minimum and maximum of the array x of size n.
+ */
+static inline void array_min_max(unsigned int n, double *x, double *x_min,
+                                 double *x_max) {
+  *x_min = *x;
+  *x_max = *x;
+  while (n-- > 0) {
+    if (*x < *x_min) *x_min = *x;
+    if (*x > *x_max) *x_max = *x;
+    x++;
+  }
+}
+
+/**
  * npts Number of array points
  * n_octant Number of octant for powder averaging.
  * a11 complex array of size npts, sideband amplitude for event 11
@@ -69,7 +83,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   unsigned int i, j, k1, address, ptr, gamma_idx;
   unsigned int nt = scheme->integration_density, npts = scheme->octant_orientations;
 
-  double offset_0, offset;
+  double offset_0, offset, freq_min, freq_max;
   double *freq, *phase_ptr, *amps = dimensions->freq_amplitude;
   double *amps_real = scheme->amps_real, *amps_imag = scheme->amps_imag;
 
@@ -135,9 +149,12 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     }
 
     else {
+      // Skip a sideband only when its entire anisotropic pattern lies outside the
+      // spectral window, not when just its isotropic center does.
+      array_min_max(scheme->total_orientations, freq, &freq_min, &freq_max);
       for (i = 0; i < planA->number_of_sidebands; i++) {
         offset = offset_0 + planA->vr_freq[i];
-        if ((int)offset >= 0 && (int)offset <= dimensions->count) {
+        if (offset + freq_max >= 0 && offset + freq_min <= dimensions->count) {
           k1 = i * scheme->total_orientations;
           address = 0;
           // multiply phase to the amplitudes.
@@ -175,7 +192,7 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   double *freq_amp = scheme->scratch;
   double offset0, offset1, offsetA, offsetB;
   double *freq0, *freq1;
-  double norm0, norm1;
+  double norm0, norm1, freq0_min, freq0_max, freq1_min, freq1_max;
   complex128 *res_t = malloc_complex128(npts);
   bool user_defined = scheme->user_defined, interpolation = scheme->interpolation;
 
@@ -229,6 +246,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
       cblas_daxpy(scheme->total_orientations, affine_matrix[2], freq0, 1, freq1, 1);
     }
 
+    array_min_max(scheme->total_orientations, freq0, &freq0_min, &freq0_max);
+    array_min_max(scheme->total_orientations, freq1, &freq1_min, &freq1_max);
+
     for (i = 0; i < planA->number_of_sidebands; i++) {
       offsetA = offset0 + planA->vr_freq[i];
       for (k = 0; k < planB->number_of_sidebands; k++) {
@@ -249,8 +269,9 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
 
         // printf("f0 %f %f, (%f, %f), %f, %f\n", freq0[0] + norm0, freq1[0] + norm1,
         //  norm0, norm1, freq_ampA[0], freq_ampB[0]);
-        if ((int)norm0 >= 0 && (int)norm0 <= dimensions[0].count) {
-          if ((int)norm1 >= 0 && (int)norm1 <= dimensions[1].count) {
+        // Skip only when the entire pattern lies outside the spectral window.
+        if (norm0 + freq0_max >= 0 && norm0 + freq0_min <= dimensions[0].count) {
+          if (norm1 + freq1_max >= 0 && norm1 + freq1_min <= dimensions[1].count) {
             for (j = 0; j < planA->n_octants; j++) {
               address = j * npts;
               // Add offset(isotropic + sideband_order) to the local frequency
@@ -292,4 +313,6 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     }
   }
   free(res_t);
+  free(fft1_index);
+  free(fft2_index);
 }

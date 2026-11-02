@@ -287,3 +287,112 @@ def test_2D_area():
 def test_MultiDimensionApodization_class():
     a = sp.apodization.MultiDimensionApodization()
     assert a.function == "apodization"
+
+
+def test_TopHat_mixed_units():
+    """Each edge keeps its own unit, and json keeps both units."""
+    test_dataset = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(500))],
+        dimensions=[cp.LinearDimension(500, "1 ms")],
+    )
+    top_hat = sp.apodization.TopHat(rising_edge="0.1 s", falling_edge="400 ms")
+    assert str(top_hat.property_units["rising_edge"]) == "s"
+    assert str(top_hat.property_units["falling_edge"]) == "ms"
+    assert top_hat.json()["rising_edge"] == "0.1 s"
+    assert top_hat.json()["falling_edge"] == "400.0 ms"
+
+    processor = sp.SignalProcessor(operations=[top_hat])
+    out = processor.apply_operations(test_dataset.copy())
+    expected = np.zeros(500)
+    expected[100:400] = 1
+    assert np.allclose(out.y[0].components[0], expected)
+
+    # no edges selects the full window
+    processor = sp.SignalProcessor(operations=[sp.apodization.TopHat()])
+    out = processor.apply_operations(test_dataset.copy())
+    assert np.allclose(out.y[0].components[0], 1)
+
+
+def _time_domain_fid(n=2**16, dt_us=10.0):
+    """Two-sided constant signal, whose spectrum is the Fourier transform of the
+    apodization window."""
+    return cp.CSDM(
+        dimensions=[cp.LinearDimension(n, f"{dt_us} us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.ones(n, dtype=complex))],
+    )
+
+
+def _spectrum(op):
+    """Spectrum of the simulated delta line (1H at 0 ppm) after apodization in the
+    time domain; (frequency in Hz, complex amplitude)."""
+    processor = sp.SignalProcessor(operations=[sp.IFFT(), op, sp.FFT()])
+    out = processor.apply_operations(dataset=sim.methods[0].simulation.copy())
+    return freqHz, out.y[0].components[0]
+
+
+def _fwhm(x, y):
+    above = x[y >= y.max() / 2]
+    return above.max() - above.min() + abs(x[1] - x[0])
+
+
+def test_SkewedGaussian_zero_skew_is_Gaussian():
+    """With zero skew, the skewed Gaussian window is the Gaussian window of the same
+    FWHM, with unit amplitude at time zero."""
+    fid = _time_domain_fid()
+    gauss = sp.apodization.Gaussian(FWHM="100 Hz").operate(fid.copy())
+    skewed = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=0).operate(fid.copy())
+    assert np.allclose(skewed.y[0].components[0], gauss.y[0].components[0])
+
+
+def test_SkewedGaussian_unit_independent():
+    """The window does not depend on the unit the FWHM is given in."""
+    fid = _time_domain_fid()
+    a = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=2).operate(fid.copy())
+    b = sp.apodization.SkewedGaussian(FWHM="0.1 kHz", skew=2).operate(fid.copy())
+    assert np.allclose(a.y[0].components[0], b.y[0].components[0])
+
+
+def test_SkewedGaussian_lineshape():
+    """The apodized delta line is a skew normal line: real, of area equal to the
+    Gaussian line, with the FWHM set by the FWHM argument at zero skew, and skewed
+    towards higher frequencies for a positive skew."""
+    x, y_gauss = _spectrum(sp.apodization.Gaussian(FWHM="100 Hz"))
+    x, y0 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=0))
+    x, y3 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=3))
+    x, ym3 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=-3))
+
+    assert np.allclose(_fwhm(x, y0.real), 100.0, rtol=0.03)
+    for y in [y0, y3, ym3]:
+        assert np.allclose(y.imag, 0, atol=1e-6 * y.real.max())
+        assert np.all(y.real > -1e-6 * y.real.max())
+        assert np.allclose(y.real.sum(), y_gauss.real.sum())
+
+    def third_moment(y):
+        p = y.real / y.real.sum()
+        mean = (p * x).sum()
+        return (p * (x - mean) ** 3).sum()
+
+    assert third_moment(y3) > 0
+    assert third_moment(ym3) < 0
+    assert np.allclose(third_moment(y3), -third_moment(ym3))
+    assert abs(third_moment(y0)) < 1e-3 * abs(third_moment(y3))
+
+
+def test_SkewedGaussian_real_dataset():
+    """A complex window applied to a real-valued dataset returns the complex product
+    instead of failing on the in-place cast."""
+    n = 256
+    dataset = cp.CSDM(
+        dimensions=[cp.LinearDimension(n, "10 us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.ones(n))],
+    )
+    assert dataset.y[0].components.dtype == np.float64
+    op = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=2)
+    out = op.operate(dataset.copy())
+    expected = op.fn(dataset.x[0].coordinates)
+    assert np.iscomplexobj(out.y[0].components)
+    assert np.allclose(out.y[0].components[0], expected)
+
+    # a real window keeps the real dtype
+    out = sp.apodization.Gaussian(FWHM="100 Hz").operate(dataset.copy())
+    assert out.y[0].components.dtype == np.float64

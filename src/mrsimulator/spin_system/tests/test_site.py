@@ -263,3 +263,28 @@ def test_custom_isotope_site():
     assert new_site.isotope.gyromagnetic_ratio == 3.14
     assert new_site.isotope.quadrupole_moment == 0
     assert new_site.isotope.natural_abundance == 100
+
+
+def test_site_shielding_frequency_units_rejected():
+    """Shielding tensors are given in ppm; frequency units raise an error instead of
+    being read as ppm."""
+    for key in ["shielding_symmetric", "shielding_antisymmetric"]:
+        with pytest.raises(ValueError, match=".*Use ppm.*"):
+            Site.parse_dict_with_units({"isotope": "29Si", key: {"zeta": "1000 Hz"}})
+
+    site = Site.parse_dict_with_units(
+        {"isotope": "29Si", "shielding_symmetric": {"zeta": "10 ppm", "eta": 0.1}}
+    )
+    assert site.shielding_symmetric.zeta == 10
+
+
+def test_site_parse_does_not_mutate_input():
+    """parse_dict_with_units does not modify the input dict."""
+    py_dict = {
+        "isotope": "27Al",
+        "isotropic_chemical_shift": "10 ppm",
+        "shielding_symmetric": {"zeta": "5 ppm", "eta": 0.1},
+        "quadrupolar": {"Cq": "1 MHz", "eta": 0.2},
+    }
+    assert Site.parse_dict_with_units(py_dict) == Site.parse_dict_with_units(py_dict)
+    assert py_dict["quadrupolar"] == {"Cq": "1 MHz", "eta": 0.2}

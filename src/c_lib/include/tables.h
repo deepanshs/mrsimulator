@@ -28,14 +28,15 @@ static inline void generate_trig_table(void) {
 }
 
 /** Gaussian tables **/
-double gauss_table[1500];
+// delta_fn_gauss_interpolation reads up to index 3 / precision = 1500.
+double gauss_table[1501];
 double gauss_table_precision_inverse;
 
 static inline void generate_gauss_table(void) {
-  extern double gauss_table[1500];
+  extern double gauss_table[1501];
   extern double gauss_table_precision_inverse;
 
-  int i, n = 1500;
+  int i, n = 1501;
   double precision = 0.002, sigma = 1.0 / 4.0, factor, temp;
   gauss_table_precision_inverse = 1.0 / precision;
 

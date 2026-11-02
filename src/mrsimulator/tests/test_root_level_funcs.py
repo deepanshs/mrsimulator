@@ -146,3 +146,20 @@ def test_parse_old_struct():
 #     assert py_dict == new_struct
 
 #     os.remove("temp_2.mrsim")
+
+
+def test_save_load_without_signal_processors(tmp_path):
+    """save() without signal processors writes `"signal_processors": None`, which
+    load() must accept and replace with default processors."""
+    sim, _, _ = setup()
+    filename = os.path.join(tmp_path, "no_processors.mrsim")
+    save(filename, sim)
+
+    sim_l, processors_l, _ = load(filename)
+    assert sim_l == sim
+    assert len(processors_l) == len(sim.methods)
+    assert all(item == sp.SignalProcessor() for item in processors_l)
+
+    sim_p, processors_p, _ = parse(dict(sim))
+    assert sim_p == sim
+    assert len(processors_p) == len(sim.methods)

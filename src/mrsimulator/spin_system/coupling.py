@@ -1,4 +1,5 @@
 """Base Site class."""
+from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import List
@@ -211,6 +212,7 @@ class Coupling(Parseable):
         ... }
         >>> coupling1 = Coupling.parse_dict_with_units(coupling_dict)
         """
+        py_dict = deepcopy(py_dict)
         prop_mapping = {
             "j_symmetric": SymmetricTensor,
             "j_antisymmetric": AntisymmetricTensor,
@@ -219,8 +221,10 @@ class Coupling(Parseable):
 
         for k, v in prop_mapping.items():
             if k in py_dict:
+                has_zeta = "zeta" in py_dict[k]
                 py_dict[k] = v.parse_dict_with_units(py_dict[k])
-                if py_dict[k].property_units["zeta"] == "ppm" and k != "dipolar":
+                unit = py_dict[k].property_units.get("zeta", None)
+                if k != "dipolar" and has_zeta and unit == "ppm":
                     raise ValueError(
                         f"Error enforcing units for {k}.zeta: ppm. Use frequency units."
                     )

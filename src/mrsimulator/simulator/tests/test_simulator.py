@@ -17,7 +17,6 @@ from mrsimulator.simulator import Sites
 from mrsimulator.spin_system.tests.test_spin_systems import generate_isotopes
 from mrsimulator.utils.collection import single_site_system_generator
 
-
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
 
@@ -406,3 +405,228 @@ def test_sim_optimize():
     opt = sim.optimize()
 
     assert set(opt.keys()) == {"precomputed_pathways", "precomputed_weights"}
+
+
+def test_pattern_with_isotropic_shift_outside_window():
+    """A static anisotropic pattern whose isotropic shift lies outside the spectral
+    window, but whose powder pattern overlaps the window, must still be simulated
+    within the window."""
+
+    def simulate(iso, count, sw):
+        site = Site(
+            isotope="13C",
+            isotropic_chemical_shift=iso,
+            shielding_symmetric={"zeta": 150, "eta": 0.3},
+        )
+        method = BlochDecaySpectrum(
+            channels=["13C"],
+            rotor_frequency=0,
+            spectral_dimensions=[{"count": count, "spectral_width": sw}],
+        )
+        sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=[method])
+        sim.run()
+        return sim.methods[0].simulation.y[0].components[0].real
+
+    # narrow window (+/- 125 ppm at 9.4 T) is the centre half of the wide window, with
+    # the same increment.
+    for iso in [0.0, -130.0, 130.0]:
+        wide = simulate(iso, 1024, 50000)
+        narrow = simulate(iso, 512, 25000)
+        assert narrow.sum() > 0, f"iso={iso}"
+        np.testing.assert_allclose(narrow, wide[256:768], atol=1e-6 * wide.max())
+
+
+def test_spin_system_with_no_transition_pathways():
+    """A spin system with no transition pathways for the method (DQ query on a single
+    site) contributes nothing and does not crash the simulation."""
+    from mrsimulator.method import Method
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    def dim(p):
+        return SpectralDimension(
+            count=64,
+            spectral_width=2e4,
+            events=[SpectralEvent(transition_queries=[{"ch1": {"P": p}}])],
+        )
+
+    method = Method(channels=["13C"], spectral_dimensions=[dim([-1, -1]), dim([-1])])
+    one = SpinSystem(sites=[Site(isotope="13C")])
+    two = SpinSystem(
+        sites=[Site(isotope="13C", isotropic_chemical_shift=10), Site(isotope="13C")]
+    )
+
+    def simulate(spin_systems, decompose="none"):
+        sim = Simulator(spin_systems=spin_systems, methods=[method])
+        sim.config.decompose_spectrum = decompose
+        sim.run()
+        return [y.components[0] for y in sim.methods[0].simulation.y]
+
+    assert np.allclose(simulate([one])[0], 0)
+    assert np.allclose(simulate([one, two])[0], simulate([two])[0])
+
+    decomposed = simulate([one, two], decompose="spin_system")
+    assert len(decomposed) == 2
+    assert np.allclose(decomposed[0], 0)
+    assert np.allclose(decomposed[1], simulate([two])[0])
+
+
+def test_2D_pattern_with_isotropic_shift_outside_window():
+    """2D analogue of test_pattern_with_isotropic_shift_outside_window: a narrow window
+    must equal the corresponding slice of a wide window, including the edge bins."""
+    from mrsimulator.method import Method
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    def simulate(iso, count, sw):
+        def dim():
+            return SpectralDimension(
+                count=count,
+                spectral_width=sw,
+                events=[
+                    SpectralEvent(
+                        rotor_frequency=0, transition_queries=[{"ch1": {"P": [-1]}}]
+                    )
+                ],
+            )
+
+        site = Site(
+            isotope="13C",
+            isotropic_chemical_shift=iso,
+            shielding_symmetric={"zeta": 150, "eta": 0.3},
+        )
+        method = Method(channels=["13C"], spectral_dimensions=[dim(), dim()])
+        sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=[method])
+        sim.run()
+        return sim.methods[0].simulation.y[0].components[0].real
+
+    for iso in [0.0, -130.0]:
+        wide = simulate(iso, 256, 50000)
+        narrow = simulate(iso, 128, 25000)
+        assert narrow.sum() > 0, f"iso={iso}"
+        np.testing.assert_allclose(narrow, wide[64:192, 64:192], atol=1e-9 * wide.max())
+
+
+def test_n_jobs_zero():
+    """n_jobs=0 raises a clear error."""
+    with pytest.raises(ValueError, match=".*n_jobs.*"):
+        get_chunks([1, 2, 3], 0)
+
+
+def test_benchmark_time_string_sub_microsecond():
+    """time_string handles times below one microsecond."""
+    from mrsimulator.benchmark import time_string
+
+    text, _ = time_string(5e-7)
+    assert text.endswith("ns")
+    text, _ = time_string(2.5e-6)
+    assert text.endswith("µs")
+
+
+def _window_slice(iso, count, sw, isotope, method_fn):
+    site = Site(
+        isotope=isotope,
+        isotropic_chemical_shift=iso,
+        shielding_symmetric={"zeta": 150, "eta": 0.3},
+    )
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[site])], methods=[method_fn(count, sw)]
+    )
+    sim.run()
+    return sim.methods[0].simulation.y[0].components[0].real
+
+
+def test_negative_gamma_window_edge_bins():
+    """For an isotope with a negative gyromagnetic ratio, the spectrum is reversed.
+    Every bin of a narrow window, including bin 0, must equal the corresponding bin of
+    a wide window with the same increment. The pattern crosses the window edges."""
+
+    def method(count, sw):
+        return BlochDecaySpectrum(
+            channels=["29Si"],
+            rotor_frequency=0,
+            spectral_dimensions=[{"count": count, "spectral_width": sw}],
+        )
+
+    for iso in [-130.0, 130.0]:
+        wide = _window_slice(iso, 1024, 50000, "29Si", method)
+        narrow = _window_slice(iso, 512, 25000, "29Si", method)
+        assert narrow.sum() > 0
+        assert wide[256] != 0 or wide[767] != 0  # the pattern reaches the window edge
+        np.testing.assert_allclose(narrow, wide[256:768], atol=1e-12 * wide.max())
+
+
+def test_negative_gamma_sideband_at_window_edge():
+    """A spinning sideband exactly on the first point of the window of a negative
+    gamma isotope keeps its own intensity, not the intensity of the sideband one
+    spectral width above the window."""
+    inc = 40000 / 2048
+
+    def simulate(count, sw, ref):
+        site = Site(isotope="29Si", shielding_symmetric={"zeta": 80, "eta": 0.3})
+        method = BlochDecaySpectrum(
+            channels=["29Si"],
+            rotor_frequency=5000,
+            spectral_dimensions=[
+                {"count": count, "spectral_width": sw, "reference_offset": ref}
+            ],
+        )
+        sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=[method])
+        sim.config.number_of_sidebands = 32
+        sim.run()
+        return sim.methods[0].simulation.y[0].components[0].real
+
+    wide = simulate(2048, 40000, 0)  # 5 kHz sideband at bin 1024 + 256
+    narrow = simulate(512, 512 * inc, 10000)  # window 5000 Hz .. 14980 Hz
+    assert wide[1280] > 0.1 * wide.max()
+    np.testing.assert_allclose(narrow, wide[1280:1792], atol=1e-12 * wide.max())
+
+
+def test_negative_gamma_2D_window_edge_bins():
+    """2D analogue of test_negative_gamma_window_edge_bins."""
+    from mrsimulator.method import Method
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    def method(count, sw):
+        def dim():
+            return SpectralDimension(
+                count=count,
+                spectral_width=sw,
+                events=[
+                    SpectralEvent(
+                        rotor_frequency=0, transition_queries=[{"ch1": {"P": [-1]}}]
+                    )
+                ],
+            )
+
+        return Method(channels=["29Si"], spectral_dimensions=[dim(), dim()])
+
+    for iso in [-130.0, 130.0]:
+        wide = _window_slice(iso, 256, 50000, "29Si", method)
+        narrow = _window_slice(iso, 128, 25000, "29Si", method)
+        assert narrow.sum() > 0
+        np.testing.assert_allclose(
+            narrow, wide[64:192, 64:192], atol=1e-12 * wide.max()
+        )
+
+
+@pytest.mark.parametrize("isotope", ["1H", "29Si"])  # positive and negative gamma
+@pytest.mark.parametrize("count", [64, 65])
+def test_grid_alignment_even_and_odd_count(isotope, count):
+    """An isotropic line placed on a grid coordinate of the spectral dimension lands on
+    that point, for even and odd counts and either sign of the gyromagnetic ratio."""
+    method = BlochDecaySpectrum(
+        channels=[isotope],
+        spectral_dimensions=[
+            {"count": count, "spectral_width": 6400, "reference_offset": 0}
+        ],
+    )
+    x = method.spectral_dimensions[0].coordinates_Hz()
+    k = count // 2 + 3
+    larmor = abs(method.channels[0].larmor_freq(B0=method.magnetic_flux_density))
+    site = Site(isotope=isotope, isotropic_chemical_shift=x[k] / larmor * 1e6)
+    sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=[method])
+    sim.run()
+    y = sim.methods[0].simulation.y[0].components[0].real
+    assert y[k] > 0.99 * y.sum(), f"{isotope}, count={count}"

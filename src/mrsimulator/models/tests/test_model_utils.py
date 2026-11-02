@@ -89,3 +89,19 @@ def test_x_y_to_zeta_eta():
     zeta, eta = x_y_to_zeta_eta(x, y)
     assert np.allclose(zeta, np.asarray(zeta_))
     assert np.allclose(eta, np.asarray(eta_))
+
+
+def test_line_shape_kernel_default_config():
+    """LineShapeKernel without an explicit config uses a default ConfigSimulator, and
+    kernels do not share the default config object."""
+    from mrsimulator.method.lib import BlochDecaySpectrum
+    from mrsimulator.models.utils import LineShapeKernel
+    from mrsimulator.simulator.config import ConfigSimulator
+
+    method = BlochDecaySpectrum(channels=["27Al"], spectral_dimensions=[{"count": 32}])
+    pos = (np.linspace(0, 1e6, 3), np.linspace(0, 1, 3))
+    kernel1 = LineShapeKernel(pos=pos, method=method)
+    kernel2 = LineShapeKernel(pos=pos, method=method)
+    assert isinstance(kernel1.config, ConfigSimulator)
+    assert kernel1.config == ConfigSimulator()
+    assert kernel1.config is not kernel2.config

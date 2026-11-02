@@ -141,8 +141,8 @@ def time_string(time):
 
     # color = '' if os_system == 'Windows' else color
 
-    while time < 1:
-        time *= 1000  # ms
+    while time < 1 and count < 3:
+        time *= 1000  # ms, µs, ns
         count += 1
     if count == 0:
         return f"{time:.3f}  s", color
@@ -150,6 +150,7 @@ def time_string(time):
         return f"{time:.3f} ms", color
     if count == 2:
         return f"{time:.3f} µs", color
+    return f"{time:.3f} ns", color
 
 
 def terminal_start_setup():

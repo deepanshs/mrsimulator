@@ -318,13 +318,13 @@ def _flatten_item(item):
 def _check_lengths_of_args(*args):
     """Raise error when not all lists are the same length. Returns length on success"""
     args = [arg for arg in args if arg is not None]
-    dicts = [
-        list(args.pop(i).values())
-        for i, arg in reversed(list(enumerate(args)))
-        if isinstance(arg, dict)
-    ]
-    dicts = dicts[0] if dicts != [] else []
-    length = {len(lst) for lst in args + dicts if isinstance(lst, (list, np.ndarray))}
+    dict_values = [v for arg in args if isinstance(arg, dict) for v in arg.values()]
+    args = [arg for arg in args if not isinstance(arg, dict)]
+    length = {
+        len(lst) for lst in args + dict_values if isinstance(lst, (list, np.ndarray))
+    }
+    if len(length) == 0:  # only scalar arguments
+        return 1
     if len(length) != 1:
         raise ValueError(
             f"Not all arrays/lists passed were of the same length. {LIST_LEN_ERROR_MSG}"

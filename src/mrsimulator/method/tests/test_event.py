@@ -352,3 +352,50 @@ def test_parse_dict_to_ev_class():
     json_dict = {"ch1": {"angle": "0.0 rad", "phase": "0.0 rad"}}
 
     assert isinstance(parse_dict_to_ev_class(json_dict), MixingEvent)
+
+
+def test_mixing_event_with_metadata_roundtrip():
+    """MixingEvent with name, label, and description survives a json round trip."""
+    event = MixingEvent(
+        ch1={"angle": np.pi / 2, "phase": 0.1},
+        name="z-filter",
+        label="z-filter label",
+        description="A z-filter.",
+    )
+    assert MixingEvent.parse_dict_with_units(event.json()) == event
+
+    event = RotationEvent(ch1={"angle": np.pi}, label="pi pulse")
+    assert RotationEvent.parse_dict_with_units(event.json()) == event
+
+
+def test_method_with_labelled_mixing_event_roundtrip():
+    """A method with a labelled MixingEvent survives a json round trip."""
+    from mrsimulator.method import Method
+
+    method = Method(
+        channels=["13C"],
+        spectral_dimensions=[
+            {
+                "events": [
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
+                    {"ch1": {"angle": np.pi / 2}, "label": "z-filter"},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
+                ]
+            }
+        ],
+    )
+    assert Method.parse_dict_with_units(method.json()) == method
+
+
+def test_unknown_freq_contrib():
+    """An unrecognized frequency contribution raises an error instead of being
+    silently dropped."""
+    from pydantic.v1 import ValidationError
+
+    with pytest.raises(ValidationError, match=".*Shielding1_O.*"):
+        SpectralEvent(freq_contrib=["Shielding1_O"])
+    with pytest.raises(ValidationError, match=".*Foo.*"):
+        SpectralEvent(freq_contrib=["Shielding1_0", "!Foo"])
+
+    event = SpectralEvent(freq_contrib=["Shielding1_0", "Quad2_4"])
+    assert {item.value for item in event.freq_contrib} == {"Shielding1_0", "Quad2_4"}
