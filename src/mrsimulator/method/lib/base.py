@@ -1,3 +1,4 @@
+import warnings
 from copy import deepcopy
 from typing import ClassVar
 
@@ -200,8 +201,10 @@ class BlochDecayCentralTransitionSpectrum(BlochDecayCTSpectrum):
         extra = "forbid"
 
     def __init__(self, **kwargs):
-        DeprecationWarning(
-            "BlochDecayCentralTransitionSpectrum is deprecated, use ",
-            "BlochDecayCTSpectrum class instead",
+        warnings.warn(
+            "BlochDecayCentralTransitionSpectrum is deprecated, use the "
+            "BlochDecayCTSpectrum class instead.",
+            DeprecationWarning,
+            stacklevel=2,
         )
         super().__init__(**kwargs)

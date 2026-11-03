@@ -1,3 +1,104 @@
+Unreleased
+----------
+
+**Bug fixes**
+
+Simulation (C core)
+
+- Fixed the transition selection for queries that request more sites than are present on
+  a channel, for example, a double-quantum ``P=[-1, -1]`` query on a single-site spin
+  system. Such queries selected every transition; they now contribute nothing.
+- Fixed the simulation of anisotropic patterns whose isotropic shift or sideband centre
+  lies outside the spectral window. The pattern was dropped entirely, even when it
+  overlapped the window; only the part outside the window is now discarded.
+- Fixed the intensity in the edge bins of the spectral window. The 1D and 2D triangle
+  interpolation now deposits the exact area of each triangle within each bin, including
+  triangles clipped by the window, and delta functions just outside the window add only
+  their linear-interpolation share to the edge bin.
+- Fixed an out-of-bounds read of the Gaussian interpolation table, which moved most of
+  the intensity of a Gaussian delta function by three bins.
+- Fixed the first point of every spectrum of an isotope with a negative gyromagnetic
+  ratio, which held the intensity from one spectral width above the window (a circular
+  reversal of the spectrum), and the half-point offset of the internal grid for an odd
+  number of points.
+- Fixed the weights of the three octant vertices of the octahedral mesh in binning
+  mode, which were 1.5 times (x, y) and 0.75 times (z) their share of the powder
+  average.
+- Fixed a crash (segmentation fault) when evaluating the Haeberlen components of zero or
+  axially symmetric random tensors.
+- Fixed memory leaks of the sideband index arrays in 2D simulations and of the plan
+  struct of every spectral dimension.
+- Fixed a crash for spin systems with no transition pathways for a method; they now
+  contribute zero intensity.
+
+Spin systems and isotopes
+
+- Fixed the sign of the default reference frequency ratio for isotopes with a negative
+  gyromagnetic ratio and no tabulated reference, which mirrored the ppm axis and the
+  isotropic shift.
+- Fixed ``Isotope.register(copy_from=...)`` modifying the global entry of the copied
+  isotope. A custom isotope with a zero gyromagnetic ratio now raises a clear error.
+- ``Site.parse_dict_with_units`` now raises an error when a shielding ``zeta`` is given
+  in frequency units, which was silently interpreted as ppm. ``Coupling`` no longer
+  requires ``zeta`` to check the units of a J tensor, and the ``AntisymmetricTensor``
+  accepts frequency units for J couplings.
+- ``Site`` and ``Coupling`` no longer modify the dictionary passed to
+  ``parse_dict_with_units``.
+
+Methods
+
+- Fixed ``MixingEvent`` JSON round trip when ``label`` or ``description`` is set.
+- Fixed the method plot for mixing events defined on different channels.
+- An unrecognized ``freq_contrib`` string now raises an error instead of being ignored.
+- ``BlochDecayCentralTransitionSpectrum`` now issues its deprecation warning.
+- The sum of the ``SpectralEvent`` fractions is compared with a tolerance.
+
+Distribution models and fitting
+
+- Fixed the ``ExtCzjzekDistribution`` for an axially symmetric (``eta=0``) dominant
+  tensor, which collapsed to a delta function.
+- Updating ``sigma`` of a ``CzjzekDistribution`` with cached tensors now takes effect,
+  and changing the sample size rebuilds the cache.
+- ``LineShapeKernel`` can be created without an explicit ``config``.
+- The lineshape kernel grid is now checked against the experiment grid once per
+  experiment; a mismatch, such as an ascending kernel grid on a descending experiment
+  axis, raises an error instead of producing a mirrored spectrum.
+- ``make_LMFIT_params`` supports antisymmetric shielding and J tensors, no longer
+  modifies the abundance of the distribution models, and constrains the abundances of
+  spin systems and distribution models to a total of 100%.
+- ``LMFIT_min_function``, ``bestfit``, and ``residuals`` accept the documented
+  ``processors=None`` default and raise an error when the number of processors does not
+  match the number of methods. ``make_LMFIT_parameters`` forwards all arguments.
+- ``Mrsimulator`` objects saved without signal processors load again, and
+  ``Mrsimulator.parse(..., parse_units=False)`` ignores the file version.
+
+Signal processing
+
+- ``SkewedGaussian`` apodization is now the Fourier transform of the skew normal
+  distribution. The ``FWHM`` argument is consistent with the ``Gaussian`` apodization,
+  the result no longer depends on the unit of ``FWHM``, and the zero skew limit is the
+  Gaussian apodization. The default ``FWHM`` is 0. The window is complex; a real-valued
+  dataset is promoted to complex when a complex window is applied.
+- ``TopHat`` keeps a separate unit for each edge, and both units are serialized.
+- ``Polynomial`` baseline on multi-dimensional datasets is applied along ``dim_index``.
+- Histogram samples just below the upper edge of the range, whose bin index rounds up
+  to the bin count, are counted in the last bin instead of being written out of bounds.
+
+Utilities
+
+- Fixed the Maryland convention conversions: the span is non-negative and the principal
+  components are accepted in any order.
+- Fixed the CLI output file name, which could write to the filesystem root, and the
+  command-line arguments are parsed only when the CLI runs.
+- ``Simulator.run`` raises a clear error for ``n_jobs=0``; the benchmark reports
+  sub-microsecond times; ``setup.py`` enforces the minimum python version.
+
+**Other changes**
+
+- ``Simulator.optimize`` computes the transition pathways once per unique set of
+  isotopes, which speeds up simulations with many spin systems.
+
+
 v1.0.1
 ------
 

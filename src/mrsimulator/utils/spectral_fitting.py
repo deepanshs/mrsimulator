@@ -17,11 +17,13 @@ ENCODING_PAIRS = [
     ["].sites[", "_site_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
     ["].shielding_symmetric.", "_shielding_symmetric_"],
+    ["].shielding_antisymmetric.", "_shielding_antisymmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
     # coupling
     ["].couplings[", "_coupling_"],
     ["].isotropic_j", "_isotropic_j"],
     ["].j_symmetric.", "_j_symmetric_"],
+    ["].j_antisymmetric.", "_j_antisymmetric_"],
     ["].dipolar.", "_dipolar_"],
 ]
 
@@ -32,11 +34,13 @@ DECODING_PAIRS = [
     [".sites.", "_site_"],
     [".isotropic_chemical_shift", "_isotropic_chemical_shift"],
     [".shielding_symmetric.", "_shielding_symmetric_"],
+    [".shielding_antisymmetric.", "_shielding_antisymmetric_"],
     [".quadrupolar.", "_quadrupolar_"],
     # coupling
     [".couplings.", "_coupling_"],
     [".isotropic_j", "_isotropic_j"],
     [".j_symmetric.", "_j_symmetric_"],
+    [".j_antisymmetric.", "_j_antisymmetric_"],
     [".dipolar.", "_dipolar_"],
 ]
 
@@ -242,10 +246,15 @@ def make_simulator_params(
     total_abundance += sum(sys.abundance for sys in spin_system_models)
     abundance_scale = 100.0 / total_abundance
 
-    # expression for the last abundance.
+    # expression for the last abundance, including the distribution model abundances.
     if sys_length > 0:
         last_abundance = f"{sys_length - 1}_abundance"
-        expression = "-".join([f"{START}{i}_abundance" for i in range(sys_length - 1)])
+        terms = [f"{START}{i}_abundance" for i in range(sys_length - 1)]
+        terms += [
+            f"{model.model_name}_{i}_abundance"
+            for i, model in enumerate(spin_system_models)
+        ]
+        expression = "-".join(terms)
         expression = "100" if expression == "" else f"100-{expression}"
 
     skip_last = sys_length > 0
@@ -307,9 +316,9 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
     return params
 
 
-def make_LMFIT_parameters(sim: Simulator, processors: list = None, include={}):
+def make_LMFIT_parameters(*args, **kwargs):
     """An alias of `make_LMFIT_params` function."""
-    return make_LMFIT_params(sim, processors)
+    return make_LMFIT_params(*args, **kwargs)
 
 
 def make_LMFIT_params(
@@ -457,6 +466,21 @@ def _check_for_experiment_data(methods_list: list):
         )
 
 
+def _get_processors(sim: Simulator, processors) -> list:
+    """Return a list of signal processors, one for each method in the simulator. When
+    processors is None, the processors apply no post-simulation processing."""
+    if processors is None:
+        return [sp.SignalProcessor() for _ in sim.methods]
+
+    processors = processors if isinstance(processors, list) else [processors]
+    if len(processors) != len(sim.methods):
+        raise ValueError(
+            f"The number of signal processors ({len(processors)}) does not match the "
+            f"number of methods ({len(sim.methods)}) in the simulator."
+        )
+    return processors
+
+
 def LMFIT_min_function(
     params: Parameters,
     sim: Simulator,
@@ -479,7 +503,7 @@ def LMFIT_min_function(
     Returns:
         Array of the differences between the simulation and the experimental datasets.
     """
-    processors = processors if isinstance(processors, list) else [processors]
+    processors = _get_processors(sim, processors)
     sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
     sigma = sigma if isinstance(sigma, list) else [sigma]
     sigma = [item.value if hasattr(item, "value") else item for item in sigma]
@@ -514,7 +538,7 @@ def bestfit(sim: Simulator, processors: list = None):
         list processors: List of SignalProcessor objects ordered according to the
             methods in the simulator object.
     """
-    processors = processors if isinstance(processors, list) else [processors]
+    processors = _get_processors(sim, processors)
     sim.run()
 
     return [
@@ -582,6 +606,30 @@ def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq):
     return csdm_obj
 
 
+def _check_kernel_grid(method, exp_spectrum):
+    """Raise a ValueError if the spectral grid of the method used to generate the
+    lineshape kernel differs from the grid of the experiment spectrum. The kernel is
+    placed directly on the experiment coordinates, so a mismatch, for example, an
+    ascending method grid with a descending experiment axis, silently produces a
+    shifted or mirrored spectrum."""
+    dim = exp_spectrum.x[0].copy()
+    if dim.coordinates.unit.physical_type == "dimensionless":
+        dim.to("Hz", "nmr_frequency_ratio")
+    exp_Hz = dim.coordinates.to("Hz").value
+
+    sd = method.spectral_dimensions[0]
+    method_Hz = sd.coordinates_Hz()
+    half_bin = 0.5 * abs(sd.spectral_width / sd.count)
+    if exp_Hz.size != method_Hz.size or not np.allclose(
+        exp_Hz, method_Hz, rtol=0, atol=half_bin
+    ):
+        raise ValueError(
+            "The spectral grid of the lineshape kernel method does not match the "
+            "experiment grid. Create the method spectral dimensions from the "
+            "experiment using `get_spectral_dimensions(experiment)`."
+        )
+
+
 def make_distribution_params(
     spin_system_models: list, norm: float, skip_last: bool = False
 ) -> Parameters:
@@ -593,12 +641,13 @@ def make_distribution_params(
     expr_terms = []
     params = Parameters()
     for i, model in enumerate(spin_system_models):
-        # normalize the abundance
-        model.abundance *= norm
         params = model.add_lmfit_params(params, i)
 
-        # Set last abundance parameter as a non-free variable
+        # normalize the abundance, without modifying the model
         model_prefix = model.model_name
+        params[f"{model_prefix}_{i}_abundance"].value = model.abundance * norm
+
+        # Set last abundance parameter as a non-free variable
         if i < n_dist - 1 or skip_last:
             expr_terms.append(f"{model_prefix}_{i}_abundance")
         else:
@@ -638,6 +687,10 @@ def _generate_distribution_spectrum(
     larmor_freq = isotope.larmor_freq(B0=method.magnetic_flux_density) / 1.0e6  # MHz
     larmor_freq *= isotope.ref_larmor_ratio
     exp_spectrum = method.experiment
+    # validate the grid once per experiment, not on every fit evaluation.
+    if kernel._checked_experiment is not exp_spectrum:
+        _check_kernel_grid(method, exp_spectrum)
+        kernel._checked_experiment = exp_spectrum
 
     guess_spectrum = exp_spectrum.copy()
     guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros

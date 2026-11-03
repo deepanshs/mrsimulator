@@ -179,3 +179,40 @@ def test_get_isotope_dict():
     error = "Isotope symbol `unknown` not recognized."
     with pytest.raises(Exception, match=error):
         get_isotope_dict(isotope_symbol="unknown")
+
+
+def test_reference_ratio_positive_for_negative_gamma_without_reference():
+    """Isotopes with gamma < 0 and no reference entry must have a positive reference
+    ratio, otherwise the isotropic shift and ppm axis are mirrored."""
+    for symbol in ["235U", "101Ru", "157Gd"]:
+        isotope = Isotope(symbol=symbol)
+        assert isotope.gyromagnetic_ratio < 0
+        assert isotope.reference.ratio > 0
+        assert np.allclose(isotope.ref_larmor_ratio, 1.0)
+
+    Isotope.register(symbol="neg-gamma-no-ref", gyromagnetic_ratio=-12.3)
+    isotope = Isotope(symbol="neg-gamma-no-ref")
+    assert isotope.reference.ratio > 0
+    assert np.allclose(isotope.ref_larmor_ratio, 1.0)
+    expected = Isotope(symbol="neg-gamma-no-ref").ref_larmor_ratio
+    assert isotope.ref_larmor_ratio == expected
+
+
+def test_register_copy_from_does_not_mutate_source():
+    """Registering a custom isotope with copy_from must not modify the source."""
+    gamma_1H = Isotope(symbol="1H").gyromagnetic_ratio
+    keys_1H = set(get_isotope_dict("1H").keys())
+
+    Isotope.register(symbol="1H-copy-test", copy_from="1H", gyromagnetic_ratio=10.0)
+
+    assert Isotope(symbol="1H").gyromagnetic_ratio == gamma_1H
+    assert Isotope(symbol="1H-copy-test").gyromagnetic_ratio == 10.0
+    assert set(get_isotope_dict("1H").keys()) == keys_1H
+
+
+def test_zero_gyromagnetic_ratio_error():
+    """An isotope with zero gyromagnetic ratio raises a clear error instead of a
+    ZeroDivisionError when its reference ratio is needed."""
+    Isotope.register(symbol="zero-gamma-test", spin_multiplicity=4)
+    with pytest.raises(ValueError, match=".*gyromagnetic ratio.*"):
+        _ = Isotope(symbol="zero-gamma-test").ref_larmor_ratio

@@ -74,3 +74,12 @@ def test_BaseNamedMethod2D_set_inf_rotor_freq():
         channels=["17O"], name="BaseNamedMethod2D", rotor_frequency=np.inf
     )
     assert mtd.rotor_frequency == 1e12
+
+
+def test_deprecated_alias_warns():
+    """The deprecated BlochDecayCentralTransitionSpectrum alias issues a warning."""
+    import pytest
+    from mrsimulator.method.lib.base import BlochDecayCentralTransitionSpectrum
+
+    with pytest.warns(DeprecationWarning, match=".*BlochDecayCTSpectrum.*"):
+        BlochDecayCentralTransitionSpectrum(channels=["27Al"])

@@ -22,7 +22,7 @@ try:
 except ImportError:
     USE_CYTHON = False
 
-PY_MINOR_VERSION = 8
+PY_MINOR_VERSION = 10
 
 
 def message(lib, env, command, key):
@@ -253,7 +253,7 @@ class MacOSSetup(Setup):
 python_version = sys.version_info
 py_version = ".".join([str(i) for i in python_version[:3]])
 print("Using python version", py_version)
-if python_version.major != 3 and python_version.minor < PY_MINOR_VERSION:
+if python_version.major != 3 or python_version.minor < PY_MINOR_VERSION:
     print(f"Python>=3.{PY_MINOR_VERSION} is required, found {py_version}")
     sys.exit(1)
 

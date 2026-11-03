@@ -185,6 +185,14 @@ static inline void create_plans_for_events_in_dimension(
   dim->local_phase = malloc_double(scheme->n_gamma * scheme->total_orientations);
   dim->freq_offset = malloc_double(scheme->octant_orientations);
   dim->freq_amplitude = malloc_double(plan->size);
+
+  /* The first event holds an owning copy of the plan buffers. Free the plan struct,
+   * or the whole plan when there are no events. */
+  if (n_events == 0) {
+    MRS_free_plan(plan);
+  } else {
+    free(plan);
+  }
 }
 
 /**

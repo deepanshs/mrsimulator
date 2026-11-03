@@ -130,7 +130,12 @@ class LineShapeKernel:
     method: Method
     kernel: np.ndarray = None
     polar: bool = False
-    config: ConfigSimulator = field(default_factory=ConfigSimulator())
+    config: ConfigSimulator = field(default_factory=ConfigSimulator)
+    # the experiment whose grid was last validated against the method grid, see
+    # mrsimulator.utils.spectral_fitting._generate_distribution_spectrum
+    _checked_experiment: object = field(
+        default=None, init=False, repr=False, compare=False
+    )
 
     def generate_lineshape(self, tensor_type: str = "shielding") -> np.ndarray:
         """Pre-compute a lineshape kernel to use for the least-squares fitting of an

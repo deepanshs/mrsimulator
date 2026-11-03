@@ -1,4 +1,5 @@
 import numpy as np
+from astropy.units import Quantity
 from csdmpy.units import string_to_quantity
 
 
@@ -21,7 +22,15 @@ def _get_broadcast_shape(array, dim, ndim):
 def _str_to_quantity(v, values, prop_name):
     if isinstance(v, str):
         quantity = string_to_quantity(v)
-        values["property_units"] = {prop_name: quantity.unit}
+        # keep the units of other properties set from strings, but not the
+        # dimensionless defaults (CONST)
+        property_units = {
+            k: u
+            for k, u in (values.get("property_units", None) or {}).items()
+            if not isinstance(u, Quantity)
+        }
+        property_units[prop_name] = quantity.unit
+        values["property_units"] = property_units
         return quantity.value
     if isinstance(v, float):
         return v

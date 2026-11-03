@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import csdmpy as cp
 import matplotlib.pyplot as plt
@@ -27,14 +28,12 @@ def run_full_simulator(args):
         proc_data.append(proc.apply_operations(mth.simulation))
 
     outfile = args.output or args.input
-    segments = outfile.split(".")
-    outname, ext = "".join(segments[:-1]), segments[-1]
-    if ext not in ["csdf"]:
-        outname = f"{outname}.{ext}"
-        ext = "csdf"
+    outname, ext = os.path.splitext(outfile)
+    if ext != ".csdf":
+        outname = outfile
 
     for i, f in enumerate(proc_data):
-        f.save(f"{outname}_{i}.{ext}")
+        f.save(f"{outname}_{i}.csdf")
 
         if args.plot:
             cp.plot(f.real)
@@ -42,6 +41,7 @@ def run_full_simulator(args):
 
 
 def run():
+    args = parser.parse_args()
     if args.input is not None:
         run_full_simulator(args)
 
@@ -85,7 +85,6 @@ parser.add_argument(
     action="store_true",
     help="run simulation benchmark. Default is False.",
 )
-args = parser.parse_args()
 
 
 if __name__ == "__main__":

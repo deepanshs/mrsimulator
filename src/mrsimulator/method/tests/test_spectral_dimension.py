@@ -231,3 +231,18 @@ def test_fraction():
                 SpectralEvent(fraction=0.5),
             ]
         )
+
+
+def test_fraction_sum_floating_point():
+    """Fractions which sum to one up to floating point error do not warn."""
+    import warnings
+
+    from mrsimulator.method import SpectralDimension
+
+    events = [
+        {"fraction": f, "transition_queries": [{"ch1": {"P": [-1]}}]}
+        for f in [0.1] * 10
+    ]
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        SpectralDimension(events=events)

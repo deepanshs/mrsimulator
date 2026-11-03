@@ -41,11 +41,9 @@ def core_simulator(method,
     channel = method.channels[0].symbol
     cdef double spin_quantum_number = method.channels[0].spin
 
-    # gyromagnetic ratio and reverse axis factor
+    # gyromagnetic ratio. For a negative ratio, the internal frequencies have the
+    # opposite sign, and the spectrum is reversed at the end.
     cdef gyromagnetic_ratio = method.channels[0].gyromagnetic_ratio
-    cdef double gyro_factor = 1.0
-    if gyromagnetic_ratio > 0.0:
-        gyro_factor = -1.0
 
     # config for spin I=0.5
     cdef bool_t allow_4th_rank = 1
@@ -143,9 +141,19 @@ def core_simulator(method,
         n_points *= dim.count
 
         count.append(dim.count)
-        offset = dim.spectral_width / 2.0
-        coordinates_offset.append(-dim.reference_offset * gyro_factor - offset)
-        increment.append(dim.spectral_width / dim.count)
+        inc = dim.spectral_width / dim.count
+        # index of the reference offset on the grid, see
+        # SpectralDimension.coordinates_Hz, for even and odd counts.
+        n_ref = int(dim.count / 2)
+        if gyromagnetic_ratio < 0.0:
+            # internal bin j is output bin N-1-j (np.flip below), so the internal grid
+            # starts at minus the last coordinate of the dimension.
+            coordinates_offset.append(
+                -dim.reference_offset - (dim.count - 1 - n_ref) * inc
+            )
+        else:
+            coordinates_offset.append(dim.reference_offset - n_ref * inc)
+        increment.append(inc)
         event_i.append(n_ev)
 
         dim_sidebands.append(number_of_sidebands if np.any(track) else 1)
@@ -253,7 +261,8 @@ def core_simulator(method,
 
         abundance = spin_sys.abundance
         isotopes = [site.isotope.symbol for site in spin_sys.sites]
-        if channel not in isotopes:
+        # skip spin systems with no transition pathways for the given method.
+        if channel not in isotopes or np.asarray(segments).size == 0:
             if decompose_spectrum == 1:
                 amp_individual.append(np.zeros(method.shape()))
             continue
@@ -478,16 +487,19 @@ def core_simulator(method,
             amp1 += temp
         amp[:] = 0
 
-    # reverse the spectrum if gyromagnetic ratio is positive.
+    # reverse the spectrum if the gyromagnetic ratio is negative. Internal bin j is
+    # output bin N-1-j along every spectral dimension. (A circular reversal, as with
+    # fft(ifft(amp).conj()), maps bin 0 onto itself and aliases the frequency one
+    # spectral width above the window into the first point.)
     if decompose_spectrum == 1 and len(amp_individual) != 0:
         if gyromagnetic_ratio < 0:
-            amp1 = [np.fft.fftn(np.fft.ifftn(item).conj()) for item in amp_individual]
+            amp1 = [np.conj(np.flip(item)) for item in amp_individual]
         else:
             amp1 = amp_individual
     else:
         amp1 = amp1.reshape(method.shape())
         if gyromagnetic_ratio < 0:
-            amp1 = np.fft.fftn(np.fft.ifftn(amp1).conj())
+            amp1 = np.conj(np.flip(amp1))
 
     clib.MRS_free_dimension(dimensions, n_dimension)
     clib.MRS_free_averaging_scheme(averaging_scheme)

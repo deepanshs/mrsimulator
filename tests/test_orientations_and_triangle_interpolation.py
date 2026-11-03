@@ -442,3 +442,172 @@ def get_amps_from_interpolation(list_, scl):
     amp2 = amp2[::2]  # + 1j * amp2[1::2]
     amp3 = amp3[::2]  # + 1j * amp3[1::2]
     return amp1, amp2, amp3, lst1, lst2
+
+
+def _exact_triangle_bins(f, n, amp=1.0):
+    """Exact area of a triangle (vertices f, total area amp) in bins [k, k+1)."""
+    f0, f1, f2 = np.sort(f)
+
+    def cdf(x):
+        x = np.clip(x, f0, f2)
+        if x <= f1:
+            return 0.0 if f1 == f0 else (x - f0) ** 2 / ((f2 - f0) * (f1 - f0))
+        return 1.0 if f2 == f1 else 1 - (f2 - x) ** 2 / ((f2 - f0) * (f2 - f1))
+
+    return amp * np.diff([cdf(x) for x in np.arange(n + 1, dtype=float)])
+
+
+def test_triangle_interpolation1D_edge_bins():
+    """Triangles partially or fully outside the spectral window [0, n) must deposit
+    only the area within each bin. In particular, a triangle within (-1, 0) lies outside
+    the window and must not add intensity to bin 0."""
+    n = 20
+    f_list = [
+        [-5.3, 2.4, 8.7],
+        [-5.3, -1.2, 8.7],
+        [-0.8, -0.5, -0.2],
+        [-0.9, -0.1, 3.0],
+        [-1.9, -1.5, -1.2],
+        [12.2, 21.5, 25.3],
+        [20.2, 20.5, 20.9],
+        [15.0, 19.9, 20.4],
+        [-3.0, 10.0, 24.0],
+        [2.3, 5.1, 9.8],
+    ]
+    for f in f_list:
+        amp_c = np.zeros(2 * n)
+        clib.triangle_interpolation1D(f, amp_c)
+        np.testing.assert_allclose(
+            amp_c[::2], _exact_triangle_bins(f, n), atol=1e-12, err_msg=f"{f}"
+        )
+
+
+def test_delta_interpolation1D_edge_bins():
+    """A delta function just outside the window contributes to the edge bin only its
+    linear-interpolation share, consistent with interior bins."""
+    n = 20
+    for freq, expected in [
+        (2.3, {1: 0.2, 2: 0.8}),  # interior reference
+        (-0.3, {0: 0.2}),
+        (-0.7, {}),
+        (-1.3, {}),
+        (20.2, {19: 0.3}),
+        (20.7, {}),
+    ]:
+        amp_c = np.zeros(2 * n)
+        clib.triangle_interpolation1D([freq] * 3, amp_c, type="linear")
+        desired = np.zeros(n)
+        for k, v in expected.items():
+            desired[k] = v
+        np.testing.assert_allclose(amp_c[::2], desired, atol=1e-12, err_msg=f"{freq}")
+
+
+def test_delta_gaussian_interpolation_table_bounds():
+    """Gaussian delta interpolation near the upper end of a bin reads the last entries
+    of the Gaussian lookup table. The result must be continuous in the position and
+    conserve the amplitude (no out-of-bounds table read)."""
+    n = 20
+    spectra = []
+    for frac in [0.9960, 0.9975, 0.9985, 0.9995]:
+        amp_c = np.zeros(2 * n)
+        freq = 10.5 + frac
+        clib.triangle_interpolation1D([freq] * 3, amp_c, type="gaussian")
+        spec = amp_c[::2]
+        assert np.allclose(spec.sum(), 1.0)
+        assert np.all(spec >= 0)
+        spectra.append(spec)
+
+    for spec in spectra[1:]:
+        np.testing.assert_allclose(spec, spectra[0], atol=1e-2)
+
+
+def test_triangle_interpolation2D_edge_rows():
+    """The 2D triangle interpolation, summed along the second dimension, must equal the
+    exact area of the triangle in each bin of the first dimension, also when the
+    triangle crosses the edges of the first dimension. The second dimension coordinates
+    lie well within the window, so no intensity is lost along it."""
+    n0, n1 = 20, 30
+    f1_list = [
+        [-5.3, 2.4, 8.7],
+        [-5.3, -1.2, 8.7],
+        [-0.8, -0.5, -0.2],
+        [-0.9, -0.1, 3.0],
+        [-1.15, -0.1, 0.5],
+        [-0.23, -0.02, 0.1],
+        [-0.4, 0.3, 0.6],
+        [-0.4, 0.3, 1.6],
+        [0.1, 0.5, 2.5],
+        [-1.6, 0.4, 2.2],
+        [-1.9, -1.5, -1.2],
+        [12.2, 21.5, 25.3],
+        [15.0, 19.9, 20.4],
+        [19.2, 19.6, 20.3],
+        [19.5, 20.2, 20.8],
+        [-3.0, 10.0, 24.0],
+        [2.3, 5.1, 9.8],
+    ]
+    for f2 in [[10.2, 12.7, 16.1], [16.1, 10.2, 12.7]]:
+        for f1 in f1_list:
+            amp = np.zeros((n0, 2 * n1))
+            clib.triangle_interpolation2D(f1, f2, amp)
+            row_sums = amp[:, ::2].sum(axis=1)
+            np.testing.assert_allclose(
+                row_sums, _exact_triangle_bins(f1, n0), atol=1e-12, err_msg=f"{f1}"
+            )
+
+
+def test_delta_interpolation2D_edge_rows():
+    """A delta function along the first dimension, just outside the window, adds only
+    its linear-interpolation share to the edge row."""
+    n0, n1 = 20, 30
+    f2 = [10.2, 12.7, 16.1]
+    for freq, expected in [
+        (2.3, {1: 0.2, 2: 0.8}),  # interior reference
+        (-0.3, {0: 0.2}),
+        (-0.7, {}),
+        (20.2, {19: 0.3}),
+        (20.7, {}),
+    ]:
+        amp = np.zeros((n0, 2 * n1))
+        clib.triangle_interpolation2D([freq] * 3, f2, amp)
+        desired = np.zeros(n0)
+        for k, v in expected.items():
+            desired[k] = v
+        np.testing.assert_allclose(
+            amp[:, ::2].sum(axis=1), desired, atol=1e-12, err_msg=f"{freq}"
+        )
+
+
+def test_triangle_interpolation2D_diagonal():
+    """A degenerate triangle along the diagonal (identical coordinates along both
+    dimensions) must deposit the exact 1D bin areas on the diagonal bins only."""
+    n = 10
+    rng = np.random.default_rng(0)
+    f_list = [[-1.15, -0.1, 0.5], [-0.4, 0.3, 1.6], [0.1, 0.5, 2.5], [8.4, 9.6, 10.3]]
+    f_list += [list(np.sort(rng.uniform(-2, 12, 3))) for _ in range(100)]
+    for f in f_list:
+        amp = np.zeros((n, 2 * n))
+        clib.triangle_interpolation2D(f, f, amp)
+        np.testing.assert_allclose(
+            amp[:, ::2], np.diag(_exact_triangle_bins(f, n)), atol=1e-12, err_msg=f"{f}"
+        )
+
+
+def test_triangle_interpolation2D_repeated_vertex():
+    """A triangle with two identical vertices (a line segment, e.g. at the pole of an
+    axially symmetric powder pattern) within one bin of the first dimension: the
+    projection onto the second dimension equals the 1D interpolation of its vertices."""
+    n0, n1 = 10, 60
+    rng = np.random.default_rng(5)
+    for _ in range(200):
+        v = np.column_stack([3.2 + rng.uniform(0, 0.5, 2), rng.uniform(10, 50, 2)])
+        for order in [(0, 1, 1), (1, 0, 1), (1, 1, 0)]:
+            f1 = [v[i, 0] for i in order]
+            f2 = [v[i, 1] for i in order]
+            amp = np.zeros((n0, 2 * n1))
+            clib.triangle_interpolation2D(f1, f2, amp)
+            ref = np.zeros(2 * n1)
+            clib.triangle_interpolation1D(f2, ref)
+            np.testing.assert_allclose(
+                amp[:, ::2].sum(axis=0), ref[::2], atol=1e-12, err_msg=f"{f1}, {f2}"
+            )

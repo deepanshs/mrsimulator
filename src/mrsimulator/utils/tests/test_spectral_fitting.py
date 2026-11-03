@@ -383,3 +383,128 @@ def test_distribution():
     assert params["ext_czjzek_2_eps"] == 0.5
     assert params["ext_czjzek_2_mean_isotropic_chemical_shift"] == 0.0
     assert np.allclose(params["ext_czjzek_2_abundance"], 100.0 / 3.0)
+
+
+def _sim_with_experiments(n_methods):
+    site = Site(isotope="1H", shielding_symmetric={"zeta": 5, "eta": 0.1})
+    methods = [
+        BlochDecaySpectrum(
+            channels=["1H"],
+            rotor_frequency=1e3 * (i + 1),
+            spectral_dimensions=[{"count": 64, "spectral_width": 2e4}],
+        )
+        for i in range(n_methods)
+    ]
+    sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=methods)
+    sim.run()
+    for mth in sim.methods:
+        mth.experiment = mth.simulation.real
+    return sim
+
+
+def test_default_processors():
+    """processors=None (the documented default) applies no post-simulation processing
+    to every method."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+
+    diff = sf.LMFIT_min_function(params, sim)
+    assert diff.size == 2 * 64
+    assert np.allclose(diff, 0)
+
+    fits = sf.bestfit(sim)
+    assert len(fits) == 2
+    for fit, mth in zip(fits, sim.methods):
+        assert np.allclose(fit.y[0].components[0], mth.experiment.y[0].components[0])
+
+    res = sf.residuals(sim)
+    assert len(res) == 2
+    assert all(np.allclose(r.y[0].components[0], 0) for r in res)
+
+
+def test_processors_length_mismatch():
+    """A number of processors different from the number of methods raises an error
+    instead of silently fitting a subset of the methods."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+    processor = sp.SignalProcessor(operations=[sp.Scale(factor=1)])
+
+    e = ".*number of signal processors.*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim, processor)
+    with pytest.raises(ValueError, match=e):
+        sf.bestfit(sim, [processor])
+    with pytest.raises(ValueError, match=e):
+        sf.residuals(sim, [processor] * 3)
+
+
+def test_antisymmetric_tensor_params():
+    """LMFIT parameters for antisymmetric shielding and J tensors are created and
+    update the simulator."""
+    from mrsimulator import Coupling
+
+    site = Site(
+        isotope="13C",
+        shielding_antisymmetric={"zeta": 10, "alpha": 0.1, "beta": 0.2},
+    )
+    coupling = Coupling(
+        site_index=[0, 1], j_antisymmetric={"zeta": 5, "alpha": 0.3, "beta": 0.4}
+    )
+    sys = SpinSystem(sites=[site, Site(isotope="13C")], couplings=[coupling])
+    sim = Simulator(spin_systems=[sys])
+
+    params = sf.make_LMFIT_params(sim)
+    names = list(params.keys())
+    assert "sys_0_site_0_shielding_antisymmetric_zeta" in names
+    assert "sys_0_coupling_0_j_antisymmetric_beta" in names
+
+    params["sys_0_site_0_shielding_antisymmetric_zeta"].value = 12.5
+    params["sys_0_coupling_0_j_antisymmetric_beta"].value = 0.9
+    sf.update_mrsim_obj_from_params(params, sim)
+    assert sim.spin_systems[0].sites[0].shielding_antisymmetric.zeta == 12.5
+    assert sim.spin_systems[0].couplings[0].j_antisymmetric.beta == 0.9
+
+
+def test_abundance_with_spin_systems_and_distribution_models():
+    """With spin systems and distribution models, the abundances sum to 100, and the
+    models are not modified."""
+    sys1 = SpinSystem(sites=[Site(isotope="27Al")], abundance=30)
+    sys2 = SpinSystem(sites=[Site(isotope="27Al")], abundance=20)
+    sim = Simulator(spin_systems=[sys1, sys2])
+    models = [
+        CzjzekDistribution(sigma=1.0, abundance=40),
+        CzjzekDistribution(1.0, 0, 10),
+    ]
+
+    params = sf.make_LMFIT_params(sim, spin_system_models=models)
+    values = params.valuesdict()
+    abundances = [v for k, v in values.items() if k.endswith("_abundance")]
+    assert np.allclose(sum(abundances), 100)
+    assert np.allclose(values["sys_1_abundance"], 20)
+
+    params["czjzek_0_abundance"].value = 25
+    params.update_constraints()
+    values = params.valuesdict()
+    abundances = [v for k, v in values.items() if k.endswith("_abundance")]
+    assert np.allclose(sum(abundances), 100)
+
+    # the models are not modified, so the parameters are the same on a second call
+    assert models[0].abundance == 40 and models[1].abundance == 10
+    params2 = sf.make_LMFIT_params(sim, spin_system_models=models)
+    assert np.allclose(params2["czjzek_0_abundance"].value, 40)
+
+
+def test_make_LMFIT_parameters_alias():
+    """The make_LMFIT_parameters alias forwards every argument."""
+    sim = _sim_with_experiments(1)
+    sim.methods[0] = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1e3)
+    models = [CzjzekDistribution(sigma=1.0, abundance=10)]
+    params = sf.make_LMFIT_parameters(
+        sim, spin_system_models=models, include={"rotor_frequency"}
+    )
+    expected = sf.make_LMFIT_params(
+        sim, spin_system_models=models, include={"rotor_frequency"}
+    )
+    assert list(params.keys()) == list(expected.keys())
+    assert any(k.startswith("mth_") for k in params.keys())
+    assert any(k.startswith("czjzek_") for k in params.keys())

@@ -101,93 +101,36 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
     return cos_alpha, cos_beta, amp
 
 
-def right_triangle_process(spec, l_clip_rt, r_clip_rt, r_clip_lt, top, f21, pmax, p, f):
-    if p != pmax:
-        p = bin_right_half(spec, l_clip_rt, r_clip_rt, top, f21, pmax, p, f)
-    else:
-        if not r_clip_rt:
-            spec[p] += f21 * top * 0.5
-        if r_clip_rt and not r_clip_lt:
-            df2 = top / f21
-            diff = f[2] - p - 1.0
-            spec[p] += (f21 - diff) * (diff + f21) * 0.5 * df2
-    return p
-
-
-def left_triangle_process(spec, l_clip_lt, r_clip_lt, l_clip_rt, top, f10, pmid, p, f):
-    if p != pmid:
-        p = bin_left_half(spec, l_clip_lt, r_clip_lt, top, f10, pmid, p, f)
-    else:
-        if not r_clip_lt and not l_clip_lt:
-            spec[p] += f10 * top * 0.5
-        # if l_clip_lt: # and not l_clip_rt:
-        #     spec[p] += f[1] * (f10 - f[0]) * 0.5 * top / f10
-    return p
-
-
 def triangle_interpolation1D(f, spec, amp=1.0):
-    """Interpolate between three points to form a triangle."""
+    """Interpolate between three points to form a triangle. The area in bin k,
+    [k, k+1), is evaluated exactly from the area under the triangle."""
 
     points = spec.size
     f = np.asarray(f, dtype=np.float64)
 
-    p = int(f[0])
-    if int(f[0]) == int(f[1]) == int(f[2]):
+    p = int(np.floor(f[0]))
+    if p == int(np.floor(f[1])) == int(np.floor(f[2])):
         if p >= points or p < 0:
             return
         spec[p] += amp
         return
 
     f = np.sort(f)
-
     top = amp * 2.0 / (f[2] - f[0])
 
-    p = int(f[0])
-    pmid = int(f[1])
-    pmax = int(f[2])
+    def area_up_to(x):
+        if x <= f[0]:
+            return 0.0
+        if x >= f[2]:
+            return amp
+        if x <= f[1]:
+            return 0.5 * top * (x - f[0]) ** 2 / (f[1] - f[0])
+        return amp - 0.5 * top * (f[2] - x) ** 2 / (f[2] - f[1])
 
-    f10 = f[1] - f[0]
-    f21 = f[2] - f[1]
-
-    if pmax < 0 or p >= points:
-        return
-
-    clips, p, pmid, pmax = get_clip_conditions(f, p, pmid, pmax, points)
-    l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt = clips
-    # print(clips)
-
-    if f[1] >= 0:
-        p = left_triangle_process(
-            spec, l_clip_lt, r_clip_lt, l_clip_rt, top, f10, pmid, p, f
-        )
-    if f[2] >= 0:
-        p = right_triangle_process(
-            spec, l_clip_rt, r_clip_rt, r_clip_lt, top, f21, pmax, p, f
-        )
-
-
-def get_clip_conditions(f, p, pmid, pmax, points):
-    """Return True for every clip boundary"""
-    r_clip_lt = r_clip_rt = False
-    l_clip_lt = l_clip_rt = False
-
-    if p <= 0:
-        p = 0
-        l_clip_lt = True
-
-    if pmid > points - 1:
-        pmid = points - 1
-        r_clip_lt = True
-
-    if pmid <= 0:
-        pmid = 0
-        l_clip_rt = True
-
-    if pmax > points - 1:
-        pmax = points - 1
-        r_clip_rt = True
-
-    return [l_clip_lt, l_clip_rt, r_clip_lt, r_clip_rt], p, pmid, pmax
+    p = max(int(np.floor(f[0])), 0)
+    pmax = min(int(np.floor(f[2])), points - 1)
+    for k in range(p, pmax + 1):
+        spec[k] += area_up_to(k + 1) - area_up_to(k)
 
 
 def bin_left_half(spec, l_clip_lt, r_clip_lt, top, f10, pmid, p, f):

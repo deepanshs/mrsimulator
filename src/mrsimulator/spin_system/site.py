@@ -1,4 +1,5 @@
 """Base Site class."""
+from copy import deepcopy
 from typing import ClassVar
 from typing import Dict
 from typing import Union
@@ -224,6 +225,7 @@ class Site(Parseable):
         ... }
         >>> site1 = Site.parse_dict_with_units(site_dict)
         """
+        py_dict = deepcopy(py_dict)
         prop_mapping = {
             "shielding_symmetric": SymmetricTensor,
             "shielding_antisymmetric": AntisymmetricTensor,
@@ -232,7 +234,13 @@ class Site(Parseable):
 
         for k, v in prop_mapping.items():
             if k in py_dict:
+                has_zeta = "zeta" in py_dict[k]
                 py_dict[k] = v.parse_dict_with_units(py_dict[k])
+                unit = py_dict[k].property_units.get("zeta", None)
+                if k != "quadrupolar" and has_zeta and unit == "Hz":
+                    raise ValueError(
+                        f"Error enforcing units for {k}.zeta: Hz. Use ppm."
+                    )
 
         return super().parse_dict_with_units(py_dict)
 

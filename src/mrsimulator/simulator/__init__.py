@@ -340,10 +340,17 @@ class Simulator(Parseable):
         for mth in self.methods:
             pathways = []
             weights = []
+            # The transition pathways and weights depend only on the isotopes of the
+            # sites, in order, for a given method. Spin systems with the same isotopes
+            # share the computation.
+            cache = {}
             for sys in self.spin_systems:
-                p, w = mth._get_transition_pathway_and_weights_np(sys)
-                pathways.append(p)
-                weights.append(w)
+                key = tuple(site.isotope.symbol for site in sys.sites)
+                if key not in cache:
+                    cache[key] = mth._get_transition_pathway_and_weights_np(sys)
+                p, w = cache[key]
+                pathways.append(p.copy())
+                weights.append(w.copy())
 
             opt["precomputed_pathways"].append(pathways)
             opt["precomputed_weights"].append(weights)
@@ -642,6 +649,11 @@ def get_chunks(items_list, n_jobs):
     """
     if n_jobs < 0:
         n_jobs += __CPU_count__ + 1
+    if n_jobs < 1:
+        raise ValueError(
+            f"n_jobs must be a positive integer or -1 to -{__CPU_count__}, "
+            f"found {n_jobs}."
+        )
     list_len = len(items_list)
     n_blocks, n_left = list_len // n_jobs, list_len % n_jobs
 

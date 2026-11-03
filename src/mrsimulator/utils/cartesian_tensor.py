@@ -162,9 +162,11 @@ def mehring_principal_components_to_maryland(
         ``span`` is the width, ``skew`` is the asymmetry, and ``isotropic``
         is the isotropic components.
     """
+    # Mehring principal components in descending order, delta11 >= delta22 >= delta33
+    lambdas = np.sort(lambdas)[::-1]
     isotropic = np.mean(lambdas)
-    span = lambdas[2] - lambdas[0]
-    skew = 3 * (isotropic - lambdas[1]) / span
+    span = lambdas[0] - lambdas[2]
+    skew = 3 * (lambdas[1] - isotropic) / span
     return span, skew, isotropic
 
 
@@ -184,9 +186,10 @@ def maryland_to_mehring_principal_components(
     Returns:
         A ndarray of Mehring Eigenvalues.
     """
-    lambda2 = isotropic - skew * span / 3
-    lambda3 = (span + 2 * isotropic + skew * span / 3) / 2
-    lambda1 = lambda3 - span
+    # principal components in descending order, delta11 >= delta22 >= delta33
+    lambda2 = isotropic + skew * span / 3
+    lambda1 = (3 * isotropic - lambda2 + span) / 2
+    lambda3 = lambda1 - span
     return np.array([lambda1, lambda2, lambda3])
 
 

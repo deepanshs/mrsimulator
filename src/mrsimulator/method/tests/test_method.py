@@ -288,3 +288,35 @@ def test_empty_spectral_dimensions():
     e = ".*Mrsimulator currently supports a maximum of two spectral dimensions.*"
     with pytest.raises(NotImplementedError, match=e):
         Method(channels=["1H"], spectral_dimensions=[dimension_dictionary] * 3)
+
+
+def test_impossible_transition_query_selects_no_transitions():
+    """A query asking for more sites than the spin system has (DQ, P=[-1, -1], on a
+    single site) must select no transitions instead of all transitions."""
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+
+    one_site = SpinSystem(sites=[Site(isotope="13C")])
+    two_site = SpinSystem(sites=[Site(isotope="13C"), Site(isotope="13C")])
+
+    def dq_method(queries):
+        return Method(
+            channels=["13C"],
+            spectral_dimensions=[
+                SpectralDimension(events=[SpectralEvent(transition_queries=queries)])
+            ],
+        )
+
+    dq = [{"ch1": {"P": [-1, -1]}}]
+    assert len(dq_method(dq).get_transition_pathways(one_site)) == 0
+    assert len(dq_method(dq).get_transition_pathways(two_site)) == 1
+
+    # an impossible query in a list of queries contributes nothing to the union
+    sq_dq = [{"ch1": {"P": [-1]}}, {"ch1": {"P": [-1, -1]}}]
+    pathways = dq_method(sq_dq).get_transition_pathways(one_site)
+    assert len(pathways) == 1
+    assert pathways[0][0].p == -1
+
+    # impossible D query
+    d_query = [{"ch1": {"P": [-1], "D": [0, 0]}}]
+    assert len(dq_method(d_query).get_transition_pathways(one_site)) == 0

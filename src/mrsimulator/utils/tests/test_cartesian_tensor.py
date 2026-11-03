@@ -101,9 +101,13 @@ def test_mehring_maryland():
         principal_components
     )
 
-    assert np.allclose(span, -101.84120077)
+    assert np.allclose(span, 101.84120077)
     assert np.allclose(skew, -0.92266208)
     assert np.allclose(isotropic, 0)
+
+    # input order does not matter
+    out = ct.mehring_principal_components_to_maryland(principal_components[::-1])
+    assert np.allclose(out, [span, skew, isotropic])
 
     lambdas = ct.maryland_to_mehring_principal_components(isotropic, span, skew)
     assert np.allclose(lambdas, principal_components)
@@ -112,7 +116,7 @@ def test_mehring_maryland():
 def test_maryland_haeberlen():
     iso_in = 0
     skew = -0.92266208
-    span = -101.84120077
+    span = 101.84120077
     zeta, eta, iso_out = ct.maryland_to_haeberlen_params(iso_in, span, skew)
 
     assert np.allclose(zeta, 66.58143607)
@@ -120,4 +124,11 @@ def test_maryland_haeberlen():
     assert np.allclose(iso_out, 0)
 
     lambdas = ct.haeberlen_params_to_maryland(zeta, eta, iso_out)
-    np.allclose(lambdas, [span, skew, iso_in])
+    assert np.allclose(lambdas, [span, skew, iso_in])
+
+    # span is non-negative and skew within [-1, 1] for any tensor
+    for zeta, eta in [(50, 0.2), (-50, 0.2), (10, 1.0), (-10, 0.0)]:
+        span, skew, _ = ct.haeberlen_params_to_maryland(zeta, eta, 5.0)
+        assert span >= 0 and -1 <= skew <= 1
+        out = ct.maryland_to_haeberlen_params(5.0, span, skew)
+        assert np.allclose(out, [zeta, eta, 5.0])

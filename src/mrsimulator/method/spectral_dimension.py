@@ -121,7 +121,7 @@ class SpectralDimension(Parseable):
             if len(fractions) == 0:  # No SpectralEvent in dimension
                 raise MissingSpectralEventError()
             total = sum(fractions)
-            if total != 1:
+            if not np.isclose(total, 1):
                 e = (
                     "The fraction attribute of each SpectralEvent in a "
                     f"SpectralDimension should sum to 1. Sum is {total}."

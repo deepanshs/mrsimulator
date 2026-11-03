@@ -130,7 +130,7 @@ class Isotope(BaseModel):
 
         # Grab copied isotope attributes if copy_from, otherwise default attributes
         kwargs_new = (
-            get_isotope_dict(copy_from)
+            {k: v for k, v in get_isotope_dict(copy_from).items() if k != "symbol"}
             if copy_from is not None
             else DEFAULT_ISOTOPE.copy()
         )
@@ -208,7 +208,7 @@ class Isotope(BaseModel):
         else:
             # when ratio = gyromagnetic_ratio * 2.348731439404777; abs(w_ref / w_0) = 1
             ref_data = {
-                "ratio": self.gyromagnetic_ratio * 2.348731439404777,
+                "ratio": abs(self.gyromagnetic_ratio) * 2.348731439404777,
                 "compound": "",
                 "solvent": "",
                 "concentration": "",
@@ -276,6 +276,11 @@ class Isotope(BaseModel):
         :math:`(1 - \sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
         where :math:`\sigma_{iso}^{ref}` is the reference isotropic shielding in ppm.
         """
+        if self.gyromagnetic_ratio == 0:
+            raise ValueError(
+                f"Isotope `{self.symbol}` has zero gyromagnetic ratio. Register the "
+                "isotope with a non-zero gyromagnetic_ratio."
+            )
         ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
         larmor_by_b0 = abs(self.gyromagnetic_ratio)
         return ref_by_b0 / larmor_by_b0
@@ -284,10 +289,14 @@ class Isotope(BaseModel):
 def get_isotope_dict(isotope_symbol: str) -> dict:
     """Get the intrinsic properties of the isotope with symbol isotope_symbol as a
     dict"""
-    if isotope_symbol not in get_all_isotope_symbols():
+    # Custom isotopes take precedence, as in get_all_isotope_data
+    if isotope_symbol in Isotope.custom_isotope_data:
+        isotope_dict = dict(Isotope.custom_isotope_data[isotope_symbol])
+    elif isotope_symbol in ISOTOPE_DATA:
+        isotope_dict = dict(ISOTOPE_DATA[isotope_symbol])
+    else:
         raise Exception(f"Isotope symbol `{isotope_symbol}` not recognized.")
 
-    isotope_dict = get_all_isotope_data()[isotope_symbol]
     isotope_dict.update({"symbol": isotope_symbol})
     return isotope_dict
 

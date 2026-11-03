@@ -25,13 +25,25 @@
  */
 static void inline delta_fn_linear_interpolation(const double *freq, const int *points,
                                                  double *amp, double *spec1) {
-  int p = (int)*freq;
-  if (p >= *points || p < 0) return;
+  int p = (int)floor(*freq);
+  if (p > *points || p < -1) return;
 
   double diff, delta;
   bool left;
   diff = *freq - (double)p;
   delta = diff - 0.5;
+
+  // delta function in the bin just outside the window. Only the linear interpolation
+  // share of the adjacent edge bin is added.
+  if (p == -1) {
+    if (delta > 0) spec1[0] += *amp * delta;
+    return;
+  }
+  if (p == *points) {
+    if (delta < 0) spec1[2 * (p - 1)] -= *amp * delta;
+    return;
+  }
+
   double *spec = &spec1[2 * p];
 
   // Do not interpolate the intensity if the difference < 1.0e-6.
@@ -110,13 +122,15 @@ static void inline delta_fn_gauss_interpolation(const double *freq, const int *p
  */
 static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *points,
                                            bool *clips) {
-  *clips = *p <= 0;  // left triangle left clip
+  // p, pmid, and pmax are floor of the vertex coordinates. A vertex in bin 0 is not
+  // clipped, only a vertex left of the window (negative index) is.
+  *clips = *p < 0;  // left triangle left clip
   *p = *clips++ ? 0 : *p;
 
   *clips = *pmid > *points - 1;  // left triangle right clip
   *pmid = *clips++ ? *points - 1 : *pmid;
 
-  *clips = *pmid <= 0;  // right triangle left clip
+  *clips = *pmid < 0;  // right triangle left clip
   *pmid = *clips++ ? 0 : *pmid;
 
   *clips = *pmax > *points - 1;  // right triangle right clip
@@ -124,100 +138,28 @@ static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *po
 }
 
 /**
- * @brief Interpolation scheme of a right-angled triangle with clipping. (left face)
+ * @brief Area under a triangle from its lowest vertex f[0] up to x.
  *
- * @param p Start bin index for triangle interpolation.
- * @param pmid End bin index for triangle interpolation.
- * @param l_clip Left clip boolean.
- * @param r_clip Right clip booleaan.
- * @param top The height of the triangle.
- * @param f Pointer to the 1D coordinates of the triangle.
- * @param spec1 Pointer to a vector where the interpolated intensities are added.
+ * @param x The upper integration limit.
+ * @param f Pointer to the sorted (ascending) vertices of the triangle.
+ * @param top The height of the triangle at f[1].
+ * @param area The total area of the triangle.
  */
-// A pictorial representation of the interpolation scheme.
-//
-//        /|                  /|                  / |                       / |      *
-//       /*|                /**|                /|  |                    /    |      *
-//      /**|              /****|              /**|  |                 /*|     |      *
-//     /***|            /|*****|            /****|  |              /|***|     |      *
-//    /****|          /__|*****|          /******|__|           /___|***|_____|      *
-//   p    pmid           p    pmid       p     pmid                 p  pmid          *
-//  no clipping        left clip           right clip         left and right clip    *
-static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool r_clip,
-                                             bool r_clip_r, double top, double *f,
-                                             double *spec1) {
-  double f10 = f[1] - f[0], df1 = top / f10, diff;
-  double *spec = &spec1[2 * p];
-
-  if (p == pmid) {
-    *spec += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
-    // *spec += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
-    return;
-  }
-
-  diff = (double)p + 1.0 - f[0];
-  *spec += (l_clip && f[0] <= 0.0) ? (diff - 0.5) * df1 : 0.5 * diff * diff * df1;
-
-  diff -= 0.5;
-  diff *= df1;
-  while (++p < pmid) *(spec += 2) += diff += df1;
-
-  double df = (double)p;
-  *(spec += 2) += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 : diff + df1;
-}
-
-/**
- * @brief Interpolation scheme of a right-angled triangle with clipping. (right face)
- *
- * @param p Start bin index for triangle interpolation.
- * @param pmax End bin index for triangle interpolation.
- * @param l_clip Left clip boolean.
- * @param r_clip Right clip booleaan.
- * @param top The height of the triangle.
- * @param f Pointer to the 1D coordinates of the triangle.
- * @param spec1 Pointer to a vector where the interpolated intensities are added.
- */
-// A pictorial representation of the interpolation scheme.
-//
-//   |\               |\                  | \                   | \                   *
-//   |*\              |**\                |  |\                 |    \                *
-//   |**\             |****\              |  |**\               |     |*\             *
-//   |***\            |*****|\            |  |****\             |     |***|\          *
-//   |****\           |*****|__\          |__|******\           |_____|***|___\       *
-//   p   pmax         p       pmax        p        pmax         p            pmax     *
-//  no clipping        right clip           left clip         left and right clip     *
-//
-static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool r_clip,
-                                              bool r_clip_l, double top, double *f,
-                                              double *spec1) {
-  double f21 = f[2] - f[1], df1 = top / f21;
-  double *spec = &spec1[2 * p];
-  double diff = f[2] - (double)p - 1.0;
-
-  if (p == pmax) {
-    *spec += (!r_clip) ? f21 * top * 0.5 : 0.0;
-    *spec += (r_clip && !r_clip_l) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : 0.0;
-    return;
-  }
-
-  *spec += (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
-
-  diff += 0.5;
-  diff *= df1;
-  while (++p < pmax) *(spec += 2) += diff -= df1;
-
-  double df = f[2] - (double)p;
-  *(spec += 2) += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
+static inline double triangle_cdf(double x, double *f, double top, double area) {
+  if (x <= f[0]) return 0.0;
+  if (x >= f[2]) return area;
+  if (x <= f[1]) return 0.5 * top * (x - f[0]) * (x - f[0]) / (f[1] - f[0]);
+  return area - 0.5 * top * (f[2] - x) * (f[2] - x) / (f[2] - f[1]);
 }
 
 static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
                                             double *amp, double *spec, int *points) {
-  int p, pmid, pmax, i, j;
+  int p, pmax, i, j;
   double top, t;
-  p = (int)(*freq1);
+  p = (int)floor(*freq1);
 
   // check if the three points lie within a bin interval.
-  if (p == (int)(*freq2) && p == (int)(*freq3)) {
+  if (p == (int)floor(*freq2) && p == (int)floor(*freq3)) {
     if (p >= *points || p < 0) return;
     spec[2 * p] += *amp;
     return;
@@ -238,25 +180,24 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   }
 
   // if min frequency is higher than the last bin, return
-  p = (int)f[0];
+  p = (int)floor(f[0]);
   if (p >= *points) return;
 
   // if max frequency is lower than the first bin, return
-  pmax = (int)f[2];
+  pmax = (int)floor(f[2]);
   if (pmax < 0) return;
 
-  pmid = (int)f[1];
+  // The area in bin k, [k, k+1), is the difference of the area under the triangle
+  // up to the bin edges. Bins outside the spectral window are skipped.
   top = *amp * 2.0 / (f[2] - f[0]);
+  p = (p < 0) ? 0 : p;
+  pmax = (pmax > *points - 1) ? *points - 1 : pmax;
 
-  bool clips[4];
-  get_clipping_conditions(&p, &pmid, &pmax, points, clips);
-
-  // printf("\n%d %d %d %d", clips[0], clips[1], clips[2], clips[3]);
-  if (f[1] >= 0.0) {
-    left_triangle_interpolate(p, pmid, clips[0], clips[1], clips[2], top, f, spec);
-  }
-  if (f[2] >= 0.0) {
-    right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, f, spec);
+  double area_left = triangle_cdf((double)p, f, top, *amp), area_right;
+  for (i = p; i <= pmax; i++) {
+    area_right = triangle_cdf((double)(i + 1), f, top, *amp);
+    spec[2 * i] += area_right - area_left;
+    area_left = area_right;
   }
 }
 
@@ -369,6 +310,48 @@ static inline void quadrilateral_bin(double *f00, double *f11, double *f10, doub
   }
 }
 
+/**
+ * @brief The second dimension coordinate at x of the edge from vertex (x0, y0) to
+ * vertex (x1, y1), where x0 <= x <= x1. Exact at the vertices, also for thin edges.
+ */
+static inline double edge_value(double x, double x0, double y0, double x1, double y1) {
+  if (x <= x0) return y0;
+  if (x >= x1) return y1;
+  return y0 + (x - x0) / (x1 - x0) * (y1 - y0);
+}
+
+/**
+ * @brief Bin the strip lo <= f1 <= hi of a triangle within one bin of the first
+ * dimension. The strip is bounded by the edges A, from vertex a0 to a1, and B, from
+ * vertex b0 to b1, given as indexes into the sorted vertices (f1, f2). The strip is
+ * split into two triangles along the second dimension.
+ */
+static inline void bin_triangle_strip_2d(double lo, double hi, double *f1, double *f2,
+                                         int ia0, int ia1, int ib0, int ib1, double amp,
+                                         double *spec, int m1, unsigned int iso_intrp) {
+  double a0 = edge_value(lo, f1[ia0], f2[ia0], f1[ia1], f2[ia1]);
+  double a1 = edge_value(hi, f1[ia0], f2[ia0], f1[ia1], f2[ia1]);
+  double b0 = edge_value(lo, f1[ib0], f2[ib0], f1[ib1], f2[ib1]);
+  double b1 = edge_value(hi, f1[ib0], f2[ib0], f1[ib1], f2[ib1]);
+  double line_lo, line_hi;
+
+  // The strip starts at the vertex shared by the two edges (a0 = b0).
+  if (ia0 == ib0 && lo <= f1[ia0]) {
+    triangle_interpolation1D(&a0, &a1, &b1, &amp, spec, &m1, iso_intrp);
+    return;
+  }
+  // The strip ends at the vertex shared by the two edges (a1 = b1).
+  if (ia1 == ib1 && hi >= f1[ia1]) {
+    triangle_interpolation1D(&a0, &b0, &a1, &amp, spec, &m1, iso_intrp);
+    return;
+  }
+
+  line_lo = absd(b0 - a0);
+  line_hi = absd(b1 - a1);
+  quadrilateral_bin(&a0, &b1, &a1, &b0, line_lo, line_hi, line_lo + line_hi, amp, spec,
+                    m1, iso_intrp);
+}
+
 static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
                                                    bool r_clip, bool r_clip_r,
                                                    double top, double *f1, double *f2,
@@ -392,13 +375,12 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   if (p == pmid) {
     *x10 = f2[1];
     *x11 = f02_slope * f10 + f2[0];
-    if (!r_clip && !l_clip) {
-      amp = f10 * top * 0.5;
-      triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1, iso_intrp);
-    }
-    if (!r_clip_r && l_clip) {
-      amp = f1[1] * (f10 - f1[0]) * 0.5 * df1;
-      triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1, iso_intrp);
+    // the part of the lower triangle within bin p, clipped to the bin.
+    double lo = fmax(f1[0], (double)p), hi = fmin(f1[1], (double)p + 1.0);
+    if (hi > lo) {
+      double area = 0.5 * top * (f1[2] - f1[0]);
+      amp = triangle_cdf(hi, f1, top, area) - triangle_cdf(lo, f1, top, area);
+      bin_triangle_strip_2d(lo, hi, f1, f2, 0, 1, 0, 2, amp, spec, m1, iso_intrp);
     }
     return;
   }
@@ -494,13 +476,12 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
 
   spec += 2 * p * m1;
   if (p == pmax) {
-    if (!r_clip) {
-      amp = f21 * top * 0.5;
-      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1, iso_intrp);
-    }
-    if (r_clip && !r_clip_l) {
-      amp = (f21 - diff) * (diff + f21) * 0.5 * df2;
-      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1, iso_intrp);
+    // the part of the upper triangle within bin p, clipped to the bin.
+    double lo = fmax(f1[1], (double)p), hi = fmin(f1[2], (double)p + 1.0);
+    if (hi > lo) {
+      double area = 0.5 * top * (f1[2] - f1[0]);
+      amp = triangle_cdf(hi, f1, top, area) - triangle_cdf(lo, f1, top, area);
+      bin_triangle_strip_2d(lo, hi, f1, f2, 1, 2, 0, 2, amp, spec, m1, iso_intrp);
     }
     return;
   }
@@ -582,13 +563,29 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   int p, pmid, pmax, i, j;
   double freq10_01, freq11_02;
 
-  p = (int)(*freq11);
+  p = (int)floor(*freq11);
 
   if (absd(freq11[0] - freq12[0]) < TOL && absd(freq11[0] - freq13[0]) < TOL) {
-    if (p >= m0 || p < 0) return;
+    if (p > m0 || p < -1) return;
 
     diff = freq11[0] - (double)p;
     n_i = 0.5;
+
+    // delta function in the bin just outside the window. Only the linear
+    // interpolation share of the adjacent edge bin is added.
+    if (p == -1) {
+      if (diff <= n_i) return;
+      temp = *amp * (diff - n_i);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, spec, &m1, iso_intrp);
+      return;
+    }
+    if (p == m0) {
+      if (diff >= n_i) return;
+      temp = *amp * (n_i - diff);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p - 1) * m1],
+                               &m1, iso_intrp);
+      return;
+    }
     if (absd(diff - n_i) < TOL) {
       triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1,
                                iso_intrp);
@@ -637,14 +634,14 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   }
 
   // if min frequency is higher than the last bin, return
-  p = (int)f1[0];
+  p = (int)floor(f1[0]);
   if (p >= m0) return;
 
   // if max frequency is lower than the first bin, return
-  pmax = (int)f1[2];
+  pmax = (int)floor(f1[2]);
   if (pmax < 0) return;
 
-  pmid = (int)f1[1];
+  pmid = (int)floor(f1[1]);
   top = *amp * 2.0 / (f1[2] - f1[0]);
 
   bool clips[4];

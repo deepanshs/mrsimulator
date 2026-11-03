@@ -113,6 +113,7 @@ class FreeEvent(Parseable):
         for item in v:
             if isinstance(item, FrequencyEnum):
                 additive.add(item.value)
+                continue
 
             function = subtractive if item.startswith("!") else additive
             item_enum = item[1:] if item.startswith("!") else item
@@ -122,8 +123,11 @@ class FreeEvent(Parseable):
                 function.add(item_enum)
 
             # Item is a string of a recognized freq contrib shortcut
-            if item_enum in FREQ_ENUM_SHORTCUT:
+            elif item_enum in FREQ_ENUM_SHORTCUT:
                 function.update(FREQ_ENUM_SHORTCUT[item_enum])
+
+            else:
+                raise ValueError(f"Unrecognized frequency contribution `{item}`.")
 
         # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive
@@ -179,11 +183,13 @@ class FreeEvent(Parseable):
 
         segment = []
         for item in symmetry_combinations:
+            if item.get("impossible", False):
+                continue
             st = all_transitions[:]
             st = st[P_symmetry_indexes(st, item["P"])] if item["P"].size > 0 else st
             st = st[D_symmetry_indexes(st, item["D"])] if item["D"].size > 0 else st
             segment += [st]
-        return np.vstack(segment)
+        return np.vstack(segment) if segment != [] else all_transitions[:0]
 
 
 class SpectralEvent(FreeEvent):
@@ -346,7 +352,11 @@ class MixingEvent(Parseable):
             A :ref:`method_api` object.
         """
         py_dict_copy = deepcopy(py_dict)
-        obj = {k: Rotation.parse_dict_with_units(v) for k, v in py_dict_copy.items()}
+        obj = {
+            k: Rotation.parse_dict_with_units(v)
+            for k, v in py_dict_copy.items()
+            if k in ["ch1", "ch2", "ch3"] and v is not None
+        }
         py_dict_copy.update(obj)
         return super().parse_dict_with_units(py_dict_copy)
 

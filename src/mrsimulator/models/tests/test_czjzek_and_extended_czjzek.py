@@ -140,3 +140,73 @@ def test_czjzek_polar():
     x1, y1 = zeta_eta_to_x_y(*x_y_to_zeta_eta(x, y))
     np.testing.assert_almost_equal(x, x1)
     np.testing.assert_almost_equal(y, y1)
+
+
+def test_extended_czjzek_axially_symmetric_dominant_tensor():
+    """eta=0 dominant tensor must still be perturbed (rho != 0)."""
+    n = 200000
+    for S0 in [{"Cq": 1e6, "eta": 0.0}, {"zeta": 10, "eta": 0.0}]:
+        zeta0, eta0 = ExtCzjzekDistribution(S0, eps=0.3).rvs(size=n)
+        S1 = {**S0, "eta": 1e-9}
+        zeta1, eta1 = ExtCzjzekDistribution(S1, eps=0.3).rvs(size=n)
+
+        assert np.std(zeta0) > 0
+        assert np.allclose(np.std(zeta0), np.std(zeta1), rtol=0.05)
+        assert np.allclose(np.mean(eta0), np.mean(eta1), rtol=0.05)
+
+
+def test_czjzek_sigma_update_with_cache():
+    """With the cached basis, a change of sigma scales the sampled zeta, and a change of
+    size returns the requested number of samples."""
+    model = CzjzekDistribution(sigma=1.0)
+    zeta1, eta1 = model.rvs(size=5000)
+
+    model.sigma = 5.0
+    zeta5, eta5 = model.rvs(size=5000)
+    assert np.allclose(zeta5, 5 * zeta1)
+    assert np.allclose(eta5, eta1)
+
+    zeta, eta = model.rvs(size=100)
+    assert zeta.size == 100 and eta.size == 100
+
+    model = ExtCzjzekDistribution({"zeta": 10, "eta": 0.3}, eps=0.2)
+    zeta, eta = model.rvs(size=1000)
+    zeta, eta = model.rvs(size=50)
+    assert zeta.size == 50 and eta.size == 50
+
+
+def test_czjzek_sigma_without_cache():
+    """Without the cache, sigma sets the scale of the distribution."""
+    std = [
+        np.std(CzjzekDistribution(sigma=s, cache=False).rvs(size=200000)[0])
+        for s in [1.0, 3.0]
+    ]
+    assert np.allclose(std[1] / std[0], 3.0, rtol=0.02)
+
+
+def test_haeberlen_components_axial_and_zero_tensor():
+    """Axially symmetric and zero tensors (rho = 0) give finite Haeberlen components
+    and do not crash. Run in a subprocess, since the failure mode is a segfault."""
+    import subprocess
+    import sys
+
+    code = """
+import numpy as np
+from mrsimulator.base_model import get_Haeberlen_components
+from mrsimulator.models.czjzek import czjzek_random_components, get_p_q_basis
+
+np.random.seed(1)
+basis = get_p_q_basis(*czjzek_random_components(1, 2000))
+for zeta in np.linspace(-50, 50, 41):
+    for rho in [0.0, 1e-14, 1e-12]:
+        z, e = get_Haeberlen_components(*basis, zeta, 0.0, rho)
+        assert np.all(np.isfinite(z)) and np.all(np.isfinite(e)), (zeta, rho)
+        if rho == 0:
+            assert np.allclose(z, zeta, atol=1e-9) and np.allclose(e, 0, atol=1e-6)
+print("ok")
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True
+    )
+    assert result.returncode == 0, result.stderr[-2000:]
+    assert result.stdout.strip() == "ok"
