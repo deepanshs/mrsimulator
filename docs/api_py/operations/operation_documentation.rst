@@ -27,3 +27,8 @@ Documentation
 
 .. autoclass:: Shear
 .. autoclass:: Scale
+
+.. currentmodule:: mrsimulator.signal_processor.correction
+
+.. autoclass:: Phase
+.. autoclass:: AutoPhaseCorrect
