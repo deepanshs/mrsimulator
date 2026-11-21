@@ -17,7 +17,7 @@ complex128 NEGATIVE_IOTA = {0.0, -1.0};
 // ✅ .. note: (wigner_d_matrices) tested with pytest
 // .........................
 void wigner_d_matrices(const int l, const int n, const double *beta, double *wigner) {
-  complex128 *exp_I_beta = malloc_complex128(n);
+  complex128 *exp_I_beta = malloc_complex128((size_t)n);
   vm_cosine_I_sine(n, beta, exp_I_beta);
   wigner_d_matrices_from_exp_I_beta(l, n, false, exp_I_beta, wigner);
   free(exp_I_beta);
@@ -741,12 +741,12 @@ void single_wigner_rotation(const int l, const double *euler_angles, const void 
  *      rotation with fourth rank wigner matrices. The length of w4 is
  *      `octant_orientations x n_octants x 9` with 9 as the leading dimension.
  */
-void __batch_wigner_rotation(const unsigned int octant_orientations,
-                             const unsigned int n_octants, double *wigner_2j_matrices,
-                             complex128 *R2, double *wigner_4j_matrices, complex128 *R4,
+void __batch_wigner_rotation(const int octant_orientations, const int n_octants,
+                             double *wigner_2j_matrices, complex128 *R2,
+                             double *wigner_4j_matrices, complex128 *R4,
                              complex128 *exp_Im_alpha, complex128 *w2, complex128 *w4) {
-  unsigned int j, max_iter, wigner_2j_inc, wigner_4j_inc = 0;
-  unsigned int w2_increment, w4_increment = 0, alpha_inc;
+  int j, max_iter, wigner_2j_inc, wigner_4j_inc = 0;
+  int w2_increment, w4_increment = 0, alpha_inc;
   double *exp_Im_alpha_ = (double *)exp_Im_alpha;
 
   w2_increment = 3 * octant_orientations;
@@ -841,13 +841,13 @@ void __batch_wigner_rotation(const unsigned int octant_orientations,
  * The result is stored in exp_Im_angle as m x n matrix, where m = [-4,-3,-2,-1]
  * Since only negative m's are computed, the following computes exp(Im angle)
  */
-void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
-                      void *exp_Im_angle, double delta_alpha) {
+void get_exp_Im_angle(const int n, const bool allow_4th_rank, void *exp_Im_angle,
+                      double delta_alpha) {
   double *exp_Im_angle_ = (double *)exp_Im_angle;
 
   // The complex array is interpreted as alternating real and imag double array.
   // The index s_i = i*n of complex array is now at index 2*i*n.
-  unsigned int m_3 = 2 * n, m_2 = 4 * n, m_1 = 6 * n;  // m_4 is 0
+  int m_3 = 2 * n, m_2 = 4 * n, m_1 = 6 * n;  // m_4 is 0
 
   // exp(-2 I angle)
   vm_double_complex_multiply(n, &exp_Im_angle_[m_1], &exp_Im_angle_[m_1],
@@ -863,8 +863,8 @@ void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
   }
 
   if (delta_alpha != 0.0) {
-    double *exp_da = malloc_double(8);
-    unsigned int m_4p = 8 * n, m_3p = 10 * n, m_2p = 12 * n, m_1p = 14 * n;
+    double *exp_da = malloc_double((size_t)8);
+    int m_4p = 8 * n, m_3p = 10 * n, m_2p = 12 * n, m_1p = 14 * n;
 
     exp_da[0] = cos(delta_alpha);
     exp_da[1] = sin(delta_alpha);
