@@ -63,6 +63,10 @@ void __mrsimulator_core(
   unsigned int evt;
   int dim, total_pts = scheme->n_gamma * scheme->total_orientations;
   double B0_in_T, fraction, duration;
+
+  double *rf_amps =
+      malloc_double(scheme->total_orientations * 2);  // mimic complex data
+  vm_double_ones(2 * scheme->total_orientations, rf_amps);
   vm_double_zeros(total_pts, scheme->phase);
 
   // Allocate memory for zeroth, second, and fourth-rank tensor components.
@@ -145,7 +149,8 @@ void __mrsimulator_core(
 
   switch (n_dimension) {
   case 1:
-    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase);
+    one_dimensional_averaging(dimensions, scheme, spec, iso_intrp, scheme->exp_I_phase,
+                              rf_amps);
     break;
   case 2:
     two_dimensional_averaging(dimensions, scheme, spec, affine_matrix, iso_intrp,

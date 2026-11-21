@@ -144,26 +144,37 @@ static inline void get_clipping_conditions(int *p, int *pmid, int *pmax, int *po
 //   p    pmid           p    pmid       p     pmid                 p  pmid          *
 //  no clipping        left clip           right clip         left and right clip    *
 static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool r_clip,
-                                             bool r_clip_r, double top, double *f,
-                                             double *spec1) {
-  double f10 = f[1] - f[0], df1 = top / f10, diff;
+                                             bool r_clip_r, double top, double top2,
+                                             double *f, double *spec1) {
+  // top = a_min * h, h = height of the triangle
+  double f10 = f[1] - f[0], df1 = top / f10, diff, diff2, df2 = top2 / (f10 * f10);
   double *spec = &spec1[2 * p];
 
   if (p == pmid) {
-    *spec += (!r_clip && !l_clip) ? f10 * top * 0.5 : 0.0;
+    *spec += (!r_clip && !l_clip) ? f10 * (top * 0.5 + top2 / 3.0) : 0.0;
     // *spec += (!r_clip_r && l_clip) ? f[1] * (f10 - f[0]) * 0.5 * df1 : 0.0;
     return;
   }
 
   diff = (double)p + 1.0 - f[0];
-  *spec += (l_clip && f[0] <= 0.0) ? (diff - 0.5) * df1 : 0.5 * diff * diff * df1;
+  *spec += (l_clip && f[0] <= 0.0)
+               ? (diff - 0.5) * df1 + ((diff - 0.5) * (diff - 0.5) + 1. / 12.) * df2
+               : diff * (0.5 * diff * df1 + diff * diff * df2 / 3.0);
 
   diff -= 0.5;
+  diff2 = (diff * diff + 1. / 12.) * df2;
   diff *= df1;
-  while (++p < pmid) *(spec += 2) += diff += df1;
+  while (++p < pmid) {
+    diff += df1;
+    diff2 += df2 * 2. * ((double)p - f[0]);
+    *(spec += 2) += diff + diff2;
+  }
 
   double df = (double)p;
-  *(spec += 2) += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 : diff + df1;
+  double r2 =
+      df2 * (f[1] - df) * ((df - f[1]) * (df - f[1]) + 3 * f10 * (df - f[0])) / 3.0;
+  *(spec += 2) += (!r_clip) ? (f[1] - df) * (f10 + df - f[0]) * 0.5 * df1 + r2
+                            : diff + df1 + diff2 + (df2 * 2. * (df - f[0]));
 }
 
 /**
@@ -188,9 +199,9 @@ static inline void left_triangle_interpolate(int p, int pmid, bool l_clip, bool 
 //  no clipping        right clip           left clip         left and right clip     *
 //
 static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool r_clip,
-                                              bool r_clip_l, double top, double *f,
-                                              double *spec1) {
-  double f21 = f[2] - f[1], df1 = top / f21;
+                                              bool r_clip_l, double top, double top2,
+                                              double *f, double *spec1) {
+  double f21 = f[2] - f[1], df1 = top / f21, df2 = top2 / (f21 * f21), diff2;
   double *spec = &spec1[2 * p];
   double diff = f[2] - (double)p - 1.0;
 
@@ -200,43 +211,58 @@ static inline void right_triangle_interpolate(int p, int pmax, bool l_clip, bool
     return;
   }
 
-  *spec += (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 : (diff + 0.5) * df1;
+  *spec += (!l_clip) ? (f21 - diff) * (diff + f21) * 0.5 * df1 +
+                           (f21 - diff) * (f21 - diff) * (2. * diff + f21) * df2 / 6.0
+                     : (diff + 0.5) * df1 +
+                           df2 * ((diff + 0.5) * ((double)p + 0.5 - f[1]) - 1. / 12.);
 
   diff += 0.5;
+  diff2 = df2 * (diff * ((double)p + 0.5 - f[1]) - 1. / 12.);
   diff *= df1;
-  while (++p < pmax) *(spec += 2) += diff -= df1;
+  while (++p < pmax) {
+    diff -= df1;
+    diff2 -= df2 * (2. * (double)p - f[2] - f[1]);
+    *(spec += 2) += diff + diff2;
+  }
 
   double df = f[2] - (double)p;
-  *(spec += 2) += (!r_clip) ? df * df * 0.5 * df1 : diff - df1;
+  *(spec += 2) += (!r_clip) ? df * df * 0.5 * df1
+                            : diff - df1 + diff2 - df2 * (2. * (double)p - f[2] - f[1]);
 }
 
 static inline void __triangle_interpolation(double *freq1, double *freq2, double *freq3,
-                                            double *amp, double *spec, int *points) {
+                                            double *amp, double *amp1, double *amp2,
+                                            double *amp3, double *spec, int *points) {
   int p, pmid, pmax, i, j;
-  double top, t;
+  double top, t, ta, top2, h;
   p = (int)(*freq1);
 
-  // check if the three points lie within a bin interval.
-  if (p == (int)(*freq2) && p == (int)(*freq3)) {
-    if (p >= *points || p < 0) return;
-    spec[2 * p] += *amp;
-    return;
-  }
-
   double f[3] = {freq1[0], freq2[0], freq3[0]};
+  double amp_f[3] = {amp1[0], amp2[0], amp3[0]};
 
   // arrange the numbers in ascending order (sort)
 
   for (j = 1; j <= 2; j++) {
     t = f[j];
+    ta = amp_f[j];
     i = j - 1;
     while (i >= 0 && f[i] > t) {
       f[i + 1] = f[i];
+      amp_f[i + 1] = amp_f[i];
       i--;
     }
     f[i + 1] = t;
+    amp_f[i + 1] = ta;
   }
 
+  double f20 = f[2] - f[0], f21 = f[2] - f[1], f10 = f[1] - f[0];
+  // check if the three points lie within a bin interval.
+  if (p == (int)(*freq2) && p == (int)(*freq3)) {
+    if (p >= *points || p < 0) return;
+    h = (amp_f[2] * f21 + 2.0 * amp_f[1] * f20 + amp_f[0] * f10) / (3.0 * f20);
+    spec[2 * p] += *amp * h;
+    return;
+  }
   // if min frequency is higher than the last bin, return
   p = (int)f[0];
   if (p >= *points) return;
@@ -246,43 +272,36 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   if (pmax < 0) return;
 
   pmid = (int)f[1];
-  top = *amp * 2.0 / (f[2] - f[0]);
+
+  h = *amp * 2.0 / f20;
 
   bool clips[4];
   get_clipping_conditions(&p, &pmid, &pmax, points, clips);
 
   // printf("\n%d %d %d %d", clips[0], clips[1], clips[2], clips[3]);
   if (f[1] >= 0.0) {
-    left_triangle_interpolate(p, pmid, clips[0], clips[1], clips[2], top, f, spec);
+    top = amp_f[0] * h;
+    top2 = (amp_f[1] - amp_f[0]) * h;
+    left_triangle_interpolate(p, pmid, clips[0], clips[1], clips[2], top, top2, f,
+                              spec);
   }
   if (f[2] >= 0.0) {
-    right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, f, spec);
+    top = amp_f[1] * h;
+    top2 = (amp_f[2] - amp_f[1]) * h;
+    right_triangle_interpolate(pmid, pmax, clips[2], clips[3], clips[1], top, top2, f,
+                               spec);
   }
 }
 
 void triangle_interpolation1D(double *freq1, double *freq2, double *freq3, double *amp,
-                              double *spec, int *points, unsigned int iso_intrp) {
+                              double *local_amps, double *spec, int *points,
+                              unsigned int iso_intrp) {
   if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL) {
     if (iso_intrp == 0) return delta_fn_linear_interpolation(freq1, points, amp, spec);
     if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq1, points, amp, spec);
   }
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
-}
-
-void triangle_interpolation1D_linear(double *freq1, double *freq2, double *freq3,
-                                     double *amp, double *spec, int *points) {
-  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL)
-    return delta_fn_linear_interpolation(freq1, points, amp, spec);
-
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
-}
-
-void triangle_interpolation1D_gaussian(double *freq1, double *freq2, double *freq3,
-                                       double *amp, double *spec, int *points) {
-  if (absd(*freq1 - *freq2) < TOL && absd(*freq1 - *freq3) < TOL)
-    return delta_fn_gauss_interpolation(freq1, points, amp, spec);
-
-  __triangle_interpolation(freq1, freq2, freq3, amp, spec, points);
+  __triangle_interpolation(freq1, freq2, freq3, amp, &local_amps[0], &local_amps[1],
+                           &local_amps[2], spec, points);
 }
 
 /**
@@ -357,15 +376,17 @@ static inline void quadrilateral_bin(double *f00, double *f11, double *f10, doub
                                      double amp, double *spec, int m1,
                                      unsigned int iso_intrp) {
   double amp_bottom, amp_top, norm;
+  double local_amps[3] = {1.0, 1.0, 1.0};
 
   if (total != 0) {
     norm = amp / total;
     amp_bottom = bottom * norm;
     amp_top = top * norm;
-    triangle_interpolation1D(f00, f11, f10, &amp_bottom, spec, &m1, iso_intrp);
-    triangle_interpolation1D(f00, f11, f01, &amp_top, spec, &m1, iso_intrp);
+    triangle_interpolation1D(f00, f11, f10, &amp_bottom, local_amps, spec, &m1,
+                             iso_intrp);
+    triangle_interpolation1D(f00, f11, f01, &amp_top, local_amps, spec, &m1, iso_intrp);
   } else {
-    triangle_interpolation1D(f00, f11, f10, &amp, spec, &m1, iso_intrp);
+    triangle_interpolation1D(f00, f11, f10, &amp, local_amps, spec, &m1, iso_intrp);
   }
 }
 
@@ -378,6 +399,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   double f10, slope_diff, abs_sdiff, abs_sdiff_2, temp, df1, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f01_slope, f02_slope;
+  double local_amps[3] = {1.0, 1.0, 1.0};
 
   f10 = f1[1] - f1[0];
   df1 = top / f10;
@@ -394,11 +416,13 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     *x11 = f02_slope * f10 + f2[0];
     if (!r_clip && !l_clip) {
       amp = f10 * top * 0.5;
-      triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1, iso_intrp);
+      triangle_interpolation1D(&f2[0], x11, x10, &amp, local_amps, spec, &m1,
+                               iso_intrp);
     }
     if (!r_clip_r && l_clip) {
       amp = f1[1] * (f10 - f1[0]) * 0.5 * df1;
-      triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1, iso_intrp);
+      triangle_interpolation1D(&f2[0], x11, x10, &amp, local_amps, spec, &m1,
+                               iso_intrp);
     }
     return;
   }
@@ -413,7 +437,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   *x11 = f02_slope * diff + f2[0];
   if (!l_clip) {
     amp = 0.5 * diff * diff * df1;
-    triangle_interpolation1D(&f2[0], x11, x10, &amp, spec, &m1, iso_intrp);
+    triangle_interpolation1D(&f2[0], x11, x10, &amp, local_amps, spec, &m1, iso_intrp);
   } else {
     amp = (diff - 0.5) * df1;
     x00 = *x10 - f01_slope;
@@ -481,6 +505,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
   double f21, slope_diff, abs_sdiff, abs_sdiff_2, temp, df2, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f12_slope, f02_slope;
+  double local_amps[3] = {1.0, 1.0, 1.0};
 
   diff = f1[2] - (double)p - 1.;
   f21 = f1[2] - f1[1];
@@ -496,11 +521,13 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
   if (p == pmax) {
     if (!r_clip) {
       amp = f21 * top * 0.5;
-      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1, iso_intrp);
+      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, local_amps, spec, &m1,
+                               iso_intrp);
     }
     if (r_clip && !r_clip_l) {
       amp = (f21 - diff) * (diff + f21) * 0.5 * df2;
-      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, spec, &m1, iso_intrp);
+      triangle_interpolation1D(x11, &f2[1], &f2[2], &amp, local_amps, spec, &m1,
+                               iso_intrp);
     }
     return;
   }
@@ -562,7 +589,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     amp = temp * temp * 0.5 * df2;
     x01 = *x11;
     *x11 = f2[2];
-    triangle_interpolation1D(x10, x11, &x01, &amp, spec, &m1, iso_intrp);
+    triangle_interpolation1D(x10, x11, &x01, &amp, local_amps, spec, &m1, iso_intrp);
   } else {
     diff -= df2;
     x00 = *x10;
@@ -581,6 +608,7 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
   double top, t1, t2, diff, temp, n_i;
   int p, pmid, pmax, i, j;
   double freq10_01, freq11_02;
+  double local_amps[3] = {1.0, 1.0, 1.0};
 
   p = (int)(*freq11);
 
@@ -590,30 +618,30 @@ void triangle_interpolation2D(double *freq11, double *freq12, double *freq13,
     diff = freq11[0] - (double)p;
     n_i = 0.5;
     if (absd(diff - n_i) < TOL) {
-      triangle_interpolation1D(freq21, freq22, freq23, amp, &spec[2 * p * m1], &m1,
-                               iso_intrp);
+      triangle_interpolation1D(freq21, freq22, freq23, amp, local_amps,
+                               &spec[2 * p * m1], &m1, iso_intrp);
       return;
     }
     if (diff < n_i) {
       if (p != 0) {
         temp = *amp * (n_i - diff);
-        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p - 1) * m1],
-                                 &m1, iso_intrp);
+        triangle_interpolation1D(freq21, freq22, freq23, &temp, local_amps,
+                                 &spec[2 * (p - 1) * m1], &m1, iso_intrp);
       }
       temp = *amp * (n_i + diff);
-      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1,
-                               iso_intrp);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, local_amps,
+                               &spec[2 * p * m1], &m1, iso_intrp);
       return;
     }
     if (diff > n_i) {
       if (p + 1 != m0) {
         temp = *amp * (diff - n_i);
-        triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * (p + 1) * m1],
-                                 &m1, iso_intrp);
+        triangle_interpolation1D(freq21, freq22, freq23, &temp, local_amps,
+                                 &spec[2 * (p + 1) * m1], &m1, iso_intrp);
       }
       temp = *amp * (1 + n_i - diff);
-      triangle_interpolation1D(freq21, freq22, freq23, &temp, &spec[2 * p * m1], &m1,
-                               iso_intrp);
+      triangle_interpolation1D(freq21, freq22, freq23, &temp, local_amps,
+                               &spec[2 * p * m1], &m1, iso_intrp);
       return;
     }
     return;
@@ -843,37 +871,53 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
 }
 
 void octahedronInterpolation(double *spec, double *freq, const unsigned int nt,
-                             double *amp, int stride, int m) {
+                             double *amp, int stride, double *rf_amps, int rf_stride,
+                             int m) {
   int i = 0, j = 0, local_index, n_pts = (nt + 1) * (nt + 2) / 2;
-  unsigned int int_i_stride = 0, int_j_stride = 0;
-  double amp1, temp, *amp_address, *freq_address;
+  unsigned int i_stride = 0, j_stride = 0, i_rf_stride = 0, j_rf_stride = 0;
+  double amp1, temp, *amp_address, *freq_address, *rf_amp_address;
+  double amp_a, amp_b, amp_c, amp_max;
 
   /* Interpolate between 1d points by setting up triangles of unit area */
   local_index = nt - 1;
   amp_address = &amp[(nt + 1) * stride];
+  rf_amp_address = &rf_amps[(nt + 1) * rf_stride];
   freq_address = &freq[nt + 1];
 
   // Note, amp is the sum of amplitude at three vertexes because the factor 3 is already
   // applied to the amplitude vector.
   while (i < n_pts - 1) {
-    temp = amp[int_i_stride + stride] + amp_address[int_j_stride];
-    amp1 = temp + amp[int_i_stride];
+    temp = amp[i_stride + stride] + amp_address[j_stride];
+    amp1 = temp + amp[i_stride];
 
-    __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, spec, &m);
+    amp_a = rf_amps[i_rf_stride];
+    amp_b = rf_amps[i_rf_stride + rf_stride];
+    amp_c = rf_amp_address[j_rf_stride];
+
+    __triangle_interpolation(&freq[i], &freq[i + 1], &freq_address[j], &amp1, &amp_a,
+                             &amp_b, &amp_c, spec, &m);
 
     if (i < local_index) {
-      temp += amp_address[int_j_stride + stride];
+      temp += amp_address[j_stride + stride];
+
+      amp_a = rf_amps[i_rf_stride + rf_stride];
+      amp_b = rf_amp_address[j_rf_stride];
+      amp_c = rf_amp_address[j_rf_stride + rf_stride];
+
       __triangle_interpolation(&freq[i + 1], &freq_address[j], &freq_address[j + 1],
-                               &temp, spec, &m);
+                               &temp, &amp_a, &amp_b, &amp_c, spec, &m);
     } else {
       local_index = j + nt;
       i++;
-      int_i_stride += stride;
+      i_stride += stride;
+      i_rf_stride += rf_stride;
     }
     i++;
     j++;
-    int_i_stride += stride;
-    int_j_stride += stride;
+    i_stride += stride;
+    j_stride += stride;
+    i_rf_stride += rf_stride;
+    j_rf_stride += rf_stride;
   }
 }
 
@@ -884,6 +928,7 @@ void generic_1d_triangle_interpolation(double *spec, const unsigned int freq_siz
   unsigned int pos_size = position_size;
   int32_t p1, p2, p3;
   double amp_sum;
+  double local_amp[3] = {1.0, 1.0, 1.0};
 
   while (pos_size-- > 0) {
     p1 = *positions++;
@@ -891,7 +936,8 @@ void generic_1d_triangle_interpolation(double *spec, const unsigned int freq_siz
     p3 = *positions++;
     // we do amp_sum because amps are already scaled to account for the factor 3
     amp_sum = amp[p1] + amp[p2] + amp[p3];
-    __triangle_interpolation(&freq[p1], &freq[p2], &freq[p3], &amp_sum, spec, &m);
+    __triangle_interpolation(&freq[p1], &freq[p2], &freq[p3], &amp_sum, &local_amp[0],
+                             &local_amp[1], &local_amp[2], spec, &m);
   }
 }
 
@@ -910,15 +956,16 @@ void hist1d(double *spec, const unsigned int freq_size, double *freq, double *am
 }
 
 void one_d_averaging(double *spec, const unsigned int freq_size, double *freq,
-                     double *amp_real, double *amp_imag, int dimension_count,
-                     const unsigned int position_size, int32_t *positions,
-                     const unsigned int nt, bool user_defined, bool interpolation,
-                     bool is_complex) {
+                     double *amp_real, double *amp_imag, double *rf_amps,
+                     int dimension_count, const unsigned int position_size,
+                     int32_t *positions, const unsigned int nt, bool user_defined,
+                     bool interpolation, bool is_complex) {
   if (!user_defined) {
     if (interpolation) {
-      octahedronInterpolation(spec, freq, nt, amp_real, 1, dimension_count);
+      octahedronInterpolation(spec, freq, nt, amp_real, 1, rf_amps, 2, dimension_count);
       if (is_complex) {
-        octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, dimension_count);
+        octahedronInterpolation(spec + 1, freq, nt, amp_imag, 1, rf_amps + 1, 2,
+                                dimension_count);
       }
     } else {
       hist1d(spec, freq_size, freq, amp_real, dimension_count, nt);
