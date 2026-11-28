@@ -161,11 +161,11 @@ class Mrsimulator(Parseable):
         # Ignore given version by removing key
         _ = py_copy_dict.pop("version", None)
 
-        if "simulator" in py_copy_dict:
+        if py_copy_dict.get("simulator", None) is not None:
             sim = Simulator.parse_dict_with_units(py_copy_dict["simulator"])
             py_copy_dict["simulator"] = sim
 
-        if "signal_processors" in py_copy_dict:
+        if py_copy_dict.get("signal_processors", None) is not None:
             processors = [
                 SignalProcessor.parse_dict_with_units(sp)
                 for sp in py_copy_dict["signal_processors"]
@@ -190,11 +190,20 @@ class Mrsimulator(Parseable):
         # Ignore given version by removing key
         _ = py_copy_dict.pop("version", None)
 
-        return (
-            Mrsimulator.parse_dict_with_units(py_dict)
-            if parse_units
-            else Mrsimulator(**py_dict)
-        )
+        if parse_units:
+            return Mrsimulator.parse_dict_with_units(py_copy_dict)
+
+        if py_copy_dict.get("simulator", None) is not None:
+            sim = Simulator.parse(py_copy_dict["simulator"], parse_units=False)
+            py_copy_dict["simulator"] = sim
+
+        # signal processors are always serialized with units.
+        if py_copy_dict.get("signal_processors", None) is not None:
+            py_copy_dict["signal_processors"] = [
+                SignalProcessor.parse_dict_with_units(sp)
+                for sp in py_copy_dict["signal_processors"]
+            ]
+        return Mrsimulator(**py_copy_dict)
 
     @classmethod
     def load(cls, filename: str, with_units: bool = True):
@@ -367,7 +376,7 @@ def parse(py_dict, parse_units: bool = True):
             SignalProcessor.parse_dict_with_units(item)
             for item in py_copy_dict["signal_processors"]
         ]
-        if "signal_processors" in py_copy_dict
+        if py_copy_dict.get("signal_processors", None) is not None
         else [SignalProcessor() for _ in sim.methods]
     )
 

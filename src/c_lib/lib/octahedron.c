@@ -144,7 +144,10 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // In terms of the variables, Eq (3) is given as xr/zr.
   // Evaluate xr = xr/zr
   vm_double_divide_inplace(points - 1, zr, xr);
-  xr[points - 1] = 0.0;
+  // alpha is undefined at the pole (beta = 0), and is set to zero, exp(i alpha) = 1.
+  // A zero phase factor removes the m != 0 components, the spinning sidebands, of
+  // the pole orientation.
+  xr[points - 1] = 1.0;
   // Copy cos(alpha), aka xr, to the even addresses of exp_I_alpha
   cblas_dcopy(points, xr, 1, (double *)exp_I_alpha, 2);
 
@@ -186,14 +189,18 @@ void get_total_amplitude(const unsigned int nt, double *amp, double *amp_sum) {
   }
 }
 
-// fix amplitude for binning case:
+// fix amplitude for binning case. The amplitudes carry a factor 1/6, one share for
+// each of the six triangles around an interior point. An edge point has three
+// triangles and an octant vertex has one, so their weights are
 // octant face edge points are divided by 2
-// octant vertexes are divided by 4
+// octant vertexes are divided by 6
+// before the factor of 6 is removed.
 void fix_amplitude_for_binning(unsigned int nt, double *amp) {
   unsigned int i = 0, i_max = (nt + 1) * (nt + 2) / 2, tt = nt - 1;
   bool inc_one = false;
   while (i <= nt) amp[i++] /= 2.0;
-  while (i < i_max) {
+  // edge points of the rows, excluding the last row, a single point (the z vertex)
+  while (i < i_max - 1) {
     amp[i] /= 2.0;
     if (inc_one) {
       i++;
@@ -203,9 +210,10 @@ void fix_amplitude_for_binning(unsigned int nt, double *amp) {
       inc_one = true;
     }
   }
-  amp[0] /= 2.0;
-  amp[nt] /= 2.0;
-  amp[i_max - 1] /= 2.0;
+  // amp[0] and amp[nt] were halved with the first row, so the total factor is 1/6.
+  amp[0] /= 3.0;
+  amp[nt] /= 3.0;
+  amp[i_max - 1] /= 6.0;
 
   // rescale all amps by 6 to remove the 1point shared by 6 triangle factor
   cblas_dscal(i_max, 6.0, amp, 1);

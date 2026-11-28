@@ -341,3 +341,42 @@ def test_abundance_03():
         assert sys[i].sites[0].quadrupolar.beta is None
         assert sys[i].sites[0].quadrupolar.gamma is None
         assert sys[i].abundance == abundances[j]
+
+
+def test_check_lengths_all_dicts_and_scalars():
+    """The lengths of the lists in every dict are checked, and scalar-only input
+    generates one spin system."""
+    error = ".*Not all arrays/lists passed were of the same length.*"
+    with pytest.raises(ValueError, match=error):
+        single_site_system_generator(
+            isotope="27Al",
+            shielding_symmetric={"zeta": [1, 2, 3], "eta": 0.1},
+            quadrupolar={"Cq": [1e6, 2e6], "eta": 0.2},
+        )
+
+    sys = single_site_system_generator(
+        isotope="27Al",
+        shielding_symmetric={"zeta": [1, 2], "eta": 0.1},
+        quadrupolar={"Cq": [1e6, 2e6], "eta": 0.2},
+    )
+    assert len(sys) == 2
+
+    sys = single_site_system_generator(isotope="1H", isotropic_chemical_shift=10)
+    assert len(sys) == 1
+    assert sys[0].sites[0].isotropic_chemical_shift == 10
+
+
+def test_abundance_as_tuple_and_numpy_integer():
+    """The abundance is a list, a tuple, an array, or a python or numpy number."""
+    import numpy as np
+    from mrsimulator.utils.collection import single_site_system_generator
+
+    systems = single_site_system_generator(
+        "1H", isotropic_chemical_shift=[1, 2], abundance=(1, 3)
+    )
+    assert [s.abundance for s in systems] == [1, 3]
+
+    systems = single_site_system_generator(
+        "1H", isotropic_chemical_shift=[1, 2], abundance=np.int64(4)
+    )
+    assert [s.abundance for s in systems] == [4, 4]

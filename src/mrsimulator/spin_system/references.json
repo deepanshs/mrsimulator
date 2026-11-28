@@ -12,7 +12,7 @@
         "concentration": "1.0 L/L"
     },
     "3H": {
-        "ratio": 105.663974,
+        "ratio": 106.663974,
         "compound": "Me4Si",
         "solvent": "CDCl3",
         "concentration": "0.01 L/L"
@@ -521,7 +521,7 @@
         "solvent": "CCl4",
         "concentration": "0.98 mol/L"
     },
-    "185Pt": {
+    "195Pt": {
         "ratio": 21.496784,
         "compound": "Na2PtCl6",
         "solvent": "D2O",

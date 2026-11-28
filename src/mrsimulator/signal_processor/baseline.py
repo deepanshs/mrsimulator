@@ -4,6 +4,7 @@ from typing import Dict
 import numpy as np
 
 from ._base import ModuleOperation
+from .utils import _get_broadcast_shape
 
 __author__ = "Deepansh Srivastava"
 __email__ = "srivastava.89@osu.edu"
@@ -89,6 +90,7 @@ class Polynomial(Baseline):
         for key, val in self.polynomial_dictionary.items():
             exponent = key.split("c")[-1]
             fn += float(val) * d1 ** int(exponent)
+        fn = _get_broadcast_shape(fn, self.dim_index, len(dataset.dimensions))
         for item in dataset.y:
             item.components += fn
         return dataset

@@ -116,8 +116,10 @@ def _add_two_euler_angles(
 
     # Check if beta is 180 degrees and phase the same
     if np.isclose(result_mat[2][2], -1.0) and np.allclose([a1, g1], [a2, g2]):
-        gamma = np.arccos(result_mat[0][0]) - np.pi
-        gamma /= 2
+        # R(alpha, pi, gamma) depends on delta = gamma - alpha only, with
+        # R[0][0] = -cos(delta) and R[1][0] = -sin(delta). The arctan2 keeps the sign
+        # of delta, which arccos(R[0][0]) alone does not.
+        gamma = np.arctan2(-result_mat[1][0], -result_mat[0][0]) / 2
         return np.asarray([-gamma, np.pi, gamma])
 
     return result.as_euler("zyz")

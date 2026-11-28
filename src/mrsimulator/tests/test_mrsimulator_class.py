@@ -103,3 +103,33 @@ def test_load():
     assert mrsim == loaded_mrsim
 
     os.remove("temp.mrsim")
+
+
+def test_mrsimulator_save_load_with_none_fields(tmp_path):
+    """Mrsimulator.json() writes None for unset simulator / signal_processors, which
+    must be parsed back."""
+    sim, _, _ = setup_sim_and_processor()
+    filename = os.path.join(tmp_path, "none_fields.mrsim")
+
+    for mrsim in [Mrsimulator(simulator=sim), Mrsimulator()]:
+        mrsim.save(filename)
+        assert Mrsimulator.load(filename) == mrsim
+        assert Mrsimulator.parse(mrsim.json()) == mrsim
+
+    mrsim = Mrsimulator(simulator=sim)
+    mrsim.save(filename, with_units=False)
+    assert Mrsimulator.load(filename, with_units=False) == mrsim
+
+
+def test_mrsimulator_parse_ignores_version():
+    """The version key of the input dict is ignored, also when parse_units=False."""
+    sim, processors, _ = setup_sim_and_processor()
+    mrsim = Mrsimulator(simulator=sim, signal_processors=processors)
+
+    py_dict = mrsim.json(with_units=False)
+    py_dict["version"] = "0.0.1"
+    assert Mrsimulator.parse(py_dict, parse_units=False) == mrsim
+
+    py_dict = mrsim.json()
+    py_dict["version"] = "0.0.1"
+    assert Mrsimulator.parse(py_dict) == mrsim

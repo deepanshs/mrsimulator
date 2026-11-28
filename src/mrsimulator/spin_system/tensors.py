@@ -165,12 +165,12 @@ class AntisymmetricTensor(Parseable):
     beta: Optional[float]
 
     property_unit_types: ClassVar[Dict] = {
-        "zeta": "dimensionless",
+        "zeta": ["dimensionless", "frequency"],
         "alpha": "angle",
         "beta": "angle",
     }
     property_default_units: ClassVar[Dict] = {
-        "zeta": "ppm",
+        "zeta": ["ppm", "Hz"],
         "alpha": "rad",
         "beta": "rad",
     }

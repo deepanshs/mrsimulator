@@ -84,6 +84,8 @@ class Isotope(BaseModel):
     symbol: str
     test_vars: ClassVar[Dict] = {"symbol": "1H"}
     custom_isotope_data: ClassVar[Dict] = {}
+    # symbol of the isotope whose reference a custom isotope takes
+    custom_isotope_reference: ClassVar[Dict] = {}
 
     class Config:
         extra = "forbid"
@@ -130,15 +132,31 @@ class Isotope(BaseModel):
 
         # Grab copied isotope attributes if copy_from, otherwise default attributes
         kwargs_new = (
-            get_isotope_dict(copy_from)
+            {k: v for k, v in get_isotope_dict(copy_from).items() if k != "symbol"}
             if copy_from is not None
             else DEFAULT_ISOTOPE.copy()
         )
+        unknown = set(kwargs) - set(DEFAULT_ISOTOPE)
+        if unknown:
+            raise ValueError(
+                f"Unrecognized isotope attributes {sorted(unknown)}. The attributes "
+                f"are {sorted(DEFAULT_ISOTOPE)}."
+            )
         kwargs_new.update(kwargs)
 
         # Validate the new isotope attributes, then add them to the lookup dictionary
         _validate_isotope_kwargs(kwargs_new)
         cls.custom_isotope_data[symbol] = kwargs_new
+
+        # A copy with the gyromagnetic ratio of the copied isotope keeps its reference.
+        cls.custom_isotope_reference.pop(symbol, None)
+        if copy_from is not None and "gyromagnetic_ratio" not in kwargs:
+            if copy_from in cls.custom_isotope_reference:
+                cls.custom_isotope_reference[symbol] = cls.custom_isotope_reference[
+                    copy_from
+                ]
+            elif copy_from in REFERENCE_DATA:
+                cls.custom_isotope_reference[symbol] = copy_from
 
     @classmethod
     def parse(cls, item):
@@ -202,13 +220,14 @@ class Isotope(BaseModel):
     @property
     def reference(self):
         """Reference compound database"""
-        data = REFERENCE_DATA.get(self.symbol, None)
+        symbol = self.custom_isotope_reference.get(self.symbol, self.symbol)
+        data = REFERENCE_DATA.get(symbol, None)
         if data is not None:
             return IsotopeReference(**data)
         else:
             # when ratio = gyromagnetic_ratio * 2.348731439404777; abs(w_ref / w_0) = 1
             ref_data = {
-                "ratio": self.gyromagnetic_ratio * 2.348731439404777,
+                "ratio": abs(self.gyromagnetic_ratio) * 2.348731439404777,
                 "compound": "",
                 "solvent": "",
                 "concentration": "",
@@ -247,8 +266,17 @@ class Isotope(BaseModel):
         >>> H1 = Isotope(symbol="1H")
         >>> B0 = H1.ref_freq_to_B0(ref_freq = 400e6)
         """
+        self._check_gyromagnetic_ratio()
         ref_ratio = self.reference.ratio / 100  # normalize reference ratio to 1
         return 1.0e-6 * 0.02348731439404777 * ref_freq / ref_ratio
+
+    def _check_gyromagnetic_ratio(self):
+        """Raise an error for an isotope with zero gyromagnetic ratio."""
+        if self.gyromagnetic_ratio == 0:
+            raise ValueError(
+                f"Isotope `{self.symbol}` has zero gyromagnetic ratio. Register the "
+                "isotope with a non-zero gyromagnetic_ratio."
+            )
 
     def B0_to_ref_freq(self, B0=9.4):
         """Return the primary reference frequency given the magnetic field strength B0.
@@ -276,6 +304,7 @@ class Isotope(BaseModel):
         :math:`(1 - \sigma_{iso}^{ref}) = |-w_{ref} / w_0|`
         where :math:`\sigma_{iso}^{ref}` is the reference isotropic shielding in ppm.
         """
+        self._check_gyromagnetic_ratio()
         ref_by_b0 = (self.reference.ratio / 100) / 0.02348731439404777
         larmor_by_b0 = abs(self.gyromagnetic_ratio)
         return ref_by_b0 / larmor_by_b0
@@ -284,10 +313,14 @@ class Isotope(BaseModel):
 def get_isotope_dict(isotope_symbol: str) -> dict:
     """Get the intrinsic properties of the isotope with symbol isotope_symbol as a
     dict"""
-    if isotope_symbol not in get_all_isotope_symbols():
+    # Custom isotopes take precedence, as in get_all_isotope_data
+    if isotope_symbol in Isotope.custom_isotope_data:
+        isotope_dict = dict(Isotope.custom_isotope_data[isotope_symbol])
+    elif isotope_symbol in ISOTOPE_DATA:
+        isotope_dict = dict(ISOTOPE_DATA[isotope_symbol])
+    else:
         raise Exception(f"Isotope symbol `{isotope_symbol}` not recognized.")
 
-    isotope_dict = get_all_isotope_data()[isotope_symbol]
     isotope_dict.update({"symbol": isotope_symbol})
     return isotope_dict
 

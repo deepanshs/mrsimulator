@@ -221,9 +221,24 @@ MRS_averaging_scheme *MRS_create_averaging_scheme_from_alpha_beta(
   complex128 *exp_I_beta = malloc_complex128(scheme->octant_orientations);
   scheme->amplitudes = malloc_double(scheme->octant_orientations);
 
-  // scale = (1 / 6) factor for 1 point to 6 triangle ratio.
-  scale = (interpolation) ? 0.1666666667 : 1.0;
-  vm_double_ramp(scheme->octant_orientations, weight, scale, 0.0, scheme->amplitudes);
+  if (interpolation && positions != NULL) {
+    // The amplitude of a triangle is the sum of the amplitudes of its three vertexes.
+    // A vertex shares its weight among the triangles that hold it. On a closed mesh
+    // the number of triangles at a vertex is six on average, and not six at every
+    // vertex.
+    unsigned int i;
+    unsigned int *valence = calloc(n_angles, sizeof(unsigned int));
+    for (i = 0; i < 3 * position_size; i++) valence[positions[i]]++;
+    for (i = 0; i < n_angles; i++) {
+      scheme->amplitudes[i] = (valence[i] > 0) ? weight[i] / (double)valence[i] : 0.0;
+    }
+    free(valence);
+  } else {
+    // scale = (1 / 6) factor for 1 point to 6 triangle ratio.
+    scale = (interpolation) ? 1.0 / 6.0 : 1.0;
+    vm_double_ramp(scheme->octant_orientations, weight, scale, 0.0,
+                   scheme->amplitudes);
+  }
 
   /* Calculate cos(α) + isin(α) from α. ............................................. */
   vm_cosine_I_sine(n_angles, alpha,

@@ -892,5 +892,6 @@ void get_exp_Im_angle(const unsigned int n, const bool allow_4th_rank,
       cblas_zcopy(n, exp_Im_angle_, 1, &exp_Im_angle_[m_4p], 1);
       cblas_zscal(n, &exp_da[6], &exp_Im_angle_[m_4p], 1);
     }
+    free(exp_da);
   }
 }

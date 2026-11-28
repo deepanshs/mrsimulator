@@ -231,3 +231,40 @@ def test_fraction():
                 SpectralEvent(fraction=0.5),
             ]
         )
+
+
+def test_fraction_sum_floating_point():
+    """Fractions which sum to one up to floating point error are accepted, and a sum
+    off by more than the round-off is not."""
+    from mrsimulator.method import SpectralDimension
+
+    def events(fractions):
+        return [
+            {"fraction": f, "transition_queries": [{"ch1": {"P": [-1]}}]}
+            for f in fractions
+        ]
+
+    import warnings
+
+    # the sum is off by a few units of round-off, whatever the summation algorithm.
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        SpectralDimension(events=events([0.3, 0.3, 0.4 - 4e-16]))
+        SpectralDimension(events=events([0.1] * 10))
+
+    for fractions in [[0.5, 0.50001], [0.3, 0.3, 0.4 - 1e-7]]:
+        with pytest.warns(UserWarning, match=".*should sum to 1.*"):
+            SpectralDimension(events=events(fractions))
+
+
+def test_reciprocal_json_round_trip():
+    """The reciprocal attribute is parsed back from its json form."""
+    from mrsimulator.method import Method
+
+    sd = SpectralDimension(count=8, reciprocal={"coordinates_offset": 0.1}, events=[{}])
+    sd2 = SpectralDimension.parse_dict_with_units(sd.json())
+    assert sd2.reciprocal.coordinates_offset == 0.1
+    assert sd2 == sd
+
+    method = Method(channels=["1H"], spectral_dimensions=[sd])
+    assert Method.parse_dict_with_units(method.json()) == method

@@ -609,6 +609,29 @@ def _fix_basicstrap_asset_lists(app, pagename, templatename, context, doctree):
         if assets:
             context[key] = [getattr(asset, "filename", asset) for asset in assets]
 
+    # Sphinx>=6 no longer ships jQuery, which the bootstrap and basicstrap scripts of
+    # the theme and the version warning banner require. The theme replaces the
+    # `_static/jquery.js` entry with its bundled jQuery, so the entry is placed first.
+    # The theme also defines DOCUMENTATION_OPTIONS inline; the documentation_options.js
+    # of Sphinx declares it again as a const, which is a syntax error, so it is
+    # replaced by a script that adds the options and the content root that the search
+    # scripts of Sphinx read.
+    scripts = [
+        item
+        for item in context.get("script_files", [])
+        if not str(item).endswith(("documentation_options.js", "jquery.js"))
+    ]
+    context["script_files"] = [
+        "_static/jquery.js",
+        "_static/js/sphinx_compat.js",
+        *scripts,
+    ]
+
+    # The search page of the theme loads searchtools.js only. The search of Sphinx>=5
+    # also reads the stemmer and the stop words from language_data.js.
+    if pagename == "search":
+        context["script_files"].append("_static/language_data.js")
+
 
 def setup(app):
     app.add_css_file("style.css")

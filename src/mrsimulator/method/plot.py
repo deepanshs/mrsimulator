@@ -421,9 +421,12 @@ class SequenceDiagram(CustomAxes):
                 if df["spec_dim_index"][df_idx + j] != spec_dim_idx:  # Next spec dim
                     x0 = x_data[x_idx]
                     if df["type"][df_idx + j] in ["MixingEvent", "RotationEvent"]:
-                        x0 += max(
-                            sum(df["angle"][df_idx:j]) / 360.0 * MIXING_WIDTH, MIN_WIDTH
+                        # total angle of the mixing events before event j in the group
+                        end = df_idx + j
+                        angle = sum(
+                            item[self.channel] for item in df["angle"][df_idx:end]
                         )
+                        x0 += max(angle / 360.0 * MIXING_WIDTH, MIN_WIDTH)
                     self.plot(x=[x0, x0], y=ylim, color="black", **plot_kwargs)
                     spec_dim_idx += 1
                 x_idx += 1
@@ -542,19 +545,21 @@ def _add_angle_and_phase(df):
         df["phase"] = [None] * len(df["type"])
         return
 
-    # Keep queries where at least one Rotation is not None
+    # Keep the channels up to the last channel with at least one Rotation. Channel
+    # names are kept, and a channel without a Rotation in an event has zero rotation.
     # cannot use `is not None` in numpy arguments below
-    queries = queries[:, np.any(queries != None, axis=0)]  # noqa:E711
-    # Need to ensure at least one channel, maybe check if queries is empty
-    ch_keys = [f"ch{i + 1}" for i in range(len(queries[0]))]
+    used = np.where(np.any(queries != None, axis=0))[0]  # noqa:E711
+    n_ch = used[-1] + 1 if used.size > 0 else 1
+    queries = queries[:, :n_ch]
+    ch_keys = [f"ch{i + 1}" for i in range(n_ch)]
 
     angles = [
-        {k: ch.angle * 180 / np.pi for k, ch in zip(ch_keys, query)}
-        for query in queries
+        {k: 0.0 if ch is None else ch.angle * 180 / np.pi for k, ch in zip(ch_keys, q)}
+        for q in queries
     ]
     phases = [
-        {k: ch.phase * 180 / np.pi for k, ch in zip(ch_keys, query)}
-        for query in queries
+        {k: 0.0 if ch is None else ch.phase * 180 / np.pi for k, ch in zip(ch_keys, q)}
+        for q in queries
     ]
 
     df["angle"] = [

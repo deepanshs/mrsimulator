@@ -7,6 +7,8 @@ import numpy as np
 from mrsimulator.utils.parseable import Parseable
 from pydantic.v1 import BaseModel
 from pydantic.v1 import Field
+from pydantic.v1 import root_validator
+from pydantic.v1 import validator
 from typing_extensions import Literal
 
 
@@ -59,6 +61,50 @@ class CustomSampling(BaseModel):
         allow_population_by_field_name = True
         validate_assignment = True
         arbitrary_types_allowed = True
+
+    @validator("alpha", "beta", "weight", pre=True)
+    def to_float_array(cls, v):
+        """Lists and arrays of any numeric type as contiguous 1D float64 arrays."""
+        if v is None:
+            return v
+        v = np.ascontiguousarray(v, dtype=np.float64)
+        if v.ndim != 1:
+            raise ValueError("alpha, beta, and weight are one-dimensional arrays.")
+        return v
+
+    @validator("vertex_indexes", pre=True)
+    def to_index_array(cls, v):
+        """Vertex indexes as a contiguous (M, 3) int32 array."""
+        if v is None:
+            return v
+        v = np.ascontiguousarray(v, dtype=np.int32)
+        if v.ndim != 2 or v.shape[1] != 3:
+            raise ValueError("vertex_indexes is an array of shape (M, 3).")
+        return v
+
+    @root_validator(skip_on_failure=True)
+    def check_sizes(cls, values):
+        """The arrays are of the same size, and the vertex indexes refer to them."""
+        arrays = [values.get(k, None) for k in ["alpha", "beta", "weight"]]
+        sizes = {item.size for item in arrays if item is not None}
+        if len(sizes) > 1:
+            raise ValueError("alpha, beta, and weight must be of the same size.")
+        index = values.get("vertex_indexes", None)
+        if index is not None and index.size > 0:
+            size = sizes.pop() if sizes else 0
+            if index.min() < 0 or index.max() >= size:
+                raise ValueError(
+                    f"vertex_indexes must be within the {size} orientations."
+                )
+        return values
+
+    def json(self, units=True, **kwargs) -> dict:
+        """JSON compliant dictionary of the sampling, with the arrays as lists."""
+        return {
+            k: getattr(self, k).tolist()
+            for k in ["alpha", "beta", "weight", "vertex_indexes"]
+            if getattr(self, k) is not None
+        }
 
     def save(
         self, filename: str, target: StrType = StrType.default, units: str = "rad"

@@ -17,11 +17,13 @@ ENCODING_PAIRS = [
     ["].sites[", "_site_"],
     ["].isotropic_chemical_shift", "_isotropic_chemical_shift"],
     ["].shielding_symmetric.", "_shielding_symmetric_"],
+    ["].shielding_antisymmetric.", "_shielding_antisymmetric_"],
     ["].quadrupolar.", "_quadrupolar_"],
     # coupling
     ["].couplings[", "_coupling_"],
     ["].isotropic_j", "_isotropic_j"],
     ["].j_symmetric.", "_j_symmetric_"],
+    ["].j_antisymmetric.", "_j_antisymmetric_"],
     ["].dipolar.", "_dipolar_"],
 ]
 
@@ -32,11 +34,13 @@ DECODING_PAIRS = [
     [".sites.", "_site_"],
     [".isotropic_chemical_shift", "_isotropic_chemical_shift"],
     [".shielding_symmetric.", "_shielding_symmetric_"],
+    [".shielding_antisymmetric.", "_shielding_antisymmetric_"],
     [".quadrupolar.", "_quadrupolar_"],
     # coupling
     [".couplings.", "_coupling_"],
     [".isotropic_j", "_isotropic_j"],
     [".j_symmetric.", "_j_symmetric_"],
+    [".j_antisymmetric.", "_j_antisymmetric_"],
     [".dipolar.", "_dipolar_"],
 ]
 
@@ -56,6 +60,15 @@ POST_SIM_DICT = {
     "ConstantOffset": {"offset": "offset"},
     "Linear": {"amplitude": "amplitude", "offset": "offset"},
 }
+
+
+def _is_fit_operation(operation) -> bool:
+    """Return True if the signal processor operation holds fit parameters. The affine
+    Scale of a dimension shares its class name with the amplitude Scale, and is not a
+    fit parameter."""
+    if isinstance(operation, sp.affine.AffineTransformation):
+        return False
+    return operation.__class__.__name__ in POST_SIM_DICT
 
 
 def _str_encode(my_string):
@@ -162,7 +175,7 @@ def _make_params_single_processor(params, process, index):
             value=getattr(operation, attr),
         )
         for i, operation in enumerate(process.operations)
-        if operation.__class__.__name__ in POST_SIM_DICT
+        if _is_fit_operation(operation)
         for attr in POST_SIM_DICT[operation.__class__.__name__]
     ]
 
@@ -242,10 +255,15 @@ def make_simulator_params(
     total_abundance += sum(sys.abundance for sys in spin_system_models)
     abundance_scale = 100.0 / total_abundance
 
-    # expression for the last abundance.
+    # expression for the last abundance, including the distribution model abundances.
     if sys_length > 0:
         last_abundance = f"{sys_length - 1}_abundance"
-        expression = "-".join([f"{START}{i}_abundance" for i in range(sys_length - 1)])
+        terms = [f"{START}{i}_abundance" for i in range(sys_length - 1)]
+        terms += [
+            f"{model.model_name}_{i}_abundance"
+            for i, model in enumerate(spin_system_models)
+        ]
+        expression = "-".join(terms)
         expression = "100" if expression == "" else f"100-{expression}"
 
     skip_last = sys_length > 0
@@ -282,8 +300,10 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
         set include: Set of method attributes to include.
     """
     if "rotor_frequency" in include:
-        values = [
-            [
+        # the rotor frequencies of the named methods, by the index of the method in
+        # the simulator.
+        values = {
+            i: [
                 ev.rotor_frequency
                 for sp in mth.spectral_dimensions
                 for ev in sp.events
@@ -291,25 +311,26 @@ def get_simulator_method_parameters(params: Parameters, sim: Simulator, include=
             ]
             for i, mth in enumerate(sim.methods)
             if mth._named_method
-        ]
+        }
 
+        # a static method (zero rotor frequency) has no rotor frequency to fit.
         _ = [
             params.add(
                 name=f"mth_{i}_rotor_frequency",
                 value=val[0],
-                min=val[0] - 100,
+                min=max(val[0] - 100, 0),
                 max=val[0] + 100,
             )
-            for i, val in enumerate(values)
-            if val != []
+            for i, val in values.items()
+            if val != [] and val[0] != 0
         ]
 
     return params
 
 
-def make_LMFIT_parameters(sim: Simulator, processors: list = None, include={}):
+def make_LMFIT_parameters(*args, **kwargs):
     """An alias of `make_LMFIT_params` function."""
-    return make_LMFIT_params(sim, processors)
+    return make_LMFIT_params(*args, **kwargs)
 
 
 def make_LMFIT_params(
@@ -408,8 +429,14 @@ def _update_processors_from_LMFIT_params(params, processors: list):
         sp, op, arg = int(ids[1]), int(ids[3]), POST_SIM_DICT[ids[4]][ids[5]]
         obj[sp].__dict__["operations"][op].__dict__[arg] = value
 
-    values = params.valuesdict()
-    _ = [set_value(processors, k, v) for k, v in values.items() if "operation_" in k]
+    values = {k: v for k, v in params.valuesdict().items() if "operation_" in k}
+    if values and processors is None:
+        raise ValueError(
+            "The parameters include signal processor parameters, but no signal "
+            "processors are given. Pass the list of SignalProcessor objects used to "
+            "create the parameters."
+        )
+    _ = [set_value(processors, k, v) for k, v in values.items()]
 
 
 def update_mrsim_obj_from_params(params, sim: Simulator, processors: list = None):
@@ -457,6 +484,23 @@ def _check_for_experiment_data(methods_list: list):
         )
 
 
+def _get_processors(sim: Simulator, processors) -> list:
+    """Return a list of signal processors, one for each method in the simulator. When
+    processors is None, the processors apply no post-simulation processing."""
+    if processors is None:
+        return [sp.SignalProcessor() for _ in sim.methods]
+
+    if isinstance(processors, tuple):
+        processors = list(processors)
+    processors = processors if isinstance(processors, list) else [processors]
+    if len(processors) != len(sim.methods):
+        raise ValueError(
+            f"The number of signal processors ({len(processors)}) does not match the "
+            f"number of methods ({len(sim.methods)}) in the simulator."
+        )
+    return processors
+
+
 def LMFIT_min_function(
     params: Parameters,
     sim: Simulator,
@@ -479,13 +523,22 @@ def LMFIT_min_function(
     Returns:
         Array of the differences between the simulation and the experimental datasets.
     """
-    processors = processors if isinstance(processors, list) else [processors]
+    # the parameters are applied to the processors given by the user, so that signal
+    # processor parameters without processors raise an error.
+    if processors is not None:
+        processors = _get_processors(sim, processors)
+    update_mrsim_obj_from_params(params, sim, processors)
+    processors = _get_processors(sim, processors)
     sigma = [1.0 for _ in sim.methods] if sigma is None else sigma
-    sigma = sigma if isinstance(sigma, list) else [sigma]
+    sigma = list(sigma) if isinstance(sigma, (list, tuple)) else [sigma]
     sigma = [item.value if hasattr(item, "value") else item for item in sigma]
+    if len(sigma) != len(sim.methods):
+        raise ValueError(
+            f"The number of sigma values ({len(sigma)}) does not match the number of "
+            f"methods ({len(sim.methods)}) in the simulator."
+        )
 
     _check_for_experiment_data(sim.methods)
-    update_mrsim_obj_from_params(params, sim, processors)
 
     sim.run(**sim_kwargs)
 
@@ -514,7 +567,7 @@ def bestfit(sim: Simulator, processors: list = None):
         list processors: List of SignalProcessor objects ordered according to the
             methods in the simulator object.
     """
-    processors = processors if isinstance(processors, list) else [processors]
+    processors = _get_processors(sim, processors)
     sim.run()
 
     return [
@@ -582,6 +635,30 @@ def _apply_iso_shift(csdm_obj, iso_shift_ppm, larmor_freq):
     return csdm_obj
 
 
+def _check_kernel_grid(method, exp_spectrum):
+    """Raise a ValueError if the spectral grid of the method used to generate the
+    lineshape kernel differs from the grid of the experiment spectrum. The kernel is
+    placed directly on the experiment coordinates, so a mismatch, for example, an
+    ascending method grid with a descending experiment axis, silently produces a
+    shifted or mirrored spectrum."""
+    dim = exp_spectrum.x[0].copy()
+    if dim.coordinates.unit.physical_type == "dimensionless":
+        dim.to("Hz", "nmr_frequency_ratio")
+    exp_Hz = dim.coordinates.to("Hz").value
+
+    sd = method.spectral_dimensions[0]
+    method_Hz = sd.coordinates_Hz()
+    half_bin = 0.5 * abs(sd.spectral_width / sd.count)
+    if exp_Hz.size != method_Hz.size or not np.allclose(
+        exp_Hz, method_Hz, rtol=0, atol=half_bin
+    ):
+        raise ValueError(
+            "The spectral grid of the lineshape kernel method does not match the "
+            "experiment grid. Create the method spectral dimensions from the "
+            "experiment using `get_spectral_dimensions(experiment)`."
+        )
+
+
 def make_distribution_params(
     spin_system_models: list, norm: float, skip_last: bool = False
 ) -> Parameters:
@@ -593,12 +670,13 @@ def make_distribution_params(
     expr_terms = []
     params = Parameters()
     for i, model in enumerate(spin_system_models):
-        # normalize the abundance
-        model.abundance *= norm
         params = model.add_lmfit_params(params, i)
 
-        # Set last abundance parameter as a non-free variable
+        # normalize the abundance, without modifying the model
         model_prefix = model.model_name
+        params[f"{model_prefix}_{i}_abundance"].value = model.abundance * norm
+
+        # Set last abundance parameter as a non-free variable
         if i < n_dist - 1 or skip_last:
             expr_terms.append(f"{model_prefix}_{i}_abundance")
         else:
@@ -638,6 +716,14 @@ def _generate_distribution_spectrum(
     larmor_freq = isotope.larmor_freq(B0=method.magnetic_flux_density) / 1.0e6  # MHz
     larmor_freq *= isotope.ref_larmor_ratio
     exp_spectrum = method.experiment
+    # validate the grid once per experiment and method grid, not on every fit
+    # evaluation.
+    sd = method.spectral_dimensions[0]
+    grid = (sd.count, sd.spectral_width, sd.reference_offset)
+    checked = kernel._checked_experiment
+    if checked is None or checked[0] is not exp_spectrum or checked[1] != grid:
+        _check_kernel_grid(method, exp_spectrum)
+        kernel._checked_experiment = (exp_spectrum, grid)
 
     guess_spectrum = exp_spectrum.copy()
     guess_spectrum.y[0].components[:] = 0  # Initialize guess spectrum with zeros
@@ -662,9 +748,43 @@ def _generate_distribution_spectrum(
 
     if processor is not None:
         _update_processors_from_LMFIT_params(params, [processor])
-        guess_spectrum = processor.apply_operations(dataset=guess_spectrum).real
+        guess_spectrum = _apply_processor_on_centered_time(processor, guess_spectrum)
 
     return guess_spectrum
+
+
+def _apply_processor_on_centered_time(processor, spectrum):
+    """Apply the signal processor to a spectrum on the experiment dimension. The
+    apodization windows are symmetric about zero time, and convolve the spectrum only
+    when the reciprocal (time) coordinates are centred at zero, as for the dimensions
+    of a simulation. The dimension of an experiment, in general, holds no reciprocal
+    coordinates offset and may run in either direction, so the operations are applied
+    on a simulation-like dimension of the same grid, and the result is placed back on
+    the experiment dimension."""
+    exp_dim = spectrum.x[0]
+    dim = exp_dim.copy()
+    if dim.coordinates.unit.physical_type == "dimensionless":
+        dim.to("Hz", "nmr_frequency_ratio")
+    coords = dim.coordinates.to("Hz").value
+    count = coords.size
+    increment = abs(coords[1] - coords[0])
+    descending = coords[1] < coords[0]
+
+    sim_dim = cp.LinearDimension(
+        count=count,
+        increment=f"{increment} Hz",
+        coordinates_offset=f"{coords.min() + (count // 2) * increment} Hz",
+        complex_fft=True,
+        reciprocal={"coordinates_offset": f"{-1 / (2 * increment)} s"},
+    )
+    y = spectrum.y[0].components[0]
+    y = y[::-1] if descending else y
+    temp = cp.CSDM(dimensions=[sim_dim], dependent_variables=[cp.as_dependent_variable(y)])
+    res = processor.apply_operations(dataset=temp).real.y[0].components[0]
+
+    out = spectrum.copy()
+    out.y[0].components[0] = res[::-1] if descending else res
+    return out
 
 
 def LMFIT_min_function_dist(

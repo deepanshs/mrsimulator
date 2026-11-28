@@ -183,6 +183,19 @@ class SpinSystem(Parseable):
                 raise ValueError("All entries must be of type `Coupling`.")
         return list(v)
 
+    def check_coupling_site_indexes(self):
+        """Raise a ValueError if the site indexes of a coupling do not refer to the
+        sites of the spin system. The sites and couplings may be assigned in any
+        order, so the check is made when the spin system is simulated."""
+        n_sites = len(self.sites)
+        for item in self.couplings:
+            index = item.site_index
+            if index is not None and not all(0 <= i < n_sites for i in index):
+                raise ValueError(
+                    f"The site_index {list(index)} of the coupling is not within the "
+                    f"{n_sites} sites of the spin system."
+                )
+
     def simplify(self):
         """Simplifies user-defined spin systems into irreducible spin system objects.
 

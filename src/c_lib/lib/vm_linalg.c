@@ -26,8 +26,17 @@ void vm_haeberlen_components(int n, double *expr_base_p, double *expr_base_q,
     p_prime = cblas_ddot(4, basis_rho_p, 1, expr_base_p++, n);
     q_prime = cblas_ddot(6, basis_rho_q, 1, expr_base_q++, n);
 
+    // zero tensor
+    if (p_prime <= 0.0) {
+      *param++ = 0.0;
+      *param++ = 0.0;
+      continue;
+    }
+
     temp = sqrt(p_prime);
     arg = q_prime / (p_prime * temp);
+    // round-off for axially symmetric tensors can give |arg| > 1
+    arg = (arg > 1.0) ? 1.0 : ((arg < -1.0) ? -1.0 : arg);
     a_cos = acos(arg) / 3.0;
     status = a_cos < 0.5235987756;  // pi / 6
 

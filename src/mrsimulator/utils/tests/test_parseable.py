@@ -79,3 +79,21 @@ def test_reduced_dict():
     obj = {"foo": "300 rad", "bar": "300 ppm"}
     pr = ParseableTestClass.parse_dict_with_units(obj)
     assert pr.reduced_dict() == {"foo": 300, "bar": 0.03}
+
+
+def test_parse_dict_with_units_does_not_modify_the_input():
+    """parse_dict_with_units leaves the given dictionary unchanged."""
+    from copy import deepcopy
+
+    from mrsimulator.method.query import Rotation
+    from mrsimulator.spin_system.tensors import AntisymmetricTensor
+    from mrsimulator.spin_system.tensors import SymmetricTensor
+
+    for cls, py_dict in [
+        (SymmetricTensor, {"zeta": "10 ppm", "eta": 0.1, "alpha": "30 deg"}),
+        (AntisymmetricTensor, {"zeta": "10 ppm", "alpha": "30 deg"}),
+        (Rotation, {"angle": "90 deg", "phase": "10 deg"}),
+    ]:
+        original = deepcopy(py_dict)
+        cls.parse_dict_with_units(py_dict)
+        assert py_dict == original, cls.__name__

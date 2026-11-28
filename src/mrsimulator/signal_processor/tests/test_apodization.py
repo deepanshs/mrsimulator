@@ -287,3 +287,219 @@ def test_2D_area():
 def test_MultiDimensionApodization_class():
     a = sp.apodization.MultiDimensionApodization()
     assert a.function == "apodization"
+
+
+def test_TopHat_mixed_units():
+    """Each edge keeps its own unit, and json keeps both units."""
+    test_dataset = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(500))],
+        dimensions=[cp.LinearDimension(500, "1 ms")],
+    )
+    top_hat = sp.apodization.TopHat(rising_edge="0.1 s", falling_edge="400 ms")
+    assert str(top_hat.property_units["rising_edge"]) == "s"
+    assert str(top_hat.property_units["falling_edge"]) == "ms"
+    assert top_hat.json()["rising_edge"] == "0.1 s"
+    assert top_hat.json()["falling_edge"] == "400.0 ms"
+
+    processor = sp.SignalProcessor(operations=[top_hat])
+    out = processor.apply_operations(test_dataset.copy())
+    expected = np.zeros(500)
+    expected[100:400] = 1
+    assert np.allclose(out.y[0].components[0], expected)
+
+    # no edges selects the full window
+    processor = sp.SignalProcessor(operations=[sp.apodization.TopHat()])
+    out = processor.apply_operations(test_dataset.copy())
+    assert np.allclose(out.y[0].components[0], 1)
+
+
+def _time_domain_fid(n=2**16, dt_us=10.0):
+    """Two-sided constant signal, whose spectrum is the Fourier transform of the
+    apodization window."""
+    return cp.CSDM(
+        dimensions=[cp.LinearDimension(n, f"{dt_us} us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.ones(n, dtype=complex))],
+    )
+
+
+def _spectrum(op):
+    """Spectrum of the simulated delta line (1H at 0 ppm) after apodization in the
+    time domain; (frequency in Hz, complex amplitude)."""
+    processor = sp.SignalProcessor(operations=[sp.IFFT(), op, sp.FFT()])
+    out = processor.apply_operations(dataset=sim.methods[0].simulation.copy())
+    return freqHz, out.y[0].components[0]
+
+
+def _fwhm(x, y):
+    above = x[y >= y.max() / 2]
+    return above.max() - above.min() + abs(x[1] - x[0])
+
+
+def test_SkewedGaussian_zero_skew_is_Gaussian():
+    """With zero skew, the skewed Gaussian window is the Gaussian window of the same
+    FWHM, with unit amplitude at time zero."""
+    fid = _time_domain_fid()
+    gauss = sp.apodization.Gaussian(FWHM="100 Hz").operate(fid.copy())
+    skewed = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=0).operate(fid.copy())
+    assert np.allclose(skewed.y[0].components[0], gauss.y[0].components[0])
+
+
+def test_SkewedGaussian_unit_independent():
+    """The window does not depend on the unit the FWHM is given in."""
+    fid = _time_domain_fid()
+    a = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=2).operate(fid.copy())
+    b = sp.apodization.SkewedGaussian(FWHM="0.1 kHz", skew=2).operate(fid.copy())
+    assert np.allclose(a.y[0].components[0], b.y[0].components[0])
+
+
+def test_SkewedGaussian_lineshape():
+    """The apodized delta line is a skew normal line: real, of area equal to the
+    Gaussian line, with the FWHM set by the FWHM argument at zero skew, and skewed
+    towards higher frequencies for a positive skew."""
+    x, y_gauss = _spectrum(sp.apodization.Gaussian(FWHM="100 Hz"))
+    x, y0 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=0))
+    x, y3 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=3))
+    x, ym3 = _spectrum(sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=-3))
+
+    assert np.allclose(_fwhm(x, y0.real), 100.0, rtol=0.03)
+    for y in [y0, y3, ym3]:
+        assert np.allclose(y.imag, 0, atol=1e-6 * y.real.max())
+        assert np.all(y.real > -1e-6 * y.real.max())
+        assert np.allclose(y.real.sum(), y_gauss.real.sum())
+
+    def third_moment(y):
+        p = y.real / y.real.sum()
+        mean = (p * x).sum()
+        return (p * (x - mean) ** 3).sum()
+
+    assert third_moment(y3) > 0
+    assert third_moment(ym3) < 0
+    assert np.allclose(third_moment(y3), -third_moment(ym3))
+    assert abs(third_moment(y0)) < 1e-3 * abs(third_moment(y3))
+
+
+def test_SkewedGaussian_real_dataset():
+    """A complex window applied to a real-valued dataset returns the complex product
+    instead of failing on the in-place cast."""
+    n = 256
+    dataset = cp.CSDM(
+        dimensions=[cp.LinearDimension(n, "10 us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.ones(n))],
+    )
+    assert dataset.y[0].components.dtype == np.float64
+    op = sp.apodization.SkewedGaussian(FWHM="100 Hz", skew=2)
+    out = op.operate(dataset.copy())
+    expected = op.fn(dataset.x[0].coordinates)
+    assert np.iscomplexobj(out.y[0].components)
+    assert np.allclose(out.y[0].components[0], expected)
+
+    # a real window keeps the real dtype
+    out = sp.apodization.Gaussian(FWHM="100 Hz").operate(dataset.copy())
+    assert out.y[0].components.dtype == np.float64
+
+
+def test_TopHat_edge_without_unit_takes_unit_of_other_edge():
+    """An edge given as a number takes the unit of the other edge, as in v1.0.1, where
+    TopHat(rising_edge="2 ms", falling_edge="5 ms") was serialized with a bare number
+    for one of the edges."""
+    dataset = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(10))],
+        dimensions=[cp.LinearDimension(10, "0.001 s")],  # 0 to 9 ms, in seconds
+    )
+    expected = np.zeros(10)
+    expected[2:5] = 1
+
+    old_file = {
+        "dim_index": 0,
+        "rising_edge": 2.0,
+        "falling_edge": "5.0 ms",
+        "function": "apodization",
+        "type": "TopHat",
+    }
+    for op in [
+        sp.apodization.TopHat.parse_dict_with_units(old_file),
+        sp.apodization.TopHat(rising_edge=2.0, falling_edge="5 ms"),
+        sp.apodization.TopHat(rising_edge="2 ms", falling_edge=5.0),
+        sp.apodization.TopHat(rising_edge="2 ms", falling_edge="0.005 s"),
+    ]:
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], expected), op.json()
+
+    # without any unit, the edges are in the unit of the dimension
+    out = sp.apodization.TopHat(rising_edge=0.002, falling_edge=0.005).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], expected)
+
+
+def test_apodization_default_FWHM_is_no_op():
+    """The default FWHM of 0 leaves the dataset unchanged, for a dimension of any
+    unit."""
+    dataset = cp.CSDM(
+        dimensions=[cp.LinearDimension(64, "10 us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.arange(64) * (1 + 0.5j))],
+    )
+    for op in [
+        sp.apodization.Gaussian(),
+        sp.apodization.Exponential(),
+        sp.apodization.SkewedGaussian(),
+        sp.apodization.SkewedGaussian(skew=2),
+        sp.apodization.Gaussian(FWHM=0.0),
+        sp.apodization.Exponential(FWHM=0.0),
+        sp.apodization.SkewedGaussian(FWHM=0.0, skew=-1),
+    ]:
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components, dataset.y[0].components), op.json()
+
+
+def test_Mask_types_and_json():
+    """The mask is a list, an array, or a number, and is serialized as a list."""
+    dataset = cp.as_csdm(np.ones(8))
+    mask = np.arange(8) / 8.0
+    for value in [mask, list(mask)]:
+        op = sp.apodization.Mask(mask=value)
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], mask)
+
+        py_dict = op.json()
+        assert np.allclose(py_dict["mask"], mask)
+        assert isinstance(py_dict["mask"], list)
+        out = sp.apodization.Mask.parse_dict_with_units(py_dict).operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], mask)
+
+    out = sp.apodization.Mask(mask=2.0).operate(dataset.copy())
+    assert np.allclose(out.y[0].components[0], 2.0)
+
+    processor = sp.SignalProcessor(operations=[sp.apodization.Mask(mask=mask)])
+    assert sp.SignalProcessor.parse_dict_with_units(processor.json()) is not None
+
+
+def test_TopHat_None_edges():
+    """An edge of None is unbounded, as documented."""
+    dataset = cp.as_csdm(np.ones(8))
+    out = sp.apodization.TopHat(rising_edge=None, falling_edge=4.0).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], [1, 1, 1, 1, 0, 0, 0, 0])
+    out = sp.apodization.TopHat(rising_edge=2.0, falling_edge=None).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], [0, 0, 1, 1, 1, 1, 1, 1])
+
+
+def test_apodization_negative_dim_index():
+    """A negative dim_index counts from the last dimension."""
+    def dataset():
+        return cp.CSDM(
+            dimensions=[
+                cp.LinearDimension(6, "1 s", complex_fft=True),
+                cp.LinearDimension(4, "2 s", complex_fft=True),
+            ],
+            dependent_variables=[cp.as_dependent_variable(np.ones((4, 6)))],
+        )
+
+    for negative, positive in [(-1, 1), (-2, 0)]:
+        a = sp.apodization.Gaussian(FWHM="0.1 Hz", dim_index=negative).operate(dataset())
+        b = sp.apodization.Gaussian(FWHM="0.1 Hz", dim_index=positive).operate(dataset())
+        assert np.allclose(a.y[0].components, b.y[0].components)
+        assert not np.allclose(a.y[0].components, 1)

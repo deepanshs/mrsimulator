@@ -352,3 +352,84 @@ def test_parse_dict_to_ev_class():
     json_dict = {"ch1": {"angle": "0.0 rad", "phase": "0.0 rad"}}
 
     assert isinstance(parse_dict_to_ev_class(json_dict), MixingEvent)
+
+
+def test_mixing_event_with_metadata_roundtrip():
+    """MixingEvent with name, label, and description survives a json round trip."""
+    event = MixingEvent(
+        ch1={"angle": np.pi / 2, "phase": 0.1},
+        name="z-filter",
+        label="z-filter label",
+        description="A z-filter.",
+    )
+    assert MixingEvent.parse_dict_with_units(event.json()) == event
+
+    event = RotationEvent(ch1={"angle": np.pi}, label="pi pulse")
+    assert RotationEvent.parse_dict_with_units(event.json()) == event
+
+
+def test_method_with_labelled_mixing_event_roundtrip():
+    """A method with a labelled MixingEvent survives a json round trip."""
+    from mrsimulator.method import Method
+
+    method = Method(
+        channels=["13C"],
+        spectral_dimensions=[
+            {
+                "events": [
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
+                    {"ch1": {"angle": np.pi / 2}, "label": "z-filter"},
+                    {"fraction": 0.5, "transition_queries": [{"ch1": {"P": [-1]}}]},
+                ]
+            }
+        ],
+    )
+    assert Method.parse_dict_with_units(method.json()) == method
+
+
+def test_unknown_freq_contrib():
+    """An unrecognized frequency contribution raises an error instead of being
+    silently dropped."""
+    from pydantic.v1 import ValidationError
+
+    with pytest.raises(ValidationError, match=".*Shielding1_O.*"):
+        SpectralEvent(freq_contrib=["Shielding1_O"])
+    with pytest.raises(ValidationError, match=".*Foo.*"):
+        SpectralEvent(freq_contrib=["Shielding1_0", "!Foo"])
+
+    event = SpectralEvent(freq_contrib=["Shielding1_0", "Quad2_4"])
+    assert {item.value for item in event.freq_contrib} == {"Shielding1_0", "Quad2_4"}
+
+
+def test_freq_contrib_order():
+    """The frequency contributions are in the order of the enumeration, whatever the
+    order or the form they are given in."""
+    names = ["Quad2_4", "Shielding1_0", "Quad1_2", "Shielding1_2"]
+    a = SpectralEvent(freq_contrib=names)
+    b = SpectralEvent(freq_contrib=names[::-1])
+    assert a == b
+    order = [FREQ_LIST_ALL.index(item.value) for item in a.freq_contrib]
+    assert order == sorted(order)
+
+    default = [item.value for item in SpectralEvent().freq_contrib]
+    assert default == list(FREQ_LIST_ALL)
+
+    c = SpectralEvent(freq_contrib=["!Quad2_2"])
+    d = SpectralEvent(freq_contrib=[k for k in FREQ_LIST_ALL if k != "Quad2_2"])
+    assert c == d
+
+
+def test_mixing_event_at_the_edge_of_a_method():
+    """A mixing event with no spectral or delay event on one of its sides raises a
+    clear error when the pathways are evaluated."""
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.method import Method
+
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    spec = {"transition_queries": [{"ch1": {"P": [-1]}}]}
+    mix = {"ch1": {"angle": np.pi / 2}}
+    for events in [[mix, spec], [spec, mix]]:
+        method = Method(channels=["1H"], spectral_dimensions=[{"events": events}])
+        with pytest.raises(ValueError, match=".*[Mm]ixing.*"):
+            method.get_transition_pathways(sys)

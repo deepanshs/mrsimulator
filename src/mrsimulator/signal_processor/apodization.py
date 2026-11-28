@@ -5,11 +5,13 @@ from typing import List
 from typing import Union
 
 import numpy as np
+from astropy.units import Quantity
 from pydantic.v1 import validator
-from scipy.special import erf
+from scipy.special import dawsn
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
+from .utils import _multiply_components
 from .utils import _str_to_quantity
 from .utils import CONST
 
@@ -45,7 +47,7 @@ class Apodization(ModuleOperation):
             dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
             for index in dv_indexes:
-                dataset.y[index].components *= apodization_vector
+                _multiply_components(dataset.y[index], apodization_vector)
         return dataset
 
 
@@ -70,12 +72,17 @@ class MultiDimensionApodization(ModuleOperation):
         dim_index = self.dim_index
         dim_index = [dim_index] if isinstance(dim_index, int) else dim_index
 
-        apodization_matrix = _get_broadcast_shape(self.fn(), dim_index, ndim)
+        # a number applies to every point.
+        apodization_matrix = np.asarray(self.fn())
+        if apodization_matrix.ndim != 0:
+            apodization_matrix = _get_broadcast_shape(
+                apodization_matrix, dim_index, ndim
+            )
 
         dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
         for index in dv_indexes:
-            dataset.y[index].components *= apodization_matrix
+            _multiply_components(dataset.y[index], apodization_matrix)
         return dataset
 
 
@@ -124,13 +131,11 @@ class Gaussian(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        return (
-            np.ones_like(x)
-            if self.FWHM == 0.0
-            else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
-        )
+        return np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(Apodization):
@@ -178,48 +183,55 @@ class Exponential(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        return (
-            np.ones_like(x)
-            if self.FWHM == 0.0
-            else np.exp(-self.FWHM * np.pi * np.abs(x))
-        )
+        return np.exp(-self.FWHM * np.pi * np.abs(x))
 
 
 class SkewedGaussian(Apodization):
     r"""Apodize dependent variables of CSDM dataset with skewed Gaussian function.
 
-    The apodization function is derived from the skewed Gaussian distribution
+    The apodization function is the Fourier transform of the skew normal
+    distribution,
 
     .. math::
-        f(x) = 2\phi(x)\Phi(\alpha x),
+        p(\nu) = \frac{2}{\omega}\, \phi\left(\frac{\nu}{\omega}\right)
+        \Phi\left(\alpha \frac{\nu}{\omega}\right),
 
-    where :math:`x` are the coordinates of the dimension, and :math:`\phi` is the
-    standard normal probability density function, :math:`\Phi` is the cumulative
-    distribution function, and :math:`\alpha` is a skewing parameter. The apodization
-    function is the fourier transform of the above function which gives another
-    skewed Gaussian function and is given by
-
-    .. math::
-        f(x) = e^{-2  (\pi x)^2}
-        \left(1 + i\text{Erfi}\left(\frac{\text{skew}\cdot x}{\sqrt{2}}\right)\right),
-
-    where skew is given by
+    where :math:`\phi` and :math:`\Phi` are the standard normal probability density
+    and cumulative distribution functions, :math:`\omega` is the scale, and
+    :math:`\alpha` is the shape (skew) parameter. The apodization function is
 
     .. math::
-        \text{skew} = \frac{\alpha}{\sqrt{1+\alpha^2}}
+        f(x) = e^{-2 \pi^2 \omega^2 x^2}
+        \left(1 + i\, \text{erfi}\left(\sqrt{2}\, \pi \delta \omega x\right)
+        \right),
+        \quad \delta = \frac{\alpha}{\sqrt{1 + \alpha^2}},
+
+    where :math:`x` are the coordinates of the dimension, and :math:`\omega` follows
+    from the FWHM of the underlying Gaussian,
+
+    .. math::
+        \omega = \frac{\text{FWHM}}{2\sqrt{2\ln 2}}.
+
+    For zero skew, the function reduces to the Gaussian apodization of the same FWHM.
+    A positive skew gives a line shape with a tail towards higher frequencies. Note,
+    the function is complex and is meant for apodizing a complex (time domain) signal.
 
     See https://en.wikipedia.org/wiki/Skew_normal_distribution
 
     Arguments
     ---------
 
-    sigma:
+    FWHM:
         The full width at half maximum, FWHM, of the reciprocal domain Gaussian
-        function given as a string with a value and a unit. The default value is 0.
+        function (zero skew) given as a string with a value and a unit. The default
+        value is 0.
 
     skew:
-        The skewness defining the asymmetry of the Gaussian distribution
+        The shape parameter, :math:`\alpha`, defining the asymmetry of the line shape.
+        The default value is 0.
 
     dim_index:
         The index of the CSDM dimension along which the operation is applied. The
@@ -232,10 +244,11 @@ class SkewedGaussian(Apodization):
     Example
     -------
 
-    >>> operation6 = sp.apodization.SkewedGaussian(skew=2, dim_index=0, dv_index=0)
+    >>> operation6 = sp.apodization.SkewedGaussian(FWHM='143.4 Hz', skew=2, dim_index=0)
     """
+
     skew: Union[float, str] = 0
-    FWHM: Union[float, str] = "2.354820045030949 Hz"
+    FWHM: Union[float, str] = 0
     property_units: Dict = {"FWHM": CONST}
 
     @validator("FWHM")
@@ -243,12 +256,21 @@ class SkewedGaussian(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
-        sigma = self.FWHM / 2.354820045030949
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        prob_func = [np.exp(-(0.5) * (sigma * j) ** 2) for j in x]
-        cum_prob_func = [0.5 + 0.5 * erf(self.skew * j / np.sqrt(2)) for j in x]
-        sg = np.asarray([a * b for a, b in zip(prob_func, cum_prob_func)])
-        return np.ones_like(x) if self.FWHM == 0.0 else sg
+
+        omega = self.FWHM / 2.354820045030949
+        delta = self.skew / np.sqrt(1.0 + self.skew**2)
+        arg = np.pi * omega * np.asarray(x, dtype=float)
+        gauss = np.exp(-2.0 * arg**2)
+
+        # erfi(y) = (2/sqrt(pi)) exp(y^2) D(y), where D is the Dawson function. The
+        # product with the Gaussian, exp(-2 arg^2 (1 - delta^2)) D(y), stays finite.
+        y = np.sqrt(2.0) * delta * arg
+        norm = 2.0 / np.sqrt(np.pi)
+        skew_part = norm * np.exp(-2.0 * arg**2 * (1.0 - delta**2)) * dawsn(y)
+        return gauss + 1j * skew_part
 
 
 class TopHat(Apodization):
@@ -303,16 +325,24 @@ class TopHat(Apodization):
     def str_to_quantity_u(cls, v, values):
         return _str_to_quantity(v, values, "falling_edge")
 
+    def _coordinates_for_edge(self, x, edge):
+        """Coordinates x in the unit of the given edge. An edge without a unit takes
+        the unit of the other edge, and when neither edge has a unit, the edges are
+        compared with the coordinates in the unit of the dimension."""
+        other = "falling_edge" if edge == "rising_edge" else "rising_edge"
+        for key in [edge, other]:
+            unit = self.property_units.get(key, CONST)
+            if not isinstance(unit, Quantity):
+                return self.get_coordinates_in_units(x, unit=1.0 * unit)
+        return x.value
+
     def fn(self, x):
-        if "falling_edge" in self.property_units:
-            unit = 1 * self.property_units["falling_edge"]
-        if "rising_edge" in self.property_units:
-            unit = 1 * self.property_units["rising_edge"]
-        x = self.get_coordinates_in_units(x, unit=1.0 * unit)
-        screen = np.where(
-            np.logical_and(x >= self.rising_edge, x < self.falling_edge), 1, 0
-        )
-        return screen
+        # an edge of None is unbounded.
+        rising_edge = -np.inf if self.rising_edge is None else self.rising_edge
+        falling_edge = np.inf if self.falling_edge is None else self.falling_edge
+        rising = self._coordinates_for_edge(x, "rising_edge") >= rising_edge
+        falling = self._coordinates_for_edge(x, "falling_edge") < falling_edge
+        return np.where(np.logical_and(rising, falling), 1, 0)
 
 
 class TypedArray(np.ndarray):
@@ -372,4 +402,4 @@ class Mask(MultiDimensionApodization):
         arbitrary_types_allowed = True
 
     def fn(self):
-        return self.mask
+        return np.asarray(self.mask)

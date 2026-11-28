@@ -177,3 +177,14 @@ def test_generic():
         "label": "1H",
     }
     assertion(csdm, res, "7")
+
+
+def test_flatten_dict_nested():
+    """The keys of every level are joined."""
+    from mrsimulator.utils import flatten_dict
+
+    assert flatten_dict({"a": {"b": {"c": 1}}, "d": 2}) == {"a.b.c": 1, "d": 2}
+    assert flatten_dict({"a": {"b": 1, "c": {"d": {"e": 3}}}}) == {
+        "a.b": 1,
+        "a.c.d.e": 3,
+    }

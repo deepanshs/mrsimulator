@@ -502,3 +502,74 @@ __email__ = "giammar.7@buckeyemail.osu.edu"
 #     )
 
 #     return method3.summary()
+
+
+def _mixing_method(dims, channels=("13C", "1H")):
+    from mrsimulator.method import Method
+
+    return Method(channels=list(channels), spectral_dimensions=dims)
+
+
+def _spec(fraction=1.0):
+    return {"fraction": fraction, "transition_queries": [{"ch1": {"P": [-1]}}]}
+
+
+def test_plot_mixing_events_on_different_channels():
+    """Mixing events which define different channels must plot; a channel that a mixing
+    event does not define has zero rotation."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import numpy as np
+    from matplotlib import pyplot as plt
+
+    method = _mixing_method(
+        [
+            {
+                "events": [
+                    _spec(0.5),
+                    {"ch1": {"angle": np.pi / 2}, "ch2": {"angle": np.pi}},
+                    _spec(0.5),
+                    {"ch1": {"angle": np.pi / 2}},
+                    _spec(0.0),
+                ]
+            }
+        ]
+    )
+    fig = method.plot()
+    assert fig is not None
+    plt.close("all")
+
+    # only the second channel is rotated by a mixing event
+    method = _mixing_method(
+        [{"events": [_spec(0.5), {"ch2": {"angle": np.pi}}, _spec(0.5)]}]
+    )
+    fig = method.plot()
+    assert fig is not None
+    plt.close("all")
+
+
+def test_plot_spectral_dimension_boundary_within_mixing_group():
+    """A spectral dimension boundary inside a group of consecutive mixing events."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import numpy as np
+    from matplotlib import pyplot as plt
+
+    method = _mixing_method(
+        [
+            {
+                "events": [
+                    _spec(),
+                    {"ch1": {"angle": np.pi / 2}},
+                    {"ch1": {"angle": np.pi / 4}},
+                ]
+            },
+            {"events": [{"ch1": {"angle": np.pi / 2}}, _spec()]},
+        ],
+        channels=("13C",),
+    )
+    fig = method.plot()
+    assert fig is not None
+    plt.close("all")

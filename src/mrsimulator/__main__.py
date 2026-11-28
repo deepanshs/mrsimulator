@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import csdmpy as cp
 import matplotlib.pyplot as plt
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 from . import __version__
 from . import load
 from .benchmark import Benchmark
+from .signal_processor import SignalProcessor
 
 
 def run_benchmark(args):
@@ -22,19 +24,20 @@ def run_full_simulator(args):
     """Read, run, and save the output of .mrsim file"""
     sim, signal_processor, _ = load(args.input)
     sim.run(n_jobs=args.n_jobs)
+    # the methods without a signal processor are saved unprocessed.
+    n_missing = len(sim.methods) - len(signal_processor)
+    signal_processor = list(signal_processor) + [SignalProcessor()] * max(n_missing, 0)
     proc_data = []
     for proc, mth in zip(signal_processor, sim.methods):
         proc_data.append(proc.apply_operations(mth.simulation))
 
     outfile = args.output or args.input
-    segments = outfile.split(".")
-    outname, ext = "".join(segments[:-1]), segments[-1]
-    if ext not in ["csdf"]:
-        outname = f"{outname}.{ext}"
-        ext = "csdf"
+    outname, ext = os.path.splitext(outfile)
+    if ext != ".csdf":
+        outname = outfile
 
     for i, f in enumerate(proc_data):
-        f.save(f"{outname}_{i}.{ext}")
+        f.save(f"{outname}_{i}.csdf")
 
         if args.plot:
             cp.plot(f.real)
@@ -42,6 +45,7 @@ def run_full_simulator(args):
 
 
 def run():
+    args = parser.parse_args()
     if args.input is not None:
         run_full_simulator(args)
 
@@ -68,6 +72,7 @@ parser.add_argument(
     "--n_jobs",
     type=int,
     nargs="?",
+    const=1,
     default=1,
     help="number of processors for parallel computation.",
 )
@@ -85,7 +90,6 @@ parser.add_argument(
     action="store_true",
     help="run simulation benchmark. Default is False.",
 )
-args = parser.parse_args()
 
 
 if __name__ == "__main__":

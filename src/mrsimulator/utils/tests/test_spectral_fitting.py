@@ -383,3 +383,235 @@ def test_distribution():
     assert params["ext_czjzek_2_eps"] == 0.5
     assert params["ext_czjzek_2_mean_isotropic_chemical_shift"] == 0.0
     assert np.allclose(params["ext_czjzek_2_abundance"], 100.0 / 3.0)
+
+
+def _sim_with_experiments(n_methods):
+    site = Site(isotope="1H", shielding_symmetric={"zeta": 5, "eta": 0.1})
+    methods = [
+        BlochDecaySpectrum(
+            channels=["1H"],
+            rotor_frequency=1e3 * (i + 1),
+            spectral_dimensions=[{"count": 64, "spectral_width": 2e4}],
+        )
+        for i in range(n_methods)
+    ]
+    sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=methods)
+    sim.run()
+    for mth in sim.methods:
+        mth.experiment = mth.simulation.real
+    return sim
+
+
+def test_default_processors():
+    """processors=None (the documented default) applies no post-simulation processing
+    to every method."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+
+    diff = sf.LMFIT_min_function(params, sim)
+    assert diff.size == 2 * 64
+    assert np.allclose(diff, 0)
+
+    fits = sf.bestfit(sim)
+    assert len(fits) == 2
+    for fit, mth in zip(fits, sim.methods):
+        assert np.allclose(fit.y[0].components[0], mth.experiment.y[0].components[0])
+
+    res = sf.residuals(sim)
+    assert len(res) == 2
+    assert all(np.allclose(r.y[0].components[0], 0) for r in res)
+
+
+def test_processors_length_mismatch():
+    """A number of processors different from the number of methods raises an error
+    instead of silently fitting a subset of the methods."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+    processor = sp.SignalProcessor(operations=[sp.Scale(factor=1)])
+
+    e = ".*number of signal processors.*"
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim, processor)
+    with pytest.raises(ValueError, match=e):
+        sf.bestfit(sim, [processor])
+    with pytest.raises(ValueError, match=e):
+        sf.residuals(sim, [processor] * 3)
+
+
+def test_antisymmetric_tensor_params():
+    """LMFIT parameters for antisymmetric shielding and J tensors are created and
+    update the simulator."""
+    from mrsimulator import Coupling
+
+    site = Site(
+        isotope="13C",
+        shielding_antisymmetric={"zeta": 10, "alpha": 0.1, "beta": 0.2},
+    )
+    coupling = Coupling(
+        site_index=[0, 1], j_antisymmetric={"zeta": 5, "alpha": 0.3, "beta": 0.4}
+    )
+    sys = SpinSystem(sites=[site, Site(isotope="13C")], couplings=[coupling])
+    sim = Simulator(spin_systems=[sys])
+
+    params = sf.make_LMFIT_params(sim)
+    names = list(params.keys())
+    assert "sys_0_site_0_shielding_antisymmetric_zeta" in names
+    assert "sys_0_coupling_0_j_antisymmetric_beta" in names
+
+    params["sys_0_site_0_shielding_antisymmetric_zeta"].value = 12.5
+    params["sys_0_coupling_0_j_antisymmetric_beta"].value = 0.9
+    sf.update_mrsim_obj_from_params(params, sim)
+    assert sim.spin_systems[0].sites[0].shielding_antisymmetric.zeta == 12.5
+    assert sim.spin_systems[0].couplings[0].j_antisymmetric.beta == 0.9
+
+
+def test_abundance_with_spin_systems_and_distribution_models():
+    """With spin systems and distribution models, the abundances sum to 100, and the
+    models are not modified."""
+    sys1 = SpinSystem(sites=[Site(isotope="27Al")], abundance=30)
+    sys2 = SpinSystem(sites=[Site(isotope="27Al")], abundance=20)
+    sim = Simulator(spin_systems=[sys1, sys2])
+    models = [
+        CzjzekDistribution(sigma=1.0, abundance=40),
+        CzjzekDistribution(1.0, 0, 10),
+    ]
+
+    params = sf.make_LMFIT_params(sim, spin_system_models=models)
+    values = params.valuesdict()
+    abundances = [v for k, v in values.items() if k.endswith("_abundance")]
+    assert np.allclose(sum(abundances), 100)
+    assert np.allclose(values["sys_1_abundance"], 20)
+
+    params["czjzek_0_abundance"].value = 25
+    params.update_constraints()
+    values = params.valuesdict()
+    abundances = [v for k, v in values.items() if k.endswith("_abundance")]
+    assert np.allclose(sum(abundances), 100)
+
+    # the models are not modified, so the parameters are the same on a second call
+    assert models[0].abundance == 40 and models[1].abundance == 10
+    params2 = sf.make_LMFIT_params(sim, spin_system_models=models)
+    assert np.allclose(params2["czjzek_0_abundance"].value, 40)
+
+
+def test_make_LMFIT_parameters_alias():
+    """The make_LMFIT_parameters alias forwards every argument."""
+    sim = _sim_with_experiments(1)
+    sim.methods[0] = BlochDecaySpectrum(channels=["1H"], rotor_frequency=1e3)
+    models = [CzjzekDistribution(sigma=1.0, abundance=10)]
+    params = sf.make_LMFIT_parameters(
+        sim, spin_system_models=models, include={"rotor_frequency"}
+    )
+    expected = sf.make_LMFIT_params(
+        sim, spin_system_models=models, include={"rotor_frequency"}
+    )
+    assert list(params.keys()) == list(expected.keys())
+    assert any(k.startswith("mth_") for k in params.keys())
+    assert any(k.startswith("czjzek_") for k in params.keys())
+
+
+def test_sigma_length_mismatch():
+    """A number of sigma values different from the number of methods raises an error
+    instead of silently fitting a subset of the methods."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+
+    with pytest.raises(ValueError, match=".*number of sigma.*"):
+        sf.LMFIT_min_function(params, sim, sigma=[1.0])
+
+    diff = sf.LMFIT_min_function(params, sim, sigma=[1.0, 2.0])
+    assert diff.size == 2 * 64
+
+
+def test_processors_as_tuple():
+    """A tuple of processors is a sequence of processors, one per method."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+    processors = tuple(
+        sp.SignalProcessor(operations=[sp.Scale(factor=1)]) for _ in range(2)
+    )
+    diff = sf.LMFIT_min_function(params, sim, processors)
+    assert diff.size == 2 * 64 and np.allclose(diff, 0)
+    assert len(sf.bestfit(sim, processors)) == 2
+
+
+def test_processor_params_without_processors():
+    """Signal processor parameters with processors=None raise a clear error."""
+    sim = _sim_with_experiments(1)
+    processor = sp.SignalProcessor(
+        operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="100 Hz"), sp.FFT()]
+    )
+    params = sf.make_LMFIT_params(sim, [processor])
+    assert any(k.startswith("SP_") for k in params.keys())
+
+    e = ".*signal processor parameters.*"
+    with pytest.raises(ValueError, match=e):
+        sf.update_mrsim_obj_from_params(params, sim)
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+    # without signal processor parameters, processors=None is fine
+    sf.update_mrsim_obj_from_params(sf.make_LMFIT_params(sim), sim)
+
+
+def test_rotor_frequency_param_index_with_generic_method():
+    """The rotor frequency parameter carries the index of its method in the
+    simulator, also when a generic method precedes a named method."""
+    from mrsimulator.method import Method
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    dim = SpectralDimension(
+        count=64,
+        spectral_width=1e4,
+        events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
+    )
+    generic = Method(channels=["1H"], rotor_frequency=5000, spectral_dimensions=[dim])
+    named = BlochDecaySpectrum(
+        channels=["1H"],
+        rotor_frequency=12000,
+        spectral_dimensions=[{"count": 64, "spectral_width": 1e4}],
+    )
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[Site(isotope="1H")])], methods=[generic, named]
+    )
+    params = sf.make_LMFIT_params(sim, include={"rotor_frequency"})
+    names = [k for k in params.keys() if k.startswith("mth_")]
+    assert names == ["mth_1_rotor_frequency"]
+    assert params["mth_1_rotor_frequency"].value == 12000
+
+    params["mth_1_rotor_frequency"].value = 12050.0
+    sf.update_mrsim_obj_from_params(params, sim)
+    rotor_freq = [m.spectral_dimensions[0].events[0].rotor_frequency for m in sim.methods]
+    assert rotor_freq == [5000, 12050]
+
+
+def test_rotor_frequency_param_of_static_method():
+    """A static method has no rotor frequency parameter, and the rotor frequency
+    parameter of a spinning method is not negative."""
+    methods = [
+        BlochDecaySpectrum(channels=["1H"], rotor_frequency=vr) for vr in [0, 50, 5000]
+    ]
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[Site(isotope="1H")])], methods=methods
+    )
+    params = sf.make_LMFIT_params(sim, include={"rotor_frequency"})
+    names = [k for k in params.keys() if k.startswith("mth_")]
+    assert names == ["mth_1_rotor_frequency", "mth_2_rotor_frequency"]
+    assert params["mth_1_rotor_frequency"].min >= 0
+    assert params["mth_2_rotor_frequency"].min == 4900
+
+
+def test_affine_scale_is_not_a_fit_parameter():
+    """Only the amplitude Scale operation is a fit parameter, not the affine Scale of
+    a dimension, which has the same class name."""
+    processor = sp.SignalProcessor(
+        operations=[sp.affine.Scale(factor=2.0, dim_index=0), sp.Scale(factor=5.0)]
+    )
+    params = sf.make_signal_processor_params([processor])
+    assert list(params.keys()) == ["SP_0_operation_1_Scale_factor"]
+
+    params["SP_0_operation_1_Scale_factor"].value = 7.0
+    sf._update_processors_from_LMFIT_params(params, [processor])
+    assert processor.operations[0].factor == 2.0
+    assert processor.operations[1].factor == 7.0
