@@ -396,3 +396,110 @@ def test_SkewedGaussian_real_dataset():
     # a real window keeps the real dtype
     out = sp.apodization.Gaussian(FWHM="100 Hz").operate(dataset.copy())
     assert out.y[0].components.dtype == np.float64
+
+
+def test_TopHat_edge_without_unit_takes_unit_of_other_edge():
+    """An edge given as a number takes the unit of the other edge, as in v1.0.1, where
+    TopHat(rising_edge="2 ms", falling_edge="5 ms") was serialized with a bare number
+    for one of the edges."""
+    dataset = cp.CSDM(
+        dependent_variables=[cp.as_dependent_variable(np.ones(10))],
+        dimensions=[cp.LinearDimension(10, "0.001 s")],  # 0 to 9 ms, in seconds
+    )
+    expected = np.zeros(10)
+    expected[2:5] = 1
+
+    old_file = {
+        "dim_index": 0,
+        "rising_edge": 2.0,
+        "falling_edge": "5.0 ms",
+        "function": "apodization",
+        "type": "TopHat",
+    }
+    for op in [
+        sp.apodization.TopHat.parse_dict_with_units(old_file),
+        sp.apodization.TopHat(rising_edge=2.0, falling_edge="5 ms"),
+        sp.apodization.TopHat(rising_edge="2 ms", falling_edge=5.0),
+        sp.apodization.TopHat(rising_edge="2 ms", falling_edge="0.005 s"),
+    ]:
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], expected), op.json()
+
+    # without any unit, the edges are in the unit of the dimension
+    out = sp.apodization.TopHat(rising_edge=0.002, falling_edge=0.005).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], expected)
+
+
+def test_apodization_default_FWHM_is_no_op():
+    """The default FWHM of 0 leaves the dataset unchanged, for a dimension of any
+    unit."""
+    dataset = cp.CSDM(
+        dimensions=[cp.LinearDimension(64, "10 us", complex_fft=True)],
+        dependent_variables=[cp.as_dependent_variable(np.arange(64) * (1 + 0.5j))],
+    )
+    for op in [
+        sp.apodization.Gaussian(),
+        sp.apodization.Exponential(),
+        sp.apodization.SkewedGaussian(),
+        sp.apodization.SkewedGaussian(skew=2),
+        sp.apodization.Gaussian(FWHM=0.0),
+        sp.apodization.Exponential(FWHM=0.0),
+        sp.apodization.SkewedGaussian(FWHM=0.0, skew=-1),
+    ]:
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components, dataset.y[0].components), op.json()
+
+
+def test_Mask_types_and_json():
+    """The mask is a list, an array, or a number, and is serialized as a list."""
+    dataset = cp.as_csdm(np.ones(8))
+    mask = np.arange(8) / 8.0
+    for value in [mask, list(mask)]:
+        op = sp.apodization.Mask(mask=value)
+        out = op.operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], mask)
+
+        py_dict = op.json()
+        assert np.allclose(py_dict["mask"], mask)
+        assert isinstance(py_dict["mask"], list)
+        out = sp.apodization.Mask.parse_dict_with_units(py_dict).operate(dataset.copy())
+        assert np.allclose(out.y[0].components[0], mask)
+
+    out = sp.apodization.Mask(mask=2.0).operate(dataset.copy())
+    assert np.allclose(out.y[0].components[0], 2.0)
+
+    processor = sp.SignalProcessor(operations=[sp.apodization.Mask(mask=mask)])
+    assert sp.SignalProcessor.parse_dict_with_units(processor.json()) is not None
+
+
+def test_TopHat_None_edges():
+    """An edge of None is unbounded, as documented."""
+    dataset = cp.as_csdm(np.ones(8))
+    out = sp.apodization.TopHat(rising_edge=None, falling_edge=4.0).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], [1, 1, 1, 1, 0, 0, 0, 0])
+    out = sp.apodization.TopHat(rising_edge=2.0, falling_edge=None).operate(
+        dataset.copy()
+    )
+    assert np.allclose(out.y[0].components[0], [0, 0, 1, 1, 1, 1, 1, 1])
+
+
+def test_apodization_negative_dim_index():
+    """A negative dim_index counts from the last dimension."""
+    def dataset():
+        return cp.CSDM(
+            dimensions=[
+                cp.LinearDimension(6, "1 s", complex_fft=True),
+                cp.LinearDimension(4, "2 s", complex_fft=True),
+            ],
+            dependent_variables=[cp.as_dependent_variable(np.ones((4, 6)))],
+        )
+
+    for negative, positive in [(-1, 1), (-2, 0)]:
+        a = sp.apodization.Gaussian(FWHM="0.1 Hz", dim_index=negative).operate(dataset())
+        b = sp.apodization.Gaussian(FWHM="0.1 Hz", dim_index=positive).operate(dataset())
+        assert np.allclose(a.y[0].components, b.y[0].components)
+        assert not np.allclose(a.y[0].components, 1)

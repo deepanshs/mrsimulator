@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from . import __version__
 from . import load
 from .benchmark import Benchmark
+from .signal_processor import SignalProcessor
 
 
 def run_benchmark(args):
@@ -23,6 +24,9 @@ def run_full_simulator(args):
     """Read, run, and save the output of .mrsim file"""
     sim, signal_processor, _ = load(args.input)
     sim.run(n_jobs=args.n_jobs)
+    # the methods without a signal processor are saved unprocessed.
+    n_missing = len(sim.methods) - len(signal_processor)
+    signal_processor = list(signal_processor) + [SignalProcessor()] * max(n_missing, 0)
     proc_data = []
     for proc, mth in zip(signal_processor, sim.methods):
         proc_data.append(proc.apply_operations(mth.simulation))
@@ -68,6 +72,7 @@ parser.add_argument(
     "--n_jobs",
     type=int,
     nargs="?",
+    const=1,
     default=1,
     help="number of processors for parallel computation.",
 )

@@ -264,3 +264,70 @@ def test_kernel_grid_checked_once_per_experiment(monkeypatch):
     method.experiment = _experiment("27Al", 9.4, 256, 100e3, False, -1)
     with pytest.raises(ValueError, match="get_spectral_dimensions"):
         sf._generate_distribution_spectrum(params, kernel, [model])
+
+
+def test_kernel_grid_checked_again_when_method_grid_changes():
+    """The kernel grid check is repeated when the spectral grid of the kernel method
+    changes, for the same experiment object."""
+    exp = _experiment("27Al", 9.4, 256, 100e3, True, 1)
+    method = _method_for_experiment(
+        BlochDecayCTSpectrum, "27Al", exp, rotor_frequency=0
+    )
+    pos = (np.linspace(0, 8e6, 5), np.linspace(0, 1, 3))
+    kernel = LineShapeKernel(
+        method=method, pos=pos, config=ConfigSimulator(number_of_sidebands=1)
+    )
+    kernel.generate_lineshape(tensor_type="quadrupolar")
+    model = CzjzekDistribution(sigma=1.5e6, mean_isotropic_chemical_shift=60.0)
+    params = sf.make_LMFIT_params(spin_system_models=[model])
+    sf._generate_distribution_spectrum(params, kernel, [model])
+
+    kernel.method.spectral_dimensions[0].reference_offset += 20e3
+    with pytest.raises(ValueError, match="get_spectral_dimensions"):
+        sf._generate_distribution_spectrum(params, kernel, [model])
+
+
+@pytest.mark.parametrize("complex_fft, increment_sign", [(True, 1), (False, 1), (False, -1)])
+def test_distribution_spectrum_with_apodization(complex_fft, increment_sign):
+    """The signal processor of a distribution spectrum convolves the line shape,
+    whatever the reciprocal coordinates offset and the convention of the experiment
+    dimension. The apodized spectrum is real and positive, has the area of the
+    spectrum, and equals the circular convolution with a Lorentzian line."""
+    import mrsimulator.signal_processor as sp
+
+    count, sw, fwhm = 512, 100e3, 2000.0
+    exp = _experiment("27Al", 9.4, count, sw, complex_fft, increment_sign)
+    method = _method_for_experiment(
+        BlochDecayCTSpectrum, "27Al", exp, rotor_frequency=0
+    )
+    pos = (np.linspace(0, 8e6, 9), np.linspace(0, 1, 5))
+    kernel = LineShapeKernel(
+        method=method, pos=pos, config=ConfigSimulator(number_of_sidebands=1)
+    )
+    kernel.generate_lineshape(tensor_type="quadrupolar")
+    model = CzjzekDistribution(sigma=1.5e6, mean_isotropic_chemical_shift=20.0)
+
+    params = sf.make_LMFIT_params(spin_system_models=[model])
+    bare = sf._generate_distribution_spectrum(params, kernel, [model])
+    y = bare.y[0].components[0].real
+
+    processor = sp.SignalProcessor(
+        operations=[
+            sp.IFFT(),
+            sp.apodization.Exponential(FWHM=f"{fwhm} Hz"),
+            sp.FFT(),
+        ]
+    )
+    params = sf.make_LMFIT_params(
+        spin_system_models=[model], processors=[processor]
+    )
+    out = sf._generate_distribution_spectrum(params, kernel, [model], processor)
+    res = out.y[0].components[0]
+
+    t = np.fft.fftfreq(count, d=sw / count)
+    ref = np.fft.fft(np.fft.ifft(y) * np.exp(-np.pi * fwhm * np.abs(t))).real
+
+    assert np.allclose(res.imag, 0)
+    np.testing.assert_allclose(res.real, ref, atol=1e-3 * ref.max())
+    # the processed spectrum is on the experiment dimension
+    assert out.x[0] == exp.x[0]

@@ -1,4 +1,4 @@
-import os
+import shutil
 import timeit
 
 import mrsimulator.tests.tests as clib
@@ -6,7 +6,7 @@ import numpy as np
 from mrsimulator import __version__
 from mrsimulator import Simulator
 from mrsimulator.method import Method
-from mrsimulator.method.lib import BlochDecayCentralTransitionSpectrum
+from mrsimulator.method.lib import BlochDecayCTSpectrum
 from mrsimulator.method.lib import BlochDecaySpectrum
 from mrsimulator.utils.collection import single_site_system_generator
 
@@ -94,13 +94,13 @@ def CSA_VAS_method():
 
 
 def quad_static_method():
-    return BlochDecayCentralTransitionSpectrum(
+    return BlochDecayCTSpectrum(
         channels=["17O"], spectral_dimensions=[{"spectral_width": 50000}]
     )
 
 
 def quad_MAS_method():
-    return BlochDecayCentralTransitionSpectrum(
+    return BlochDecayCTSpectrum(
         channels=["17O"],
         rotor_frequency=14000,
         spectral_dimensions=[{"spectral_width": 50000}],
@@ -154,7 +154,7 @@ def time_string(time):
 
 
 def terminal_start_setup():
-    size = os.get_terminal_size().columns
+    size = shutil.get_terminal_size().columns
     delimit = "-"
     print(f"{delimit:-<{size}}")
     left_align = "Computation method"
@@ -168,7 +168,7 @@ def terminal_end_setup(t, n, description):
     t, color = time_string(t)
     end = "\033[0m"
     # end = '' if os_system == 'Windows' else "\033[0m"
-    size = os.get_terminal_size().columns - 15
+    size = shutil.get_terminal_size().columns - 15
     print(f"{end}{description:.<{size}}{color}{t:>15}{end}")
 
 

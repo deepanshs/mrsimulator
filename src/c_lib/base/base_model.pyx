@@ -178,9 +178,13 @@ def core_simulator(method,
     # if np.all(srfiH == 1e12):
     #     n_dim_sidebands[0] = 1
 
-    if srfiH.size == 1 and srfiH[0] == 1e-6 and auto_switch:
-        rair[0] = 0.0
-        n_dim_sidebands[0] = 1
+    # A static spectrum does not depend on the rotor angle. When every event is static
+    # at the same rotor angle, the angle is set to zero, where the frequencies do not
+    # depend on the gamma angle and no gamma averaging is required. This holds for any
+    # number of events and dimensions.
+    if np.all(srfiH == 1e-6) and np.all(rair == rair[0]) and auto_switch:
+        rair[:] = 0.0
+        n_dim_sidebands[:] = 1
 
     # create spectral_dimensions
     dimensions = clib.MRS_create_dimensions(averaging_scheme, &cnt[0],

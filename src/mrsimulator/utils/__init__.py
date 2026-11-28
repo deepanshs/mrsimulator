@@ -49,11 +49,11 @@ def flatten_dict(obj, previous_key=None):
     """Flatten a nested dictionary with keys as obj1.obj2... and so on"""
     result = {}
     for k, v in obj.items():
+        key = f"{previous_key}.{k}" if previous_key is not None else k
         if not isinstance(v, dict):
-            key = f"{previous_key}.{k}" if previous_key is not None else k
             result.update({key: v})
         else:
-            result.update(**flatten_dict(v, previous_key=k))
+            result.update(**flatten_dict(v, previous_key=key))
 
     return result
 

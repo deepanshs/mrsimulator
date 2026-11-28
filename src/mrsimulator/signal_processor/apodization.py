@@ -11,22 +11,12 @@ from scipy.special import dawsn
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
+from .utils import _multiply_components
 from .utils import _str_to_quantity
 from .utils import CONST
 
 __author__ = "Maxwell C. Venetos"
 __email__ = "maxvenetos@gmail.com"
-
-
-def _multiply_components(dependent_variable, window):
-    """Multiply the components of a CSDM dependent variable by the apodization window
-    in place. A complex window applied to real-valued components promotes the
-    components to complex."""
-    components = dependent_variable.components
-    if np.iscomplexobj(window) and not np.iscomplexobj(components):
-        dependent_variable.components = components * window
-    else:
-        components *= window
 
 
 class Apodization(ModuleOperation):
@@ -82,7 +72,12 @@ class MultiDimensionApodization(ModuleOperation):
         dim_index = self.dim_index
         dim_index = [dim_index] if isinstance(dim_index, int) else dim_index
 
-        apodization_matrix = _get_broadcast_shape(self.fn(), dim_index, ndim)
+        # a number applies to every point.
+        apodization_matrix = np.asarray(self.fn())
+        if apodization_matrix.ndim != 0:
+            apodization_matrix = _get_broadcast_shape(
+                apodization_matrix, dim_index, ndim
+            )
 
         dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
@@ -136,13 +131,11 @@ class Gaussian(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
         sigma = self.FWHM / 2.354820045030949
-        return (
-            np.ones_like(x)
-            if self.FWHM == 0.0
-            else np.exp(-2.0 * (np.pi * sigma * x) ** 2)
-        )
+        return np.exp(-2.0 * (np.pi * sigma * x) ** 2)
 
 
 class Exponential(Apodization):
@@ -190,12 +183,10 @@ class Exponential(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        return (
-            np.ones_like(x)
-            if self.FWHM == 0.0
-            else np.exp(-self.FWHM * np.pi * np.abs(x))
-        )
+        return np.exp(-self.FWHM * np.pi * np.abs(x))
 
 
 class SkewedGaussian(Apodization):
@@ -265,9 +256,9 @@ class SkewedGaussian(Apodization):
         return _str_to_quantity(v, values, "FWHM")
 
     def fn(self, x):
+        if self.FWHM == 0.0:  # no apodization, for a dimension of any unit.
+            return np.ones(x.size)
         x = self.get_coordinates_in_units(x, unit=1.0 / self.property_units["FWHM"])
-        if self.FWHM == 0.0:
-            return np.ones_like(x)
 
         omega = self.FWHM / 2.354820045030949
         delta = self.skew / np.sqrt(1.0 + self.skew**2)
@@ -335,16 +326,22 @@ class TopHat(Apodization):
         return _str_to_quantity(v, values, "falling_edge")
 
     def _coordinates_for_edge(self, x, edge):
-        """Coordinates x in the unit of the given edge. An edge without a unit is
+        """Coordinates x in the unit of the given edge. An edge without a unit takes
+        the unit of the other edge, and when neither edge has a unit, the edges are
         compared with the coordinates in the unit of the dimension."""
-        unit = self.property_units.get(edge, CONST)
-        if isinstance(unit, Quantity):
-            return x.value
-        return self.get_coordinates_in_units(x, unit=1.0 * unit)
+        other = "falling_edge" if edge == "rising_edge" else "rising_edge"
+        for key in [edge, other]:
+            unit = self.property_units.get(key, CONST)
+            if not isinstance(unit, Quantity):
+                return self.get_coordinates_in_units(x, unit=1.0 * unit)
+        return x.value
 
     def fn(self, x):
-        rising = self._coordinates_for_edge(x, "rising_edge") >= self.rising_edge
-        falling = self._coordinates_for_edge(x, "falling_edge") < self.falling_edge
+        # an edge of None is unbounded.
+        rising_edge = -np.inf if self.rising_edge is None else self.rising_edge
+        falling_edge = np.inf if self.falling_edge is None else self.falling_edge
+        rising = self._coordinates_for_edge(x, "rising_edge") >= rising_edge
+        falling = self._coordinates_for_edge(x, "falling_edge") < falling_edge
         return np.where(np.logical_and(rising, falling), 1, 0)
 
 
@@ -405,4 +402,4 @@ class Mask(MultiDimensionApodization):
         arbitrary_types_allowed = True
 
     def fn(self):
-        return self.mask
+        return np.asarray(self.mask)

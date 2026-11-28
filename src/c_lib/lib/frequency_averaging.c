@@ -87,7 +87,7 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
   double *freq, *phase_ptr, *amps = dimensions->freq_amplitude;
   double *amps_real = scheme->amps_real, *amps_imag = scheme->amps_imag;
 
-  bool delta_interpolation = false;
+  bool delta_interpolation;
   bool user_defined = scheme->user_defined, interpolation = scheme->interpolation;
   MRS_plan *planA = dimensions->events->plan;
 
@@ -117,14 +117,19 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     freq = &dimensions->local_frequency[ptr];
     phase_ptr = &(((double *)exp_I_phase)[2 * ptr]);
 
-    if (absd(*freq - freq[nt]) < TOL && absd(*freq - freq[npts - 1]) < TOL)
-      if (interpolation) delta_interpolation = true;
+    // The pattern is a delta function when the frequencies at all orientations are
+    // the same, not just at the three vertexes of the octant.
+    array_min_max(scheme->total_orientations, freq, &freq_min, &freq_max);
+    delta_interpolation = interpolation && (freq_max - freq_min < TOL);
+    // a user-defined sampling without a triangle mesh is binned.
+    if (user_defined && scheme->positions == NULL) delta_interpolation = false;
 
     if (delta_interpolation) {
-      offset_0 += *freq;
       for (i = 0; i < planA->number_of_sidebands; i++) {
-        offset = offset_0 + planA->vr_freq[i];
-        if ((int)offset >= 0 && (int)offset <= dimensions->count) {
+        offset = offset_0 + *freq + planA->vr_freq[i];
+        // the delta function interpolation reaches the window from up to two bins
+        // outside either edge, and clips the rest.
+        if (offset > -2.0 && offset < (double)dimensions->count + 2.0) {
           k1 = i * scheme->total_orientations;
           address = 0;
           j = 0;
@@ -136,11 +141,22 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
                                amps_imag);
           }
           while (j++ < planA->n_octants) {
-            octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
-                                         dimensions->count, spec, iso_intrp);
-            if (scheme->is_complex) {
-              octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
-                                           dimensions->count, spec + 1, iso_intrp);
+            if (user_defined) {
+              genericDeltaInterpolation(&offset, &amps_real[address],
+                                        scheme->position_size, scheme->positions,
+                                        dimensions->count, spec, iso_intrp);
+              if (scheme->is_complex) {
+                genericDeltaInterpolation(&offset, &amps_imag[address],
+                                          scheme->position_size, scheme->positions,
+                                          dimensions->count, spec + 1, iso_intrp);
+              }
+            } else {
+              octahedronDeltaInterpolation(nt, &offset, &amps_real[address], 1,
+                                           dimensions->count, spec, iso_intrp);
+              if (scheme->is_complex) {
+                octahedronDeltaInterpolation(nt, &offset, &amps_imag[address], 1,
+                                             dimensions->count, spec + 1, iso_intrp);
+              }
             }
             address += npts;
           }
@@ -151,7 +167,6 @@ void one_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
     else {
       // Skip a sideband only when its entire anisotropic pattern lies outside the
       // spectral window, not when just its isotropic center does.
-      array_min_max(scheme->total_orientations, freq, &freq_min, &freq_max);
       for (i = 0; i < planA->number_of_sidebands; i++) {
         offset = offset_0 + planA->vr_freq[i];
         if (offset + freq_max >= 0 && offset + freq_min <= dimensions->count) {
@@ -224,6 +239,12 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
       vm_double_multiply_inplace(npts, planA->norm_amplitudes, 1,
                                  (double *)(&phase_ptr[j * npts]) + 1, 2);
     }
+    // The sideband amplitude is a product of four unnormalized FFT amplitudes, two for
+    // each dimension. The norm_amplitudes of planA hold the factor 1 / n^2 of the
+    // sidebands of the first dimension only.
+    norm0 = 1.0 / ((double)planB->number_of_sidebands *
+                   (double)planB->number_of_sidebands);
+    cblas_dscal(2 * scheme->total_orientations, norm0, (double *)phase_ptr, 1);
 
     // scale and shear the first dimension.
     // matrix = [[a, b], [c/a, d - bc/a]]
@@ -269,9 +290,11 @@ void two_dimensional_averaging(MRS_dimension *dimensions, MRS_averaging_scheme *
 
         // printf("f0 %f %f, (%f, %f), %f, %f\n", freq0[0] + norm0, freq1[0] + norm1,
         //  norm0, norm1, freq_ampA[0], freq_ampB[0]);
-        // Skip only when the entire pattern lies outside the spectral window.
-        if (norm0 + freq0_max >= 0 && norm0 + freq0_min <= dimensions[0].count) {
-          if (norm1 + freq1_max >= 0 && norm1 + freq1_min <= dimensions[1].count) {
+        // Skip only when the entire pattern lies outside the spectral window. A
+        // delta function reaches the window from up to two bins outside either edge.
+        if (norm0 + freq0_max > -2.0 && norm0 + freq0_min < dimensions[0].count + 2.0) {
+          if (norm1 + freq1_max > -2.0 &&
+              norm1 + freq1_min < dimensions[1].count + 2.0) {
             for (j = 0; j < planA->n_octants; j++) {
               address = j * npts;
               // Add offset(isotropic + sideband_order) to the local frequency

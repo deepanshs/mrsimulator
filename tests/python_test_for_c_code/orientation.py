@@ -97,7 +97,8 @@ def cosine_of_polar_angles_and_amplitudes(integration_density: int = 72):
     cos_beta = np.sqrt(zr)
     cos_alpha = np.zeros(xr.size, dtype=np.float64)
     cos_alpha[:-1] = np.sqrt(xr[:-1] / (xr[:-1] + yr[:-1]))
-    cos_alpha[-1] = 0.0
+    # alpha is undefined at the pole and set to zero, cos(alpha) = 1.
+    cos_alpha[-1] = 1.0
     return cos_alpha, cos_beta, amp
 
 

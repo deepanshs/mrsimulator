@@ -399,3 +399,37 @@ def test_unknown_freq_contrib():
 
     event = SpectralEvent(freq_contrib=["Shielding1_0", "Quad2_4"])
     assert {item.value for item in event.freq_contrib} == {"Shielding1_0", "Quad2_4"}
+
+
+def test_freq_contrib_order():
+    """The frequency contributions are in the order of the enumeration, whatever the
+    order or the form they are given in."""
+    names = ["Quad2_4", "Shielding1_0", "Quad1_2", "Shielding1_2"]
+    a = SpectralEvent(freq_contrib=names)
+    b = SpectralEvent(freq_contrib=names[::-1])
+    assert a == b
+    order = [FREQ_LIST_ALL.index(item.value) for item in a.freq_contrib]
+    assert order == sorted(order)
+
+    default = [item.value for item in SpectralEvent().freq_contrib]
+    assert default == list(FREQ_LIST_ALL)
+
+    c = SpectralEvent(freq_contrib=["!Quad2_2"])
+    d = SpectralEvent(freq_contrib=[k for k in FREQ_LIST_ALL if k != "Quad2_2"])
+    assert c == d
+
+
+def test_mixing_event_at_the_edge_of_a_method():
+    """A mixing event with no spectral or delay event on one of its sides raises a
+    clear error when the pathways are evaluated."""
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.method import Method
+
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+    spec = {"transition_queries": [{"ch1": {"P": [-1]}}]}
+    mix = {"ch1": {"angle": np.pi / 2}}
+    for events in [[mix, spec], [spec, mix]]:
+        method = Method(channels=["1H"], spectral_dimensions=[{"events": events}])
+        with pytest.raises(ValueError, match=".*[Mm]ixing.*"):
+            method.get_transition_pathways(sys)

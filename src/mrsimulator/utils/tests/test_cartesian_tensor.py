@@ -132,3 +132,31 @@ def test_maryland_haeberlen():
         assert span >= 0 and -1 <= skew <= 1
         out = ct.maryland_to_haeberlen_params(5.0, span, skew)
         assert np.allclose(out, [zeta, eta, 5.0])
+
+
+def test_maryland_invalid_span_and_skew():
+    """A negative span, as returned by v1.0.1, or a skew outside [-1, 1] raises an
+    error instead of converting to a tensor of the opposite sign."""
+    import pytest
+
+    with pytest.raises(ValueError, match=".*span.*"):
+        ct.maryland_to_mehring_principal_components(0.0, -101.84120077, -0.92266208)
+    with pytest.raises(ValueError, match=".*span.*"):
+        ct.maryland_to_haeberlen_params(0.0, -101.84120077, -0.92266208)
+    with pytest.raises(ValueError, match=".*skew.*"):
+        ct.maryland_to_mehring_principal_components(0.0, 10.0, 1.5)
+
+    # an isotropic tensor has zero span, and its skew is zero by convention
+    span, skew, iso = ct.mehring_principal_components_to_maryland([5.0, 5.0, 5.0])
+    assert span == 0 and skew == 0 and iso == 5
+    out = ct.maryland_to_mehring_principal_components(5.0, 0.0, 0.0)
+    assert np.allclose(out, [5.0, 5.0, 5.0])
+
+
+def test_isotropic_tensor():
+    """An isotropic tensor has zero zeta and zero eta, not a nan eta."""
+    _, zeta, eta, iso = ct.to_haeberlen_params(np.eye(3) * 5.0)
+    assert zeta == 0 and eta == 0 and np.allclose(iso, 5.0)
+
+    zeta, eta, iso = ct.maryland_to_haeberlen_params(5.0, 0.0, 0.0)
+    assert zeta == 0 and eta == 0 and np.allclose(iso, 5.0)

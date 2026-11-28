@@ -611,3 +611,107 @@ def test_triangle_interpolation2D_repeated_vertex():
             np.testing.assert_allclose(
                 amp[:, ::2].sum(axis=0), ref[::2], atol=1e-12, err_msg=f"{f1}, {f2}"
             )
+
+
+def test_delta_gaussian_interpolation_edges_are_symmetric():
+    """The Gaussian interpolation of a delta function outside the window is the mirror
+    image at the two edges of the window."""
+    n = 20
+    for d in [0.2, 0.7, 1.2, 1.7, 2.3]:
+        left, right = np.zeros(2 * n), np.zeros(2 * n)
+        clib.triangle_interpolation1D([-d] * 3, left, type="gaussian")
+        clib.triangle_interpolation1D([n + d] * 3, right, type="gaussian")
+        np.testing.assert_allclose(
+            left[::2], right[::2][::-1], atol=1e-12, err_msg=f"{d}"
+        )
+        if d < 1.5:
+            assert left[::2].sum() > 0, d
+
+
+def test_triangle_interpolation2D_collinear():
+    """A triangle whose vertices are collinear in the plane of the two dimensions
+    (proportional frequencies along the two dimensions). Within each bin of the first
+    dimension, the projection onto the second dimension is the tent density of the
+    first dimension, stretched by the slope."""
+    n0 = 12
+    for slope, c in [(3.0, 1.3), (5.0, 0.4), (-3.0, 40.2), (0.5, 2.1)]:
+        n1 = 64
+        for f1 in [[2.3, 5.1, 9.8], [1.2, 1.9, 6.4], [3.1, 7.7, 7.9], [-1.5, 4.2, 14.5]]:
+            f1 = np.asarray(f1)
+            f2 = slope * f1 + c
+            amp = np.zeros((n0, 2 * n1))
+            clib.triangle_interpolation2D(list(f1), list(f2), amp)
+            res = amp[:, ::2]
+
+            f0, fm, fx = f1
+
+            def cdf(x):
+                x = np.clip(x, f0, fx)
+                lower = (x - f0) ** 2 / ((fx - f0) * (fm - f0))
+                upper = 1 - (fx - x) ** 2 / ((fx - f0) * (fx - fm))
+                return np.where(x <= fm, lower, upper)
+
+            expected = np.zeros((n0, n1))
+            for k in range(n0):
+                for j in range(n1):
+                    # range of x within row k and column j
+                    xa, xb = sorted([(j - c) / slope, (j + 1 - c) / slope])
+                    lo, hi = max(xa, k), min(xb, k + 1)
+                    if hi > lo:
+                        expected[k, j] = cdf(hi) - cdf(lo)
+            np.testing.assert_allclose(
+                res, expected, atol=1e-9, err_msg=f"slope={slope}, f1={f1}"
+            )
+
+
+def _exact_triangle_2d(f1, f2, n0, n1, steps=40000):
+    """Area of a triangle of unit area in each bin of a (n0, n1) grid, by integrating
+    the cross-section along the second dimension over the first dimension."""
+    order = np.argsort(f1)
+    f1, f2 = np.asarray(f1, dtype=float)[order], np.asarray(f2, dtype=float)[order]
+    res = np.zeros((n0, n1))
+    edges = np.arange(n1 + 1, dtype=float)
+    for k in range(n0):
+        lo, hi = max(f1[0], k), min(f1[2], k + 1)
+        if hi <= lo:
+            continue
+        x = lo + (np.arange(steps) + 0.5) * (hi - lo) / steps
+        long_edge = f2[0] + (x - f1[0]) / (f1[2] - f1[0]) * (f2[2] - f2[0])
+        with np.errstate(divide="ignore", invalid="ignore"):
+            lower = f2[0] + (x - f1[0]) / (f1[1] - f1[0]) * (f2[1] - f2[0])
+            upper = f2[1] + (x - f1[1]) / (f1[2] - f1[1]) * (f2[2] - f2[1])
+        short_edge = np.where(x <= f1[1], lower, upper)
+        short_edge = np.where(np.isfinite(short_edge), short_edge, upper)
+        ya, yb = np.minimum(long_edge, short_edge), np.maximum(long_edge, short_edge)
+        overlap = np.clip(
+            np.minimum(yb[:, None], edges[None, 1:])
+            - np.maximum(ya[:, None], edges[None, :-1]),
+            0,
+            None,
+        )
+        res[k] = overlap.sum(axis=0) * (hi - lo) / steps
+    return res / _triangle_area(f1, f2)
+
+
+def _triangle_area(f1, f2):
+    return 0.5 * abs(
+        (f1[1] - f1[0]) * (f2[2] - f2[0]) - (f1[2] - f1[0]) * (f2[1] - f2[0])
+    )
+
+
+def test_triangle_interpolation2D_two_vertices_tie_at_window_edge():
+    """A triangle with two vertices at the same coordinate of the first dimension,
+    clipped by the edge of the window along that dimension."""
+    n0, n1 = 12, 9
+    for f1, f2 in [
+        ([11.25, 11.25, 12.5], [6.5, 1.5, 3.0]),  # tie at the low side, right edge
+        ([-0.5, 0.75, 0.75], [3.0, 6.5, 1.5]),  # tie at the high side, left edge
+        ([4.25, 4.25, 6.5], [6.5, 1.5, 3.0]),  # interior reference
+        ([3.5, 5.75, 5.75], [3.0, 6.5, 1.5]),
+    ]:
+        amp = np.zeros((n0, 2 * n1))
+        clib.triangle_interpolation2D(f1, f2, amp)
+        expected = _exact_triangle_2d(f1, f2, n0, n1)
+        np.testing.assert_allclose(
+            amp[:, ::2], expected, atol=2e-6, err_msg=f"{f1}, {f2}"
+        )

@@ -210,3 +210,41 @@ print("ok")
     )
     assert result.returncode == 0, result.stderr[-2000:]
     assert result.stdout.strip() == "ok"
+
+
+def test_extended_czjzek_zero_dominant_tensor():
+    """A dominant tensor with zeta=0 is a zero tensor, not a missing value."""
+    zeta, eta = ExtCzjzekDistribution({"zeta": 0.0, "eta": 0.3}, eps=0.2).rvs(size=50)
+    assert zeta.size == 50
+    assert np.allclose(zeta, 0) and np.all(np.isfinite(eta))
+
+    zeta, eta = ExtCzjzekDistribution({"Cq": 0.0, "eta": 0.3}, eps=0.2).rvs(size=50)
+    assert np.allclose(zeta, 0) and np.all(np.isfinite(eta))
+
+
+def test_czjzek_analytical_pdf_is_normalized():
+    """The analytical zeta-eta pdf sums to one, as the numerical pdf, also when the
+    eta grid includes eta=1 or extends beyond the range of eta."""
+    cz = CzjzekDistribution(sigma=1.0)
+    zeta = np.linspace(-15, 15, 61)
+    for eta in [np.linspace(0, 1, 21), np.linspace(0, 1.2, 25), np.linspace(0, 0.9, 10)]:
+        amp = cz.pdf([zeta, eta], analytical=True)[2]
+        assert np.allclose(amp.sum(), 1.0), eta[-1]
+
+
+def test_czjzek_analytical_polar_pdf_on_non_square_grid():
+    """The analytical polar pdf holds for different ranges and counts along x and y."""
+    cz = CzjzekDistribution(sigma=1.0, polar=True)
+
+    np.random.seed(0)
+    for x, y in [
+        (np.linspace(0, 12, 41), np.linspace(0, 6, 41)),
+        (np.linspace(0, 12, 41), np.linspace(0, 12, 21)),
+        (np.linspace(0, 12, 41), np.linspace(0, 12, 41)),
+    ]:
+        analytical = cz.pdf([x, y], analytical=True)[2]
+        numerical = cz.pdf([x, y], analytical=False, size=2000000)[2]
+        assert analytical.shape == (y.size, x.size)
+        assert np.allclose(analytical.sum(), 1.0)
+        corr = np.corrcoef(analytical.ravel(), numerical.ravel())[0, 1]
+        assert corr > 0.995, (x[-1], y[-1], y.size)

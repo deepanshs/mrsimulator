@@ -121,7 +121,8 @@ class SpectralDimension(Parseable):
             if len(fractions) == 0:  # No SpectralEvent in dimension
                 raise MissingSpectralEventError()
             total = sum(fractions)
-            if not np.isclose(total, 1):
+            # the sum is one within the round-off of the sum.
+            if not np.isclose(total, 1, rtol=0, atol=1e-12):
                 e = (
                     "The fraction attribute of each SpectralEvent in a "
                     f"SpectralDimension should sum to 1. Sum is {total}."
@@ -143,6 +144,10 @@ class SpectralDimension(Parseable):
             py_dict_copy["events"] = [
                 parse_dict_to_ev_class(e) for e in py_dict_copy["events"]
             ]
+        if isinstance(py_dict_copy.get("reciprocal", None), dict):
+            py_dict_copy["reciprocal"] = Reciprocal.parse_dict_with_units(
+                py_dict_copy["reciprocal"]
+            )
 
         return super().parse_dict_with_units(py_dict_copy)
 

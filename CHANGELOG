@@ -14,7 +14,16 @@ Simulation (C core)
 - Fixed the intensity in the edge bins of the spectral window. The 1D and 2D triangle
   interpolation now deposits the exact area of each triangle within each bin, including
   triangles clipped by the window, and delta functions just outside the window add only
-  their linear-interpolation share to the edge bin.
+  their interpolation share to the edge bins, in one and two dimensions and for the
+  linear and Gaussian isotropic interpolations.
+- Fixed the 2D triangle interpolation of triangles with collinear vertices, such as
+  two dimensions with proportional anisotropic frequencies, which were distributed
+  incorrectly along the second dimension.
+- Fixed static powder patterns with the same frequency at the x, y, and z orientations,
+  for example, ``zeta=50, eta=1, beta=pi/4``, which were taken for a delta function
+  and collapsed into a single point.
+- Fixed the zero intensity of delta functions, such as an isotropic site or the
+  sidebands at the magic angle, with a custom sampling with ``vertex_indexes``.
 - Fixed an out-of-bounds read of the Gaussian interpolation table, which moved most of
   the intensity of a Gaussian delta function by three bins.
 - Fixed the first point of every spectrum of an isotope with a negative gyromagnetic
@@ -26,18 +35,38 @@ Simulation (C core)
   average.
 - Fixed a crash (segmentation fault) when evaluating the Haeberlen components of zero or
   axially symmetric random tensors.
-- Fixed memory leaks of the sideband index arrays in 2D simulations and of the plan
-  struct of every spectral dimension.
-- Fixed a crash for spin systems with no transition pathways for a method; they now
-  contribute zero intensity.
+- Fixed memory leaks of the sideband index arrays in 2D simulations, of the plan
+  struct of every spectral dimension, and of a phase array of the sphere averaging.
+- Fixed static methods with more than one event, such as two events of half fractions
+  or a static 2D method, at a non-zero rotor angle, which is the default. The powder
+  pattern was distorted, since the rotor angle was set to zero for a single event only.
+- Fixed the intensity of 2D spectra with spinning sidebands along the second dimension,
+  which was scaled by the square of the number of sidebands.
+- Fixed the missing spinning sidebands of the orientation at the pole of the octant.
+  The error falls with the integration density, and is 0.002% of the intensity at the
+  default density.
+- Fixed the intensity with a custom sampling and a triangle mesh, which was low by 2/N
+  for N orientations. An orientation shares its weight among the triangles that hold
+  it, and not among six triangles.
+- Spin systems with no transition pathways for a method are skipped and contribute zero
+  intensity.
 
 Spin systems and isotopes
 
 - Fixed the sign of the default reference frequency ratio for isotopes with a negative
-  gyromagnetic ratio and no tabulated reference, which mirrored the ppm axis and the
-  isotropic shift.
+  gyromagnetic ratio and no tabulated reference. The origin offset of the dimension
+  was negative, and the anisotropic patterns were mirrored about the isotropic shift.
+- Fixed the reference of 195Pt (Na2PtCl6), which was listed under 185Pt, and the
+  reference frequency ratio of 3H, 106.663974, which was low by 1%.
+- ``Isotope.register(copy_from=...)`` copies the reference of the isotope, and raises
+  an error for unrecognized attributes.
+- A coupling with a ``site_index`` outside the sites of the spin system raises an error
+  on ``Simulator.run``, instead of reading out of bounds.
+- ``parse_dict_with_units`` of the tensors and ``Rotation`` no longer modifies the
+  dictionary.
 - Fixed ``Isotope.register(copy_from=...)`` modifying the global entry of the copied
-  isotope. A custom isotope with a zero gyromagnetic ratio now raises a clear error.
+  isotope. A custom isotope with a zero gyromagnetic ratio now raises a clear error
+  from ``ref_larmor_ratio`` and ``ref_freq_to_B0``.
 - ``Site.parse_dict_with_units`` now raises an error when a shielding ``zeta`` is given
   in frequency units, which was silently interpreted as ppm. ``Coupling`` no longer
   requires ``zeta`` to check the units of a J tensor, and the ``AntisymmetricTensor``
@@ -47,28 +76,60 @@ Spin systems and isotopes
 
 Methods
 
+- Fixed ``ST2_VAS`` for spin 7/2 isotopes, such as 51V and 59Co. The satellite
+  coherence had the wrong sign, and the sheared dimension held the second-order
+  anisotropy. The sign follows from the ratio of the fourth-rank second-order terms of
+  the satellite and the central transitions.
+- Fixed the combination of two mixing events of the same phase with rotation angles
+  that sum to 180 degrees, which gave the wrong rotation for phases within (90, 180)
+  and (270, 360) degrees.
+- The frequency contributions of an event are in the order of the enumeration, so that
+  equal events compare equal and the JSON output is reproducible.
+- A ``Method`` no longer modifies the ``SpectralDimension`` and event objects it is
+  given, so an object shared by two methods is filled from each method.
+- Fixed the JSON round trip of ``SpectralDimension.reciprocal``, and the serialization
+  of a method after ``Simulator.run(pack_as_csdm=False)``.
+- A mixing event before the first or after the last spectral or delay event, and a
+  ``ThreeQ_VAS``, ``FiveQ_VAS``, ``ST1_VAS``, or ``ST2_VAS`` method for an isotope
+  without the transition, raise a clear error instead of a ``KeyError``.
 - Fixed ``MixingEvent`` JSON round trip when ``label`` or ``description`` is set.
 - Fixed the method plot for mixing events defined on different channels.
 - An unrecognized ``freq_contrib`` string now raises an error instead of being ignored.
 - ``BlochDecayCentralTransitionSpectrum`` now issues its deprecation warning.
-- The sum of the ``SpectralEvent`` fractions is compared with a tolerance.
+- The sum of the ``SpectralEvent`` fractions is compared with a tolerance of 1e-12.
 
 Distribution models and fitting
 
 - Fixed the ``ExtCzjzekDistribution`` for an axially symmetric (``eta=0``) dominant
-  tensor, which collapsed to a delta function.
+  tensor, which collapsed to a delta function, and for a zero (``zeta=0``) dominant
+  tensor, which raised an error.
 - Updating ``sigma`` of a ``CzjzekDistribution`` with cached tensors now takes effect,
   and changing the sample size rebuilds the cache.
+- Fixed the analytical Czjzek distribution in polar coordinates for grids with
+  different ranges or counts along x and y, and the normalization of the analytical
+  distribution in zeta and eta, which was low when the grid included ``eta=1``.
+- Fixed the signal processor of the distribution spectra, ``bestfit_dist`` and
+  ``LMFIT_min_function_dist``, for experiments without a reciprocal coordinates offset
+  or with a descending axis, where the apodization gave half the line on a pedestal.
+- Fixed the ``rotor_frequency`` fit parameter, which was assigned to the wrong method
+  when a generic method preceded a named method. Static methods have no rotor frequency
+  parameter, and the lower bound of the parameter is not negative.
+- The ``affine.Scale`` operation is no longer a fit parameter.
 - ``LineShapeKernel`` can be created without an explicit ``config``.
 - The lineshape kernel grid is now checked against the experiment grid once per
-  experiment; a mismatch, such as an ascending kernel grid on a descending experiment
+  experiment and method grid; a mismatch, such as an ascending kernel grid on a descending experiment
   axis, raises an error instead of producing a mirrored spectrum.
 - ``make_LMFIT_params`` supports antisymmetric shielding and J tensors, no longer
   modifies the abundance of the distribution models, and constrains the abundances of
-  spin systems and distribution models to a total of 100%.
+  spin systems and distribution models to a total of 100%, as long as the free
+  abundances sum to 100% or less.
 - ``LMFIT_min_function``, ``bestfit``, and ``residuals`` accept the documented
-  ``processors=None`` default and raise an error when the number of processors does not
-  match the number of methods. ``make_LMFIT_parameters`` forwards all arguments.
+  ``processors=None`` default, accept a tuple of processors, and raise an error when
+  the number of processors or of ``sigma`` values does not match the number of
+  methods, or when the parameters include signal processor parameters and no
+  processors are given. Note, a call with fewer processors than methods, which fitted
+  only the first methods, now raises an error. ``make_LMFIT_parameters`` forwards all
+  arguments.
 - ``Mrsimulator`` objects saved without signal processors load again, and
   ``Mrsimulator.parse(..., parse_units=False)`` ignores the file version.
 
@@ -79,19 +140,43 @@ Signal processing
   the result no longer depends on the unit of ``FWHM``, and the zero skew limit is the
   Gaussian apodization. The default ``FWHM`` is 0. The window is complex; a real-valued
   dataset is promoted to complex when a complex window is applied.
-- ``TopHat`` keeps a separate unit for each edge, and both units are serialized.
+- ``TopHat`` keeps a separate unit for each edge, and both units are serialized. An
+  edge given as a number takes the unit of the other edge, as before, and the unit of
+  the dimension when neither edge has a unit.
+- ``Gaussian``, ``Exponential``, and ``SkewedGaussian`` with the default ``FWHM`` of 0
+  leave the dataset unchanged, instead of raising a unit conversion error.
 - ``Polynomial`` baseline on multi-dimensional datasets is applied along ``dim_index``.
+- ``Polynomial`` and ``Mask`` operations are serialized. ``Mask`` accepts a list or a
+  number, ``TopHat`` accepts ``None`` for an unbounded edge, and a negative
+  ``dim_index`` counts from the last dimension.
+- Fixed ``affine.Shear`` for dimensions whose product of units is not dimensionless,
+  such as ms and Hz, where the phase was off by the inverse of the unit conversion,
+  and for real-valued datasets.
 - Histogram samples just below the upper edge of the range, whose bin index rounds up
   to the bin count, are counted in the last bin instead of being written out of bounds.
 
 Utilities
 
 - Fixed the Maryland convention conversions: the span is non-negative and the principal
-  components are accepted in any order.
+  components are accepted in any order. Note, a negative span, as returned by earlier
+  versions, and a skew outside [-1, 1] now raise an error. The skew of an isotropic
+  tensor is zero.
+- ``_check_lengths_of_args`` of the collection utilities accepts more than one
+  dictionary argument and only scalar arguments, and ``single_site_system_generator``
+  accepts the abundance as a tuple or a numpy integer.
+- An isotropic tensor converts to zero ``zeta`` and ``eta`` instead of a nan ``eta``.
+- ``flatten_dict`` keeps the keys of every level.
+- A simulator with a ``custom_sampling`` is serialized. The arrays of
+  ``CustomSampling`` are checked for size and index range, which crashed the
+  simulation, and lists and arrays of any numeric type are accepted.
+- ``Simulator.run`` accepts a numpy integer ``method_index``.
+- The CLI saves every method when the file holds fewer signal processors than methods,
+  ``--n_jobs`` without a value is one job, and the benchmark runs without a terminal.
 - Fixed the CLI output file name, which could write to the filesystem root, and the
   command-line arguments are parsed only when the CLI runs.
 - ``Simulator.run`` raises a clear error for ``n_jobs=0``; the benchmark reports
-  sub-microsecond times; ``setup.py`` enforces the minimum python version.
+  sub-microsecond times and no longer uses a deprecated method class; ``setup.py``
+  enforces the minimum python version.
 
 **Other changes**
 

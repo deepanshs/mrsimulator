@@ -5,6 +5,7 @@ from enum import Enum
 from typing import ClassVar
 from typing import Dict
 
+import numpy as np
 from csdmpy.units import string_to_quantity
 from pydantic.v1 import BaseModel
 
@@ -66,6 +67,8 @@ class Parseable(BaseModel):
         Args:
             dict json_dict: A required python dict object.
         """
+        json_dict = dict(json_dict)  # the given dictionary is not modified.
+
         # Only consider properties with both unit types and default units
         all_props = set(cls.property_unit_types.keys()).intersection(
             set(cls.property_default_units.keys())
@@ -133,12 +136,18 @@ class Parseable(BaseModel):
         for k, v in self.dict(exclude={"property_units", *exclude}).items():
             attr_val = getattr(self, k)
             if k not in INCLUDE_LIST:
-                if attr_val == get_default_class_value(self.__class__, k):
+                default = get_default_class_value(self.__class__, k)
+                if _is_equal(attr_val, default):
                     continue
 
+            # numpy arrays are serialized as lists
+            if isinstance(attr_val, np.ndarray):
+                temp_dict[k] = attr_val.tolist()
+
             # check the dict objects
-            if isinstance(v, (dict, Enum)):
-                val = attr_val.json(units=units)
+            elif isinstance(v, (dict, Enum)):
+                # a plain dict attribute has no json method.
+                val = attr_val.json(units=units) if hasattr(attr_val, "json") else v
                 _ = None if val in [None, {}] else temp_dict.update({k: val})
 
             # check the list objects
@@ -164,6 +173,15 @@ class Parseable(BaseModel):
                 var = f" {u}" if unit != CONST else ""
                 temp_dict[key] = f"{temp_dict[key]}{var}"
         return temp_dict
+
+
+def _is_equal(a, b) -> bool:
+    """Equality of two attribute values, where either may be a numpy array."""
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        if a is None or b is None:
+            return a is b
+        return np.array_equal(a, b)
+    return a == b
 
 
 def get_default_class_value(obj, k):

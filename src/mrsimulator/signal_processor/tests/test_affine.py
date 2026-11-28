@@ -112,3 +112,32 @@ def test_scale():
 
     assert s_inc == 2 * c_inc
     assert s_off == 2 * c_off
+
+
+def _shear_phase(unit_x, unit_y, factor, dtype=complex):
+    """Phase / (-2 pi) at x = 1, y = 1, in the units of the dimensions."""
+    dataset = cp.CSDM(
+        dimensions=[
+            cp.LinearDimension(count=8, increment=f"1 {unit_x}"),
+            cp.LinearDimension(count=4, increment=f"1 {unit_y}"),
+        ],
+        dependent_variables=[cp.as_dependent_variable(np.ones((4, 8), dtype=dtype))],
+    )
+    out = sp.affine.Shear(factor=factor, dim_index=0, parallel=1).operate(dataset)
+    return np.angle(out.y[0].components[0][1, 1]) / (-2 * np.pi)
+
+
+def test_shear_units_of_dimensions():
+    """The shear phase is factor * x * y, with x * y in the reciprocal of the unit
+    of the factor, for dimensions in any unit."""
+    assert np.allclose(_shear_phase("s", "Hz", 0.01), 0.01)
+    assert np.allclose(_shear_phase("ms", "Hz", 0.01), 1e-5)
+    assert np.allclose(_shear_phase("s", "kHz", 1e-5), 0.01)
+    assert np.allclose(_shear_phase("ms", "kHz", 0.01), 0.01)
+    # factor of 0.01 ms/s = 1e-5
+    assert np.allclose(_shear_phase("s", "kHz", "0.01 ms/s"), 0.01)
+
+
+def test_shear_real_dataset():
+    """The shear of a real-valued dataset is complex."""
+    assert np.allclose(_shear_phase("s", "Hz", 0.01, dtype=float), 0.01)

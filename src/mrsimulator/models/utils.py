@@ -131,7 +131,7 @@ class LineShapeKernel:
     kernel: np.ndarray = None
     polar: bool = False
     config: ConfigSimulator = field(default_factory=ConfigSimulator)
-    # the experiment whose grid was last validated against the method grid, see
+    # the experiment and the method grid which were last validated, see
     # mrsimulator.utils.spectral_fitting._generate_distribution_spectrum
     _checked_experiment: object = field(
         default=None, init=False, repr=False, compare=False

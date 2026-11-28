@@ -52,6 +52,9 @@ def czjzek_zeta_eta(sigma: float, pos: list):
     pdf_model = pdf_model.ravel()
     pdf_model[eta_idx] /= 2.0
     pdf_model = pdf_model.reshape(zeta.shape)
+    # normalize after the eta = 1 and out of range rows are set.
+    total = pdf_model.sum()
+    pdf_model = pdf_model / total if total != 0 else pdf_model
     return pos[0], pos[1], pdf_model
 
 
@@ -73,11 +76,17 @@ def czjzek_polar(sigma: float, pos: list):
     pdf_model = czjzek_distribution(sigma, zeta, eta)
     eta = eta.ravel()
     zeta = zeta.ravel()
-    x, y = zeta_eta_to_x_y(zeta, eta)
 
     eta_idx = np.where(eta == 1)
     pdf_model = pdf_model.ravel()
     pdf_model[eta_idx] /= 2.0
+
+    # The distribution is even in zeta. Both signs of zeta are binned, which holds for
+    # a grid of any range and count along x and y.
+    x_pos, y_pos = zeta_eta_to_x_y(zeta, eta)
+    x_neg, y_neg = zeta_eta_to_x_y(-zeta, eta)
+    x, y = np.append(x_pos, x_neg), np.append(y_pos, y_neg)
+    pdf_model = np.append(pdf_model, pdf_model)
 
     delta_z = (pos[0][1] - pos[0][0]) / 2
     delta_e = (pos[1][1] - pos[1][0]) / 2
@@ -95,6 +104,5 @@ def czjzek_polar(sigma: float, pos: list):
         y_min=range_y[0],
         y_max=range_y[1],
     )
-    hist_x_y += hist_x_y.T
     hist_x_y /= hist_x_y.sum()
-    return pos[0], pos[1], hist_x_y
+    return pos[0], pos[1], hist_x_y.T

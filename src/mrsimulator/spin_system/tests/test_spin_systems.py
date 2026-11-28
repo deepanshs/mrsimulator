@@ -321,3 +321,24 @@ def test_equality():
 
     c = SpinSystem(sites=[Site(isotope="1H", isotropic_chemical_shift=16)])
     assert a != c
+
+
+def test_coupling_site_index_within_the_sites():
+    """The site indexes of a coupling refer to the sites of the spin system. An index
+    outside the sites raises an error when the spin system is simulated, instead of
+    reading out of bounds."""
+    from mrsimulator import Simulator
+    from mrsimulator.method.lib import BlochDecaySpectrum
+
+    sites = [Site(isotope="1H"), Site(isotope="13C")]
+    method = BlochDecaySpectrum(channels=["1H"], spectral_dimensions=[{"count": 32}])
+    for index in [[0, 7], [0, -1], [2, 1]]:
+        sys = SpinSystem(
+            sites=sites, couplings=[Coupling(site_index=index, isotropic_j=10)]
+        )
+        sim = Simulator(spin_systems=[sys], methods=[method])
+        with pytest.raises(ValueError, match=".*site_index.*"):
+            sim.run()
+
+    sys = SpinSystem(sites=sites, couplings=[Coupling(site_index=[0, 1])])
+    Simulator(spin_systems=[sys], methods=[method]).run()

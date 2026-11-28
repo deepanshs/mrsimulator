@@ -8,6 +8,7 @@ from pydantic.v1 import validator
 
 from ._base import ModuleOperation
 from .utils import _get_broadcast_shape
+from .utils import _multiply_components
 from .utils import _str_to_quantity
 from .utils import CONST
 
@@ -79,9 +80,9 @@ class Shear(AffineTransformation):
         vector_y = _get_broadcast_shape(y_value, self.parallel, n_dim)
 
         xy = vector_x * vector_y
-        unit = 1 / self.property_units["factor"]
-
-        multiplier = unit.to(x.increment.unit * y.increment.unit).value
+        # the product of the coordinates and the factor is dimensionless.
+        unit = 1.0 * x.increment.unit * y.increment.unit * self.property_units["factor"]
+        multiplier = unit.to("").value
 
         # apodization by exp(-i 2π w t a), where w is freq, t is time, and
         # a is the factor.
@@ -90,8 +91,7 @@ class Shear(AffineTransformation):
         dv_indexes = self._get_dv_indexes(self.dv_index, n=len(dataset.y))
 
         for i in dv_indexes:
-            datum = dataset.y[i].components
-            datum *= apodization_vector
+            _multiply_components(dataset.y[i], apodization_vector)
 
         return dataset
 

@@ -407,7 +407,9 @@ class ExtCzjzekDistribution(AbstractDistribution):
 
         symmetric_tensor = self.symmetric_tensor
 
-        zeta = symmetric_tensor.zeta or symmetric_tensor.Cq
+        # zeta = 0 (or Cq = 0) is a zero tensor, not a missing value.
+        zeta = symmetric_tensor.zeta
+        zeta = symmetric_tensor.Cq if zeta is None else zeta
         eta = symmetric_tensor.eta
 
         # the traceless second-rank symmetric Cartesian tensor in PAS

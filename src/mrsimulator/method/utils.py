@@ -75,6 +75,12 @@ def nearest_nonmixing_event(event_name, i):
     high_range = event_name[i:]
     upper = [high_range.index(item) for item in options if item in high_range]
     lower = [low_range[::-1].index(item) for item in options if item in low_range]
+    if upper == [] or lower == []:
+        raise ValueError(
+            "A MixingEvent connects the transitions of the spectral or delay events "
+            "on its two sides. Mixing events before the first or after the last "
+            "spectral or delay event of a method are not supported."
+        )
     # NOTE: returning index of 0 when non-existent might cause issues when first ev mix?
     return [
         i - 1 - (min(lower) if lower != [] else 0),

@@ -216,3 +216,49 @@ def test_zero_gyromagnetic_ratio_error():
     Isotope.register(symbol="zero-gamma-test", spin_multiplicity=4)
     with pytest.raises(ValueError, match=".*gyromagnetic ratio.*"):
         _ = Isotope(symbol="zero-gamma-test").ref_larmor_ratio
+
+
+def test_195Pt_reference():
+    """The Na2PtCl6 reference belongs to 195Pt, not 185Pt."""
+    pt = Isotope(symbol="195Pt")
+    assert pt.reference.compound == "Na2PtCl6"
+    assert np.allclose(pt.reference.ratio, 21.496784)
+    assert np.allclose(pt.ref_larmor_ratio, 1.0, atol=2e-2)
+    assert Isotope(symbol="185Pt").reference.compound == ""
+    assert np.allclose(Isotope(symbol="185Pt").ref_larmor_ratio, 1.0)
+
+
+def test_zero_gyromagnetic_ratio_ref_freq_to_B0():
+    """ref_freq_to_B0 of an isotope with zero gyromagnetic ratio raises the same clear
+    error as ref_larmor_ratio."""
+    Isotope.register(symbol="zero-gamma-test-2", spin_multiplicity=4)
+    with pytest.raises(ValueError, match=".*gyromagnetic ratio.*"):
+        Isotope(symbol="zero-gamma-test-2").ref_freq_to_B0(400e6)
+
+
+def test_3H_reference_ratio():
+    """The reference frequency ratio of 3H is 106.663974 (IUPAC 2001), consistent with
+    the ratio of the gyromagnetic ratios of 3H and 1H."""
+    h3 = Isotope(symbol="3H")
+    assert np.allclose(h3.reference.ratio, 106.663974)
+    gamma_ratio = 100 * h3.gyromagnetic_ratio / Isotope(symbol="1H").gyromagnetic_ratio
+    assert np.allclose(h3.reference.ratio, gamma_ratio, rtol=1e-5)
+    assert np.allclose(h3.ref_larmor_ratio, Isotope(symbol="1H").ref_larmor_ratio)
+
+
+def test_register_copy_from_copies_the_reference():
+    """A custom isotope copied from an isotope has the reference of that isotope."""
+    Isotope.register(symbol="29Si-copy-ref", copy_from="29Si")
+    copy, parent = Isotope(symbol="29Si-copy-ref"), Isotope(symbol="29Si")
+    assert copy.reference.ratio == parent.reference.ratio
+    assert copy.B0_to_ref_freq(9.4) == parent.B0_to_ref_freq(9.4)
+
+    # a different gyromagnetic ratio has no tabulated reference
+    Isotope.register(symbol="29Si-copy-gamma", copy_from="29Si", gyromagnetic_ratio=3.0)
+    assert np.allclose(Isotope(symbol="29Si-copy-gamma").ref_larmor_ratio, 1.0)
+
+
+def test_register_unknown_attribute():
+    """An unknown isotope attribute raises an error instead of being ignored."""
+    with pytest.raises(ValueError, match=".*spin.*"):
+        Isotope.register(symbol="unknown-attr-test", spin=1.5)

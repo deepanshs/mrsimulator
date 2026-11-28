@@ -18,6 +18,20 @@ shear_factor_ST_MAS = {
     9: {4.5: 600 / 216},
 }
 
+def _fourth_rank_term(spin, m):
+    """Fourth-rank second-order quadrupolar term of the Zeeman level m, up to a factor
+    independent of m."""
+    return m * (18 * spin * (spin + 1) - 34 * m * m - 5)
+
+
+def _fourth_rank_ratio(spin, st):
+    """Ratio of the fourth-rank second-order quadrupolar terms of the satellite
+    transition, |st - 1> to |st>, and the central transition."""
+    satellite = _fourth_rank_term(spin, st - 1) - _fourth_rank_term(spin, st)
+    central = _fourth_rank_term(spin, -0.5) - _fourth_rank_term(spin, 0.5)
+    return satellite / central
+
+
 ST_p_symmetry = {"ST1_VAS": {"st": 1.5}, "ST2_VAS": {"st": 2.5}}
 
 
@@ -41,7 +55,15 @@ class ST_VAS(BaseNamedMethod2D):
         st = ST_p_symmetry[name]["st"]
 
         spin = Isotope.parse(kwargs["channels"][0]).spin
-        p = -1 if st == spin else 1
+        if spin not in shear_factor_ST_MAS[int(2 * st)]:
+            raise ValueError(
+                f"{name} requires a half-integer quadrupolar isotope of spin {st} or "
+                f"higher, found spin {spin} for {kwargs['channels'][0]}."
+            )
+        # The satellite and the central transition coherences have the same sign when
+        # their fourth-rank second-order terms have the same sign, so that the shear
+        # with a positive factor refocuses the anisotropy.
+        p = -1 if _fourth_rank_ratio(spin, st) < 0 else 1
 
         description = (
             f"Simulate a P={p} (ST) to P=-1 (CT) ST-CT variable-angle spinning "

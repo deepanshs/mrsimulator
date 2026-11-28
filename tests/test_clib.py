@@ -146,3 +146,16 @@ def test_octahedron_binning_weights_conserve_triangle_shares():
         np.testing.assert_allclose(
             amp_b, amp_i * _triangles_per_vertex(nt), rtol=1e-12, err_msg=f"nt={nt}"
         )
+
+
+def test_octant_pole_orientation_has_unit_phase():
+    """exp(i alpha) is of unit modulus at every orientation, including the pole
+    (beta = 0), where alpha is undefined and set to zero. A zero phase factor removes
+    the spinning sidebands of the pole orientation."""
+    import numpy as np
+    import mrsimulator.tests.tests as tst
+
+    for nt in [1, 2, 5, 20]:
+        exp_I_alpha = tst.cosine_of_polar_angles_and_amplitudes(nt)[0]
+        assert np.allclose(np.abs(exp_I_alpha), 1.0), nt
+        assert np.allclose(exp_I_alpha[-1], 1.0), nt

@@ -137,8 +137,9 @@ def single_site_system_generator(
 
     if abundance is None:
         abundance = np.asarray([1 / n_sites] * n_sites)
-    if isinstance(abundance, (int, float, np.floating)):
+    if isinstance(abundance, (int, float, np.number)):
         abundance = np.asarray([abundance] * n_sites)
+    abundance = np.asarray(abundance)
 
     keep_idxs = np.asarray(abundance > rtol * abundance.max()).nonzero()[0]
 

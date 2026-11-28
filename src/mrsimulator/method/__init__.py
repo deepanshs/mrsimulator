@@ -188,6 +188,14 @@ class Method(Parseable):
 
     def __init__(self, **kwargs):
         Method.check(kwargs)
+        # The event attributes are filled from the global attributes of the method. A
+        # copy keeps the SpectralDimension and Event objects given by the user, which
+        # may be shared with another method, unchanged.
+        if isinstance(kwargs.get("spectral_dimensions", None), (list, tuple)):
+            kwargs["spectral_dimensions"] = [
+                deepcopy(item) if isinstance(item, SpectralDimension) else item
+                for item in kwargs["spectral_dimensions"]
+            ]
         super().__init__(**kwargs)
         # assign global attribute to local if it is None.
         _ = [
@@ -352,7 +360,9 @@ class Method(Parseable):
         mth["affine_matrix"] = self.affine_matrix
 
         sim = self.simulation
-        mth["simulation"] = None if sim is None else sim.to_dict(update_timestamp=True)
+        # a simulation held as a numpy array (pack_as_csdm=False) is not serialized.
+        is_csdm = isinstance(sim, cp.CSDM)
+        mth["simulation"] = sim.to_dict(update_timestamp=True) if is_csdm else None
 
         exp = self.experiment
         mth["experiment"] = None if exp is None else exp.to_dict()

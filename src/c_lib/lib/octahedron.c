@@ -144,7 +144,10 @@ void octahedronGetComplexExpOfPolarAngleOverOctant(const unsigned int nt,
   // In terms of the variables, Eq (3) is given as xr/zr.
   // Evaluate xr = xr/zr
   vm_double_divide_inplace(points - 1, zr, xr);
-  xr[points - 1] = 0.0;
+  // alpha is undefined at the pole (beta = 0), and is set to zero, exp(i alpha) = 1.
+  // A zero phase factor removes the m != 0 components, the spinning sidebands, of
+  // the pole orientation.
+  xr[points - 1] = 1.0;
   // Copy cos(alpha), aka xr, to the even addresses of exp_I_alpha
   cblas_dcopy(points, xr, 1, (double *)exp_I_alpha, 2);
 

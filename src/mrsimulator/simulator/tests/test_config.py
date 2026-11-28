@@ -142,3 +142,58 @@ def test_config():
 
     # get orientation count
     assert a.config.get_orientations_count() == 4 * 21 * 22 * 14
+
+
+def test_custom_sampling_validation():
+    """The arrays of a custom sampling are of the same size, and the vertex indexes
+    refer to the orientations. Lists and arrays of any numeric type are accepted."""
+    import numpy as np
+    from mrsimulator.simulator.config import CustomSampling
+
+    sampling = CustomSampling(
+        alpha=[0, 1, 2, 3],
+        beta=np.arange(4, dtype=np.float32),
+        weight=np.ones(4, dtype=int),
+        vertex_indexes=[[0, 1, 2], [1, 2, 3]],
+    )
+    assert sampling.alpha.dtype == np.float64 and sampling.beta.dtype == np.float64
+    assert sampling.weight.dtype == np.float64
+    assert sampling.vertex_indexes.dtype == np.int32
+    assert sampling.vertex_indexes.shape == (2, 3)
+
+    with pytest.raises(ValueError, match=".*same size.*"):
+        CustomSampling(alpha=np.zeros(200), beta=np.zeros(10), weight=np.ones(10))
+    with pytest.raises(ValueError, match=".*vertex_indexes.*"):
+        CustomSampling(
+            alpha=np.zeros(4), beta=np.zeros(4), weight=np.ones(4),
+            vertex_indexes=[[0, 1, 4]],
+        )
+    with pytest.raises(ValueError, match=".*vertex_indexes.*"):
+        CustomSampling(
+            alpha=np.zeros(4), beta=np.zeros(4), weight=np.ones(4),
+            vertex_indexes=[[0, 1], [2, 3]],
+        )
+
+
+def test_custom_sampling_json():
+    """A simulator with a custom sampling is serialized and parsed back."""
+    import numpy as np
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.method.lib import BlochDecaySpectrum
+    from mrsimulator.simulator.sampling_scheme import zcw_averaging
+
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[Site(isotope="1H")])],
+        methods=[BlochDecaySpectrum(channels=["1H"])],
+    )
+    for mesh in [False, True]:
+        sim.config.custom_sampling = zcw_averaging(M=3, triangle_mesh=mesh)
+        py_dict = sim.json()
+        sampling = Simulator.parse(py_dict).config.custom_sampling
+        assert np.allclose(sampling.alpha, sim.config.custom_sampling.alpha)
+        assert np.allclose(sampling.weight, sim.config.custom_sampling.weight)
+        if mesh:
+            assert np.array_equal(
+                sampling.vertex_indexes, sim.config.custom_sampling.vertex_indexes
+            )

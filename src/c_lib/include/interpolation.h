@@ -95,6 +95,22 @@ extern void triangle_interpolation2D(double *f11, double *f12, double *f13, doub
  * @param spec A pointer to the starting index of a one-dimensional array
  * @param iso_intrp Linear=0 | Gaussian=1 isotropic interpolation scheme.
  */
+/**
+ * @brief Interpolation of a delta function for a user-defined triangle mesh. The
+ * amplitude is the sum of the amplitudes over the triangles of the mesh.
+ *
+ * @param freq A pointer to the frequency of the delta function.
+ * @param amp A pointer to the array of amplitudes at the orientations.
+ * @param position_size The number of triangles in the mesh.
+ * @param positions A pointer to the vertex indexes of the triangles.
+ * @param n_spec The number of points in the spectrum.
+ * @param spec A pointer to the spectrum array (stride 2).
+ * @param iso_intrp The isotropic interpolation scheme, 0 for linear, 1 for Gaussian.
+ */
+void genericDeltaInterpolation(double *freq, double *amp,
+                               const unsigned int position_size, int32_t *positions,
+                               int n_spec, double *spec, unsigned int iso_intrp);
+
 void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *amp,
                                   int stride, int n_spec, double *spec,
                                   unsigned int iso_intrp);

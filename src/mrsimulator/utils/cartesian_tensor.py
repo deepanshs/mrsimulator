@@ -102,7 +102,10 @@ def to_haeberlen_params(
     euler_angles = r.as_euler("zyz")
 
     zeta_sigma = eigenvalues[2]
-    eta_sigma = (eigenvalues[1] - eigenvalues[0]) / eigenvalues[2]
+    # an isotropic tensor has zero anisotropy, and its asymmetry is set to zero.
+    eta_sigma = 0.0
+    if zeta_sigma != 0:
+        eta_sigma = (eigenvalues[1] - eigenvalues[0]) / eigenvalues[2]
 
     return euler_angles, zeta_sigma, eta_sigma, isotropic_component
 
@@ -166,7 +169,8 @@ def mehring_principal_components_to_maryland(
     lambdas = np.sort(lambdas)[::-1]
     isotropic = np.mean(lambdas)
     span = lambdas[0] - lambdas[2]
-    skew = 3 * (lambdas[1] - isotropic) / span
+    # the skew of an isotropic tensor (zero span) is undefined, and set to zero.
+    skew = 3 * (lambdas[1] - isotropic) / span if span != 0 else 0.0
     return span, skew, isotropic
 
 
@@ -186,6 +190,14 @@ def maryland_to_mehring_principal_components(
     Returns:
         A ndarray of Mehring Eigenvalues.
     """
+    if span < 0:
+        raise ValueError(
+            f"The span is non-negative in the Maryland convention, found {span}. "
+            "Versions v1.0.1 and earlier returned a span of the opposite sign."
+        )
+    if abs(skew) > 1:
+        raise ValueError(f"The skew lies within [-1, 1], found {skew}.")
+
     # principal components in descending order, delta11 >= delta22 >= delta33
     lambda2 = isotropic + skew * span / 3
     lambda1 = (3 * isotropic - lambda2 + span) / 2

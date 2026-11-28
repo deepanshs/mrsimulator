@@ -392,12 +392,15 @@ class Simulator(Parseable):
         """
         verbose = 0
 
+        # the site indexes of the couplings are read without bound checks at C level.
+        _ = [sys.check_coupling_site_indexes() for sys in self.spin_systems]
+
         if opt is None:
             opt = self.optimize()
 
         if method_index is None:  # Simulate for all methods
             method_index = np.arange(len(self.methods))
-        elif isinstance(method_index, int):  # Package single method index as list
+        elif isinstance(method_index, (int, np.integer)):  # Package index as list
             method_index = [method_index]
 
         for index in method_index:
@@ -647,12 +650,13 @@ def get_chunks(items_list, n_jobs):
         (list) items_list: The input list to divide into n_jobs chunks.
         (int) n_jobs: Number of chunks of input list.
     """
+    given_n_jobs = n_jobs
     if n_jobs < 0:
         n_jobs += __CPU_count__ + 1
     if n_jobs < 1:
         raise ValueError(
             f"n_jobs must be a positive integer or -1 to -{__CPU_count__}, "
-            f"found {n_jobs}."
+            f"found {given_n_jobs}."
         )
     list_len = len(items_list)
     n_blocks, n_left = list_len // n_jobs, list_len % n_jobs

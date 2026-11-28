@@ -134,3 +134,53 @@ def test_combine_euler_angles():
     should_be = (alpha_should_be, beta_should_be, gamma_should_be)
 
     assert np.allclose(combine_euler_angles(angle_set_2), should_be)
+
+
+def test_add_two_euler_angles_sum_to_pi_rotation():
+    """Two rotations of the same phase which sum to a pi rotation combine to the pi
+    rotation of that phase, for a phase in any quadrant."""
+    from mrsimulator.utils.euler_angles import _angle_phase_to_euler_angles
+    from scipy.spatial.transform import Rotation
+
+    for deg in [0, 30, 45, 90, 135, 180, 225, 270, 315, 350]:
+        phase = np.deg2rad(deg)
+        for angle in [np.pi / 2, np.pi / 3]:
+            first = _angle_phase_to_euler_angles(angle, phase)
+            second = _angle_phase_to_euler_angles(np.pi - angle, phase)
+            out = _add_two_euler_angles(*first, *second)
+            exact = Rotation.from_euler("zyz", first) * Rotation.from_euler(
+                "zyz", second
+            )
+            res = Rotation.from_euler("zyz", out).as_matrix()
+            assert np.allclose(res, exact.as_matrix(), atol=1e-12), (deg, angle)
+
+
+def test_two_half_pi_mixing_events_equal_one_pi_mixing_event():
+    """The pathway weight of two pi/2 mixing events of the same phase is the weight of
+    one pi mixing event of that phase."""
+    from mrsimulator import Method
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+    from mrsimulator.method import MixingEvent
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    sys = SpinSystem(sites=[Site(isotope="1H")])
+
+    def method(mix):
+        events = [
+            SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [1]}}]),
+            *mix,
+            SpectralEvent(fraction=0.5, transition_queries=[{"ch1": {"P": [-1]}}]),
+        ]
+        return Method(
+            channels=["1H"], spectral_dimensions=[SpectralDimension(events=events)]
+        )
+
+    for deg in [45, 135, 225, 315]:
+        phase = np.deg2rad(deg)
+        one = method([MixingEvent(ch1={"angle": np.pi, "phase": phase})])
+        two = method([MixingEvent(ch1={"angle": np.pi / 2, "phase": phase})] * 2)
+        w1 = one.get_transition_pathways(sys)[0].weight
+        w2 = two.get_transition_pathways(sys)[0].weight
+        assert np.allclose(w1, w2), deg

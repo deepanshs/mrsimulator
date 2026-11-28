@@ -131,7 +131,9 @@ class FreeEvent(Parseable):
 
         # Set additive to all frequency enumerations if none passed (default)
         additive = set(FREQ_LIST_ALL) if additive == set() else additive
-        return [FrequencyEnum(item) for item in list(additive - subtractive)]
+        # in the order of the enumeration, not the order of a set.
+        selected = additive - subtractive
+        return [FrequencyEnum(item) for item in FREQ_LIST_ALL if item in selected]
 
     @classmethod
     def parse_dict_with_units(cls, py_dict: dict):

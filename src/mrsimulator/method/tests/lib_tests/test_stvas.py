@@ -173,3 +173,49 @@ def test_stvas_custom_isotopes():
 
     st1_vas_new = ST1_VAS.parse_dict_with_units(st1_vas_json)
     assert st1_vas == st1_vas_new
+
+
+@pytest.mark.parametrize(
+    "method_class, isotope",
+    [
+        (ST1_VAS, "87Rb"),
+        (ST1_VAS, "27Al"),
+        (ST1_VAS, "51V"),
+        (ST1_VAS, "93Nb"),
+        (ST2_VAS, "27Al"),
+        (ST2_VAS, "51V"),
+        (ST2_VAS, "59Co"),
+        (ST2_VAS, "93Nb"),
+    ],
+)
+def test_ST_VAS_isotropic_dimension_is_refocused(method_class, isotope):
+    """The sheared satellite dimension is free of the second-order anisotropy for
+    every spin. The sign of the satellite coherence follows the sign of the ratio of
+    the fourth-rank second-order terms of the satellite and the central transitions,
+    which is negative for ST2 of spin 7/2."""
+    from mrsimulator import Simulator
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+
+    method = method_class(
+        channels=[isotope],
+        spectral_dimensions=[
+            {"count": 512, "spectral_width": 2e4},
+            {"count": 256, "spectral_width": 1e5},
+        ],
+    )
+    site = Site(isotope=isotope, quadrupolar={"Cq": 6e6, "eta": 0.4})
+    sim = Simulator(spin_systems=[SpinSystem(sites=[site])], methods=[method])
+    sim.config.integration_density = 40
+    sim.run()
+    y = sim.methods[0].simulation.y[0].components[0].real
+    projection = y.sum(axis=1)
+    assert (projection > 1e-3 * projection.max()).sum() <= 3
+
+
+def test_ST_VAS_spin_without_the_satellite_transition():
+    """A clear error for a spin without the satellite transition."""
+    with pytest.raises(ValueError, match=".*spin.*"):
+        ST2_VAS(channels=["87Rb"])
+    with pytest.raises(ValueError, match=".*spin.*"):
+        ST1_VAS(channels=["13C"])

@@ -108,3 +108,23 @@ def test_polynomial_2D_dim_index():
         dataset()
     )
     assert np.allclose(out.y[0].components[0], (1 + 2 * x1)[:, np.newaxis])
+
+
+def test_polynomial_json():
+    """The polynomial baseline is serialized and parsed back."""
+    import csdmpy as cp
+    import numpy as np
+    from mrsimulator import signal_processor as sp
+
+    op = sp.baseline.Polynomial(polynomial_dictionary={"c0": 1.0, "c1": 2.0})
+    py_dict = op.json()
+    assert py_dict["polynomial_dictionary"] == {"c0": 1.0, "c1": 2.0}
+
+    processor = sp.SignalProcessor(operations=[op])
+    processor_2 = sp.SignalProcessor.parse_dict_with_units(processor.json())
+    dataset = cp.CSDM(
+        dimensions=[cp.LinearDimension(6, "1 Hz")],
+        dependent_variables=[cp.as_dependent_variable(np.zeros(6))],
+    )
+    out = processor_2.apply_operations(dataset)
+    assert np.allclose(out.y[0].components[0], 1 + 2 * np.arange(6))

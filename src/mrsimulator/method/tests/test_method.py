@@ -320,3 +320,41 @@ def test_impossible_transition_query_selects_no_transitions():
     # impossible D query
     d_query = [{"ch1": {"P": [-1], "D": [0, 0]}}]
     assert len(dq_method(d_query).get_transition_pathways(one_site)) == 0
+
+
+def test_method_does_not_modify_the_given_spectral_dimensions():
+    """A SpectralDimension object given to two methods is not shared between them.
+    Each method fills the event attributes from its own global attributes."""
+    dim = SpectralDimension(
+        events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])]
+    )
+    low = Method(channels=["1H"], magnetic_flux_density=4.7, spectral_dimensions=[dim])
+    high = Method(
+        channels=["1H"], magnetic_flux_density=11.7, spectral_dimensions=[dim]
+    )
+    assert dim.events[0].magnetic_flux_density is None
+    assert low.spectral_dimensions[0].events[0].magnetic_flux_density == 4.7
+    assert high.spectral_dimensions[0].events[0].magnetic_flux_density == 11.7
+
+
+def test_method_json_with_array_simulation():
+    """A method holding a simulation as a numpy array, from
+    Simulator.run(pack_as_csdm=False), is serialized without the simulation."""
+    from mrsimulator import Simulator
+    from mrsimulator import Site
+    from mrsimulator import SpinSystem
+
+    method = Method(
+        channels=["1H"],
+        spectral_dimensions=[
+            SpectralDimension(
+                count=16,
+                events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
+            )
+        ],
+    )
+    sim = Simulator(spin_systems=[SpinSystem(sites=[Site(isotope="1H")])], methods=[method])
+    sim.run(pack_as_csdm=False)
+    assert isinstance(sim.methods[0].simulation, np.ndarray)
+    assert "simulation" not in sim.methods[0].json()
+    assert sim.json() is not None

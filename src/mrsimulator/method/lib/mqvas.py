@@ -53,6 +53,11 @@ class MQ_VAS(BaseNamedMethod2D):
         # select the coherence for the first event
         P = int(2 * mq)
         nQ = P
+        if spin not in shear_factor_MQ_MAS[nQ]:
+            raise ValueError(
+                f"{name} requires a half-integer quadrupolar isotope of spin {mq} or "
+                f"higher, found spin {spin} for {kwargs['channels'][0]}."
+            )
         P = -P if mq == spin else P
 
         # set transition symmetry elements for spectral dimension 0

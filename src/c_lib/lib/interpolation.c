@@ -68,7 +68,8 @@ static void inline delta_fn_gauss_interpolation(const double *freq, const int *p
                                                 double *amp, double *spec) {
   double res, w, a0, a1, a2, a3, a4, sum, temp;
   int p = (int)(floor(*freq)), index, ip2, ip1, im1, im2, pad = 2, p2 = 2 * p;
-  if (p >= *points + pad || p < -pad + 1) return;
+  // the five-point kernel reaches the window from up to two bins outside either edge.
+  if (p >= *points + pad || p < -pad) return;
 
   // for sideband delta freq. It avoids round-off errors.
   res = *freq - (double)p;
@@ -193,11 +194,34 @@ static inline void __triangle_interpolation(double *freq1, double *freq2, double
   p = (p < 0) ? 0 : p;
   pmax = (pmax > *points - 1) ? *points - 1 : pmax;
 
-  double area_left = triangle_cdf((double)p, f, top, *amp), area_right;
-  for (i = p; i <= pmax; i++) {
-    area_right = triangle_cdf((double)(i + 1), f, top, *amp);
-    spec[2 * i] += area_right - area_left;
-    area_left = area_right;
+  // A bin holding a vertex takes the difference of the cumulative area at its edges.
+  // The density is linear across every other bin, where the area is the density at
+  // the bin centre, which changes by a constant from one bin to the next.
+  int p0 = (int)floor(f[0]), p1 = (int)floor(f[1]), p2 = (int)floor(f[2]);
+  double slope, value;
+
+  i = p;
+  while (i <= pmax) {
+    if (i == p0 || i == p1 || i == p2) {
+      spec[2 * i] += triangle_cdf((double)(i + 1), f, top, *amp) -
+                     triangle_cdf((double)i, f, top, *amp);
+      i++;
+      continue;
+    }
+    // bins i to j - 1 lie within one side of the triangle.
+    if (i < p1) {
+      j = (p1 - 1 < pmax) ? p1 : pmax + 1;
+      slope = top / (f[1] - f[0]);
+      value = ((double)i + 0.5 - f[0]) * slope;
+    } else {
+      j = (p2 - 1 < pmax) ? p2 : pmax + 1;
+      slope = -top / (f[2] - f[1]);
+      value = (f[2] - (double)i - 0.5) * (-slope);
+    }
+    for (; i < j; i++) {
+      spec[2 * i] += value;
+      value += slope;
+    }
   }
 }
 
@@ -321,6 +345,16 @@ static inline double edge_value(double x, double x0, double y0, double x1, doubl
 }
 
 /**
+ * @brief Relative height at x of the triangle (tent) with sorted vertices f.
+ */
+static inline double tent_height(double x, double *f) {
+  if (x < f[0] || x > f[2]) return 0.0;
+  // two vertices at the same coordinate: the height is one at that coordinate.
+  if (x <= f[1]) return (f[1] > f[0]) ? (x - f[0]) / (f[1] - f[0]) : 1.0;
+  return (f[2] > f[1]) ? (f[2] - x) / (f[2] - f[1]) : 1.0;
+}
+
+/**
  * @brief Bin the strip lo <= f1 <= hi of a triangle within one bin of the first
  * dimension. The strip is bounded by the edges A, from vertex a0 to a1, and B, from
  * vertex b0 to b1, given as indexes into the sorted vertices (f1, f2). The strip is
@@ -346,8 +380,11 @@ static inline void bin_triangle_strip_2d(double lo, double hi, double *f1, doubl
     return;
   }
 
-  line_lo = absd(b0 - a0);
-  line_hi = absd(b1 - a1);
+  // The strip is split in proportion to the length of its two sides, which is in
+  // proportion to the height of the triangle of the first dimension at lo and hi.
+  // The heights also hold for collinear vertices, where the sides have zero length.
+  line_lo = tent_height(lo, f1);
+  line_hi = tent_height(hi, f1);
   quadrilateral_bin(&a0, &b1, &a1, &b0, line_lo, line_hi, line_lo + line_hi, amp, spec,
                     m1, iso_intrp);
 }
@@ -358,7 +395,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
                                                    double *x10, double *x11, int m1,
                                                    double *spec,
                                                    unsigned int iso_intrp) {
-  double f10, slope_diff, abs_sdiff, abs_sdiff_2, temp, df1, diff;
+  double f10, abs_sdiff, abs_sdiff_2, temp, df1, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f01_slope, f02_slope;
 
@@ -367,8 +404,13 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
 
   f01_slope = (f2[1] - f2[0]) / f10;
   f02_slope = (f2[2] - f2[0]) / (f1[2] - f1[0]);
-  slope_diff = f02_slope - f01_slope;
-  abs_sdiff = absd(slope_diff);
+  // The strip of a bin is split in proportion to the length of its two sides. The
+  // length of a side is the distance from the vertex f1[0] times the difference of
+  // the slopes of the two edges. Only the ratio of the lengths is needed, so the
+  // distances (unit slope difference) are used. Unlike the difference of the edge
+  // coordinates, the distances are exact for collinear and nearly collinear vertices,
+  // where the sides have zero length.
+  abs_sdiff = 1.0;
   abs_sdiff_2 = 2.0 * abs_sdiff;
 
   spec += 2 * p * m1;
@@ -400,8 +442,8 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     amp = (diff - 0.5) * df1;
     x00 = *x10 - f01_slope;
     x01 = *x11 - f02_slope;
-    line_down = absd(*x11 - *x10);
-    line_up = absd(x01 - x00);
+    line_down = diff;
+    line_up = diff - 1.0;
     denom = line_down + line_up;
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1,
                       iso_intrp);
@@ -410,9 +452,9 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
   spec += 2 * m1;
 
   // Part 2: After start to before mid bin.
-  temp = diff * slope_diff;
-  line_up = absd(temp);
-  line_down = absd(temp + slope_diff);
+  temp = diff * abs_sdiff;
+  line_up = temp;
+  line_down = temp + abs_sdiff;
   denom = line_up + line_down;
 
   diff -= 0.5;
@@ -439,7 +481,7 @@ static inline void lower_triangle_interpolation_2d(int p, int pmid, bool l_clip,
     x01 = *x11;
     *x10 = f2[1];
     *x11 = f02_slope * f10 + f2[0];
-    line_down = absd(*x11 - *x10);
+    line_down = f10;
     denom = line_up + line_down;
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1,
                       iso_intrp);
@@ -460,7 +502,7 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
                                                    double *x10, double *x11, int m1,
                                                    double *spec,
                                                    unsigned int iso_intrp) {
-  double f21, slope_diff, abs_sdiff, abs_sdiff_2, temp, df2, diff;
+  double f21, abs_sdiff, abs_sdiff_2, temp, df2, diff;
   double amp, denom, line_up, line_down;
   double x00, x01, f12_slope, f02_slope;
 
@@ -470,8 +512,9 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
 
   f02_slope = (f2[2] - f2[0]) / (f1[2] - f1[0]);
   f12_slope = (f2[2] - f2[1]) / f21;
-  slope_diff = f02_slope - f12_slope;
-  abs_sdiff = absd(slope_diff);
+  // see lower_triangle_interpolation_2d. The length of the sides of a strip is in
+  // proportion to the distance from the vertex f1[2].
+  abs_sdiff = 1.0;
   abs_sdiff_2 = 2 * abs_sdiff;
 
   spec += 2 * p * m1;
@@ -496,8 +539,8 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     x01 = *x11;
     *x10 = f12_slope * ((double)(p + 1) - f1[1]) + f2[1];
     *x11 = f02_slope * ((double)(p + 1) - f1[0]) + f2[0];
-    line_up = absd(x01 - x00);
-    line_down = absd(*x11 - *x10);
+    line_up = f21;
+    line_down = diff;
     denom = line_down + line_up;
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1,
                       iso_intrp);
@@ -507,8 +550,8 @@ static inline void upper_triangle_interpolation_2d(int p, int pmax, bool l_clip,
     x01 = f02_slope * ((double)p - f1[0]) + f2[0];
     *x10 = x00 + f12_slope;
     *x11 = x01 + f02_slope;
-    line_up = absd(x01 - x00);
-    line_down = absd(*x11 - *x10);
+    line_up = diff + 1.0;
+    line_down = diff;
     denom = line_down + line_up;
     quadrilateral_bin(&x00, x11, x10, &x01, line_up, line_down, denom, amp, spec, m1,
                       iso_intrp);
@@ -834,6 +877,22 @@ void octahedronDeltaInterpolation(const unsigned int nt, double *freq, double *a
     j++;
     int_i_stride += stride;
     int_j_stride += stride;
+  }
+  if (iso_intrp == 0) return delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
+  if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq, &n_spec, &amp1, spec);
+}
+
+void genericDeltaInterpolation(double *freq, double *amp,
+                               const unsigned int position_size, int32_t *positions,
+                               int n_spec, double *spec, unsigned int iso_intrp) {
+  unsigned int pos_size = position_size;
+  double amp1 = 0.0;
+
+  // the amplitude of every triangle of the mesh, as in
+  // generic_1d_triangle_interpolation.
+  while (pos_size-- > 0) {
+    amp1 += amp[positions[0]] + amp[positions[1]] + amp[positions[2]];
+    positions += 3;
   }
   if (iso_intrp == 0) return delta_fn_linear_interpolation(freq, &n_spec, &amp1, spec);
   if (iso_intrp == 1) return delta_fn_gauss_interpolation(freq, &n_spec, &amp1, spec);

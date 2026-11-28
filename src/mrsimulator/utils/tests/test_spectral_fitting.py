@@ -508,3 +508,110 @@ def test_make_LMFIT_parameters_alias():
     assert list(params.keys()) == list(expected.keys())
     assert any(k.startswith("mth_") for k in params.keys())
     assert any(k.startswith("czjzek_") for k in params.keys())
+
+
+def test_sigma_length_mismatch():
+    """A number of sigma values different from the number of methods raises an error
+    instead of silently fitting a subset of the methods."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+
+    with pytest.raises(ValueError, match=".*number of sigma.*"):
+        sf.LMFIT_min_function(params, sim, sigma=[1.0])
+
+    diff = sf.LMFIT_min_function(params, sim, sigma=[1.0, 2.0])
+    assert diff.size == 2 * 64
+
+
+def test_processors_as_tuple():
+    """A tuple of processors is a sequence of processors, one per method."""
+    sim = _sim_with_experiments(2)
+    params = sf.make_LMFIT_params(sim)
+    processors = tuple(
+        sp.SignalProcessor(operations=[sp.Scale(factor=1)]) for _ in range(2)
+    )
+    diff = sf.LMFIT_min_function(params, sim, processors)
+    assert diff.size == 2 * 64 and np.allclose(diff, 0)
+    assert len(sf.bestfit(sim, processors)) == 2
+
+
+def test_processor_params_without_processors():
+    """Signal processor parameters with processors=None raise a clear error."""
+    sim = _sim_with_experiments(1)
+    processor = sp.SignalProcessor(
+        operations=[sp.IFFT(), sp.apodization.Exponential(FWHM="100 Hz"), sp.FFT()]
+    )
+    params = sf.make_LMFIT_params(sim, [processor])
+    assert any(k.startswith("SP_") for k in params.keys())
+
+    e = ".*signal processor parameters.*"
+    with pytest.raises(ValueError, match=e):
+        sf.update_mrsim_obj_from_params(params, sim)
+    with pytest.raises(ValueError, match=e):
+        sf.LMFIT_min_function(params, sim)
+
+    # without signal processor parameters, processors=None is fine
+    sf.update_mrsim_obj_from_params(sf.make_LMFIT_params(sim), sim)
+
+
+def test_rotor_frequency_param_index_with_generic_method():
+    """The rotor frequency parameter carries the index of its method in the
+    simulator, also when a generic method precedes a named method."""
+    from mrsimulator.method import Method
+    from mrsimulator.method import SpectralDimension
+    from mrsimulator.method import SpectralEvent
+
+    dim = SpectralDimension(
+        count=64,
+        spectral_width=1e4,
+        events=[SpectralEvent(transition_queries=[{"ch1": {"P": [-1]}}])],
+    )
+    generic = Method(channels=["1H"], rotor_frequency=5000, spectral_dimensions=[dim])
+    named = BlochDecaySpectrum(
+        channels=["1H"],
+        rotor_frequency=12000,
+        spectral_dimensions=[{"count": 64, "spectral_width": 1e4}],
+    )
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[Site(isotope="1H")])], methods=[generic, named]
+    )
+    params = sf.make_LMFIT_params(sim, include={"rotor_frequency"})
+    names = [k for k in params.keys() if k.startswith("mth_")]
+    assert names == ["mth_1_rotor_frequency"]
+    assert params["mth_1_rotor_frequency"].value == 12000
+
+    params["mth_1_rotor_frequency"].value = 12050.0
+    sf.update_mrsim_obj_from_params(params, sim)
+    rotor_freq = [m.spectral_dimensions[0].events[0].rotor_frequency for m in sim.methods]
+    assert rotor_freq == [5000, 12050]
+
+
+def test_rotor_frequency_param_of_static_method():
+    """A static method has no rotor frequency parameter, and the rotor frequency
+    parameter of a spinning method is not negative."""
+    methods = [
+        BlochDecaySpectrum(channels=["1H"], rotor_frequency=vr) for vr in [0, 50, 5000]
+    ]
+    sim = Simulator(
+        spin_systems=[SpinSystem(sites=[Site(isotope="1H")])], methods=methods
+    )
+    params = sf.make_LMFIT_params(sim, include={"rotor_frequency"})
+    names = [k for k in params.keys() if k.startswith("mth_")]
+    assert names == ["mth_1_rotor_frequency", "mth_2_rotor_frequency"]
+    assert params["mth_1_rotor_frequency"].min >= 0
+    assert params["mth_2_rotor_frequency"].min == 4900
+
+
+def test_affine_scale_is_not_a_fit_parameter():
+    """Only the amplitude Scale operation is a fit parameter, not the affine Scale of
+    a dimension, which has the same class name."""
+    processor = sp.SignalProcessor(
+        operations=[sp.affine.Scale(factor=2.0, dim_index=0), sp.Scale(factor=5.0)]
+    )
+    params = sf.make_signal_processor_params([processor])
+    assert list(params.keys()) == ["SP_0_operation_1_Scale_factor"]
+
+    params["SP_0_operation_1_Scale_factor"].value = 7.0
+    sf._update_processors_from_LMFIT_params(params, [processor])
+    assert processor.operations[0].factor == 2.0
+    assert processor.operations[1].factor == 7.0
